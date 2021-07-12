@@ -12,11 +12,9 @@ class ShipyardVC: UIViewController {
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var tableView: UITableView!
     
-    var object: OGame?
     var prodPerSecond = [Double]()
     var ships: Ships?
     var isConstructionNow: Bool?
-    
     var timer: Timer?
     
     let shipsCellType: [TypeOfShip] = [
@@ -42,10 +40,6 @@ class ShipyardVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let _ = object else {
-            fatalError("error initialazing main object")
-        }
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
@@ -55,7 +49,7 @@ class ShipyardVC: UIViewController {
     
     func refresh() {
         print(#function)
-        object!.getResources(forID: 0) { result in
+        OGame.shared.getResources(forID: 0) { result in
             switch result {
             case .success(let resources):
                 self.resourcesOverview.set(metal: resources.metal,
@@ -80,7 +74,7 @@ class ShipyardVC: UIViewController {
             }
         }
         
-        object!.ships(forID: 0) { result in
+        OGame.shared.ships(forID: 0) { result in
             switch result {
             case .success(let ships):
                 self.ships = ships
@@ -135,7 +129,7 @@ extension ShipyardVC: BuildingCellDelegate {
         }
         print("new type is \(newType)")
         
-        object!.build(what: newType, id: 0) { result in
+        OGame.shared.build(what: newType, id: 0) { result in
             switch result {
             case .success(_):
                 self.isConstructionNow = true

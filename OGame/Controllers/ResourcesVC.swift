@@ -12,20 +12,15 @@ class ResourcesVC: UIViewController {
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var tableView: UITableView!
     
-    var object: OGame?
     var prodPerSecond = [Double]()
     var supplies: Supplies?
-    var isConstructionNow: Bool?
+    var isConstructionNow: Bool? = false
     var timer: Timer?
     let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        guard let _ = object else {
-            fatalError("error initialazing main object")
-        }
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -40,7 +35,7 @@ class ResourcesVC: UIViewController {
     
     // MARK: - REFRESH DATA ON RESOURCES VC
     func refresh() {
-        object!.getResources(forID: 0) { result in
+        OGame.shared.getResources(forID: 0) { result in
             switch result {
             case .success(let resources):
                 self.resourcesOverview.set(metal: resources.metal,
@@ -65,22 +60,35 @@ class ResourcesVC: UIViewController {
             }
         }
         
-        object!.isAnyBuildingsConstructed(forID: 0) { result in
+//        OGame.shared.isAnyBuildingsConstructed(forID: 0) { result in
+//            switch result {
+//            case .success(let bool):
+//                self.isConstructionNow = bool
+//
+//                OGame.shared.supply(forID: 0) { result in
+//                    switch result {
+//                    case .success(let supplies):
+//                        self.supplies = supplies
+//                        DispatchQueue.main.async {
+//                            self.refreshControl.endRefreshing()
+//                            self.tableView.reloadData()
+//                        }
+//                    case .failure(_):
+//                        self.navigationController?.popToRootViewController(animated: true)
+//                    }
+//                }
+//            case .failure(_):
+//                self.navigationController?.popToRootViewController(animated: true)
+//            }
+//        }
+        
+        OGame.shared.supply(forID: 0) { result in
             switch result {
-            case .success(let bool):
-                self.isConstructionNow = bool
-                
-                self.object!.supply(forID: 0) { result in
-                    switch result {
-                    case .success(let supplies):
-                        self.supplies = supplies
-                        DispatchQueue.main.async {
-                            self.refreshControl.endRefreshing()
-                            self.tableView.reloadData()
-                        }
-                    case .failure(_):
-                        self.navigationController?.popToRootViewController(animated: true)
-                    }
+            case .success(let supplies):
+                self.supplies = supplies
+                DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
+                    self.tableView.reloadData()
                 }
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
@@ -104,12 +112,10 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         
-        // TODO: refactor this somewhere to buildingcell
-        // actually do i need this now after check in OGame?
+        // TODO: How to load tableview without supplies?
         guard let supplies = self.supplies else { return UITableViewCell() }
-        guard let isConstructionNow = self.isConstructionNow else { return UITableViewCell() }
         
-        cell.setSupply(id: indexPath.row, supplies: supplies, isConstructionNow)
+        cell.setSupply(id: indexPath.row, supplies: supplies)
         
         return cell
     }
@@ -124,7 +130,7 @@ extension ResourcesVC: BuildingCellDelegate {
     
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
         
-        object!.build(what: type, id: 0) { result in
+        OGame.shared.build(what: type, id: 0) { result in
             switch result {
             case .success(_):
                 self.refresh()

@@ -12,20 +12,14 @@ class ResearchesVC: UIViewController {
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var tableView: UITableView!
     
-    var object: OGame?
     var prodPerSecond = [Double]()
     var researches: Researches?
-    var isResearchingNow: Bool?
     var timer: Timer?
     let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        guard let _ = object else {
-            fatalError("error initialazing main object")
-        }
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -40,7 +34,7 @@ class ResearchesVC: UIViewController {
     
     func refresh() {
         print(#function)
-        object!.getResources(forID: 0) { result in
+        OGame.shared.getResources(forID: 0) { result in
             print("function: get resources")
             switch result {
             case .success(let resources):
@@ -66,17 +60,10 @@ class ResearchesVC: UIViewController {
             }
         }
         
-        object!.research(forID: 0) { result in
+        OGame.shared.research(forID: 0) { result in
             switch result {
             case .success(let researches):
                 self.researches = researches
-                self.isResearchingNow = false
-                for research in researches.allResearches {
-                    if research.condition == "active" {
-                        self.isResearchingNow = true
-                        break
-                    }
-                }
                 DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
@@ -102,25 +89,25 @@ extension ResearchesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         
         guard let researches = self.researches else { return UITableViewCell() }
-        guard let isResearchingNow = self.isResearchingNow else { return UITableViewCell() }
         cell.delegate = self
         
-        cell.setResearch(id: indexPath.row, researches: researches, isResearchingNow)
+        cell.setResearch(id: indexPath.row, researches: researches)
         
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
 extension ResearchesVC: BuildingCellDelegate {
     
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
         
-        object!.build(what: type, id: 0) { result in
+        OGame.shared.build(what: type, id: 0) { result in
             switch result {
             case .success(_):
-                self.isResearchingNow = true
-                print("successfully builded something")
                 self.refresh()
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)

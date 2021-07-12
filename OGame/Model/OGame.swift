@@ -10,16 +10,19 @@ import Alamofire
 import SwiftSoup
 
 class OGame {
-    var universe: String
-    var username: String
-    var password: String
+    
+    static let shared = OGame()
+    
+    var universe: String = ""
+    var username: String = ""
+    var password: String = ""
     var userAgent: [String: String]?
-    var proxy: String
+    var proxy: String?
     var language: String?
     var serverNumber: Int?
     let sessionAF = Session.default
     // session.proxies.update
-    var token: String?
+    var token: String? = nil
     
     var attempt: Int = 0
     var serverID: Int?
@@ -42,7 +45,9 @@ class OGame {
         }
     }
     
-    init(universe: String, username: String, password: String, token: String? = nil, userAgent: [String: String]? = nil, proxy: String = "", language: String? = nil, serverNumber: Int? = nil) {
+    private init(){}
+    
+    func loginIntoAccount(universe: String, username: String, password: String, token: String? = nil, userAgent: [String: String]? = nil, proxy: String = "", language: String? = nil, serverNumber: Int? = nil) {
         self.universe = universe
         self.username = username
         self.password = password
@@ -63,11 +68,11 @@ class OGame {
     }
     
     // MARK: - TOKEN
-    func configureToken() {
+    private func configureToken() {
         if token == nil {
             loginAF(attempt: attempt)
         } else {
-            // do i even need this check?
+            //TODO: do i even need this check?
             //var accountsRequest = URLRequest(url: URL(string: "https://lobby.ogame.gameforge.com/api/users/me/accounts")!)
             //accountsRequest.setValue("Bearer \(token!)", forHTTPHeaderField: "authorization")
             //let accounts = session?.dataTask(with: accountsRequest) { data, response, error in
@@ -83,9 +88,9 @@ class OGame {
     // MARK: - ALAMOFIRE SECTION
     
     // MARK: - LOGIN
-    func loginAF(attempt: Int) {
+    private func loginAF(attempt: Int) {
         print(#function)
-        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // delete this?
+        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") //TODO: delete this?
         
         let parameters = LoginData(identity: self.username,
                                    password: self.password,
@@ -129,7 +134,7 @@ class OGame {
     }
     
     // MARK: - SOLVE CAPTCHA
-    func solveCaptcha(challenge: String) {
+    private func solveCaptcha(challenge: String) {
         print(#function)
         let getHeaders: HTTPHeaders = [
             "Cookie": "",
@@ -163,7 +168,7 @@ class OGame {
     
     
     // MARK: - CONFIGURE SERVER
-    func configureServerAF() {
+    private func configureServerAF() {
         print(#function)
         sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Server].self) { response in
             
@@ -192,7 +197,7 @@ class OGame {
     }
     
     // MARK: - CONFIGURE ACCOUNTS
-    func configureAccountsAF() {
+    private func configureAccountsAF() {
         print(#function)
         let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
         sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
@@ -222,7 +227,7 @@ class OGame {
     }
     
     // MARK: - CONFIGURE INDEX
-    func configureIndexAF() {
+    private func configureIndexAF() {
         print(#function)
         indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
         let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
@@ -241,7 +246,7 @@ class OGame {
         }
     }
     // MARK: - Do i even need this one?
-    func configureIndexAF2() {
+    private func configureIndexAF2() {
         print(#function)
         sessionAF.request(loginLink!).validate().response { response in
             
@@ -256,7 +261,7 @@ class OGame {
             }
         }
     }
-    func configureIndexAF3() {
+    private func configureIndexAF3() {
         print(#function)
         let link = "\(indexPHP!)&page=ingame"
         print(link)
@@ -275,7 +280,7 @@ class OGame {
     }
     
     // MARK: - CONFIGURE PLAYER
-    func configurePlayerAF() {
+    private func configurePlayerAF() {
         print(#function)
         doc = try! SwiftSoup.parse(self.landingPage!)
         let planetName = try! doc!.select("[name=ogame-planet-name]")

@@ -16,9 +16,7 @@ class MenuVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     let menuList = ["Overview", "Resources", "Test Page", "Facilities", "Research", "Shipyard", "Defense", "Fleet", "Galaxy"]
-    
-    var object: OGame?
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
@@ -27,9 +25,9 @@ class MenuVC: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        planetNameLabel.text = object?.planet
-        serverNameLabel.text = object?.universe
-        rankLabel.text = String(object!.rank())
+        planetNameLabel.text = OGame.shared.planet
+        serverNameLabel.text = OGame.shared.universe
+        rankLabel.text = String(OGame.shared.rank())
     }
 }
 
@@ -62,28 +60,6 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             performSegue(withIdentifier: "ShowShipyardVC", sender: self)
         default:
             print(menuList[indexPath.row])
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // TODO: refactor this to switch or something else
-        if let overviewVC = segue.destination as? OverviewVC {
-            overviewVC.object = object
-        }
-        if let resourcesVC = segue.destination as? ResourcesVC {
-            resourcesVC.object = object
-        }
-        if let testPageVC = segue.destination as? TestPageVC {
-            testPageVC.object = object
-        }
-        if let facilitiesVC = segue.destination as? FacilitiesVC {
-            facilitiesVC.object = object
-        }
-        if let researchesVC = segue.destination as? ResearchesVC {
-            researchesVC.object = object
-        }
-        if let shipyardVC = segue.destination as? ShipyardVC {
-            shipyardVC.object = object
         }
     }
 }

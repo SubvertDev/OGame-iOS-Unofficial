@@ -9,11 +9,9 @@ import UIKit
 
 class OverviewVC: UIViewController {
     
-    var object: OGame?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        //TODO: Implement
     }
     
 }
