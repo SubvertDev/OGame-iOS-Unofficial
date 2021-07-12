@@ -48,6 +48,8 @@ class OGame {
     private init(){}
     
     func loginIntoAccount(universe: String, username: String, password: String, token: String? = nil, userAgent: [String: String]? = nil, proxy: String = "", language: String? = nil, serverNumber: Int? = nil) {
+        print(#function)
+        
         self.universe = universe
         self.username = username
         self.password = password
@@ -69,6 +71,7 @@ class OGame {
     
     // MARK: - TOKEN
     private func configureToken() {
+        print(#function)
         if token == nil {
             loginAF(attempt: attempt)
         } else {
@@ -264,7 +267,7 @@ class OGame {
     private func configureIndexAF3() {
         print(#function)
         let link = "\(indexPHP!)&page=ingame"
-        print(link)
+        print("Got ingame page: \(link)")
         sessionAF.request(link).validate().response { response in
             
             switch response.result {
@@ -369,7 +372,6 @@ class OGame {
     
     // MARK: - RANK -> Int
     func rank() -> Int {
-        
         let idBar = try! doc!.select("[id=bar]").get(0)
         let li = try! idBar.select("li").get(1)
         let text = try! li.text()
@@ -415,7 +417,7 @@ class OGame {
     
     // MARK: - ID BY PLANET NAME -> Int
     func idByPlanetName(_ name: String) -> Int {
-        
+        // TODO: Better way?
         var found: Int?
         
         for (planetName, id) in zip(planetNames(), planetIDs()) {
@@ -442,7 +444,7 @@ class OGame {
     
     // MARK: - GET RESOURCES
     func getResources(forID: Int, completion: @escaping (Result<Resources, Error>) -> Void) {
-        
+        // FIXME: Fix planetID
         let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
             
@@ -517,7 +519,6 @@ class OGame {
     
     // MARK: - GET FACILITIES
     func facilities(forID: Int, completion: @escaping (Result<Facilities, Error>) -> Void) {
-        print(#function)
         // FIXME: Fix forID insertion in link
         let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
@@ -583,16 +584,12 @@ class OGame {
                         technologyStatus.append(try status.attr("data-status"))
                     }
                     print("Status of researches: \(technologyStatus)")
-                    // on: can build
-                    // off: disabled
-                    // disabled: cannot build
-                    // active: currently building
+
                     guard !levels.isEmpty && !technologyStatus.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN?")
                         completion(.failure(NSError()))
                         return
                     }
-                    
                     
                     let researchesObject = Researches(levels, technologyStatus)
                     
@@ -611,6 +608,7 @@ class OGame {
     
     // MARK: - GET SHIPS
     func ships(forID: Int, completion: @escaping (Result<Ships, Error>) -> Void) {
+        // FIXME: Fix planetID
         let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
         
@@ -624,25 +622,20 @@ class OGame {
                     for ship in shipsParse {
                         ships.append(Int(try ship.text())!)
                     }
-                    //print("Amount of ships: \(ships)")
+                    print("Amount of ships: \(ships)")
                     
                     let technologyStatusParse = try self.docResearch!.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    //print("Tech Status: \(technologyStatus)")
-                    //on: can build
-                    //off: not researched / disabled
-                    //disabled: not enough resources?
-                    //active?
+                    print("Ship Tech? Status: \(technologyStatus)")
                     
                     guard !ships.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN?")
                         completion(.failure(NSError()))
                         return
                     }
-                    
                     
                     let shipsObject = Ships(ships, technologyStatus)
                     
@@ -696,7 +689,7 @@ class OGame {
     
     
     // MARK: - BUILD BUILDING/SHIPS
-    // todo: change int int string to buildings
+    // TODO: change int int string to buildings
     func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
         let type = what.0
         let amount = what.1
@@ -756,10 +749,10 @@ class OGame {
     // MARK: - COLLECT RUBBLE FIELD
     
     // MARK: - IS LOGGED IN
+    // TODO: Do I need this?
     func isLoggedIn(completion: @escaping (Bool) -> Void) {
         let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
         sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", headers: headers).responseJSON { response in
-            //print("response is: \(response)")
             switch response.result {
             case .success(let data):
                 let checkData = data as? [String: Any]
@@ -780,35 +773,4 @@ class OGame {
     
     // MARK: - LOGOUT
     
-    // MARK: - TEST FUNCTION
-    func isAnyBuildingsConstructed(forID: Int, completion: @escaping (Result<Bool, Error>) -> Void)  {
-        // TODO: i need more clever solution
-        var construction = false
-        
-        supply(forID: forID) { result in
-            switch result {
-            case .success(let supplies):
-                for supply in supplies.allSupplies {
-                    if supply.condition == "active" {
-                        construction = true
-                    }
-                }
-                self.facilities(forID: forID) { result in
-                    switch result {
-                    case .success(let facilities):
-                        for facility in facilities.allFacilities {
-                            if facility.condition == "active" {
-                                construction = true
-                            }
-                        }
-                        completion(.success(construction))
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
 }

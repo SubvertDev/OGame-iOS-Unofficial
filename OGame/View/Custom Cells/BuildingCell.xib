@@ -25,35 +25,40 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Building name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ENA-tV-loT">
-                        <rect key="frame" x="88" y="8" width="84" height="15"/>
+                        <rect key="frame" x="88" y="8" width="83.5" height="14.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Metal req.:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KsA-3G-LfF">
-                        <rect key="frame" x="88" y="23" width="61" height="15"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Crystal req.:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1za-60-C5i">
-                        <rect key="frame" x="88" y="38" width="69" height="15"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Energy req.:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LLW-9q-82t">
-                        <rect key="frame" x="88" y="53" width="69" height="15"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time to build:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DTT-XM-Ibv">
-                        <rect key="frame" x="88" y="68" width="78" height="15"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="vcu-0x-J0s">
+                        <rect key="frame" x="88" y="23" width="88" height="58"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Metal req.:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KsA-3G-LfF">
+                                <rect key="frame" x="0.0" y="0.0" width="60.5" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Crystal req.:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1za-60-C5i">
+                                <rect key="frame" x="0.0" y="14.5" width="69" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Deuterium req.:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LLW-9q-82t">
+                                <rect key="frame" x="0.0" y="29" width="88" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time to build:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DTT-XM-Ibv">
+                                <rect key="frame" x="0.0" y="43.5" width="77.5" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                    </stackView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FG1-1F-cPM">
                         <rect key="frame" x="269" y="29" width="35" height="30"/>
                         <state key="normal" title="Build"/>
@@ -79,26 +84,20 @@
                     </textField>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="vcu-0x-J0s" firstAttribute="leading" secondItem="ENA-tV-loT" secondAttribute="leading" id="4SW-qk-9qo"/>
                     <constraint firstAttribute="bottomMargin" secondItem="gnO-3z-gss" secondAttribute="bottom" id="6Lx-He-vlN"/>
                     <constraint firstItem="2t6-H2-wvG" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="DUi-Dp-Lfj"/>
                     <constraint firstItem="2t6-H2-wvG" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Gpf-50-xiZ"/>
                     <constraint firstItem="gGX-fL-LLw" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="N3q-rf-o9t"/>
-                    <constraint firstItem="1za-60-C5i" firstAttribute="leading" secondItem="2t6-H2-wvG" secondAttribute="trailing" constant="8" symbolic="YES" id="Riy-Xg-kTW"/>
                     <constraint firstItem="2t6-H2-wvG" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="Uio-gE-7f4"/>
-                    <constraint firstItem="KsA-3G-LfF" firstAttribute="leading" secondItem="2t6-H2-wvG" secondAttribute="trailing" constant="8" symbolic="YES" id="XaC-Bk-7vA"/>
                     <constraint firstItem="ENA-tV-loT" firstAttribute="top" secondItem="2t6-H2-wvG" secondAttribute="top" id="Y7g-NN-Q7p"/>
-                    <constraint firstItem="DTT-XM-Ibv" firstAttribute="top" secondItem="LLW-9q-82t" secondAttribute="bottom" id="Yrr-gd-vyf"/>
-                    <constraint firstItem="DTT-XM-Ibv" firstAttribute="leading" secondItem="2t6-H2-wvG" secondAttribute="trailing" constant="8" symbolic="YES" id="bS1-2F-eoq"/>
-                    <constraint firstItem="1za-60-C5i" firstAttribute="top" secondItem="KsA-3G-LfF" secondAttribute="bottom" id="bxv-ji-eyp"/>
+                    <constraint firstItem="vcu-0x-J0s" firstAttribute="top" secondItem="ENA-tV-loT" secondAttribute="bottom" constant="0.5" id="cUV-st-L4k"/>
                     <constraint firstItem="gnO-3z-gss" firstAttribute="centerX" secondItem="2t6-H2-wvG" secondAttribute="centerX" id="h7B-69-1a0"/>
                     <constraint firstItem="FG1-1F-cPM" firstAttribute="leading" secondItem="gGX-fL-LLw" secondAttribute="trailing" constant="8" symbolic="YES" id="jlb-ih-ebV"/>
                     <constraint firstAttribute="trailing" secondItem="FG1-1F-cPM" secondAttribute="trailing" constant="16" id="kJt-fN-zqa"/>
                     <constraint firstAttribute="bottom" secondItem="2t6-H2-wvG" secondAttribute="bottom" constant="8" id="kfk-xj-IkJ"/>
-                    <constraint firstItem="KsA-3G-LfF" firstAttribute="top" secondItem="ENA-tV-loT" secondAttribute="bottom" id="lgK-Za-IHO"/>
                     <constraint firstItem="FG1-1F-cPM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="mVa-Mk-beV"/>
                     <constraint firstItem="ENA-tV-loT" firstAttribute="leading" secondItem="2t6-H2-wvG" secondAttribute="trailing" constant="8" symbolic="YES" id="wzF-3L-9QL"/>
-                    <constraint firstItem="LLW-9q-82t" firstAttribute="top" secondItem="1za-60-C5i" secondAttribute="bottom" id="x2n-Gw-aYS"/>
-                    <constraint firstItem="LLW-9q-82t" firstAttribute="leading" secondItem="2t6-H2-wvG" secondAttribute="trailing" constant="8" symbolic="YES" id="zyO-Ph-mzG"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
