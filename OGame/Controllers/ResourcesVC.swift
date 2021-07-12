@@ -16,8 +16,8 @@ class ResourcesVC: UIViewController {
     var prodPerSecond = [Double]()
     var supplies: Supplies?
     var isConstructionNow: Bool?
-    
     var timer: Timer?
+    let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
@@ -31,13 +31,15 @@ class ResourcesVC: UIViewController {
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
         
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        
         refresh()
     }
     
     
     // MARK: - REFRESH DATA ON RESOURCES VC
     func refresh() {
-        //print(#function)
         object!.getResources(forID: 0) { result in
             switch result {
             case .success(let resources):
@@ -64,7 +66,6 @@ class ResourcesVC: UIViewController {
         }
         
         object!.isAnyBuildingsConstructed(forID: 0) { result in
-            //print(#function)
             switch result {
             case .success(let bool):
                 self.isConstructionNow = bool
@@ -74,6 +75,7 @@ class ResourcesVC: UIViewController {
                     case .success(let supplies):
                         self.supplies = supplies
                         DispatchQueue.main.async {
+                            self.refreshControl.endRefreshing()
                             self.tableView.reloadData()
                         }
                     case .failure(_):
@@ -84,23 +86,10 @@ class ResourcesVC: UIViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
         }
-        
-//        object!.supply(forID: 0) { result in
-//            switch result {
-//            case .success(let supplies):
-//                for supply in supplies.allSupplies {
-//                    if supply.inConstruction! {
-//                        self.isConstructionNow = true
-//                    }
-//                }
-//                self.supplies = supplies
-//                DispatchQueue.main.async {
-//                    self.tableView.reloadData()
-//                }
-//            case .failure(_):
-//                self.navigationController?.popToRootViewController(animated: true)
-//            }
-//        }
+    }
+    
+    @objc func refreshTableView() {
+        refresh()
     }
 }
 
@@ -112,33 +101,16 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //print(#function)
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
+        
         // TODO: refactor this somewhere to buildingcell
+        // actually do i need this now after check in OGame?
         guard let supplies = self.supplies else { return UITableViewCell() }
         guard let isConstructionNow = self.isConstructionNow else { return UITableViewCell() }
         
-        switch indexPath.row {
-        case 0:
-            cell.setSupply(type: .metalMine, supplies: supplies, isConstructionNow)
-        case 1:
-            cell.setSupply(type: .crystalMine, supplies: supplies, isConstructionNow)
-        case 2:
-            cell.setSupply(type: .deuteriumMine, supplies: supplies, isConstructionNow)
-        case 3:
-            cell.setSupply(type: .solarPlant, supplies: supplies, isConstructionNow)
-        case 4:
-            cell.setSupply(type: .fusionPlant, supplies: supplies, isConstructionNow)
-        case 5:
-            cell.setSupply(type: .metalStorage, supplies: supplies, isConstructionNow)
-        case 6:
-            cell.setSupply(type: .crystalStorage, supplies: supplies, isConstructionNow)
-        case 7:
-            cell.setSupply(type: .deuteriumStorage, supplies: supplies, isConstructionNow)
-        default:
-            return UITableViewCell()
-        }
+        cell.setSupply(id: indexPath.row, supplies: supplies, isConstructionNow)
+        
         return cell
     }
     
@@ -155,7 +127,6 @@ extension ResourcesVC: BuildingCellDelegate {
         object!.build(what: type, id: 0) { result in
             switch result {
             case .success(_):
-                self.isConstructionNow = true
                 self.refresh()
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)

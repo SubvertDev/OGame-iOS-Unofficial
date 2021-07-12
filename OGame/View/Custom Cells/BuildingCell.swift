@@ -11,50 +11,6 @@ protocol BuildingCellDelegate: AnyObject {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String))
 }
 
-enum TypeOfSupply {
-    case metalMine
-    case crystalMine
-    case deuteriumMine
-    case solarPlant
-    case fusionPlant
-    case metalStorage
-    case crystalStorage
-    case deuteriumStorage
-}
-
-enum TypeOfFacility {
-    case roboticsFactory
-    case shipyard
-    case researchLaboratory
-    case allianceDepot
-    case missileSilo
-    case naniteFactory
-    case terraformer
-    case repairDock
-    case moonBase
-    case sensorPhalanx
-    case jumpGate
-}
-
-enum TypeOfResearch {
-    case energy
-    case laser
-    case ion
-    case hyperspace
-    case plasma
-    case combustionDrive
-    case impulseDrive
-    case hyperspaceDrive
-    case espionage
-    case computer
-    case astrophysics
-    case researchNetwork
-    case graviton
-    case weapons
-    case shielding
-    case armor
-}
-
 enum TypeOfShip {
     case lightFighter
     case heavyFighter
@@ -105,614 +61,390 @@ class BuildingCell: UITableViewCell {
     
     
     // MARK: - SET SUPPLY
-    func setSupply(type: TypeOfSupply, supplies: Supplies, _ isConstructionNow: Bool) {
-        switch type {
+    func setSupply(id: Int, supplies: Supplies, _ isConstructionNow: Bool) {
         
-        case .metalMine:
-            typeOfBuilding = Buildings().metalMine
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.metalMine.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.metalMine.isPossible)! {
-                buildingImage.image = UIImage(named: "unMetalMine")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "metalMine")
-            }
-            levelLabel.text = "\(supplies.metalMine.level)"
-            buildingNameLabel.text = "Metal Mine"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().metalMine, level: supplies.metalMine.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().metalMine, level: supplies.metalMine.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().metalMine, level: supplies.metalMine.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .crystalMine:
-            typeOfBuilding = Buildings().crystalMine
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.crystalMine.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.crystalMine.isPossible)! {
-                buildingImage.image = UIImage(named: "unCrystalMine")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "crystalMine")
-            }
-            levelLabel.text = "\(supplies.crystalMine.level)"
-            buildingNameLabel.text = "Crystal Mine"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().crystalMine, level: supplies.crystalMine.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().crystalMine, level: supplies.crystalMine.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().crystalMine, level: supplies.crystalMine.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .deuteriumMine:
-            typeOfBuilding = Buildings().deuteriumMine
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.deuteriumMine.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.deuteriumMine.isPossible)! {
-                buildingImage.image = UIImage(named: "unDeuteriumMine")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "deuteriumMine")
-            }
-            levelLabel.text = "\(supplies.deuteriumMine.level)"
-            buildingNameLabel.text = "Deuterium Mine"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().deuteriumMine, level: supplies.deuteriumMine.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().deuteriumMine, level: supplies.deuteriumMine.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().deuteriumMine, level: supplies.deuteriumMine.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .solarPlant:
-            typeOfBuilding = Buildings().solarPlant
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.solarPlant.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.solarPlant.isPossible)! {
-                buildingImage.image = UIImage(named: "unSolarPlant")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "solarPlant")
-            }
-            levelLabel.text = "\(supplies.solarPlant.level)"
-            buildingNameLabel.text = "Solar Plant"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().solarPlant, level: supplies.solarPlant.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().solarPlant, level: supplies.solarPlant.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().solarPlant, level: supplies.solarPlant.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .fusionPlant:
-            typeOfBuilding = Buildings().fusionPlant
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.fusionPlant.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.fusionPlant.isPossible)! {
-                buildingImage.image = UIImage(named: "unFusionPlant")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "fusionPlant")
-            }
-            levelLabel.text = "\(supplies.fusionPlant.level)"
-            buildingNameLabel.text = "Fusion Plant"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().fusionPlant, level: supplies.fusionPlant.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().fusionPlant, level: supplies.fusionPlant.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().fusionPlant, level: supplies.fusionPlant.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .metalStorage:
-            typeOfBuilding = Buildings().metalStorage
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.metalStorage.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.metalStorage.isPossible)! {
-                buildingImage.image = UIImage(named: "unMetalStorage")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "metalStorage")
-            }
-            levelLabel.text = "\(supplies.metalStorage.level)"
-            buildingNameLabel.text = "Metal Storage"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().metalStorage, level: supplies.metalStorage.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().metalStorage, level: supplies.metalStorage.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().metalStorage, level: supplies.metalStorage.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .crystalStorage:
-            typeOfBuilding = Buildings().crystalStorage
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (supplies.crystalStorage.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.crystalStorage.isPossible)! {
-                buildingImage.image = UIImage(named: "unCrystalStorage")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "crystalStorage")
-            }
-            levelLabel.text = "\(supplies.crystalStorage.level)"
-            buildingNameLabel.text = "Crystal Storage"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().crystalStorage, level: supplies.crystalStorage.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().crystalStorage, level: supplies.crystalStorage.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium:  \(Price().get(technology: Buildings().crystalStorage, level: supplies.crystalStorage.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .deuteriumStorage:
-            buildButton.isEnabled = isConstructionNow ? false : true
-            typeOfBuilding = Buildings().deuteriumStorage
-            if (supplies.deuteriumStorage.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(supplies.deuteriumStorage.isPossible)! {
-                buildingImage.image = UIImage(named: "unDeuteriumStorage")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "deuteriumStorage")
-            }
-            levelLabel.text = "\(supplies.deuteriumStorage.level)"
-            buildingNameLabel.text = "Deuterium Storage"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().deuteriumStorage, level: supplies.deuteriumStorage.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().deuteriumStorage, level: supplies.deuteriumStorage.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().deuteriumStorage, level: supplies.deuteriumStorage.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
+        //TODO: Move all variables out of function
+        let metalMine = (name: "Metal Mine",
+                         metal: Price().get(technology: Buildings().metalMine, level: supplies.metalMine.level)[0],
+                         crystal: Price().get(technology: Buildings().metalMine, level: supplies.metalMine.level)[1],
+                         deuterium: Price().get(technology: Buildings().metalMine, level: supplies.metalMine.level)[2],
+                         image: (available: Images.Resources.SmallAvailable.metalMine,
+                                 unavailable: Images.Resources.SmallUnavailable.metalMine,
+                                 disabled: Images.Resources.SmallDisabled.metalMine),
+                         buildingsID: 1)
+        
+        let crystalMine = (name: "Crystal Mine",
+                           metal: Price().get(technology: Buildings().crystalMine, level: supplies.crystalMine.level)[0],
+                           crystal: Price().get(technology: Buildings().crystalMine, level: supplies.crystalMine.level)[1],
+                           deuterium: Price().get(technology: Buildings().crystalMine, level: supplies.crystalMine.level)[2],
+                           image: (available: Images.Resources.SmallAvailable.crystalMine,
+                                   unavailable: Images.Resources.SmallUnavailable.crystalMine,
+                                   disabled: Images.Resources.SmallDisabled.crystalMine),
+                           buildingsID: 2)
+        
+        let deuteriumMine = (name: "Deuterium Mine",
+                             metal: Price().get(technology: Buildings().deuteriumMine, level: supplies.deuteriumMine.level)[0],
+                             crystal: Price().get(technology: Buildings().deuteriumMine, level: supplies.deuteriumMine.level)[1],
+                             deuterium: Price().get(technology: Buildings().deuteriumMine, level: supplies.deuteriumMine.level)[2],
+                             image: (available: Images.Resources.SmallAvailable.deuteriumMine,
+                                     unavailable: Images.Resources.SmallUnavailable.deuteriumMine,
+                                     disabled: Images.Resources.SmallDisabled.deuteriumMine),
+                             buildingsID: 3)
+        
+        let solarPlant = (name: "Solar Plant",
+                          metal: Price().get(technology: Buildings().solarPlant, level: supplies.solarPlant.level)[0],
+                          crystal: Price().get(technology: Buildings().solarPlant, level: supplies.solarPlant.level)[1],
+                          deuterium: Price().get(technology: Buildings().solarPlant, level: supplies.solarPlant.level)[2],
+                          image: (available: Images.Resources.SmallAvailable.solarPlant,
+                                  unavailable: Images.Resources.SmallUnavailable.solarPlant,
+                                  disabled: Images.Resources.SmallDisabled.solarPlant),
+                          buildingsID: 4)
+        
+        let fusionPlant = (name: "Fusion Plant",
+                           metal: Price().get(technology: Buildings().fusionPlant, level: supplies.fusionPlant.level)[0],
+                           crystal: Price().get(technology: Buildings().fusionPlant, level: supplies.fusionPlant.level)[1],
+                           deuterium: Price().get(technology: Buildings().fusionPlant, level: supplies.fusionPlant.level)[2],
+                           image: (available: Images.Resources.SmallAvailable.fusionPlant,
+                                   unavailable: Images.Resources.SmallUnavailable.fusionPlant,
+                                   disabled: Images.Resources.SmallDisabled.fusionPlant),
+                           buildingsID: 12)
+        
+        let metalStorage = (name: "Metal Storage",
+                            metal: Price().get(technology: Buildings().metalStorage, level: supplies.metalStorage.level)[0],
+                            crystal: Price().get(technology: Buildings().metalStorage, level: supplies.metalStorage.level)[1],
+                            deuterium: Price().get(technology: Buildings().metalStorage, level: supplies.metalStorage.level)[2],
+                            image: (available: Images.Resources.SmallAvailable.metalStorage,
+                                    unavailable: Images.Resources.SmallUnavailable.metalStorage,
+                                    disabled: Images.Resources.SmallDisabled.metalStorage),
+                            buildingsID: 22)
+        
+        let crystalStorage = (name: "Crystal Storage",
+                              metal: Price().get(technology: Buildings().crystalStorage, level: supplies.crystalStorage.level)[0],
+                              crystal: Price().get(technology: Buildings().crystalStorage, level: supplies.crystalStorage.level)[1],
+                              deuterium: Price().get(technology: Buildings().crystalStorage, level: supplies.crystalStorage.level)[2],
+                              image: (available: Images.Resources.SmallAvailable.crystalStorage,
+                                      unavailable: Images.Resources.SmallUnavailable.crystalStorage,
+                                      disabled: Images.Resources.SmallDisabled.crystalStorage),
+                              buildingsID: 23)
+        
+        let deuteriumStorage = (name: "Deuterium Storage",
+                                metal: Price().get(technology: Buildings().deuteriumStorage, level: supplies.deuteriumStorage.level)[0],
+                                crystal: Price().get(technology: Buildings().deuteriumStorage, level: supplies.deuteriumStorage.level)[1],
+                                deuterium: Price().get(technology: Buildings().deuteriumStorage, level: supplies.deuteriumStorage.level)[2],
+                                image: (available: Images.Resources.SmallAvailable.deuteriumStorage,
+                                        unavailable: Images.Resources.SmallUnavailable.deuteriumStorage,
+                                        disabled: Images.Resources.SmallDisabled.deuteriumStorage),
+                                buildingsID: 24)
+        
+        let resourceBuildings = [metalMine, crystalMine, deuteriumMine, solarPlant, fusionPlant, metalStorage, crystalStorage, deuteriumStorage]
+        
+        typeOfBuilding = (resourceBuildings[id].buildingsID, 1, "supplies")
+        buildButton.isEnabled = false
+        buildingNameLabel.text = resourceBuildings[id].name
+        metalRequiredLabel.text = "Metal: \(resourceBuildings[id].metal)"
+        crystalRequiredLabel.text = "Crystal: \(resourceBuildings[id].crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(resourceBuildings[id].deuterium)"
+        levelLabel.text = "\(supplies.allSupplies[id].level)"
+        timeToBuildLabel.text = ""
+        
+        switch supplies.allSupplies[id].condition {
+        case "on":
+            buildingImage.image = resourceBuildings[id].image.available
+            buildButton.isEnabled = true
+        case "active":
+            buildingImage.image = UIImage(systemName: "timer") //TODO: Change it
+            levelLabel.text = "\(supplies.allSupplies[id].level) -> \(supplies.allSupplies[id].level + 1)"
+        case "disabled":
+            buildingImage.image = resourceBuildings[id].image.unavailable
+        case "off":
+            buildingImage.image = resourceBuildings[id].image.disabled
+        default:
+            buildingImage.image = UIImage(systemName: "xmark")
         }
     }
-    
-    
     
     
     // MARK: - SET FACILITY
-    func setFacility(type: TypeOfFacility, facilities: Facilities, _ isConstructionNow: Bool) {
-        switch type {
-        case .roboticsFactory:
-            typeOfBuilding = Buildings().roboticsFactory
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.roboticsFactory.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.roboticsFactory.isPossible)! {
-                buildingImage.image = UIImage(named: "unRoboticsFactory")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "roboticsFactory")
-            }
-            levelLabel.text = "\(facilities.roboticsFactory.level)"
-            buildingNameLabel.text = "Robotics Factory"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .shipyard:
-            typeOfBuilding = Buildings().shipyard
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.shipyard.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.shipyard.isPossible)! {
-                buildingImage.image = UIImage(named: "unShipyard")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "shipyard")
-            }
-            levelLabel.text = "\(facilities.shipyard.level)"
-            buildingNameLabel.text = "Shipyard"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .researchLaboratory:
-            typeOfBuilding = Buildings().researchLaboratory
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.researchLaboratory.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.researchLaboratory.isPossible)! {
-                buildingImage.image = UIImage(named: "unResearchLaboratory")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "researchLaboratory")
-            }
-            levelLabel.text = "\(facilities.researchLaboratory.level)"
-            buildingNameLabel.text = "Research Laboratory"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .allianceDepot:
-            typeOfBuilding = Buildings().allianceDepot
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.allianceDepot.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.allianceDepot.isPossible)! {
-                buildingImage.image = UIImage(named: "unAllianceDepot")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "allianceDepot")
-            }
-            levelLabel.text = "\(facilities.allianceDepot.level)"
-            buildingNameLabel.text = "Alliance Depot"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .missileSilo:
-            typeOfBuilding = Buildings().missileSilo
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.missileSilo.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.missileSilo.isPossible)! {
-                buildingImage.image = UIImage(named: "unMissileSilo")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "missileSilo")
-            }
-            levelLabel.text = "\(facilities.missileSilo.level)"
-            buildingNameLabel.text = "Robotics Factory"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .naniteFactory:
-            typeOfBuilding = Buildings().naniteFactory
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.naniteFactory.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.naniteFactory.isPossible)! {
-                buildingImage.image = UIImage(named: "unNaniteFactory")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "naniteFactory")
-            }
-            levelLabel.text = "\(facilities.naniteFactory.level)"
-            buildingNameLabel.text = "Nanite Factory"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .terraformer:
-            typeOfBuilding = Buildings().terraformer
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.terraformer.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.terraformer.isPossible)! {
-                buildingImage.image = UIImage(named: "unTerraformer")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "terraformer")
-            }
-            levelLabel.text = "\(facilities.terraformer.level)"
-            buildingNameLabel.text = "Terraformer"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .repairDock:
-            typeOfBuilding = Buildings().repairDock
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (facilities.repairDock.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(facilities.repairDock.isPossible)! {
-                buildingImage.image = UIImage(named: "unRepairDock")
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = UIImage(named: "repairDock")
-            }
-            levelLabel.text = "\(facilities.repairDock.level)"
-            buildingNameLabel.text = "Repair Dock"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .moonBase:
-            // not implemented
-            break
-            
-        case .sensorPhalanx:
-            // not implemented
-            break
-            
-        case .jumpGate:
-            // not implemented
-            break
+    func setFacility(id: Int, facilities: Facilities, _ isConstructionNow: Bool) {
+        
+        //TODO: Move all variables out of function
+        //FIXME: Change all Large to SmallAvailable
+        let roboticsFactory = (name: "Robotics Factory",
+                               metal: Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[0],
+                               crystal: Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[1],
+                               deuterium: Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[2],
+                               image: (available: Images.Facilities.Large.roboticsFactory,
+                                       unavailable: Images.Facilities.SmallUnavailable.roboticsFactory,
+                                       disabled: Images.Facilities.SmallDisabled.roboticsFactory),
+                               buildingsID: 14)
+        
+        let shipyard = (name: "Shipyard",
+                        metal: Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[0],
+                        crystal: Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[1],
+                        deuterium: Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[2],
+                        image: (available: Images.Facilities.Large.shipyard,
+                                unavailable: Images.Facilities.SmallUnavailable.shipyard,
+                                disabled: Images.Facilities.SmallDisabled.shipyard),
+                        buildingsID: 21)
+        
+        let researchLaboratory = (name: "Research Laboratory",
+                                  metal: Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[0],
+                                  crystal: Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[1],
+                                  deuterium: Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[2],
+                                  image: (available: Images.Facilities.Large.researchLaboratory,
+                                          unavailable: Images.Facilities.SmallUnavailable.researchLaboratory,
+                                          disabled: Images.Facilities.SmallDisabled.researchLaboratory),
+                                  buildingsID: 31)
+        
+        let allianceDepot = (name: "Alliance Depot",
+                             metal: Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[0],
+                             crystal: Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[1],
+                             deuterium: Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[2],
+                             image: (available: Images.Facilities.Large.allianceDepot,
+                                     unavailable: Images.Facilities.SmallUnavailable.allianceDepot,
+                                     disabled: Images.Facilities.SmallDisabled.allianceDepot),
+                             buildingsID: 34)
+        
+        let missileSilo = (name: "Missile Silo",
+                           metal: Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[0],
+                           crystal: Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[1],
+                           deuterium: Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[2],
+                           image: (available: Images.Facilities.Large.missileSilo,
+                                   unavailable: Images.Facilities.SmallUnavailable.missileSilo,
+                                   disabled: Images.Facilities.SmallDisabled.missileSilo),
+                           buildingsID: 44)
+        
+        let naniteFactory = (name: "Nanite Factory",
+                             metal: Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[0],
+                             crystal: Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[1],
+                             deuterium: Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[2],
+                             image: (available: Images.Facilities.Large.naniteFactory,
+                                     unavailable: Images.Facilities.SmallUnavailable.naniteFactory,
+                                     disabled: Images.Facilities.SmallDisabled.naniteFactory),
+                             buildingsID: 15)
+        
+        let terraformer = (name: "Terraformer",
+                           metal: Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[0],
+                           crystal: Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[1],
+                           deuterium: Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[2],
+                           image: (available: Images.Facilities.Large.terraformer,
+                                   unavailable: Images.Facilities.SmallUnavailable.terraformer,
+                                   disabled: Images.Facilities.SmallDisabled.terraformer),
+                           buildingsID: 33)
+        
+        let repairDock = (name: "Repair Dock",
+                          metal: Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[0],
+                          crystal: Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[1],
+                          deuterium: Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[2],
+                          image: (available: Images.Facilities.Large.repairDock,
+                                  unavailable: Images.Facilities.SmallUnavailable.repairDock,
+                                  disabled: Images.Facilities.SmallDisabled.repairDock),
+                          buildingsID: 36)
+        
+        // TODO: Implement moonBase
+        // TODO: Implement sensorPhalanx
+        // TODO: Implement jumpGate
+        
+        let facilityBuildings = [roboticsFactory, shipyard, researchLaboratory, allianceDepot, missileSilo, naniteFactory, terraformer, repairDock]
+        
+        typeOfBuilding = (facilityBuildings[id].buildingsID, 1, "supplies")
+        buildButton.isEnabled = false
+        buildingNameLabel.text = facilityBuildings[id].name
+        metalRequiredLabel.text = "Metal: \(facilityBuildings[id].metal)"
+        crystalRequiredLabel.text = "Crystal: \(facilityBuildings[id].crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(facilityBuildings[id].deuterium)"
+        levelLabel.text = "\(facilities.allFacilities[id].level)"
+        timeToBuildLabel.text = ""
+        
+        switch facilities.allFacilities[id].condition {
+        case "on":
+            buildingImage.image = facilityBuildings[id].image.available
+            buildButton.isEnabled = true
+        case "active":
+            buildingImage.image = UIImage(systemName: "timer") //TODO: Change it
+            levelLabel.text = "\(facilities.allFacilities[id].level) -> \(facilities.allFacilities[id].level + 1)"
+        case "disabled":
+            buildingImage.image = facilityBuildings[id].image.unavailable
+        case "off":
+            buildingImage.image = facilityBuildings[id].image.disabled
+        default:
+            buildingImage.image = UIImage(systemName: "xmark")
         }
     }
     
     
-    
-    
     // MARK: - SET RESEARCH
-    func setResearch(type: TypeOfResearch, researches: Researches, _ isConstructionNow: Bool) {
-        switch type {
+    func setResearch(id: Int, researches: Researches, _ isConstructionNow: Bool) {
         
-        case .energy:
-            typeOfBuilding = Researchings().energy
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.energy.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.energy.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.energy
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.energy
-            }
-            levelLabel.text = "\(researches.energy.level)"
-            buildingNameLabel.text = "Energy Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().energy, level: researches.energy.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().energy, level: researches.energy.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().energy, level: researches.energy.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .laser:
-            typeOfBuilding = Researchings().laser
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.laser.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.laser.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.laser
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.laser
-            }
-            levelLabel.text = "\(researches.laser.level)"
-            buildingNameLabel.text = "Laser Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().laser, level: researches.laser.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().laser, level: researches.laser.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().laser, level: researches.laser.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .ion:
-            typeOfBuilding = Researchings().ion
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.ion.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.ion.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.ion
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.ion
-            }
-            levelLabel.text = "\(researches.ion.level)"
-            buildingNameLabel.text = "Ion Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().ion, level: researches.ion.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().ion, level: researches.ion.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().ion, level: researches.ion.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .hyperspace:
-            typeOfBuilding = Researchings().hyperspace
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.hyperspace.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.hyperspace.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.hyperspace
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.hyperspace
-            }
-            levelLabel.text = "\(researches.hyperspace.level)"
-            buildingNameLabel.text = "Hyperspace Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .plasma:
-            typeOfBuilding = Researchings().plasma
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.plasma.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.plasma.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.plasma
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.plasma
-            }
-            levelLabel.text = "\(researches.plasma.level)"
-            buildingNameLabel.text = "Plasma Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().plasma, level: researches.plasma.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().plasma, level: researches.plasma.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().plasma, level: researches.plasma.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .combustionDrive:
-            typeOfBuilding = Researchings().combustionDrive
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.combustionDrive.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.combustionDrive.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.combustionDrive
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.combustionDrive
-            }
-            levelLabel.text = "\(researches.combustionDrive.level)"
-            buildingNameLabel.text = "Cobustion Drive"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .impulseDrive:
-            typeOfBuilding = Researchings().impulseDrive
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.impulseDrive.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.impulseDrive.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.impulseDrive
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.impulseDrive
-            }
-            levelLabel.text = "\(researches.impulseDrive.level)"
-            buildingNameLabel.text = "Impulse Drive"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .hyperspaceDrive:
-            typeOfBuilding = Researchings().hyperspaceDrive
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.hyperspaceDrive.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.hyperspaceDrive.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.hyperspace
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.hyperspace
-            }
-            levelLabel.text = "\(researches.hyperspaceDrive.level)"
-            buildingNameLabel.text = "Hyperspace Drive"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .espionage:
-            typeOfBuilding = Researchings().espionage
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.espionage.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.espionage.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.espionage
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.espionage
-            }
-            levelLabel.text = "\(researches.espionage.level)"
-            buildingNameLabel.text = "Espionage Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().espionage, level: researches.espionage.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().espionage, level: researches.espionage.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().espionage, level: researches.espionage.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .computer:
-            typeOfBuilding = Researchings().computer
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.computer.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.computer.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.computer
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.computer
-            }
-            levelLabel.text = "\(researches.computer.level)"
-            buildingNameLabel.text = "Computer Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().computer, level: researches.computer.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().computer, level: researches.computer.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().computer, level: researches.computer.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .astrophysics:
-            typeOfBuilding = Researchings().astrophysics
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.astrophysics.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.astrophysics.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.astrophysics
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.astrophysics
-            }
-            levelLabel.text = "\(researches.astrophysics.level)"
-            buildingNameLabel.text = "Astrophysics"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .researchNetwork:
-            typeOfBuilding = Researchings().researchNetwork
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.researchNetwork.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.researchNetwork.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.researchNetwork
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.researchNetwork
-            }
-            levelLabel.text = "\(researches.researchNetwork.level)"
-            buildingNameLabel.text = "Intergalactic Research Network"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .graviton:
-            typeOfBuilding = Researchings().graviton
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.graviton.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.graviton.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.graviton
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.graviton
-            }
-            levelLabel.text = "\(researches.graviton.level)"
-            buildingNameLabel.text = "Graviton Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().graviton, level: researches.graviton.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().graviton, level: researches.graviton.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().graviton, level: researches.graviton.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .weapons:
-            typeOfBuilding = Researchings().weapons
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.weapons.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.weapons.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.weapons
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.weapons
-            }
-            levelLabel.text = "\(researches.weapons.level)"
-            buildingNameLabel.text = "Weapons Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().weapons, level: researches.weapons.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().weapons, level: researches.weapons.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().weapons, level: researches.weapons.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .shielding:
-            typeOfBuilding = Researchings().shielding
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.shielding.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.shielding.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.shielding
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.shielding
-            }
-            levelLabel.text = "\(researches.shielding.level)"
-            buildingNameLabel.text = "Shielding Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().shielding, level: researches.shielding.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().shielding, level: researches.shielding.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().shielding, level: researches.shielding.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
-        case .armor:
-            typeOfBuilding = Researchings().armor
-            buildButton.isEnabled = isConstructionNow ? false : true
-            if (researches.armor.inConstruction)! {
-                buildingImage.image = UIImage(systemName: "timer")
-            } else if !(researches.armor.isPossible)! {
-                buildingImage.image = Images.Researches.SmallUnavailable.armor
-                buildButton.isEnabled = false
-            } else {
-                buildingImage.image = Images.Researches.SmallAvailable.armor
-            }
-            levelLabel.text = "\(researches.armor.level)"
-            buildingNameLabel.text = "Armour Technology"
-            metalRequiredLabel.text = "Metal: \(Price().get(technology: Researchings().armor, level: researches.armor.level)[0])"
-            crystalRequiredLabel.text = "Crystal: \(Price().get(technology: Researchings().armor, level: researches.armor.level)[1])"
-            deuteriumRequiredLabel.text = "Deuterium: \(Price().get(technology: Researchings().armor, level: researches.armor.level)[2])"
-            timeToBuildLabel.text = "Time to build: N/A"
-            
+        //TODO: Move all variables out of function
+        let energy = (name: "Energy Technology",
+                          metal: Price().get(technology: Researchings().energy, level: researches.energy.level)[0],
+                          crystal: Price().get(technology: Researchings().energy, level: researches.energy.level)[1],
+                          deuterium: Price().get(technology: Researchings().energy, level: researches.energy.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.energy,
+                                  unavailable: Images.Researches.SmallUnavailable.energy,
+                                  disabled: Images.Researches.SmallDisabled.energy),
+                          buildingsID: 113)
+        
+        let laser = (name: "Laser Technology",
+                          metal: Price().get(technology: Researchings().laser, level: researches.laser.level)[0],
+                          crystal: Price().get(technology: Researchings().laser, level: researches.laser.level)[1],
+                          deuterium: Price().get(technology: Researchings().laser, level: researches.laser.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.laser,
+                                  unavailable: Images.Researches.SmallUnavailable.laser,
+                                  disabled: Images.Researches.SmallDisabled.laser),
+                          buildingsID: 120)
+        
+        let ion = (name: "Ion Technology",
+                          metal: Price().get(technology: Researchings().ion, level: researches.ion.level)[0],
+                          crystal: Price().get(technology: Researchings().ion, level: researches.ion.level)[1],
+                          deuterium: Price().get(technology: Researchings().ion, level: researches.ion.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.ion,
+                                  unavailable: Images.Researches.SmallUnavailable.ion,
+                                  disabled: Images.Researches.SmallDisabled.ion),
+                          buildingsID: 121)
+        
+        let hyperspace = (name: "Hyperspace Technology",
+                          metal: Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[0],
+                          crystal: Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[1],
+                          deuterium: Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.hyperspace,
+                                  unavailable: Images.Researches.SmallUnavailable.hyperspace,
+                                  disabled: Images.Researches.SmallDisabled.hyperspace),
+                          buildingsID: 114)
+        
+        let plasma = (name: "Plasma Technology",
+                          metal: Price().get(technology: Researchings().plasma, level: researches.plasma.level)[0],
+                          crystal: Price().get(technology: Researchings().plasma, level: researches.plasma.level)[1],
+                          deuterium: Price().get(technology: Researchings().plasma, level: researches.plasma.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.plasma,
+                                  unavailable: Images.Researches.SmallUnavailable.plasma,
+                                  disabled: Images.Researches.SmallDisabled.plasma),
+                          buildingsID: 122)
+        
+        let combustionDrive = (name: "Combustion Drive",
+                          metal: Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[0],
+                          crystal: Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[1],
+                          deuterium: Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.combustionDrive,
+                                  unavailable: Images.Researches.SmallUnavailable.combustionDrive,
+                                  disabled: Images.Researches.SmallDisabled.combustionDrive),
+                          buildingsID: 115)
+        
+        let impulseDrive = (name: "Impulse Drive",
+                          metal: Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[0],
+                          crystal: Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[1],
+                          deuterium: Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.impulseDrive,
+                                  unavailable: Images.Researches.SmallUnavailable.impulseDrive,
+                                  disabled: Images.Researches.SmallDisabled.impulseDrive),
+                          buildingsID: 117)
+        
+        let hyperspaceDrive = (name: "Hyperspace Drive",
+                          metal: Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[0],
+                          crystal: Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[1],
+                          deuterium: Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.hyperspaceDrive,
+                                  unavailable: Images.Researches.SmallUnavailable.hyperspaceDrive,
+                                  disabled: Images.Researches.SmallDisabled.hyperspaceDrive),
+                          buildingsID: 118)
+        
+        let espionage = (name: "Espionage Technology",
+                          metal: Price().get(technology: Researchings().espionage, level: researches.espionage.level)[0],
+                          crystal: Price().get(technology: Researchings().espionage, level: researches.espionage.level)[1],
+                          deuterium: Price().get(technology: Researchings().espionage, level: researches.espionage.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.espionage,
+                                  unavailable: Images.Researches.SmallUnavailable.espionage,
+                                  disabled: Images.Researches.SmallDisabled.espionage),
+                          buildingsID: 106)
+        
+        let computer = (name: "Computer Technology",
+                          metal: Price().get(technology: Researchings().computer, level: researches.computer.level)[0],
+                          crystal: Price().get(technology: Researchings().computer, level: researches.computer.level)[1],
+                          deuterium: Price().get(technology: Researchings().computer, level: researches.computer.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.computer,
+                                  unavailable: Images.Researches.SmallUnavailable.computer,
+                                  disabled: Images.Researches.SmallDisabled.computer),
+                          buildingsID: 108)
+        
+        let astrophysics = (name: "Astrophysics",
+                          metal: Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[0],
+                          crystal: Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[1],
+                          deuterium: Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.astrophysics,
+                                  unavailable: Images.Researches.SmallUnavailable.astrophysics,
+                                  disabled: Images.Researches.SmallDisabled.astrophysics),
+                          buildingsID: 124)
+        
+        let researchNetwork = (name: "Research Network",
+                          metal: Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[0],
+                          crystal: Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[1],
+                          deuterium: Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.researchNetwork,
+                                  unavailable: Images.Researches.SmallUnavailable.researchNetwork,
+                                  disabled: Images.Researches.SmallDisabled.researchNetwork),
+                          buildingsID: 123)
+        
+        let graviton = (name: "Graviton Technology",
+                          metal: Price().get(technology: Researchings().graviton, level: researches.graviton.level)[0],
+                          crystal: Price().get(technology: Researchings().graviton, level: researches.graviton.level)[1],
+                          deuterium: Price().get(technology: Researchings().graviton, level: researches.graviton.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.graviton,
+                                  unavailable: Images.Researches.SmallUnavailable.graviton,
+                                  disabled: Images.Researches.SmallDisabled.graviton),
+                          buildingsID: 199)
+        
+        let weapons = (name: "Weapons Technology",
+                          metal: Price().get(technology: Researchings().weapons, level: researches.weapons.level)[0],
+                          crystal: Price().get(technology: Researchings().weapons, level: researches.weapons.level)[1],
+                          deuterium: Price().get(technology: Researchings().weapons, level: researches.weapons.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.weapons,
+                                  unavailable: Images.Researches.SmallUnavailable.weapons,
+                                  disabled: Images.Researches.SmallDisabled.weapons),
+                          buildingsID: 109)
+        
+        let shielding = (name: "Shielding Technology",
+                          metal: Price().get(technology: Researchings().shielding, level: researches.shielding.level)[0],
+                          crystal: Price().get(technology: Researchings().shielding, level: researches.shielding.level)[1],
+                          deuterium: Price().get(technology: Researchings().shielding, level: researches.shielding.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.shielding,
+                                  unavailable: Images.Researches.SmallUnavailable.shielding,
+                                  disabled: Images.Researches.SmallDisabled.shielding),
+                          buildingsID: 110)
+        
+        let armor = (name: "Armor Technology",
+                          metal: Price().get(technology: Researchings().armor, level: researches.armor.level)[0],
+                          crystal: Price().get(technology: Researchings().armor, level: researches.armor.level)[1],
+                          deuterium: Price().get(technology: Researchings().armor, level: researches.armor.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.armor,
+                                  unavailable: Images.Researches.SmallUnavailable.armor,
+                                  disabled: Images.Researches.SmallDisabled.armor),
+                          buildingsID: 111)
+        
+        let researchTechnologies = [energy, laser, ion, hyperspace, plasma, combustionDrive, impulseDrive, hyperspaceDrive, espionage, computer, astrophysics, researchNetwork, graviton, weapons, shielding, armor]
+        
+        typeOfBuilding = (researchTechnologies[id].buildingsID, 1, "research")
+        buildButton.isEnabled = false
+        buildingNameLabel.text = researchTechnologies[id].name
+        metalRequiredLabel.text = "Metal: \(researchTechnologies[id].metal)"
+        crystalRequiredLabel.text = "Crystal: \(researchTechnologies[id].crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(researchTechnologies[id].deuterium)"
+        levelLabel.text = "\(researches.allResearches[id].level)"
+        timeToBuildLabel.text = ""
+
+        switch researches.allResearches[id].condition {
+        case "on":
+            buildingImage.image = researchTechnologies[id].image.available
+            buildButton.isEnabled = true
+        case "active":
+            buildingImage.image = UIImage(systemName: "timer") //TODO: Change it
+            levelLabel.text = "\(researches.allResearches[id].level) -> \(researches.allResearches[id].level + 1)"
+        case "disabled":
+            buildingImage.image = researchTechnologies[id].image.unavailable
+        case "off":
+            buildingImage.image = researchTechnologies[id].image.disabled
+        default:
+            buildingImage.image = UIImage(systemName: "xmark")
         }
     }
     

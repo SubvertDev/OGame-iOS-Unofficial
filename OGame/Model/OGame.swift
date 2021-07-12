@@ -477,19 +477,19 @@ class OGame {
                 do {
                     self.docSupplies = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let levelsParse = try self.docSupplies!.select("span[data-value]")
+                    let levelsParse = try self.docSupplies!.select("span[data-value][class=level]") // + [class=amount]
                     var levels = [Int]()
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
-                    //print("Levels of buildings: \(levels)")
+                    print("Levels of buildings: \(levels)")
                     
                     let technologyStatusParse = try self.docSupplies!.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    //print("Status of buildings: \(technologyStatus)")
+                    print("Status of buildings: \(technologyStatus)")
                     
                     guard !levels.isEmpty, !technologyStatus.isEmpty else {
                         completion(.failure(NSError()))
@@ -527,14 +527,14 @@ class OGame {
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
-                    //print("Levels of facilities: \(levels)")
+                    print("Levels of facilities: \(levels)")
                     
                     let technologyStatusParse = try self.docSupplies!.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    //print("Status of facilities: \(technologyStatus)")
+                    print("Status of facilities: \(technologyStatus)")
                     
                     let facilitiesObject = Facilities(levels, technologyStatus)
                     
@@ -784,7 +784,7 @@ class OGame {
             switch result {
             case .success(let supplies):
                 for supply in supplies.allSupplies {
-                    if supply.inConstruction! {
+                    if supply.condition == "active" {
                         construction = true
                     }
                 }
@@ -792,7 +792,7 @@ class OGame {
                     switch result {
                     case .success(let facilities):
                         for facility in facilities.allFacilities {
-                            if facility.inConstruction! {
+                            if facility.condition == "active" {
                                 construction = true
                             }
                         }

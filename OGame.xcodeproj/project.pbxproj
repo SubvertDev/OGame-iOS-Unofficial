@@ -161,7 +161,6 @@
 				B867615A265983980096BE39 /* Non-Components */,
 				B86761572659831A0096BE39 /* Components */,
 				B867615B265983D00096BE39 /* Server */,
-				B85D7F88265FDDCC00186021 /* Images.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -198,6 +197,7 @@
 			children = (
 				B8B7BC0B26504F8A00988758 /* AppDelegate.swift */,
 				B8B7BC0D26504F8A00988758 /* SceneDelegate.swift */,
+				B85D7F88265FDDCC00186021 /* Images.swift */,
 				B8B7BC1426504F8F00988758 /* Assets.xcassets */,
 			);
 			path = Utilities;

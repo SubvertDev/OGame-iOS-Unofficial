@@ -8,23 +8,14 @@
 import Foundation
 
 struct Supply {
-    // FIXME: somehow change Bool? to Bool
+
+    //TODO: Can I merge Supply and Supplies?
     let level: Int
-    var isPossible: Bool?
-    var inConstruction: Bool?
+    let condition: String
     
     init(_ levels: [Int], _ status: [String], _ type: Int) {
         self.level = levels[type]
-        self.isPossible = isPossible(status[type])
-        self.inConstruction = inConstruction(status[type])
-    }
-    
-    private func isPossible(_ string: String) -> Bool {
-        string == "on" ? true : false
-    }
-    
-    private func inConstruction(_ string: String) -> Bool {
-        string == "active" ? true : false
+        self.condition = status[type]
     }
 }
 
@@ -42,14 +33,19 @@ struct Supplies {
     let allSupplies: [Supply]
         
     init(_ levels: [Int], _ status: [String]) {
-        self.metalMine = Supply(levels, status, 0)
-        self.crystalMine = Supply(levels, status, 1)
-        self.deuteriumMine = Supply(levels, status, 2)
-        self.solarPlant = Supply(levels, status, 3)
-        self.fusionPlant = Supply(levels, status, 4)
-        self.metalStorage = Supply(levels, status, 7)
-        self.crystalStorage = Supply(levels, status, 8)
-        self.deuteriumStorage = Supply(levels, status, 9)
+        
+        //TODO: Add Solar Sattelite and Crawler
+        var fixedStatus = status
+        fixedStatus.removeSubrange(5...6)
+        
+        self.metalMine = Supply(levels, fixedStatus, 0)
+        self.crystalMine = Supply(levels, fixedStatus, 1)
+        self.deuteriumMine = Supply(levels, fixedStatus, 2)
+        self.solarPlant = Supply(levels, fixedStatus, 3)
+        self.fusionPlant = Supply(levels, fixedStatus, 4)
+        self.metalStorage = Supply(levels, fixedStatus, 5)
+        self.crystalStorage = Supply(levels, fixedStatus, 6)
+        self.deuteriumStorage = Supply(levels, fixedStatus, 7)
         
         self.allSupplies = [
             self.metalMine,

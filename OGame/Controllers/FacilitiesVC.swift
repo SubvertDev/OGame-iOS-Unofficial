@@ -16,8 +16,8 @@ class FacilitiesVC: UIViewController {
     var prodPerSecond = [Double]()
     var facilities: Facilities?
     var isConstructionNow: Bool?
-    
     var timer: Timer?
+    let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
@@ -31,13 +31,15 @@ class FacilitiesVC: UIViewController {
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
         
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        
         refresh()
     }
     
     
     // MARK: - REFRESH DATA ON FACILITIES VC
     func refresh() {
-        print(#function)
         object!.getResources(forID: 0) { result in
             print("function: get resources")
             switch result {
@@ -65,7 +67,6 @@ class FacilitiesVC: UIViewController {
         }
         
         object!.isAnyBuildingsConstructed(forID: 0) { result in
-            print("function: isanybuildingsconstructed")
             switch result {
             case .success(let bool):
                 self.isConstructionNow = bool
@@ -75,6 +76,7 @@ class FacilitiesVC: UIViewController {
                     case .success(let facilities):
                         self.facilities = facilities
                         DispatchQueue.main.async {
+                            self.refreshControl.endRefreshing()
                             self.tableView.reloadData()
                         }
                     case .failure(_):
@@ -85,6 +87,10 @@ class FacilitiesVC: UIViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
         }
+    }
+    
+    @objc func refreshTableView() {
+        refresh()
     }
 }
 
@@ -97,29 +103,12 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         
+        //TODO: Can I get rid of these?
         guard let facilities = self.facilities else { return UITableViewCell() }
         guard let isConstructionNow = self.isConstructionNow else { return UITableViewCell() }
         
-        switch indexPath.row {
-        case 0:
-            cell.setFacility(type: .roboticsFactory, facilities: facilities, isConstructionNow)
-        case 1:
-            cell.setFacility(type: .shipyard, facilities: facilities, isConstructionNow)
-        case 2:
-            cell.setFacility(type: .researchLaboratory, facilities: facilities, isConstructionNow)
-        case 3:
-            cell.setFacility(type: .allianceDepot, facilities: facilities, isConstructionNow)
-        case 4:
-            cell.setFacility(type: .missileSilo, facilities: facilities, isConstructionNow)
-        case 5:
-            cell.setFacility(type: .naniteFactory, facilities: facilities, isConstructionNow)
-        case 6:
-            cell.setFacility(type: .terraformer, facilities: facilities, isConstructionNow)
-        case 7:
-            cell.setFacility(type: .repairDock, facilities: facilities, isConstructionNow)
-        default:
-            break
-        }
+        cell.setFacility(id: indexPath.row, facilities: facilities, isConstructionNow)
+        
         return cell
     }
     
@@ -135,8 +124,6 @@ extension FacilitiesVC: BuildingCellDelegate {
         object!.build(what: type, id: 0) { result in
             switch result {
             case .success(_):
-                self.isConstructionNow = true
-                print("successfully builded something")
                 self.refresh()
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)

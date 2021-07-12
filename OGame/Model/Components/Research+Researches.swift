@@ -9,22 +9,13 @@ import Foundation
 
 struct Research {
     
+    //TODO: Can I merge research and researches?
     let level: Int
-    var isPossible: Bool?
-    var inConstruction: Bool?
+    let condition: String
     
     init(_ levels: [Int], _ status: [String], _ type: Int) {
         self.level = levels[type]
-        self.isPossible = isPossible(status[type])
-        self.inConstruction = inConstruction(status[type])
-    }
-    
-    private func isPossible(_ string: String) -> Bool {
-        string == "on" ? true : false
-    }
-    
-    private func inConstruction(_ string: String) -> Bool {
-        string == "active" ? true : false
+        self.condition = status[type]
     }
 }
 

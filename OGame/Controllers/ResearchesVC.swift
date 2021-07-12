@@ -16,27 +16,8 @@ class ResearchesVC: UIViewController {
     var prodPerSecond = [Double]()
     var researches: Researches?
     var isResearchingNow: Bool?
-
-    let researchCellTypes: [TypeOfResearch] = [
-        .energy,
-        .laser,
-        .ion,
-        .hyperspace,
-        .plasma,
-        .combustionDrive,
-        .impulseDrive,
-        .hyperspaceDrive,
-        .espionage,
-        .computer,
-        .astrophysics,
-        .researchNetwork,
-        .graviton,
-        .weapons,
-        .shielding,
-        .armor
-    ]
-    
     var timer: Timer?
+    let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
@@ -49,6 +30,9 @@ class ResearchesVC: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
+        
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         
         refresh()
     }
@@ -88,18 +72,23 @@ class ResearchesVC: UIViewController {
                 self.researches = researches
                 self.isResearchingNow = false
                 for research in researches.allResearches {
-                    if research.inConstruction! {
+                    if research.condition == "active" {
                         self.isResearchingNow = true
                         break
                     }
                 }
                 DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
                 }
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }
         }
+    }
+    
+    @objc func refreshTableView() {
+        refresh()
     }
 }
 
@@ -116,7 +105,7 @@ extension ResearchesVC: UITableViewDelegate, UITableViewDataSource {
         guard let isResearchingNow = self.isResearchingNow else { return UITableViewCell() }
         cell.delegate = self
         
-        cell.setResearch(type: researchCellTypes[indexPath.row], researches: researches, isResearchingNow)
+        cell.setResearch(id: indexPath.row, researches: researches, isResearchingNow)
         
         return cell
     }
