@@ -61,7 +61,7 @@ class BuildingCell: UITableViewCell {
     
     
     // MARK: - SET SUPPLY
-    func setSupply(id: Int, supplies: Supplies, _ isConstructionNow: Bool) {
+    func setSupply(id: Int, supplies: Supplies) {
         
         //TODO: Move all variables out of function
         let metalMine = (name: "Metal Mine",
@@ -165,7 +165,7 @@ class BuildingCell: UITableViewCell {
     
     
     // MARK: - SET FACILITY
-    func setFacility(id: Int, facilities: Facilities, _ isConstructionNow: Bool) {
+    func setFacility(id: Int, facilities: Facilities) {
         
         //TODO: Move all variables out of function
         //FIXME: Change all Large to SmallAvailable
@@ -274,7 +274,7 @@ class BuildingCell: UITableViewCell {
     
     
     // MARK: - SET RESEARCH
-    func setResearch(id: Int, researches: Researches, _ isConstructionNow: Bool) {
+    func setResearch(id: Int, researches: Researches) {
         
         //TODO: Move all variables out of function
         let energy = (name: "Energy Technology",

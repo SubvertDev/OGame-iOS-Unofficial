@@ -12,20 +12,14 @@ class FacilitiesVC: UIViewController {
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var tableView: UITableView!
     
-    var object: OGame?
     var prodPerSecond = [Double]()
     var facilities: Facilities?
-    var isConstructionNow: Bool?
     var timer: Timer?
     let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        guard let _ = object else {
-            fatalError("error initialazing main object")
-        }
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -40,7 +34,7 @@ class FacilitiesVC: UIViewController {
     
     // MARK: - REFRESH DATA ON FACILITIES VC
     func refresh() {
-        object!.getResources(forID: 0) { result in
+        OGame.shared.getResources(forID: 0) { result in
             print("function: get resources")
             switch result {
             case .success(let resources):
@@ -66,22 +60,13 @@ class FacilitiesVC: UIViewController {
             }
         }
         
-        object!.isAnyBuildingsConstructed(forID: 0) { result in
+        OGame.shared.facilities(forID: 0) { result in
             switch result {
-            case .success(let bool):
-                self.isConstructionNow = bool
-                
-                self.object!.facilities(forID: 0) { result in
-                    switch result {
-                    case .success(let facilities):
-                        self.facilities = facilities
-                        DispatchQueue.main.async {
-                            self.refreshControl.endRefreshing()
-                            self.tableView.reloadData()
-                        }
-                    case .failure(_):
-                        self.navigationController?.popToRootViewController(animated: true)
-                    }
+            case .success(let facilities):
+                self.facilities = facilities
+                DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
+                    self.tableView.reloadData()
                 }
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
@@ -105,9 +90,8 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
         
         //TODO: Can I get rid of these?
         guard let facilities = self.facilities else { return UITableViewCell() }
-        guard let isConstructionNow = self.isConstructionNow else { return UITableViewCell() }
         
-        cell.setFacility(id: indexPath.row, facilities: facilities, isConstructionNow)
+        cell.setFacility(id: indexPath.row, facilities: facilities)
         
         return cell
     }
@@ -121,7 +105,7 @@ extension FacilitiesVC: BuildingCellDelegate {
     
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
         
-        object!.build(what: type, id: 0) { result in
+        OGame.shared.build(what: type, id: 0) { result in
             switch result {
             case .success(_):
                 self.refresh()

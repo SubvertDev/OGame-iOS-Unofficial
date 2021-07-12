@@ -9,8 +9,6 @@ import UIKit
 
 class TestPageVC: UIViewController {
     
-    var object: OGame?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -13,27 +13,26 @@ class LoginVC: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var serverNameTextField: UITextField!
+    @IBOutlet weak var loginButton: UIButton!
     
-    var object: OGame?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(goToSegue), name: Notification.Name("didFullInit"), object: nil)
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        object = OGame(universe: serverNameTextField.text!, username: emailTextField.text!, password: passwordTextField.text!)
-        
+        //TODO: Add check for empty fields
+        //TODO: Make a falling list of servers
+        loginButton.isEnabled = false
+        OGame.shared.loginIntoAccount(universe: serverNameTextField.text!,
+                                      username: emailTextField.text!,
+                                      password: passwordTextField.text!)
     }
     
     @objc func goToSegue() {
+        loginButton.isEnabled = true
         performSegue(withIdentifier: "ShowMenuVC", sender: self)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let menuVC = segue.destination as? MenuVC {
-            menuVC.object = object
-        }
     }
 }
 
