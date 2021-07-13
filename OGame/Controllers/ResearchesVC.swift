@@ -13,7 +13,7 @@ class ResearchesVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var prodPerSecond = [Double]()
-    var researches: Researches?
+    var researchCell: ResearchCell?
     var timer: Timer?
     let refreshControl = UIRefreshControl()
     
@@ -63,7 +63,7 @@ class ResearchesVC: UIViewController {
         OGame.shared.research(forID: 0) { result in
             switch result {
             case .success(let researches):
-                self.researches = researches
+                self.researchCell = ResearchCell(with: researches)
                 DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
@@ -87,11 +87,11 @@ extension ResearchesVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
-        
-        guard let researches = self.researches else { return UITableViewCell() }
         cell.delegate = self
+
+        guard let researchCell = self.researchCell else { return UITableViewCell() }
         
-        cell.setResearch(id: indexPath.row, researches: researches)
+        cell.setResearch(id: indexPath.row, researchTechnologies: researchCell.researchTechnologies)
         
         return cell
     }

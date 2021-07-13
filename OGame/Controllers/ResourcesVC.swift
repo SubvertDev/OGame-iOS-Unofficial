@@ -13,7 +13,7 @@ class ResourcesVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var prodPerSecond = [Double]()
-    var supplies: Supplies?
+    var resourceCell: ResourceCell?
     var isConstructionNow: Bool? = false
     var timer: Timer?
     let refreshControl = UIRefreshControl()
@@ -60,32 +60,10 @@ class ResourcesVC: UIViewController {
             }
         }
         
-//        OGame.shared.isAnyBuildingsConstructed(forID: 0) { result in
-//            switch result {
-//            case .success(let bool):
-//                self.isConstructionNow = bool
-//
-//                OGame.shared.supply(forID: 0) { result in
-//                    switch result {
-//                    case .success(let supplies):
-//                        self.supplies = supplies
-//                        DispatchQueue.main.async {
-//                            self.refreshControl.endRefreshing()
-//                            self.tableView.reloadData()
-//                        }
-//                    case .failure(_):
-//                        self.navigationController?.popToRootViewController(animated: true)
-//                    }
-//                }
-//            case .failure(_):
-//                self.navigationController?.popToRootViewController(animated: true)
-//            }
-//        }
-        
         OGame.shared.supply(forID: 0) { result in
             switch result {
             case .success(let supplies):
-                self.supplies = supplies
+                self.resourceCell = ResourceCell(with: supplies)
                 DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
@@ -113,9 +91,9 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
         cell.delegate = self
         
         // TODO: How to load tableview without supplies?
-        guard let supplies = self.supplies else { return UITableViewCell() }
+        guard let resourceCell = self.resourceCell else { return UITableViewCell() }
         
-        cell.setSupply(id: indexPath.row, supplies: supplies)
+        cell.setSupply(id: indexPath.row, resourceBuildings: resourceCell.resourceBuildings)
         
         return cell
     }

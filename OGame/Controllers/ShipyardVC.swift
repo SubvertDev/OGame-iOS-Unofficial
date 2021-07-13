@@ -13,8 +13,9 @@ class ShipyardVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var prodPerSecond = [Double]()
-    var ships: Ships?
+    var shipsCell: ShipsCell?
     var timer: Timer?
+    let refreshControl = UIRefreshControl()
     
     
     override func viewDidLoad() {
@@ -24,8 +25,12 @@ class ShipyardVC: UIViewController {
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
         
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        
         refresh()
     }
+    
     
     func refresh() {
         print(#function)
@@ -57,8 +62,9 @@ class ShipyardVC: UIViewController {
         OGame.shared.ships(forID: 0) { result in
             switch result {
             case .success(let ships):
-                self.ships = ships
+                self.shipsCell = ShipsCell(with: ships)
                 DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
                 }
             case .failure(_):
@@ -67,6 +73,9 @@ class ShipyardVC: UIViewController {
         }
     }
     
+    @objc func refreshTableView() {
+        refresh()
+    }
 }
 
 extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
@@ -76,13 +85,12 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
-        
-        guard let ships = self.ships else { return UITableViewCell() }
-        
         cell.delegate = self
         cell.amountTextField.delegate = self
         
-        cell.setShip(id: indexPath.row, ships: ships)
+        guard let shipsCell = self.shipsCell else { return UITableViewCell() }
+        
+        cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies)
         
         return cell // FIXME: text field is not properly reused
     }

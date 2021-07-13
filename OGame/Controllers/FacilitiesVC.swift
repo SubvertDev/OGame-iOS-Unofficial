@@ -13,7 +13,7 @@ class FacilitiesVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var prodPerSecond = [Double]()
-    var facilities: Facilities?
+    var facilityCell: FacilityCell?
     var timer: Timer?
     let refreshControl = UIRefreshControl()
     
@@ -63,7 +63,7 @@ class FacilitiesVC: UIViewController {
         OGame.shared.facilities(forID: 0) { result in
             switch result {
             case .success(let facilities):
-                self.facilities = facilities
+                self.facilityCell = FacilityCell(with: facilities)
                 DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
@@ -89,9 +89,9 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
         cell.delegate = self
         
         //TODO: Can I get rid of these?
-        guard let facilities = self.facilities else { return UITableViewCell() }
+        guard let facilityCell = self.facilityCell else { return UITableViewCell() }
         
-        cell.setFacility(id: indexPath.row, facilities: facilities)
+        cell.setFacility(id: indexPath.row, facilityBuildings: facilityCell.facilityBuildings)
         
         return cell
     }
