@@ -40,16 +40,16 @@ struct Buildings {
         return facilities.2 == "facilities" ? true : false
     }
     
-    func rocketLauncher(amount: Int = 1) -> (Int, Int, String) { return (401, amount, "defenses") }
-    func laserCannonLight(amount: Int = 1) -> (Int, Int, String) { return (402, amount, "defenses") }
-    func laserCannonHeavy(amount: Int = 1) -> (Int, Int, String) { return (403, amount, "defenses") }
-    func gaussCannon(amount: Int = 1) -> (Int, Int, String) { return (404, amount, "defenses") }
-    func ionCannon(amount: Int = 1) -> (Int, Int, String) { return (405, amount, "defenses") }
-    func plasmaCannon(amount: Int = 1) -> (Int, Int, String) { return (406, amount, "defenses") }
-    func shieldDomeSmall(amount: Int = 1) -> (Int, Int, String) { return (407, amount, "defenses") }
-    func shieldDomeLarge(amount: Int = 1) -> (Int, Int, String) { return (408, amount, "defenses") }
-    func missileInterceptor(amount: Int = 1) -> (Int, Int, String) { return (502, amount, "defenses") }
-    func missileInterplanetary(amount: Int = 1) -> (Int, Int, String) { return (503, amount, "defenses") }
+    func rocketLauncher(amount: Int = 1) -> (Int, Int, String) { return (401, amount, "defences") }
+    func lightLaser(amount: Int = 1) -> (Int, Int, String) { return (402, amount, "defences") }
+    func heavyLaser(amount: Int = 1) -> (Int, Int, String) { return (403, amount, "defences") }
+    func gaussCannon(amount: Int = 1) -> (Int, Int, String) { return (404, amount, "defences") }
+    func ionCannon(amount: Int = 1) -> (Int, Int, String) { return (405, amount, "defences") }
+    func plasmaCannon(amount: Int = 1) -> (Int, Int, String) { return (406, amount, "defences") }
+    func smallShieldDome(amount: Int = 1) -> (Int, Int, String) { return (407, amount, "defences") }
+    func largeShieldDome(amount: Int = 1) -> (Int, Int, String) { return (408, amount, "defences") }
+    func antiBallisticMissiles(amount: Int = 1) -> (Int, Int, String) { return (502, amount, "defences") }
+    func interplanetaryMissiles(amount: Int = 1) -> (Int, Int, String) { return (503, amount, "defences") }
     
     static func isDefenses(_ defenses: (Int, Int, String)) -> Bool {
         return defenses.2 == "defenses" ? true : false

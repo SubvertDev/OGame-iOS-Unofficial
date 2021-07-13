@@ -75,7 +75,7 @@ class OGame {
         if token == nil {
             loginAF(attempt: attempt)
         } else {
-            //TODO: do i even need this check?
+            // TODO: do i even need this check?
             //var accountsRequest = URLRequest(url: URL(string: "https://lobby.ogame.gameforge.com/api/users/me/accounts")!)
             //accountsRequest.setValue("Bearer \(token!)", forHTTPHeaderField: "authorization")
             //let accounts = session?.dataTask(with: accountsRequest) { data, response, error in
@@ -93,7 +93,7 @@ class OGame {
     // MARK: - LOGIN
     private func loginAF(attempt: Int) {
         print(#function)
-        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") //TODO: delete this?
+        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // TODO: delete this?
         
         let parameters = LoginData(identity: self.username,
                                    password: self.password,
@@ -629,7 +629,7 @@ class OGame {
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print("Ship Tech? Status: \(technologyStatus)")
+                    print("Ships Status: \(technologyStatus)")
                     
                     guard !ships.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN?")
@@ -653,6 +653,50 @@ class OGame {
     }
     
     // MARK: - GET DEFENCES
+    func defences(forID: Int, completion: @escaping (Result<Defences, Error>) -> Void) {
+        // FIXME: Fix planetID
+        let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
+        sessionAF.request(link).validate().response { response in
+        
+            switch response.result {
+            case .success(let data):
+                do {
+                    self.docResearch = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    
+                    let defencesParse = try self.docResearch!.select("[class*=amount]").select("[data-value]")
+                    var defences = [Int]()
+                    for defence in defencesParse {
+                        defences.append(Int(try defence.text())!)
+                    }
+                    print("Amount of defences: \(defences)")
+                    
+                    let technologyStatusParse = try self.docResearch!.select("li[class*=technology]")
+                    var technologyStatus = [String]()
+                    for status in technologyStatusParse {
+                        technologyStatus.append(try status.attr("data-status"))
+                    }
+                    print("Defences Status: \(technologyStatus)")
+                    
+                    guard !defences.isEmpty else {
+                        print("LOOKS LIKE NOT LOGGED IN?")
+                        completion(.failure(NSError()))
+                        return
+                    }
+                    
+                    let defencesObject = Defences(defences, technologyStatus)
+                    
+                    completion(.success(defencesObject))
+                } catch {
+                    print(error)
+                    completion(.failure(error))
+                }
+                
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
     
     
     // MARK: - GET GALAXY

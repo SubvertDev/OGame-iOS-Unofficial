@@ -58,7 +58,7 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = resourceBuildings[id].image.available
             buildButton.isEnabled = true
         case "active":
-            buildingImage.image = UIImage(systemName: "timer") //TODO: Change it
+            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(resourceBuildings[id].level) -> \(resourceBuildings[id].level + 1)"
         case "disabled":
             buildingImage.image = resourceBuildings[id].image.unavailable
@@ -88,7 +88,7 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = facilityBuildings[id].image.available
             buildButton.isEnabled = true
         case "active":
-            buildingImage.image = UIImage(systemName: "timer") //TODO: Change it
+            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(facilityBuildings[id].level) -> \(facilityBuildings[id].level + 1)"
         case "disabled":
             buildingImage.image = facilityBuildings[id].image.unavailable
@@ -117,7 +117,7 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = researchTechnologies[id].image.available
             buildButton.isEnabled = true
         case "active":
-            buildingImage.image = UIImage(systemName: "timer") //TODO: Change it
+            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(researchTechnologies[id].level) -> \(researchTechnologies[id].level + 1)"
         case "disabled":
             buildingImage.image = researchTechnologies[id].image.unavailable
@@ -129,7 +129,7 @@ class BuildingCell: UITableViewCell {
     }
     
     
-    // MARK: - SET SHIPS
+    // MARK: - SET SHIP
     func setShip(id: Int, shipsTechnologies: ShipsData) {
                         
         typeOfBuilding = (shipsTechnologies[id].buildingsID, 1, "shipyard")
@@ -167,6 +167,50 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = shipsTechnologies[id].image.unavailable
         case "off":
             buildingImage.image = shipsTechnologies[id].image.disabled
+        default:
+            buildingImage.image = UIImage(systemName: "xmark")
+        }
+    }
+    
+    
+    // MARK: - SET DEFENCE
+    func setDefence(id: Int, defenceTechnologies: DefencesData) {
+        
+        typeOfBuilding = (defenceTechnologies[id].buildingsID, 1, "defences")
+        buildButton.isEnabled = false
+        buildingNameLabel.text = defenceTechnologies[id].name
+        metalRequiredLabel.text = "Metal: \(defenceTechnologies[id].metal)"
+        crystalRequiredLabel.text = "Crystal: \(defenceTechnologies[id].crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(defenceTechnologies[id].deuterium)"
+        levelLabel.text = "\(defenceTechnologies[id].amount)"
+        timeToBuildLabel.text = ""
+        amountTextField.isHidden = false
+        
+        // TODO: Add building queue for defences
+        // This is check to restrict from building more than one type at a time
+        var defenceActive = false
+        for defence in defenceTechnologies {
+            if defence.condition == "active" {
+                defenceActive = true
+            }
+        }
+        
+        switch defenceTechnologies[id].condition {
+        case "on":
+            if defenceActive {
+                buildingImage.image = defenceTechnologies[id].image.unavailable
+            } else {
+                buildingImage.image = defenceTechnologies[id].image.available
+                buildButton.isEnabled = true
+            }
+        case "active":
+            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+            // TODO: Add info about from what amount to what amount building is going
+            //levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
+        case "disabled":
+            buildingImage.image = defenceTechnologies[id].image.unavailable
+        case "off":
+            buildingImage.image = defenceTechnologies[id].image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }

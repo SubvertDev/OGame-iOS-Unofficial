@@ -15,7 +15,15 @@ class MenuVC: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    let menuList = ["Overview", "Resources", "Test Page", "Facilities", "Research", "Shipyard", "Defense", "Fleet", "Galaxy"]
+    let menuList = ["Overview",
+                    "Resources",
+                    "Test Page",
+                    "Facilities",
+                    "Research",
+                    "Shipyard",
+                    "Defence",
+                    "Fleet",
+                    "Galaxy"]
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,9 +63,11 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         case 3:
             performSegue(withIdentifier: "ShowFacilitiesVC", sender: self)
         case 4:
-            performSegue(withIdentifier: "ShowResearchesVC", sender: self)
+            performSegue(withIdentifier: "ShowResearchVC", sender: self)
         case 5:
             performSegue(withIdentifier: "ShowShipyardVC", sender: self)
+        case 6:
+            performSegue(withIdentifier: "ShowDefenceVC", sender: self)
         default:
             print(menuList[indexPath.row])
         }

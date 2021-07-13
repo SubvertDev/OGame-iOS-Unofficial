@@ -279,4 +279,59 @@ struct Images {
             static let crawler = UIImage(named: "crawlerDisabled")
         }
     }
+    
+    struct Defences {
+        
+        struct Large {
+            static let rocketLauncher = UIImage(named: "rocketLauncher")
+            static let lightLaser = UIImage(named: "lightLaser")
+            static let heavyLaser = UIImage(named: "heavyLaser")
+            static let gaussCannon = UIImage(named: "gaussCannon")
+            static let ionCannon = UIImage(named: "ionCannon")
+            static let plasmaCannon = UIImage(named: "plasmaCannon")
+            static let smallShieldDome = UIImage(named: "smallShieldDome")
+            static let largeShieldDome = UIImage(named: "largeShieldDome")
+            static let antiBallisticMissiles = UIImage(named: "antiBallisticMissiles")
+            static let interplanetaryMissiles = UIImage(named: "interplanetaryMissiles")
+        }
+        
+        struct SmallAvailable {
+            static let rocketLauncher = UIImage(named: "rocketLauncherAvailable")
+            static let lightLaser = UIImage(named: "lightLaserAvailable")
+            static let heavyLaser = UIImage(named: "heavyLaserAvailable")
+            static let gaussCannon = UIImage(named: "gaussCannonAvailable")
+            static let ionCannon = UIImage(named: "ionCannonAvailable")
+            static let plasmaCannon = UIImage(named: "plasmaCannonAvailable")
+            static let smallShieldDome = UIImage(named: "smallShieldDomeAvailable")
+            static let largeShieldDome = UIImage(named: "largeShieldDomeAvailable")
+            static let antiBallisticMissiles = UIImage(named: "antiBallisticMissilesAvailable")
+            static let interplanetaryMissiles = UIImage(named: "interplanetaryMissilesAvailable")
+        }
+        
+        struct SmallUnavailable {
+            static let rocketLauncher = UIImage(named: "rocketLauncherUnavailable")
+            static let lightLaser = UIImage(named: "lightLaserUnavailable")
+            static let heavyLaser = UIImage(named: "heavyLaserUnavailable")
+            static let gaussCannon = UIImage(named: "gaussCannonUnavailable")
+            static let ionCannon = UIImage(named: "ionCannonUnavailable")
+            static let plasmaCannon = UIImage(named: "plasmaCannonUnavailable")
+            static let smallShieldDome = UIImage(named: "smallShieldDomeUnavailable")
+            static let largeShieldDome = UIImage(named: "largeShieldDomeUnavailable")
+            static let antiBallisticMissiles = UIImage(named: "antiBallisticMissilesUnavailable")
+            static let interplanetaryMissiles = UIImage(named: "interplanetaryMissilesUnavailable")
+        }
+        
+        struct SmallDisabled {
+            static let rocketLauncher = UIImage(named: "rocketLauncherDisabled")
+            static let lightLaser = UIImage(named: "lightLaserDisabled")
+            static let heavyLaser = UIImage(named: "heavyLaserDisabled")
+            static let gaussCannon = UIImage(named: "gaussCannonDisabled")
+            static let ionCannon = UIImage(named: "ionCannonDisabled")
+            static let plasmaCannon = UIImage(named: "plasmaCannonDisabled")
+            static let smallShieldDome = UIImage(named: "smallShieldDomeDisabled")
+            static let largeShieldDome = UIImage(named: "largeShieldDomeDisabled")
+            static let antiBallisticMissiles = UIImage(named: "antiBallisticMissilesDisabled")
+            static let interplanetaryMissiles = UIImage(named: "interplanetaryMissilesDisabled")
+        }
+    }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 struct Supply {
 
-    //TODO: Can I merge Supply and Supplies?
+    // TODO: Can I merge Supply and Supplies?
     let level: Int
     let condition: String
     
@@ -34,7 +34,7 @@ struct Supplies {
         
     init(_ levels: [Int], _ status: [String]) {
         
-        //TODO: Add Solar Sattelite and Crawler
+        // TODO: Add Solar Sattelite and Crawler
         var fixedStatus = status
         fixedStatus.removeSubrange(5...6)
         

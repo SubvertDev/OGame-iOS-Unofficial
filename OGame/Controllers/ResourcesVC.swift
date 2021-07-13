@@ -11,10 +11,11 @@ class ResourcesVC: UIViewController {
     
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableViewHider: UIView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var prodPerSecond = [Double]()
     var resourceCell: ResourceCell?
-    var isConstructionNow: Bool? = false
     var timer: Timer?
     let refreshControl = UIRefreshControl()
     
@@ -65,8 +66,10 @@ class ResourcesVC: UIViewController {
             case .success(let supplies):
                 self.resourceCell = ResourceCell(with: supplies)
                 DispatchQueue.main.async {
-                    self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
+                    self.refreshControl.endRefreshing()
+                    self.tableViewHider.isHidden = true
+                    self.activityIndicator.stopAnimating()
                 }
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
@@ -81,7 +84,6 @@ class ResourcesVC: UIViewController {
 
 
 extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
     }
@@ -105,8 +107,9 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
 
 
 extension ResourcesVC: BuildingCellDelegate {
-    
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
+        tableViewHider.isHidden = false
+        activityIndicator.startAnimating()
         
         OGame.shared.build(what: type, id: 0) { result in
             switch result {

@@ -44,7 +44,7 @@ struct Resources {
         self.deuterium = resources[2]
         
         var dp = [Int]()
-        //let dayProduction = try! doc.select("tr[class=summary]")
+        //let dayProduction = try! doc.select("tr[class=summary]") // Stopped working
         let dayProduction = try! doc.select("tr[class=summary alt]")
         
         let metalProduction = try! dayProduction.select("td[class=undermark]").get(0).select("span").attr("title")
@@ -57,7 +57,7 @@ struct Resources {
         self.dayProduction = dp
         
         var str = [Int]()
-        //let storageInfo = try! doc.select("tr[class=alt]").get(1)
+        //let storageInfo = try! doc.select("tr[class=alt]").get(1) // Stopped working
         let storageInfo = try! doc.select("tr[class]") // .get(16)
         
         let metalStorage = try! storageInfo.select("td[class*=left2]").get(0).select("span").attr("title")

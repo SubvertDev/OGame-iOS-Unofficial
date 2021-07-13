@@ -194,8 +194,9 @@
                         <segue destination="sK6-tY-buS" kind="show" identifier="ShowResourcesVC" id="D9n-S4-mMB"/>
                         <segue destination="6si-5e-TLW" kind="show" identifier="ShowTestPageVC" id="9xU-OW-r06"/>
                         <segue destination="jqS-LO-SgG" kind="show" identifier="ShowFacilitiesVC" id="Yel-A6-qVi"/>
-                        <segue destination="SMG-3N-VSy" kind="show" identifier="ShowResearchesVC" id="xUz-Ek-Wa6"/>
+                        <segue destination="SMG-3N-VSy" kind="show" identifier="ShowResearchVC" id="xUz-Ek-Wa6"/>
                         <segue destination="yyD-gZ-whT" kind="show" identifier="ShowShipyardVC" id="LHA-CZ-fKM"/>
+                        <segue destination="SYK-aU-qOz" kind="show" identifier="ShowDefenceVC" id="H80-05-Xak"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W40-vo-J8V" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -249,7 +250,7 @@
         <!--Research-->
         <scene sceneID="Fyu-3O-rXY">
             <objects>
-                <viewController id="SMG-3N-VSy" customClass="ResearchesVC" customModule="OGame" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="SMG-3N-VSy" customClass="ResearchVC" customModule="OGame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PPh-AO-6Ae">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -288,7 +289,7 @@
             </objects>
             <point key="canvasLocation" x="4525" y="757"/>
         </scene>
-        <!--ShipyardVC-->
+        <!--Shipyard-->
         <scene sceneID="6NV-xI-t0o">
             <objects>
                 <viewController id="yyD-gZ-whT" customClass="ShipyardVC" customModule="OGame" customModuleProvider="target" sceneMemberID="viewController">
@@ -320,7 +321,7 @@
                             <constraint firstItem="B2l-jn-gZ0" firstAttribute="trailing" secondItem="osk-lZ-vIA" secondAttribute="trailing" id="pfp-fY-nhS"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="LxM-ZS-8Ci"/>
+                    <navigationItem key="navigationItem" title="Shipyard" id="LxM-ZS-8Ci"/>
                     <connections>
                         <outlet property="resourcesOverview" destination="vxB-7U-Q0c" id="zwd-lM-Nd1"/>
                         <outlet property="tableView" destination="B2l-jn-gZ0" id="Z1G-KL-Qvx"/>
@@ -328,7 +329,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lJ-jj-zGN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5184.6153846153848" y="755.68720379146919"/>
+            <point key="canvasLocation" x="5185" y="756"/>
         </scene>
         <!--Facilities-->
         <scene sceneID="W5y-fU-yvz">
@@ -391,28 +392,47 @@
                                 <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <view hidden="YES" alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hGZ-Cd-nVo">
+                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <color key="backgroundColor" systemColor="systemGray2Color"/>
+                            </view>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="zIp-b6-DgP">
+                                <rect key="frame" x="170" y="472.66666666666669" width="50" height="50.000000000000057"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="EdK-jB-I33"/>
+                                    <constraint firstAttribute="height" constant="50" id="fnz-pg-59M"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ote-yJ-Qc1"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="ote-yJ-Qc1" firstAttribute="bottom" secondItem="4WY-jL-jvM" secondAttribute="bottom" id="8tU-4h-X2M"/>
+                            <constraint firstItem="ote-yJ-Qc1" firstAttribute="bottom" secondItem="hGZ-Cd-nVo" secondAttribute="bottom" id="DVM-r5-Pbg"/>
                             <constraint firstItem="b17-ac-P3G" firstAttribute="leading" secondItem="ote-yJ-Qc1" secondAttribute="leading" id="KJk-nL-isF"/>
                             <constraint firstItem="4WY-jL-jvM" firstAttribute="top" secondItem="b17-ac-P3G" secondAttribute="bottom" id="Pwx-pt-KK3"/>
                             <constraint firstItem="ote-yJ-Qc1" firstAttribute="trailing" secondItem="b17-ac-P3G" secondAttribute="trailing" id="X2H-hs-2AM"/>
+                            <constraint firstItem="zIp-b6-DgP" firstAttribute="centerY" secondItem="hGZ-Cd-nVo" secondAttribute="centerY" id="e3c-9p-9jZ"/>
                             <constraint firstItem="b17-ac-P3G" firstAttribute="top" secondItem="ote-yJ-Qc1" secondAttribute="top" id="gLM-Do-71H"/>
+                            <constraint firstItem="ote-yJ-Qc1" firstAttribute="trailing" secondItem="hGZ-Cd-nVo" secondAttribute="trailing" id="mnp-v6-nQ0"/>
                             <constraint firstItem="ote-yJ-Qc1" firstAttribute="trailing" secondItem="4WY-jL-jvM" secondAttribute="trailing" id="mte-1z-28T"/>
                             <constraint firstItem="4WY-jL-jvM" firstAttribute="leading" secondItem="ote-yJ-Qc1" secondAttribute="leading" id="puO-O2-gAz"/>
+                            <constraint firstItem="hGZ-Cd-nVo" firstAttribute="leading" secondItem="ote-yJ-Qc1" secondAttribute="leading" id="shK-mr-fPE"/>
+                            <constraint firstItem="zIp-b6-DgP" firstAttribute="centerX" secondItem="hGZ-Cd-nVo" secondAttribute="centerX" id="uDe-ui-p3G"/>
+                            <constraint firstItem="hGZ-Cd-nVo" firstAttribute="top" secondItem="b17-ac-P3G" secondAttribute="bottom" id="zxz-Ve-GLk"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Resources" id="eV2-kv-t8a"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="zIp-b6-DgP" id="Zf2-GT-N5K"/>
                         <outlet property="resourcesOverview" destination="b17-ac-P3G" id="4ZW-0P-fGd"/>
                         <outlet property="tableView" destination="4WY-jL-jvM" id="Yrn-Lc-7mp"/>
+                        <outlet property="tableViewHider" destination="hGZ-Cd-nVo" id="a8l-pV-Nnd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qFF-BS-Dkb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5185" y="-597"/>
+            <point key="canvasLocation" x="5185" y="-609"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dsA-EO-8ZC">
@@ -432,6 +452,48 @@
             </objects>
             <point key="canvasLocation" x="1745" y="68"/>
         </scene>
+        <!--Defence-->
+        <scene sceneID="F4s-qb-SBm">
+            <objects>
+                <viewController id="SYK-aU-qOz" userLabel="Defence" customClass="DefenceVC" customModule="OGame" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5ag-r4-SiD">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ejj-2M-a7M" customClass="ResourcesOverview" customModule="OGame" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="88" width="390" height="97.666666666666686"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="ejj-2M-a7M" secondAttribute="height" multiplier="4:1" id="4mf-SB-0Da"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ATd-K6-1G0">
+                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="xXV-PS-ptB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="ATd-K6-1G0" firstAttribute="leading" secondItem="xXV-PS-ptB" secondAttribute="leading" id="1Ch-N7-cxl"/>
+                            <constraint firstItem="ATd-K6-1G0" firstAttribute="trailing" secondItem="xXV-PS-ptB" secondAttribute="trailing" id="6Gm-Go-Wvx"/>
+                            <constraint firstItem="xXV-PS-ptB" firstAttribute="bottom" secondItem="ATd-K6-1G0" secondAttribute="bottom" id="B6O-7c-WpA"/>
+                            <constraint firstItem="ATd-K6-1G0" firstAttribute="top" secondItem="ejj-2M-a7M" secondAttribute="bottom" id="Kyl-bE-SzN"/>
+                            <constraint firstItem="ejj-2M-a7M" firstAttribute="leading" secondItem="xXV-PS-ptB" secondAttribute="leading" id="Suc-9I-PfW"/>
+                            <constraint firstItem="ejj-2M-a7M" firstAttribute="top" secondItem="xXV-PS-ptB" secondAttribute="top" id="mkc-pz-DTC"/>
+                            <constraint firstItem="ejj-2M-a7M" firstAttribute="trailing" secondItem="xXV-PS-ptB" secondAttribute="trailing" id="x0p-5b-kbZ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Defence" id="2J9-Fj-wA7"/>
+                    <connections>
+                        <outlet property="resourcesOverview" destination="ejj-2M-a7M" id="ohE-dT-KS9"/>
+                        <outlet property="tableView" destination="ATd-K6-1G0" id="S6B-qW-lZB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mep-Cu-VH2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4525" y="1435"/>
+        </scene>
     </scenes>
     <resources>
         <image name="login_background" width="207" height="466.66665649414062"/>
@@ -445,6 +507,9 @@
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray2Color">
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

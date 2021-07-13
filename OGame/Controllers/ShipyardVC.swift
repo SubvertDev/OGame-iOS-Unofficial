@@ -32,8 +32,8 @@ class ShipyardVC: UIViewController {
     }
     
     
+    // MARK: - REFRESH DATA ON SHIPYARD VC
     func refresh() {
-        print(#function)
         OGame.shared.getResources(forID: 0) { result in
             switch result {
             case .success(let resources):
@@ -78,6 +78,7 @@ class ShipyardVC: UIViewController {
     }
 }
 
+
 extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 17
@@ -95,11 +96,13 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
         return cell // FIXME: text field is not properly reused
     }
     
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
+
 extension ShipyardVC: BuildingCellDelegate {
-    
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
         var typeToBuild = type
         if cell.amountTextField.text == "" || cell.amountTextField.text == "0" {

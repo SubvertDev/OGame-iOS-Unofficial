@@ -9,16 +9,7 @@ import UIKit
 
 struct ShipsCell {
     
-    var shipsTechnologies: [(name: String,
-                             metal: Int,
-                             crystal: Int,
-                             deuterium: Int,
-                             image: (available: UIImage?,
-                                     unavailable: UIImage?,
-                                     disabled: UIImage?),
-                             buildingsID: Int,
-                             amount: Int,
-                             condition: String)]
+    var shipsTechnologies: ShipsData
     
     init(with ships: Ships) {
         

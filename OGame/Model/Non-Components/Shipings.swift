@@ -31,6 +31,8 @@ struct Shipings {
         return ships.2 == "shipyard" ? true : false
     }
     
+    // TODO: Do I need these down below?
+    
     // ship name
     
     // ship amount

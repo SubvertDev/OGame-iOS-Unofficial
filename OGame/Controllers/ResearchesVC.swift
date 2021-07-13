@@ -1,5 +1,5 @@
 //
-//  ResearchesVC.swift
+//  ResearchVC.swift
 //  OGame
 //
 //  Created by Subvert on 26.05.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ResearchesVC: UIViewController {
+class ResearchVC: UIViewController {
     
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var tableView: UITableView!
@@ -32,10 +32,9 @@ class ResearchesVC: UIViewController {
     }
     
     
+    // MARK: - REFRESH DATA ON RESEARCHES VC
     func refresh() {
-        print(#function)
         OGame.shared.getResources(forID: 0) { result in
-            print("function: get resources")
             switch result {
             case .success(let resources):
                 self.resourcesOverview.set(metal: resources.metal,
@@ -80,7 +79,7 @@ class ResearchesVC: UIViewController {
 }
 
 
-extension ResearchesVC: UITableViewDelegate, UITableViewDataSource {
+extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 16
     }
@@ -101,10 +100,9 @@ extension ResearchesVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension ResearchesVC: BuildingCellDelegate {
-    
+
+extension ResearchVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
-        
         OGame.shared.build(what: type, id: 0) { result in
             switch result {
             case .success(_):

@@ -8,15 +8,15 @@
 import UIKit
 
 typealias BuildingsData = [(name: String,
-                           metal: Int,
-                           crystal: Int,
-                           deuterium: Int,
-                           image: (available: UIImage?,
-                                   unavailable: UIImage?,
-                                   disabled: UIImage?),
-                           buildingsID: Int,
-                           level: Int,
-                           condition: String)]
+                            metal: Int,
+                            crystal: Int,
+                            deuterium: Int,
+                            image: (available: UIImage?,
+                                    unavailable: UIImage?,
+                                    disabled: UIImage?),
+                            buildingsID: Int,
+                            level: Int,
+                            condition: String)]
 
 typealias ResearchesData = [(name: String,
                              metal: Int,
@@ -39,3 +39,14 @@ typealias ShipsData = [(name: String,
                         buildingsID: Int,
                         amount: Int,
                         condition: String)]
+
+typealias DefencesData = [(name: String,
+                           metal: Int,
+                           crystal: Int,
+                           deuterium: Int,
+                           image: (available: UIImage?,
+                                   unavailable: UIImage?,
+                                   disabled: UIImage?),
+                           buildingsID: Int,
+                           amount: Int,
+                           condition: String)]

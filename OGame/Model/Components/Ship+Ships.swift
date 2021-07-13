@@ -8,6 +8,7 @@
 import Foundation
 
 struct Ship {
+    
     // TODO: Merge Ship and Ships?
     let amount: Int
     var condition: String
