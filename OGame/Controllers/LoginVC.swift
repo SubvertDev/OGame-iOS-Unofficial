@@ -24,7 +24,7 @@ class LoginVC: UIViewController {
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         //TODO: Add check for empty fields
         //TODO: Make a falling list of servers
-        loginButton.isEnabled = false
+        loginButton.isEnabled = false   
         OGame.shared.loginIntoAccount(universe: serverNameTextField.text!,
                                       username: emailTextField.text!,
                                       password: passwordTextField.text!)

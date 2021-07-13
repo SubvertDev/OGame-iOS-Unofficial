@@ -14,28 +14,8 @@ class ShipyardVC: UIViewController {
     
     var prodPerSecond = [Double]()
     var ships: Ships?
-    var isConstructionNow: Bool?
     var timer: Timer?
     
-    let shipsCellType: [TypeOfShip] = [
-        .lightFighter,
-        .heavyFighter,
-        .cruiser,
-        .battleship,
-        .interceptor,
-        .bomber,
-        .destroyer,
-        .deathstar,
-        .reaper,
-        .explorer,
-        .smallTransporter,
-        .largeTransporter,
-        .colonyShip,
-        .recycler,
-        .espionageProbe,
-        .solarSatellite,
-        .crawler
-    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,15 +58,8 @@ class ShipyardVC: UIViewController {
             switch result {
             case .success(let ships):
                 self.ships = ships
-                self.isConstructionNow = false
-                for ship in ships.allShips {
-                    if ship.inConstruction! {
-                        self.isConstructionNow = true
-                        break
-                    }
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
@@ -105,35 +78,31 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         
         guard let ships = self.ships else { return UITableViewCell() }
-        guard let isConstructionNow = self.isConstructionNow else { return UITableViewCell() }
         
         cell.delegate = self
         cell.amountTextField.delegate = self
         
-        cell.setShip(type: shipsCellType[indexPath.row], ships: ships, isConstructionNow)
+        cell.setShip(id: indexPath.row, ships: ships)
         
         return cell // FIXME: text field is not properly reused
     }
-
+    
     
 }
 
 extension ShipyardVC: BuildingCellDelegate {
     
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
-        var newType = type
+        var typeToBuild = type
         if cell.amountTextField.text == "" || cell.amountTextField.text == "0" {
-            newType = (type.0, 1, type.2)
+            typeToBuild = (type.0, 1, type.2)
         } else {
-            newType = (type.0, Int((cell.amountTextField.text)!)!, type.2)
+            typeToBuild = (type.0, Int((cell.amountTextField.text)!)!, type.2)
         }
-        print("new type is \(newType)")
         
-        OGame.shared.build(what: newType, id: 0) { result in
+        OGame.shared.build(what: typeToBuild, id: 0) { result in
             switch result {
             case .success(_):
-                self.isConstructionNow = true
-                print("successfully builded something")
                 self.refresh()
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)

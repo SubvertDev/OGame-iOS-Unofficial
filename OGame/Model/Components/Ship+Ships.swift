@@ -8,22 +8,13 @@
 import Foundation
 
 struct Ship {
+    // TODO: Merge Ship and Ships?
     let amount: Int
-    var isPossible: Bool?
-    var inConstruction: Bool?
+    var condition: String
     
     init(_ amount: [Int], _ status: [String], _ type: Int) {
         self.amount = amount[type]
-        self.isPossible = isPossible(status[type])
-        self.inConstruction = inConstruction(status[type])
-    }
-    
-    private func isPossible(_ string: String) -> Bool {
-        string == "on" ? true : false
-    }
-    
-    private func inConstruction(_ string: String) -> Bool {
-        string == "active" ? true : false
+        self.condition = status[type]
     }
 }
 
@@ -32,14 +23,14 @@ struct Ships {
     let heavyFighter: Ship
     let cruiser: Ship
     let battleship: Ship
-    let interceptor: Ship
+    let battlecruiser: Ship
     let bomber: Ship
     let destroyer: Ship
     let deathstar: Ship
     let reaper: Ship
-    let explorer: Ship
-    let smallTransporter: Ship
-    let largeTransporter: Ship
+    let pathfinder: Ship
+    let smallCargo: Ship
+    let largeCargo: Ship
     let colonyShip: Ship
     let recycler: Ship
     let espionageProbe: Ship
@@ -53,14 +44,14 @@ struct Ships {
         self.heavyFighter = Ship(ships, status, 1)
         self.cruiser = Ship(ships, status, 2)
         self.battleship = Ship(ships, status, 3)
-        self.interceptor = Ship(ships, status, 4)
+        self.battlecruiser = Ship(ships, status, 4)
         self.bomber = Ship(ships, status, 5)
         self.destroyer = Ship(ships, status, 6)
         self.deathstar = Ship(ships, status, 7)
         self.reaper = Ship(ships, status, 8)
-        self.explorer = Ship(ships, status, 9)
-        self.smallTransporter = Ship(ships, status, 10)
-        self.largeTransporter = Ship(ships, status, 11)
+        self.pathfinder = Ship(ships, status, 9)
+        self.smallCargo = Ship(ships, status, 10)
+        self.largeCargo = Ship(ships, status, 11)
         self.colonyShip = Ship(ships, status, 12)
         self.recycler = Ship(ships, status, 13)
         self.espionageProbe = Ship(ships, status, 14)
@@ -72,14 +63,14 @@ struct Ships {
             self.heavyFighter,
             self.cruiser,
             self.battleship,
-            self.interceptor,
+            self.battlecruiser,
             self.bomber,
             self.destroyer,
             self.deathstar,
             self.reaper,
-            self.explorer,
-            self.smallTransporter,
-            self.largeTransporter,
+            self.pathfinder,
+            self.smallCargo,
+            self.largeCargo,
             self.colonyShip,
             self.recycler,
             self.espionageProbe,
