@@ -394,7 +394,14 @@ class OGame {
     
     // MARK: - GET SERVER INFO
     
-    // MARK: - GET CHARACTER CLASS
+    // MARK: - GET CHARACTER CLASS -> String
+    func getCharacterClass() -> String {
+        if let character = try? self.doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
+            return character
+        } else {
+            return "error"
+        }
+    }
     
     // MARK: - GET MOON IDS
     
@@ -419,7 +426,7 @@ class OGame {
                     
                     let noScript = try self.docResources!.select("noscript").text()
                     guard noScript != "You need to enable JavaScript to run this app." else {
-                        print("LOOKS LIKE NOT LOGGED IN")
+                        print("LOOKS LIKE NOT LOGGED IN (resources info)")
                         completion(.failure(NSError()))
                         return
                     }
@@ -463,6 +470,7 @@ class OGame {
                     print("Status of buildings: \(technologyStatus)")
                     
                     guard !levels.isEmpty, !technologyStatus.isEmpty else {
+                        print("LOOKS LIKE NOT LOGGED IN (resources)")
                         completion(.failure(NSError()))
                         return
                     }
@@ -523,7 +531,6 @@ class OGame {
     
     // MARK: - GET MOON FACILITIES
     
-    
     // MARK: - GET RESEARCH
     func research(forID: Int, completion: @escaping (Result<Researches, Error>) -> Void) {
         // FIXME: Fix forID insertion in link
@@ -550,7 +557,7 @@ class OGame {
                     print("Status of researches: \(technologyStatus)")
 
                     guard !levels.isEmpty && !technologyStatus.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN?")
+                        print("LOOKS LIKE NOT LOGGED IN (research)")
                         completion(.failure(NSError()))
                         return
                     }
@@ -596,7 +603,7 @@ class OGame {
                     print("Ships Status: \(technologyStatus)")
                     
                     guard !ships.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN?")
+                        print("LOOKS LIKE NOT LOGGED IN (ships)")
                         completion(.failure(NSError()))
                         return
                     }
@@ -642,7 +649,7 @@ class OGame {
                     print("Defences Status: \(technologyStatus)")
                     
                     guard !defences.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN?")
+                        print("LOOKS LIKE NOT LOGGED IN (defences)")
                         completion(.failure(NSError()))
                         return
                     }
@@ -709,7 +716,7 @@ class OGame {
             case .success(let data):
                 // FIXME: this is a mess, i hate regex
                 let text = String(data: data!, encoding: .ascii)!
-                // can i just delete that below and change it to .range(of:) ?
+                // Can i just delete that below and change it to .range(of:) ?
                 let pattern = "var urlQueueAdd = (.*)token=(.*)';"
                 let regex = try! NSRegularExpression(pattern: pattern, options: [])
                 let nsString = text as NSString
@@ -753,6 +760,7 @@ class OGame {
     
     
     // MARK: - DO RESEARCH
+    // TODO: Do I need this? Looks like build function about can do it on its own
     
     // MARK: - COLLECT RUBBLE FIELD
     
