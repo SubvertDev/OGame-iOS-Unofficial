@@ -617,7 +617,7 @@ class OGame {
                 do {
                     self.docResearch = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let shipsParse = try self.docResearch!.select("[class*=amount]").select("[data-value]")
+                    let shipsParse = try self.docResearch!.select("[class=amount]").select("[data-value]") // *=amount for targetamount
                     var ships = [Int]()
                     for ship in shipsParse {
                         ships.append(Int(try ship.text())!)
@@ -663,7 +663,7 @@ class OGame {
                 do {
                     self.docResearch = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let defencesParse = try self.docResearch!.select("[class*=amount]").select("[data-value]")
+                    let defencesParse = try self.docResearch!.select("[class=amount]").select("[data-value]") // *=amount for targetamount
                     var defences = [Int]()
                     for defence in defencesParse {
                         defences.append(Int(try defence.text())!)

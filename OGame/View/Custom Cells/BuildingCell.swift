@@ -176,7 +176,7 @@ class BuildingCell: UITableViewCell {
     // MARK: - SET DEFENCE
     func setDefence(id: Int, defenceTechnologies: DefencesData) {
         
-        typeOfBuilding = (defenceTechnologies[id].buildingsID, 1, "defences")
+        typeOfBuilding = (defenceTechnologies[id].buildingsID, 1, "defenses")
         buildButton.isEnabled = false
         buildingNameLabel.text = defenceTechnologies[id].name
         metalRequiredLabel.text = "Metal: \(defenceTechnologies[id].metal)"
