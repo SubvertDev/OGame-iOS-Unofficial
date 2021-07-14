@@ -97,8 +97,8 @@ class OGame {
                 } else {
                     guard statusCode == 201 else { fatalError("Bad Login, Status Code Is Not 201") }
                 }
-                // TODO: refactor guards above
-                //self.configureServerAF()
+            // TODO: refactor guards above
+            //self.configureServerAF()
             }
         }
     }
@@ -126,7 +126,7 @@ class OGame {
                     case .failure(_):
                         print("failure captcha post request")
                         fatalError()
-                        // TODO: handle all errors
+                    // TODO: handle all errors
                     }
                 }
             case .failure(_):
@@ -404,10 +404,60 @@ class OGame {
     }
     
     // MARK: - GET MOON IDS
+    // TODO: Get a moon
     
     // MARK: - coordinates
     
-    // MARK: - GET CELESTIAL DATA
+    // MARK: - GET CELESTIAL DATA -> Celestial
+    func getCelestial(forID: Int, completion: @escaping (Result<Celestial, Error>) -> Void) {
+        
+        let link = "\(self.indexPHP!)page=ingame&component=overview&cp=\(planetID!)"
+        sessionAF.request(link).validate().response { response in
+            
+            switch response.result {
+            case .success(let data):
+                let text = String(data: data!, encoding: .ascii)!
+                
+                var pattern = #"textContent\[1] = "(.*)km \(<span>(.*)<(.*)<span>(.*)<"#
+                var regex = try! NSRegularExpression(pattern: pattern, options: [])
+                var nsString = text as NSString
+                var results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
+                let stringPlanetSize = results.map { nsString.substring(with: $0.range)}
+                //print("stringPlanetSize: \(stringPlanetSize)")
+                
+                var stringSize = stringPlanetSize.first!.components(separatedBy: #" ""#)[1].components(separatedBy: " ")[0]
+                stringSize.removeLast(2)
+                let planetSize = Int(stringSize.replacingOccurrences(of: ".", with: ""))!
+                let planetUsedFields = Int(stringPlanetSize.first!.components(separatedBy: ">")[1].components(separatedBy: "<")[0])!
+                let planetTotalFields = Int(stringPlanetSize.first!.components(separatedBy: ">")[3].components(separatedBy: "<")[0])!
+                //print(planetSize, planetUsedFields, planetTotalFields)
+                
+                
+                pattern = #"textContent\[3] = "(.*)\\u00b0C (.*) (.*)""#
+                regex = try! NSRegularExpression(pattern: pattern, options: [])
+                nsString = text as NSString
+                results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
+                let stringPlanetTemperature = results.map { nsString.substring(with: $0.range)}
+                //print("planetTemperature: \(stringPlanetTemperature)")
+                
+                let stringTemperature = stringPlanetTemperature.first!.components(separatedBy: #"""#)[1]
+                let planetTemperatureMin = Int(stringTemperature.components(separatedBy: "\\")[0])!
+                let planetTemperatureMax = Int(stringTemperature.components(separatedBy: "to ").last!.components(separatedBy: "\\").first!)!
+                //print(planetTemperatureMin, planetTemperatureMax)
+                
+                let result = Celestial(planetSize: planetSize,
+                                       usedFields: planetUsedFields,
+                                       totalFields: planetTotalFields,
+                                       tempMin: planetTemperatureMin,
+                                       tempMax: planetTemperatureMax)
+                
+                completion(.success(result))
+            case .failure(let error):
+                print(error)
+                completion(.failure(error))
+            }
+        }
+    }
     
     // MARK: - GET CELESTIAL COORDINATES
     
@@ -555,7 +605,7 @@ class OGame {
                         technologyStatus.append(try status.attr("data-status"))
                     }
                     print("Status of researches: \(technologyStatus)")
-
+                    
                     guard !levels.isEmpty && !technologyStatus.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN (research)")
                         completion(.failure(NSError()))
@@ -582,7 +632,7 @@ class OGame {
         // FIXME: Fix planetID
         let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
-        
+            
             switch response.result {
             case .success(let data):
                 do {
@@ -628,7 +678,7 @@ class OGame {
         // FIXME: Fix planetID
         let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
-        
+            
             switch response.result {
             case .success(let data):
                 do {
