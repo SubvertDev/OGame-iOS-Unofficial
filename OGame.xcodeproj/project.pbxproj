@@ -26,7 +26,6 @@
 		B8ABC3042664228F0032ADBB /* Shipings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC3032664228F0032ADBB /* Shipings.swift */; };
 		B8B2972826550E6F00C59CD4 /* ResourcesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B2972726550E6F00C59CD4 /* ResourcesVC.swift */; };
 		B8B2972C26552FD500C59CD4 /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B2972B26552FD500C59CD4 /* MenuVC.swift */; };
-		B8B2972E2656E65600C59CD4 /* TestPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B2972D2656E65600C59CD4 /* TestPageVC.swift */; };
 		B8B29730265703FE00C59CD4 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B2972F265703FE00C59CD4 /* Resources.swift */; };
 		B8B7BC0C26504F8A00988758 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC0B26504F8A00988758 /* AppDelegate.swift */; };
 		B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC0D26504F8A00988758 /* SceneDelegate.swift */; };
@@ -71,7 +70,6 @@
 		B8ABC3032664228F0032ADBB /* Shipings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shipings.swift; sourceTree = "<group>"; };
 		B8B2972726550E6F00C59CD4 /* ResourcesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesVC.swift; sourceTree = "<group>"; };
 		B8B2972B26552FD500C59CD4 /* MenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
-		B8B2972D2656E65600C59CD4 /* TestPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPageVC.swift; sourceTree = "<group>"; };
 		B8B2972F265703FE00C59CD4 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		B8B7BC0826504F8A00988758 /* OGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8B7BC0B26504F8A00988758 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -202,7 +200,6 @@
 				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
 				B873317426542CB400524FD8 /* OverviewVC.swift */,
 				B8B2972726550E6F00C59CD4 /* ResourcesVC.swift */,
-				B8B2972D2656E65600C59CD4 /* TestPageVC.swift */,
 				B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */,
 				B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */,
 				B8ABC30126641BC10032ADBB /* ShipyardVC.swift */,
@@ -369,7 +366,6 @@
 				B8ABC30026640EF00032ADBB /* Ship+Ships.swift in Sources */,
 				B8B7BC262650579100988758 /* Server.swift in Sources */,
 				B8ABC3042664228F0032ADBB /* Shipings.swift in Sources */,
-				B8B2972E2656E65600C59CD4 /* TestPageVC.swift in Sources */,
 				B867614F265945A30096BE39 /* BuildingCell.swift in Sources */,
 				B8676155265982DD0096BE39 /* Research+Researches.swift in Sources */,
 				B8B7BC202650524000988758 /* OGame.swift in Sources */,

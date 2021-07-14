@@ -17,7 +17,6 @@ class OGame {
     var username: String = ""
     var password: String = ""
     var userAgent: [String: String]?
-    var proxy: String?
     var language: String?
     var serverNumber: Int?
     let sessionAF = Session.default
@@ -47,22 +46,19 @@ class OGame {
     
     private init(){}
     
-    func loginIntoAccount(universe: String, username: String, password: String, token: String? = nil, userAgent: [String: String]? = nil, proxy: String = "", language: String? = nil, serverNumber: Int? = nil) {
+    func loginIntoAccount(universe: String, username: String, password: String, token: String? = nil, userAgent: [String: String]? = nil, language: String? = nil, serverNumber: Int? = nil) {
         print(#function)
         
         self.universe = universe
         self.username = username
         self.password = password
         self.userAgent = userAgent
-        self.proxy = proxy
         self.language = language
         self.serverNumber = serverNumber
-        //self.session.proxies.update({'https': self.proxy})
         self.token = token
         
-        
         if self.userAgent == nil {
-            self.userAgent = ["User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"]
+            self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
         }
         
         print("New OGame object created:\nLogin: \(username)\nUniverse: \(universe)")
@@ -75,7 +71,7 @@ class OGame {
         if token == nil {
             loginAF(attempt: attempt)
         } else {
-            // TODO: do i even need this check?
+            // TODO: Do I even need this check? Possibly save token to relogin?
             //var accountsRequest = URLRequest(url: URL(string: "https://lobby.ogame.gameforge.com/api/users/me/accounts")!)
             //accountsRequest.setValue("Bearer \(token!)", forHTTPHeaderField: "authorization")
             //let accounts = session?.dataTask(with: accountsRequest) { data, response, error in
@@ -169,7 +165,6 @@ class OGame {
         }
     }
     
-    
     // MARK: - CONFIGURE SERVER
     private func configureServerAF() {
         print(#function)
@@ -248,7 +243,7 @@ class OGame {
             self.configureIndexAF2()
         }
     }
-    // MARK: - Do i even need this one?
+    // TODO: Do I even need this one?
     private func configureIndexAF2() {
         print(#function)
         sessionAF.request(loginLink!).validate().response { response in
@@ -304,7 +299,7 @@ class OGame {
     
     // MARK: - NON LOGIN FUNCTIONS
     
-    // MARK: - ATTACKED -> Escaping Bool
+    // MARK: - ATTACKED -> Bool
     func attacked(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
@@ -326,7 +321,7 @@ class OGame {
     }
     
     
-    // MARK: - NEUTRAL -> Escaping Bool
+    // MARK: - NEUTRAL -> Bool
     func neutral(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
@@ -348,7 +343,7 @@ class OGame {
     }
     
     
-    // MARK: - FRIENDLY -> Escaping Bool
+    // MARK: - FRIENDLY -> Bool
     func friendly(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
@@ -427,6 +422,7 @@ class OGame {
         }
         return found!
     }
+    
     
     // MARK: - GET SERVER INFO
     

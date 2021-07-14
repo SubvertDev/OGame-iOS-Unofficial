@@ -17,7 +17,6 @@ class MenuVC: UIViewController {
     
     let menuList = ["Overview",
                     "Resources",
-                    "Test Page",
                     "Facilities",
                     "Research",
                     "Shipyard",
@@ -59,14 +58,12 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         case 1:
             performSegue(withIdentifier: "ShowResourcesVC", sender: self)
         case 2:
-            performSegue(withIdentifier: "ShowTestPageVC", sender: self)
-        case 3:
             performSegue(withIdentifier: "ShowFacilitiesVC", sender: self)
-        case 4:
+        case 3:
             performSegue(withIdentifier: "ShowResearchVC", sender: self)
-        case 5:
+        case 4:
             performSegue(withIdentifier: "ShowShipyardVC", sender: self)
-        case 6:
+        case 5:
             performSegue(withIdentifier: "ShowDefenceVC", sender: self)
         default:
             print(menuList[indexPath.row])
