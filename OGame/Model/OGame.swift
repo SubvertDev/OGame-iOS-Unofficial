@@ -20,7 +20,6 @@ class OGame {
     var language: String?
     var serverNumber: Int?
     let sessionAF = Session.default
-    // session.proxies.update
     var token: String? = nil
     
     var attempt: Int = 0
@@ -46,50 +45,22 @@ class OGame {
     
     private init(){}
     
-    func loginIntoAccount(universe: String, username: String, password: String, token: String? = nil, userAgent: [String: String]? = nil, language: String? = nil, serverNumber: Int? = nil) {
+    func loginIntoAccount(universe: String, username: String, password: String) {
         print(#function)
-        
         self.universe = universe
         self.username = username
         self.password = password
-        self.userAgent = userAgent
-        self.language = language
-        self.serverNumber = serverNumber
-        self.token = token
-        
-        if self.userAgent == nil {
-            self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
-        }
+        self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
         
         print("New OGame object created:\nLogin: \(username)\nUniverse: \(universe)")
-        configureToken()
-    }
-    
-    // MARK: - TOKEN
-    private func configureToken() {
-        print(#function)
-        if token == nil {
-            loginAF(attempt: attempt)
-        } else {
-            // TODO: Do I even need this check? Possibly save token to relogin?
-            //var accountsRequest = URLRequest(url: URL(string: "https://lobby.ogame.gameforge.com/api/users/me/accounts")!)
-            //accountsRequest.setValue("Bearer \(token!)", forHTTPHeaderField: "authorization")
-            //let accounts = session?.dataTask(with: accountsRequest) { data, response, error in
-            //    guard let data = data else {
-            //        print(#function)
-            //        print("DATA ERROR!")
-            //        return
-            //    }
-            //}
-        }
+        login(attempt: attempt)
     }
     
     // MARK: - ALAMOFIRE SECTION
-    
-    // MARK: - LOGIN
-    private func loginAF(attempt: Int) {
+    // MARK: - Login
+    private func login(attempt: Int) {
         print(#function)
-        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // TODO: delete this?
+        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // TODO: Delete this?
         
         let parameters = LoginData(identity: self.username,
                                    password: self.password,
@@ -110,7 +81,7 @@ class OGame {
                 self.token = response.value!.token
                 print("TOKEN IS SET TO \(self.token!)")
                 // headers update?
-                self.configureServerAF()
+                self.configureServer()
                 
             case .failure(_):
                 print("Status code: \(statusCode)")
@@ -132,7 +103,7 @@ class OGame {
         }
     }
     
-    // MARK: - SOLVE CAPTCHA
+    // MARK: - Solve Captcha
     private func solveCaptcha(challenge: String) {
         print(#function)
         let getHeaders: HTTPHeaders = [
@@ -151,7 +122,7 @@ class OGame {
                     case .success(_):
                         print("success captcha post request")
                         self.attempt += 1
-                        self.loginAF(attempt: self.attempt)
+                        self.login(attempt: self.attempt)
                     case .failure(_):
                         print("failure captcha post request")
                         fatalError()
@@ -165,8 +136,8 @@ class OGame {
         }
     }
     
-    // MARK: - CONFIGURE SERVER
-    private func configureServerAF() {
+    // MARK: - Configure Server
+    private func configureServer() {
         print(#function)
         sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Server].self) { response in
             
@@ -176,12 +147,12 @@ class OGame {
                     if server.name == self.universe {
                         self.serverNumber = server.number
                         print("serverNumber set to \(self.serverNumber!) with no language parameter")
-                        self.configureAccountsAF()
+                        self.configureAccounts()
                         break
                     } else if server.name == self.universe && self.language == nil {
                         self.serverNumber = server.number
                         print("serverNumber set to \(self.serverNumber!) with language: nil")
-                        self.configureAccountsAF()
+                        self.configureAccounts()
                         break
                     }
                 }
@@ -194,8 +165,8 @@ class OGame {
         }
     }
     
-    // MARK: - CONFIGURE ACCOUNTS
-    private func configureAccountsAF() {
+    // MARK: - Configure Accounts
+    private func configureAccounts() {
         print(#function)
         let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
         sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
@@ -207,13 +178,13 @@ class OGame {
                     if account.server.number == self.serverNumber && account.server.language == self.language {
                         self.serverID = account.id
                         print("Set serverID to \(account.id)")
-                        self.configureIndexAF()
+                        self.configureIndex()
                         break
                     } else if account.server.number == self.serverNumber && self.language == nil {
                         self.serverID = account.id
                         self.language = account.server.language
                         print("Set serverID to \(self.serverID!) and Language to '\(self.language!)'")
-                        self.configureIndexAF()
+                        self.configureIndex()
                         break
                     }
                 }
@@ -224,8 +195,8 @@ class OGame {
         }
     }
     
-    // MARK: - CONFIGURE INDEX
-    private func configureIndexAF() {
+    // MARK: - Configure Index
+    private func configureIndex() {
         print(#function)
         indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
         let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
@@ -240,11 +211,11 @@ class OGame {
         sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).validate().responseDecodable(of: Index.self) { response in
             print("Login link: \(response.value!.url)")
             self.loginLink = response.value!.url
-            self.configureIndexAF2()
+            self.configureIndex2()
         }
     }
     // TODO: Do I even need this one?
-    private func configureIndexAF2() {
+    private func configureIndex2() {
         print(#function)
         sessionAF.request(loginLink!).validate().response { response in
             
@@ -252,14 +223,14 @@ class OGame {
             case .success(let data):
                 self.landingPage = String(data: data!, encoding: .ascii)
                 //print("Landing page html: \(self.landingPage!)")
-                self.configureIndexAF3()
+                self.configureIndex3()
             case .failure(let error):
                 print(error)
                 fatalError()
             }
         }
     }
-    private func configureIndexAF3() {
+    private func configureIndex3() {
         print(#function)
         let link = "\(indexPHP!)&page=ingame"
         print("Got ingame page: \(link)")
@@ -269,7 +240,7 @@ class OGame {
             case .success(let data):
                 self.landingPage = String(data: data!, encoding: .ascii)
                 //print("Landing page html: \(self.landingPage!)")
-                self.configurePlayerAF()
+                self.configurePlayer()
             case .failure(let error):
                 print(error)
                 fatalError()
@@ -277,8 +248,8 @@ class OGame {
         }
     }
     
-    // MARK: - CONFIGURE PLAYER
-    private func configurePlayerAF() {
+    // MARK: - Configure Player
+    private func configurePlayer() {
         print(#function)
         doc = try! SwiftSoup.parse(self.landingPage!)
         let planetName = try! doc!.select("[name=ogame-planet-name]")
@@ -295,10 +266,7 @@ class OGame {
     }
     
     
-    
-    
     // MARK: - NON LOGIN FUNCTIONS
-    
     // MARK: - ATTACKED -> Bool
     func attacked(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
