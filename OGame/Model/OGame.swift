@@ -26,16 +26,14 @@ class OGame {
     var serverID: Int?
     var tokenBearer: String?
     var indexPHP: String?
+    var loginLink: String?
+    
+    // These gonna change on planet change
     var planet: String?
     var planetID: Int?
-    var contentsOfPage: String?
-    var loginLink: String?
     var landingPage: String?
-    
     var doc: Document?
-    var docResources: Document?
-    var docSupplies: Document?
-    var docResearch: Document?
+    var celestial: Celestial?
     
     var didFullInit: Bool = false {
         didSet {
@@ -99,7 +97,6 @@ class OGame {
                             return
                         }
                     }
-                    completion("Unknown server response error \(statusCode)")
                 }
             }
         }
@@ -225,7 +222,6 @@ class OGame {
                 switch response.result {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
-                    //print("Landing page html: \(self.landingPage!)")
                     configureIndex3()
                 case .failure(_):
                     completion("Failed configuring login link, please try again!")
@@ -242,7 +238,6 @@ class OGame {
                 switch response.result {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
-                    //print("Landing page html: \(self.landingPage!)")
                     configurePlayer()
                 case .failure(_):
                     completion("Failed configuring ingame page, please try again!")
@@ -274,7 +269,7 @@ class OGame {
     
     
     // MARK: - NON LOGIN FUNCTIONS
-    // MARK: - ATTACKED -> Bool
+    // MARK: - ATTACKED -> @Bool
     func attacked(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
@@ -296,7 +291,7 @@ class OGame {
     }
     
     
-    // MARK: - NEUTRAL -> Bool
+    // MARK: - NEUTRAL -> @Bool
     func neutral(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
@@ -318,7 +313,7 @@ class OGame {
     }
     
     
-    // MARK: - FRIENDLY -> Bool
+    // MARK: - FRIENDLY -> @Bool
     func friendly(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
@@ -415,7 +410,7 @@ class OGame {
     
     // MARK: - coordinates
     
-    // MARK: - GET CELESTIAL DATA -> Celestial
+    // MARK: - GET CELESTIAL DATA -> @Celestial
     func getCelestial(forID: Int, completion: @escaping (Result<Celestial, Error>) -> Void) {
         
         let link = "\(self.indexPHP!)page=ingame&component=overview&cp=\(planetID!)"
@@ -439,7 +434,10 @@ class OGame {
                 let planetTotalFields = Int(stringPlanetSize.first!.components(separatedBy: ">")[3].components(separatedBy: "<")[0])!
                 //print(planetSize, planetUsedFields, planetTotalFields)
                 
-                
+                // FIXME: It's actually three versions? ->
+//                "textContent\[3] = "(.*) \\u00b0C \\u00e0(.*)(.*)\\"
+//                "textContent\[3] = "(.*)\\u00b0C to (.*)\\u00b0C""
+//                "textContent\[3] = "(.*) \\u00b0C (.*) (.*) \\u00b0C""
                 pattern = #"textContent\[3] = "(.*)\\u00b0C (.*) (.*)""#
                 regex = try! NSRegularExpression(pattern: pattern, options: [])
                 nsString = text as NSString
@@ -452,24 +450,37 @@ class OGame {
                 let planetTemperatureMax = Int(stringTemperature.components(separatedBy: "to ").last!.components(separatedBy: "\\").first!)!
                 //print(planetTemperatureMin, planetTemperatureMax)
                 
+                let coordinates = self.getCelestialCoordinates()
+                
                 let result = Celestial(planetSize: planetSize,
                                        usedFields: planetUsedFields,
                                        totalFields: planetTotalFields,
                                        tempMin: planetTemperatureMin,
-                                       tempMax: planetTemperatureMax)
+                                       tempMax: planetTemperatureMax,
+                                       coordinates: coordinates)
                 
                 completion(.success(result))
             case .failure(let error):
-                print(error)
                 completion(.failure(error))
             }
         }
     }
     
     // MARK: - GET CELESTIAL COORDINATES
-    
-    // MARK: - GET PRICES
-    
+    func getCelestialCoordinates() -> [Int] {
+        // FIXME: Does it work for different planets? I think it isn't
+        do {
+            let page = try SwiftSoup.parse(landingPage!)
+            var rawCoordinates = try page.select("[class*=smallplanet]").get(0).select("[class=planet-koords ]").get(0).text()
+            rawCoordinates.removeFirst()
+            rawCoordinates.removeLast()
+            let coordinates = rawCoordinates.components(separatedBy: ":").compactMap { Int($0) }
+            return coordinates
+        } catch {
+            return [0, 0, 0]
+        }
+    }
+        
     // MARK: - GET RESOURCES
     func getResources(forID: Int, completion: @escaping (Result<Resources, Error>) -> Void) {
         // FIXME: Fix planetID
@@ -479,15 +490,15 @@ class OGame {
             switch response.result {
             case .success(let data):
                 do {
-                    self.docResources = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let noScript = try self.docResources!.select("noscript").text()
+                    let noScript = try page.select("noscript").text()
                     guard noScript != "You need to enable JavaScript to run this app." else {
                         print("LOOKS LIKE NOT LOGGED IN (resources info)")
                         completion(.failure(NSError()))
                         return
                     }
-                    let resourceObject = Resources(from: self.docResources!)
+                    let resourceObject = Resources(from: page)
                     completion(.success(resourceObject))
                 } catch {
                     print(error)
@@ -510,16 +521,16 @@ class OGame {
             switch response.result {
             case .success(let data):
                 do {
-                    self.docSupplies = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let levelsParse = try self.docSupplies!.select("span[data-value][class=level]") // + [class=amount]
+                    let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
                     var levels = [Int]()
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
                     print("Levels of buildings: \(levels)")
                     
-                    let technologyStatusParse = try self.docSupplies!.select("li[class*=technology]")
+                    let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
@@ -555,16 +566,16 @@ class OGame {
             switch response.result {
             case .success(let data):
                 do {
-                    self.docSupplies = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let levelsParse = try self.docSupplies!.select("span[class=level]").select("[data-value]")
+                    let levelsParse = try page.select("span[class=level]").select("[data-value]")
                     var levels = [Int]()
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
                     print("Levels of facilities: \(levels)")
                     
-                    let technologyStatusParse = try self.docSupplies!.select("li[class*=technology]")
+                    let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
@@ -597,16 +608,16 @@ class OGame {
             switch response.result {
             case .success(let data):
                 do {
-                    self.docResearch = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let levelsParse = try self.docResearch!.select("span[class=level]").select("[data-value]")
+                    let levelsParse = try page.select("span[class=level]").select("[data-value]")
                     var levels = [Int]()
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
                     print("Levels of researches: \(levels)")
                     
-                    let technologyStatusParse = try self.docResearch!.select("li[class*=technology]")
+                    let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
@@ -643,16 +654,16 @@ class OGame {
             switch response.result {
             case .success(let data):
                 do {
-                    self.docResearch = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let shipsParse = try self.docResearch!.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+                    let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
                     var ships = [Int]()
                     for ship in shipsParse {
                         ships.append(Int(try ship.text())!)
                     }
                     print("Amount of ships: \(ships)")
                     
-                    let technologyStatusParse = try self.docResearch!.select("li[class*=technology]")
+                    let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
@@ -689,16 +700,16 @@ class OGame {
             switch response.result {
             case .success(let data):
                 do {
-                    self.docResearch = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
                     
-                    let defencesParse = try self.docResearch!.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+                    let defencesParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
                     var defences = [Int]()
                     for defence in defencesParse {
                         defences.append(Int(try defence.text())!)
                     }
                     print("Amount of defences: \(defences)")
                     
-                    let technologyStatusParse = try self.docResearch!.select("li[class*=technology]")
+                    let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
@@ -761,7 +772,6 @@ class OGame {
     
     
     // MARK: - BUILD BUILDING/SHIPS
-    // TODO: change int int string to buildings
     func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
         let type = what.0
         let amount = what.1
@@ -817,7 +827,7 @@ class OGame {
     
     
     // MARK: - DO RESEARCH
-    // TODO: Do I need this? Looks like build function about can do it on its own
+    // TODO: Do I need this? Looks like build function can do it on its own
     
     // MARK: - COLLECT RUBBLE FIELD
     

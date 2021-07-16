@@ -14,14 +14,15 @@ struct Celestial {
     let free: Int
     let tempMin: Int
     let tempMax: Int
-    // let coordinates
+    let coordinates: [Int]
     
-    init(planetSize: Int, usedFields: Int, totalFields: Int, tempMin: Int, tempMax: Int) {
+    init(planetSize: Int, usedFields: Int, totalFields: Int, tempMin: Int, tempMax: Int, coordinates: [Int]) {
         self.diameter = planetSize
         self.used = usedFields
         self.total = totalFields
         self.free = total - used
         self.tempMin = tempMin
         self.tempMax = tempMax
+        self.coordinates = coordinates
     }
 }
