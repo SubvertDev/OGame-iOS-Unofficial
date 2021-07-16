@@ -24,10 +24,17 @@ class LoginVC: UIViewController {
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         // TODO: Add check for empty fields
         // TODO: Make a falling list of servers
-        loginButton.isEnabled = false   
+        loginButton.isEnabled = false
         OGame.shared.loginIntoAccount(universe: serverNameTextField.text!,
                                       username: emailTextField.text!,
-                                      password: passwordTextField.text!)
+                                      password: passwordTextField.text!) { errorMessage in
+            if let message = errorMessage {
+                self.loginButton.isEnabled = true
+                let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     @objc func goToSegue() {

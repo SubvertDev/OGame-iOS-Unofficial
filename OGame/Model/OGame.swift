@@ -45,7 +45,8 @@ class OGame {
     
     private init(){}
     
-    func loginIntoAccount(universe: String, username: String, password: String) {
+    // MARK: - ALAMOFIRE SECTION
+    func loginIntoAccount(universe: String, username: String, password: String, completion: @escaping (String?) -> Void) {
         print(#function)
         self.universe = universe
         self.username = username
@@ -54,215 +55,221 @@ class OGame {
         
         print("New OGame object created:\nLogin: \(username)\nUniverse: \(universe)")
         login(attempt: attempt)
-    }
-    
-    // MARK: - ALAMOFIRE SECTION
-    // MARK: - Login
-    private func login(attempt: Int) {
-        print(#function)
-        let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // TODO: Delete this?
         
-        let parameters = LoginData(identity: self.username,
-                                   password: self.password,
-                                   locale: "en_EN",
-                                   gfLang: "en",
-                                   platformGameId: "1dfd8e7e-6e1a-4eb1-8c64-03c3b62efd2f",
-                                   gameEnvironmentId: "0a31d605-ffaf-43e7-aa02-d06df7116fc8",
-                                   autoGameAccountCreation: false)
-        
-        sessionAF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).responseDecodable(of: Login.self) { response in
+        // MARK: - Login
+        func login(attempt: Int) {
+            print(#function)
+            let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // TODO: Delete this?
             
-            let statusCode = response.response!.statusCode
+            let parameters = LoginData(identity: self.username,
+                                       password: self.password,
+                                       locale: "en_EN",
+                                       gfLang: "en",
+                                       platformGameId: "1dfd8e7e-6e1a-4eb1-8c64-03c3b62efd2f",
+                                       gameEnvironmentId: "0a31d605-ffaf-43e7-aa02-d06df7116fc8",
+                                       autoGameAccountCreation: false)
             
-            switch response.result {
-            case .success(let login):
-                print("Login successful, data: \(login)")
-                guard statusCode == 201 else { fatalError("Bad Login, Status Code Is Not 201") }
-                self.token = response.value!.token
-                print("TOKEN IS SET TO \(self.token!)")
-                // headers update?
-                self.configureServer()
+            sessionAF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).responseDecodable(of: Login.self) { response in
                 
-            case .failure(_):
-                print("Status code: \(statusCode)")
-                if statusCode == 409 && attempt < 10 {
-                    //print("all headers: \(response.response?.headers)")
-                    let captchaToken = response.response?.headers["gf-challenge-id"]
-                    //print("gf challenge id: \(captchaToken ?? "error")")
-                    let token = captchaToken!.replacingOccurrences(of: ";https://challenge.gameforge.com", with: "")
-                    print("captcha token: \(token)")
-                    self.solveCaptcha(challenge: token)
-                } else if attempt > 10 {
-                    guard statusCode != 409 else { fatalError("Resolve Captcha, Status Code Is Not 409") }
-                } else {
-                    guard statusCode == 201 else { fatalError("Bad Login, Status Code Is Not 201") }
-                }
-            // TODO: refactor guards above
-            //self.configureServerAF()
-            }
-        }
-    }
-    
-    // MARK: - Solve Captcha
-    private func solveCaptcha(challenge: String) {
-        print(#function)
-        let getHeaders: HTTPHeaders = [
-            "Cookie": "",
-            "Connection": "close"
-        ]
-        sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", headers: getHeaders).response { response in
-            switch response.result {
-            case .success(_):
-                print("success captcha get request")
+                let statusCode = response.response!.statusCode
                 
-                let postHeaders: HTTPHeaders = ["Content-type": "application/json"]
-                let parameters = ["answer": 3]
-                self.sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default, headers: postHeaders).response { response in
-                    switch response.result {
-                    case .success(_):
-                        print("success captcha post request")
-                        self.attempt += 1
-                        self.login(attempt: self.attempt)
-                    case .failure(_):
-                        print("failure captcha post request")
-                        fatalError()
-                    // TODO: handle all errors
+                switch response.result {
+                case .success(let login):
+                    print("Login successful, data: \(login)")
+                    self.token = response.value!.token
+                    print("TOKEN IS SET TO \(self.token!)")
+                    self.attempt = 0
+                    configureServer()
+                    
+                case .failure(_):
+                    print("Status code: \(statusCode)")
+                    if statusCode == 409 && attempt < 10 {
+                        let captchaToken = response.response?.headers["gf-challenge-id"]
+                        let token = captchaToken!.replacingOccurrences(of: ";https://challenge.gameforge.com", with: "")
+                        print("captcha token: \(token)")
+                        solveCaptcha(challenge: token)
+                    } else if attempt > 10 {
+                        guard statusCode != 409 else {
+                            completion("Please, resolve captcha in your browser and then try again!")
+                            return
+                        }
+                    } else {
+                        guard statusCode == 201 else {
+                            completion("Please, check your login data and try again!")
+                            return
+                        }
                     }
+                    completion("Unknown server response error \(statusCode)")
                 }
-            case .failure(_):
-                print("failure captcha get request")
-                fatalError()
             }
         }
-    }
-    
-    // MARK: - Configure Server
-    private func configureServer() {
-        print(#function)
-        sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Server].self) { response in
-            
-            switch response.result {
-            case .success(let servers):
-                for server in servers {
-                    if server.name == self.universe {
-                        self.serverNumber = server.number
-                        print("serverNumber set to \(self.serverNumber!) with no language parameter")
-                        self.configureAccounts()
-                        break
-                    } else if server.name == self.universe && self.language == nil {
-                        self.serverNumber = server.number
-                        print("serverNumber set to \(self.serverNumber!) with language: nil")
-                        self.configureAccounts()
-                        break
+        
+        // MARK: - Solve Captcha
+        func solveCaptcha(challenge: String) {
+            print(#function)
+            let getHeaders: HTTPHeaders = [
+                "Cookie": "",
+                "Connection": "close"
+            ]
+            sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", headers: getHeaders).response { response in
+                
+                switch response.result {
+                case .success(_):
+                    let postHeaders: HTTPHeaders = ["Content-type": "application/json"]
+                    let parameters = ["answer": 3]
+                    self.sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default, headers: postHeaders).response { response in
+                        switch response.result {
+                        case .success(_):
+                            self.attempt += 1
+                            login(attempt: self.attempt)
+                        case .failure(_):
+                            completion("Captcha sending error, please try again!")
+                        }
                     }
+                case .failure(_):
+                    completion("Captcha request error, please try again!")
+
                 }
-                guard self.serverNumber != nil else { fatalError("UNIVESE NOT FOUND! RETURN!") }
-                print("Universe found: \(self.universe)")
-            case .failure(let error):
-                print(error)
-                fatalError()
             }
         }
-    }
-    
-    // MARK: - Configure Accounts
-    private func configureAccounts() {
-        print(#function)
-        let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
-        sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
-            
-            switch response.result {
-            case .success(let accounts):
-                print("Accounts: \(accounts)")
-                for account in accounts {
-                    if account.server.number == self.serverNumber && account.server.language == self.language {
-                        self.serverID = account.id
-                        print("Set serverID to \(account.id)")
-                        self.configureIndex()
-                        break
-                    } else if account.server.number == self.serverNumber && self.language == nil {
-                        self.serverID = account.id
-                        self.language = account.server.language
-                        print("Set serverID to \(self.serverID!) and Language to '\(self.language!)'")
-                        self.configureIndex()
-                        break
+        
+        // MARK: - Configure Server
+        func configureServer() {
+            print(#function)
+            sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Server].self) { response in
+                
+                switch response.result {
+                case .success(let servers):
+                    for server in servers {
+                        if server.name == self.universe {
+                            self.serverNumber = server.number
+                            print("serverNumber set to \(self.serverNumber!) with no language parameter")
+                            configureAccounts()
+                            break
+                        } else if server.name == self.universe && self.language == nil {
+                            self.serverNumber = server.number
+                            print("serverNumber set to \(self.serverNumber!) with language: nil")
+                            configureAccounts()
+                            break
+                        }
                     }
+                    guard self.serverNumber != nil else {
+                        completion("Universe not found, please try again!")
+                        return
+                    }
+                case .failure(_):
+                    completion("Server list request error, please try again!")
                 }
-            case .failure(let error):
-                print(error)
-                fatalError()
             }
         }
-    }
-    
-    // MARK: - Configure Index
-    private func configureIndex() {
-        print(#function)
-        indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
-        let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
-        let parameters: Parameters = [
-            "id": "\(self.serverID!)",
-            "server[language]": "\(self.language!)",
-            "server[number]": "\(self.serverNumber!)",
-            "clickedButton": "account_list"
-        ]
         
-        let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
-        sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).validate().responseDecodable(of: Index.self) { response in
-            print("Login link: \(response.value!.url)")
-            self.loginLink = response.value!.url
-            self.configureIndex2()
+        // MARK: - Configure Accounts
+        func configureAccounts() {
+            print(#function)
+            let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
+            sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
+                
+                switch response.result {
+                case .success(let accounts):
+                    print("Accounts: \(accounts)")
+                    for account in accounts {
+                        if account.server.number == self.serverNumber && account.server.language == self.language {
+                            self.serverID = account.id
+                            print("Set serverID to \(account.id)")
+                            configureIndex()
+                            break
+                        } else if account.server.number == self.serverNumber && self.language == nil {
+                            self.serverID = account.id
+                            self.language = account.server.language
+                            print("Set serverID to \(self.serverID!) and Language to '\(self.language!)'")
+                            configureIndex()
+                            break
+                        }
+                    }
+                case .failure(_):
+                    completion("Unable to configure account, please try again!")
+                }
+            }
         }
-    }
-    // TODO: Do I even need this one?
-    private func configureIndex2() {
-        print(#function)
-        sessionAF.request(loginLink!).validate().response { response in
+        
+        // MARK: - Configure Index
+        func configureIndex() {
+            print(#function)
+            indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
+            let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
+            let parameters: Parameters = [
+                "id": "\(self.serverID!)",
+                "server[language]": "\(self.language!)",
+                "server[number]": "\(self.serverNumber!)",
+                "clickedButton": "account_list"
+            ]
             
-            switch response.result {
-            case .success(let data):
-                self.landingPage = String(data: data!, encoding: .ascii)
-                //print("Landing page html: \(self.landingPage!)")
-                self.configureIndex3()
-            case .failure(let error):
-                print(error)
-                fatalError()
+            let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
+            sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).validate().responseDecodable(of: Index.self) { response in
+                
+                switch response.result {
+                case .success(_):
+                    print("Login link: \(response.value!.url)")
+                    self.loginLink = response.value!.url
+                    configureIndex2()
+                case .failure(_):
+                    completion("Failed configuring authorization page, please try again!")
+                }
             }
         }
-    }
-    private func configureIndex3() {
-        print(#function)
-        let link = "\(indexPHP!)&page=ingame"
-        print("Got ingame page: \(link)")
-        sessionAF.request(link).validate().response { response in
-            
-            switch response.result {
-            case .success(let data):
-                self.landingPage = String(data: data!, encoding: .ascii)
-                //print("Landing page html: \(self.landingPage!)")
-                self.configurePlayer()
-            case .failure(let error):
-                print(error)
-                fatalError()
+        
+        func configureIndex2() {
+            print(#function)
+            sessionAF.request(loginLink!).validate().response { response in
+
+                switch response.result {
+                case .success(let data):
+                    self.landingPage = String(data: data!, encoding: .ascii)
+                    //print("Landing page html: \(self.landingPage!)")
+                    configureIndex3()
+                case .failure(_):
+                    completion("Failed configuring login link, please try again!")
+                }
             }
         }
-    }
-    
-    // MARK: - Configure Player
-    private func configurePlayer() {
-        print(#function)
-        doc = try! SwiftSoup.parse(self.landingPage!)
-        let planetName = try! doc!.select("[name=ogame-planet-name]")
-        let planetID = try! doc!.select("[name=ogame-planet-id]")
         
-        let planetNameContent = try! planetName.get(0).attr("content")
-        let planetIDContent = try! planetID.get(0).attr("content")
+        func configureIndex3() {
+            print(#function)
+            let link = "\(indexPHP!)&page=ingame"
+            print("Got ingame page: \(link)")
+            sessionAF.request(link).validate().response { response in
+                
+                switch response.result {
+                case .success(let data):
+                    self.landingPage = String(data: data!, encoding: .ascii)
+                    //print("Landing page html: \(self.landingPage!)")
+                    configurePlayer()
+                case .failure(_):
+                    completion("Failed configuring ingame page, please try again!")
+                }
+            }
+        }
         
-        self.planet = planetNameContent
-        self.planetID = Int(planetIDContent)
-        //print("Player name (planet): \(player!)")
-        //print("Player id: \(playerID!)")
-        didFullInit = true
+        // MARK: - Configure Player
+        func configurePlayer() {
+            print(#function)
+            do {
+                doc = try SwiftSoup.parse(self.landingPage!)
+                let planetName = try doc!.select("[name=ogame-planet-name]")
+                let planetID = try doc!.select("[name=ogame-planet-id]")
+                
+                let planetNameContent = try planetName.get(0).attr("content")
+                let planetIDContent = try planetID.get(0).attr("content")
+                
+                self.planet = planetNameContent
+                self.planetID = Int(planetIDContent)
+                //print("Player name (planet): \(player!)")
+                //print("Player id: \(playerID!)")
+                didFullInit = true
+            } catch {
+                completion("Can't configure player info, please try again!")
+            }
+        }
     }
     
     
