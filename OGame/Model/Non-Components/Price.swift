@@ -152,7 +152,7 @@ struct Price {
                 return resources()
             }
             
-        case "defences":
+        case "defenses":
             switch technology.id {
             case 401:
                 return multiplyResources(resources: [2000, 0, 0], multiplier: technology.amount)
