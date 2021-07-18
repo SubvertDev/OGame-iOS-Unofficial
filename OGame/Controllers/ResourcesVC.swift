@@ -92,7 +92,6 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         
-        // TODO: How to load tableview without supplies?
         guard let resourceCell = self.resourceCell else { return UITableViewCell() }
         
         cell.setSupply(id: indexPath.row, resourceBuildings: resourceCell.resourceBuildings)

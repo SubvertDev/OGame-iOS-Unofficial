@@ -256,14 +256,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bDR-JO-Yjt" customClass="ResourcesOverview" customModule="OGame" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="390" height="97.666666666666686"/>
+                                <rect key="frame" x="0.0" y="88" width="390" height="78"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="bDR-JO-Yjt" secondAttribute="height" multiplier="4:1" id="Tm2-Bh-4mt"/>
+                                    <constraint firstAttribute="width" secondItem="bDR-JO-Yjt" secondAttribute="height" multiplier="5:1" id="Tm2-Bh-4mt"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="mNW-CE-3kY">
-                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <rect key="frame" x="0.0" y="166" width="390" height="644"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -298,14 +298,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vxB-7U-Q0c" customClass="ResourcesOverview" customModule="OGame" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="390" height="97.666666666666686"/>
+                                <rect key="frame" x="0.0" y="88" width="390" height="78"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="vxB-7U-Q0c" secondAttribute="height" multiplier="4:1" id="mLA-lR-XeW"/>
+                                    <constraint firstAttribute="width" secondItem="vxB-7U-Q0c" secondAttribute="height" multiplier="5:1" id="mLA-lR-XeW"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="B2l-jn-gZ0">
-                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <rect key="frame" x="0.0" y="166" width="390" height="644"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -340,14 +340,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hzO-Yt-x46" customClass="ResourcesOverview" customModule="OGame" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="390" height="97.666666666666686"/>
+                                <rect key="frame" x="0.0" y="88" width="390" height="78"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="hzO-Yt-x46" secondAttribute="height" multiplier="4:1" id="bUf-WV-dkC"/>
+                                    <constraint firstAttribute="width" secondItem="hzO-Yt-x46" secondAttribute="height" multiplier="5:1" id="bUf-WV-dkC"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="fql-yZ-BDf">
-                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <rect key="frame" x="0.0" y="166" width="390" height="644"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -382,22 +382,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b17-ac-P3G" customClass="ResourcesOverview" customModule="OGame" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="390" height="97.666666666666686"/>
+                                <rect key="frame" x="0.0" y="88" width="390" height="78"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="b17-ac-P3G" secondAttribute="height" multiplier="4:1" id="K8p-Bm-Xt9"/>
+                                    <constraint firstAttribute="width" secondItem="b17-ac-P3G" secondAttribute="height" multiplier="5:1" id="K8p-Bm-Xt9"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="4WY-jL-jvM">
-                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <rect key="frame" x="0.0" y="166" width="390" height="644"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                             <view hidden="YES" alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hGZ-Cd-nVo">
-                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <rect key="frame" x="0.0" y="166" width="390" height="644"/>
                                 <color key="backgroundColor" systemColor="systemGray2Color"/>
                             </view>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="zIp-b6-DgP">
-                                <rect key="frame" x="170" y="472.66666666666669" width="50" height="50.000000000000057"/>
+                                <rect key="frame" x="170" y="463" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="EdK-jB-I33"/>
                                     <constraint firstAttribute="height" constant="50" id="fnz-pg-59M"/>
@@ -461,14 +461,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ejj-2M-a7M" customClass="ResourcesOverview" customModule="OGame" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="390" height="97.666666666666686"/>
+                                <rect key="frame" x="0.0" y="88" width="390" height="78"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="ejj-2M-a7M" secondAttribute="height" multiplier="4:1" id="4mf-SB-0Da"/>
+                                    <constraint firstAttribute="width" secondItem="ejj-2M-a7M" secondAttribute="height" multiplier="5:1" id="4mf-SB-0Da"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="88" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ATd-K6-1G0">
-                                <rect key="frame" x="0.0" y="185.66666666666669" width="390" height="624.33333333333326"/>
+                                <rect key="frame" x="0.0" y="166" width="390" height="644"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>

@@ -466,19 +466,42 @@ class OGame {
         }
     }
     
-    // MARK: - GET CELESTIAL COORDINATES
+    // MARK: - GET CELESTIAL COORDINATES -> [Int]
     func getCelestialCoordinates() -> [Int] {
-        // FIXME: Does it work for different planets? I think it isn't
+        // TODO: Check if it works with 2+ planets and moons
         do {
             let page = try SwiftSoup.parse(landingPage!)
-            var rawCoordinates = try page.select("[class*=smallplanet]").get(0).select("[class=planet-koords ]").get(0).text()
-            rawCoordinates.removeFirst()
-            rawCoordinates.removeLast()
-            let coordinates = rawCoordinates.components(separatedBy: ":").compactMap { Int($0) }
-            return coordinates
+            let allCelestials = try page.select("[class*=smallplanet]")
+            
+            let planet = try allCelestials.get(0).select("[class*=planetlink]").get(0)
+            let isPlanetHere = try planet.getElementsByAttributeValueContaining("href", "\(String(planetID!))")
+            
+            let moon = try allCelestials.get(0).select("[class*=moonlink]")
+            let isMoonHere = try planet.getElementsByAttributeValueContaining("href", "\(String(planetID!))")
+            
+            // TODO: Is it even working for moons?
+            for celestial in allCelestials {
+                if !isPlanetHere.isEmpty() {
+                    var coordinates = try celestial.select("[class=planet-koords ]").get(0).text()
+                    coordinates.removeFirst()
+                    coordinates.removeLast()
+                    var arrayOfCoordinates = coordinates.components(separatedBy: ":").compactMap { Int($0) }
+                    arrayOfCoordinates.append(1)
+                    return arrayOfCoordinates
+                }
+                if !moon.isEmpty() && !isMoonHere.isEmpty() {
+                    var coordinates = try celestial.select("[class=planet-koords ]").get(0).text()
+                    coordinates.removeFirst()
+                    coordinates.removeLast()
+                    var arrayOfCoordinates = coordinates.components(separatedBy: ":").compactMap { Int($0) }
+                    arrayOfCoordinates.append(3)
+                    return arrayOfCoordinates
+                }
+            }
         } catch {
-            return [0, 0, 0]
+            return [0, 0, 0, 0]
         }
+        return [0, 0, 0, 0]
     }
         
     // MARK: - GET RESOURCES

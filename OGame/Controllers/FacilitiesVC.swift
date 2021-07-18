@@ -88,7 +88,6 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         
-        // TODO: Can I get rid of these?
         guard let facilityCell = self.facilityCell else { return UITableViewCell() }
         
         cell.setFacility(id: indexPath.row, facilityBuildings: facilityCell.facilityBuildings)
