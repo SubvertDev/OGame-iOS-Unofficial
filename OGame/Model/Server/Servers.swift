@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Server
-struct Server: Codable {
+struct Servers: Codable {
     let language: String
     let number: Int
     let name: String

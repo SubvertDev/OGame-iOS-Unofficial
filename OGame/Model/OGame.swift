@@ -14,28 +14,28 @@ class OGame {
     static let shared = OGame()
     
     var universe: String = ""
-    var username: String = ""
-    var password: String = ""
-    var userAgent: [String: String]?
-    var language: String?
-    var serverNumber: Int?
-    let sessionAF = Session.default
-    var token: String? = nil
+    private var username: String = ""
+    private var password: String = ""
+    private var userAgent: [String: String]?
+    private var language: String?
+    private var serverNumber: Int?
+    private let sessionAF = Session.default
+    private var token: String? = nil
     
-    var attempt: Int = 0
-    var serverID: Int?
-    var tokenBearer: String?
-    var indexPHP: String?
-    var loginLink: String?
+    private var attempt: Int = 0
+    private var serverID: Int?
+    private var tokenBearer: String?
+    private var indexPHP: String?
+    private var loginLink: String?
     
     // These gonna change on planet change
+    private var landingPage: String?
+    private var doc: Document?
     var planet: String?
     var planetID: Int?
-    var landingPage: String?
-    var doc: Document?
     var celestial: Celestial?
     
-    var didFullInit: Bool = false {
+    private var didFullInit: Bool = false {
         didSet {
             NotificationCenter.default.post(name: Notification.Name("didFullInit"), object: nil)
         }
@@ -94,6 +94,7 @@ class OGame {
                     } else {
                         guard statusCode == 201 else {
                             completion("Please, check your login data and try again!")
+                            // TODO: Also called when can't captcha in
                             return
                         }
                     }
@@ -125,7 +126,7 @@ class OGame {
                     }
                 case .failure(_):
                     completion("Captcha request error, please try again!")
-
+                    
                 }
             }
         }
@@ -133,7 +134,7 @@ class OGame {
         // MARK: - Configure Server
         func configureServer() {
             print(#function)
-            sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Server].self) { response in
+            sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Servers].self) { response in
                 
                 switch response.result {
                 case .success(let servers):
@@ -218,7 +219,7 @@ class OGame {
         func configureIndex2() {
             print(#function)
             sessionAF.request(loginLink!).validate().response { response in
-
+                
                 switch response.result {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
@@ -395,10 +396,29 @@ class OGame {
     
     
     // MARK: - GET SERVER INFO
+    func getServerInfo() -> Server {
+        do {
+            let version = try doc!.select("[name=ogame-version]").get(0).attr("content")
+            
+            let universe = Int(try doc!.select("[name=ogame-universe-speed]").get(0).attr("content")) ?? -1
+            let fleet = Int(try doc!.select("[name=ogame-universe-speed-fleet-peaceful]").get(0).attr("content")) ?? -1
+            let speed = Speed(universe: universe, fleet: fleet)
+            
+            let galaxyString = Int(try doc!.select("[name=ogame-donut-galaxy]").get(0).attr("content")) ?? 0
+            let galaxy = galaxyString == 1 ? true : false
+            let systemString = Int(try doc!.select("[name=ogame-donut-system]").get(0).attr("content")) ?? 0
+            let system = systemString == 1 ? true : false
+            let donut = Donut(galaxy: galaxy, system: system)
+            
+            return Server(version: version, speed: speed, donut: donut)
+        } catch {
+            return Server(version: "-1", speed: Speed(universe: -1, fleet: -1), donut: Donut(galaxy: false, system: false))
+        }
+    }
     
     // MARK: - GET CHARACTER CLASS -> String
     func getCharacterClass() -> String {
-        if let character = try? self.doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
+        if let character = try? doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
             return character
         } else {
             return "error"
@@ -435,9 +455,9 @@ class OGame {
                 //print(planetSize, planetUsedFields, planetTotalFields)
                 
                 // FIXME: It's actually three versions? ->
-//                "textContent\[3] = "(.*) \\u00b0C \\u00e0(.*)(.*)\\"
-//                "textContent\[3] = "(.*)\\u00b0C to (.*)\\u00b0C""
-//                "textContent\[3] = "(.*) \\u00b0C (.*) (.*) \\u00b0C""
+                //                "textContent\[3] = "(.*) \\u00b0C \\u00e0(.*)(.*)\\"
+                //                "textContent\[3] = "(.*)\\u00b0C to (.*)\\u00b0C""
+                //                "textContent\[3] = "(.*) \\u00b0C (.*) (.*) \\u00b0C""
                 pattern = #"textContent\[3] = "(.*)\\u00b0C (.*) (.*)""#
                 regex = try! NSRegularExpression(pattern: pattern, options: [])
                 nsString = text as NSString
@@ -503,7 +523,7 @@ class OGame {
         }
         return [0, 0, 0, 0]
     }
-        
+    
     // MARK: - GET RESOURCES
     func getResources(forID: Int, completion: @escaping (Result<Resources, Error>) -> Void) {
         // FIXME: Fix planetID
@@ -767,8 +787,15 @@ class OGame {
     // MARK: - GET ALLY
     
     
-    // MARK: - GET SLOT
-    
+    // MARK: - GET SLOT -> Slot
+    func getSlotCelestial() -> Slot {
+        do {
+            let slots = try doc!.select("[class=textCenter]").get(1).text().components(separatedBy: " ")[0].components(separatedBy: "/").compactMap { Int($0) }
+            return Slot.init(with: slots)
+        } catch {
+            return Slot.init(with: [0, 0])
+        }
+    }
     
     // MARK: - GET FLEET
     
@@ -792,7 +819,7 @@ class OGame {
     
     
     // MARK: - SEND MESSAGE
-    
+    // TODO: Implement later
     
     // MARK: - BUILD BUILDING/SHIPS
     func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, Error>) -> Void) {

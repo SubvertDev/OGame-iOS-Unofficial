@@ -21,6 +21,16 @@ class LoginVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(goToSegue), name: Notification.Name("didFullInit"), object: nil)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         // TODO: Add check for empty fields
         // TODO: Make a falling list of servers
