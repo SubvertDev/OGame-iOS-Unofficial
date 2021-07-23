@@ -336,22 +336,26 @@ class OGame {
     }
     
     
-    // MARK: - RANK -> Int
-    func rank() -> Int {
-        let idBar = try! doc!.select("[id=bar]").get(0)
-        let li = try! idBar.select("li").get(1)
-        let text = try! li.text()
-        
-        let pattern = "\\((.*?)\\)"
-        let regex = try! NSRegularExpression(pattern: pattern, options: [])
-        let nsString = text as NSString
-        let results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
-        var matches = results.map { nsString.substring(with: $0.range)}
-        matches[0].removeFirst()
-        matches[0].removeLast()
-        let rank = matches[0]
-        
-        return Int(rank)!
+    // MARK: - RANK -> String
+    func rank() -> String {
+        do {
+            let idBar = try doc!.select("[id=bar]").get(0)
+            let li = try idBar.select("li").get(1)
+            let text = try li.text()
+            
+            let pattern = "\\((.*?)\\)"
+            let regex = try NSRegularExpression(pattern: pattern, options: [])
+            let nsString = text as NSString
+            let results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
+            var matches = results.map { nsString.substring(with: $0.range)}
+            matches[0].removeFirst()
+            matches[0].removeLast()
+            let rank = matches[0]
+            
+            return rank
+        } catch {
+            return "-1"
+        }
     }
     
     
@@ -395,7 +399,7 @@ class OGame {
     }
     
     
-    // MARK: - GET SERVER INFO
+    // MARK: - GET SERVER INFO -> Server
     func getServerInfo() -> Server {
         do {
             let version = try doc!.select("[name=ogame-version]").get(0).attr("content")
@@ -641,6 +645,7 @@ class OGame {
     
     
     // MARK: - GET MOON FACILITIES
+    // TODO: Get a moon
     
     // MARK: - GET RESEARCH
     func research(forID: Int, completion: @escaping (Result<Researches, Error>) -> Void) {
@@ -733,6 +738,7 @@ class OGame {
             }
         }
     }
+    
     
     // MARK: - GET DEFENCES
     func defences(forID: Int, completion: @escaping (Result<Defences, Error>) -> Void) {
@@ -907,3 +913,41 @@ class OGame {
     // MARK: - LOGOUT
     
 }
+
+// ongoing fleets
+// attacked(@) -> @Bool -> true/false
+// neutral(@) -> @Bool -> true/false
+// friendly(@) -> @Bool -> true/false
+
+// rank() -> String -> 999
+
+// planetIDs() -> [Int] -> [123456, 987654]
+// planetName() -> [String] -> [Homeworld, Colony]
+// idByPlanetName(name) -> Int -> 123456
+
+// getServerInfo() -> Server
+// getServerInfo().version -> String -> "8.1.0"
+// getServerInfo().speed.universe -> Int -> 4
+// getServerInfo().speed.fleet -> Int -> 1
+// getServerInfo().donut.galaxy -> Bool -> true/false
+// getServerInfo().donut.system -> Bool -> true/false
+
+// getCharacterClass() -> String -> "explorer"
+
+// getCelestial(@) -> @Celestial
+// getCelestial(@).diameter -> Int -> 12800
+// getCelestial(@).used -> Int -> 21
+// getCelestial(@).total -> Int -> 180
+// getCelestial(@).free -> Int -> 159
+// getCelestial(@).tempMin -> Int -> 10
+// getCelestial(@).tempMax -> Int -> 50
+// getCelestial(@).coordinates -> [Int] -> [3, 453, 10, 1]
+
+// getCelestialCoordinates() -> [Int] -> [3, 453, 10, 1]
+
+// getSlotCelestial() -> Slot
+// getSlotCelestial().total -> Int -> 180
+// getSlotCelestial().free -> Int -> 21
+// getSlotCelestial().used -> Int -> 159
+
+

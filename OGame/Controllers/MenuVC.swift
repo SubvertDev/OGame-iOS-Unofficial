@@ -34,7 +34,7 @@ class MenuVC: UIViewController {
         
         planetNameLabel.text = OGame.shared.planet
         serverNameLabel.text = OGame.shared.universe
-        rankLabel.text = String(OGame.shared.rank())
+        rankLabel.text = OGame.shared.rank()
     }
 }
 
