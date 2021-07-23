@@ -53,7 +53,6 @@ class OGame {
         self.password = password
         self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
         
-        print("New OGame object created:\nLogin: \(username)\nUniverse: \(universe)")
         login(attempt: attempt)
         
         // MARK: - Login
@@ -81,7 +80,7 @@ class OGame {
                     self.attempt = 0
                     //configureServer()
                     //configureAccounts()
-                    getServersList()
+                    configureServers()
                     
                     
                 case .failure(_):
@@ -137,39 +136,8 @@ class OGame {
         }
         
         
-        // MARK: - Configure Server
-        func configureServer() {
-            print(#function)
-            sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Servers].self) { response in
-                
-                switch response.result {
-                case .success(let servers):
-                    print("servers response: \(servers)")
-                    for server in servers {
-                        if server.name == self.universe {
-                            self.serverNumber = server.number
-                            print("serverNumber set to \(self.serverNumber!) with no language parameter")
-                            configureAccounts()
-                            break
-                        } else if server.name == self.universe && self.language == nil {
-                            self.serverNumber = server.number
-                            print("serverNumber set to \(self.serverNumber!) with language: nil")
-                            configureAccounts()
-                            break
-                        }
-                    }
-                    guard self.serverNumber != nil else {
-                        completion("Universe not found, please try again!")
-                        return
-                    }
-                case .failure(_):
-                    completion("Server list request error, please try again!")
-                }
-            }
-        }
-        
-        // MARK: - Get Servers List
-        func getServersList() {
+        // MARK: - Configure Servers List
+        func configureServers() {
             print(#function)
             sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Servers].self) { response in
                 
@@ -184,6 +152,7 @@ class OGame {
                 }
             }
         }
+        
         
         // MARK: - Configure Accounts
         func configureAccounts() {
