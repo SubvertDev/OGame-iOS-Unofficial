@@ -12,8 +12,8 @@ class LoginVC: UIViewController {
 
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var serverNameTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     
     override func viewDidLoad() {
@@ -35,23 +35,41 @@ class LoginVC: UIViewController {
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        // TODO: Add check for empty fields
-        // TODO: Make a falling list of servers
-        loginButton.isEnabled = false
-        OGame.shared.loginIntoAccount(username: emailTextField.text!,
-                                      password: passwordTextField.text!) { errorMessage in
+        
+        emailTextField.resignFirstResponder()
+        passwordTextField.resignFirstResponder()
+        
+        let username = emailTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
+        let password = passwordTextField.text!
+        
+        let emailPattern = #"^\S+@\S+\.\S+$"#
+        let emailCheck = username
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .range(of: emailPattern, options: .regularExpression)
+        
+        guard emailCheck != nil else { return }
+        guard !password.isEmpty else { return }
+        
+        loginButton.isHidden = true
+        activityIndicator.startAnimating()
+        
+        OGame.shared.loginIntoAccount(username: username,
+                                      password: password) { errorMessage in
             if let message = errorMessage {
                 self.loginButton.isEnabled = true
                 let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
                 self.present(alert, animated: true)
             }
+            self.loginButton.isHidden = false
+            self.activityIndicator.stopAnimating()
         }
-
     }
     
     @objc func goToSegue() {
-        loginButton.isEnabled = true
+        loginButton.isHidden = false
+        activityIndicator.stopAnimating()
+        
         performSegue(withIdentifier: "ShowServerListVC", sender: self)
     }
 }

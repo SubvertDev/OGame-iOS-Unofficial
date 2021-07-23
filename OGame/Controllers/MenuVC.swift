@@ -38,6 +38,7 @@ class MenuVC: UIViewController {
     }
     
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
+        OGame.shared.reset()
         navigationController?.popToRootViewController(animated: true)
     }
 }

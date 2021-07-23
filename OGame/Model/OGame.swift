@@ -927,6 +927,29 @@ class OGame {
     
     // MARK: - LOGOUT
     
+    // MARK: - Reset
+    func reset() {
+        // TODO: Maybe recreate singleton?
+        universe = ""
+        username = ""
+        password = ""
+        userAgent = nil
+        language = nil
+        serverNumber = nil
+        token = nil
+        attempt = 0
+        serverID = nil
+        tokenBearer = nil
+        serversList = nil
+        serversOnAccount = []
+        indexPHP = nil
+        loginLink = nil
+        landingPage = nil
+        doc = nil
+        planet = nil
+        planetID = nil
+        celestial = nil
+    }
 }
 
 // ongoing fleets

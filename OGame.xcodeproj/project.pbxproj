@@ -211,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
+				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
 				B873317426542CB400524FD8 /* OverviewVC.swift */,
 				B8B2972726550E6F00C59CD4 /* ResourcesVC.swift */,
@@ -218,7 +219,6 @@
 				B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */,
 				B8ABC30126641BC10032ADBB /* ShipyardVC.swift */,
 				B8FF0462269E1C69007743B8 /* DefenceVC.swift */,
-				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";

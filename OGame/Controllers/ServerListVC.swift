@@ -13,9 +13,15 @@ class ServerListVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.hidesBackButton = true
         
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    
+    @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
+        OGame.shared.reset()
+        navigationController?.popToRootViewController(animated: true)
     }
 }
 
