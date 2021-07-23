@@ -36,6 +36,10 @@ class MenuVC: UIViewController {
         serverNameLabel.text = OGame.shared.universe
         rankLabel.text = OGame.shared.rank()
     }
+    
+    @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
+        navigationController?.popToRootViewController(animated: true)
+    }
 }
 
 extension MenuVC: UITableViewDelegate, UITableViewDataSource {

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B814BA6626AB0F1B00FF346A /* ServerListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B814BA6526AB0F1B00FF346A /* ServerListVC.swift */; };
+		B814BA6826AB1B0200FF346A /* MyServers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B814BA6726AB1B0200FF346A /* MyServers.swift */; };
 		B83B64042658455C00A75A00 /* Supply+Supplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83B64032658455C00A75A00 /* Supply+Supplies.swift */; };
 		B83B640626585FE500A75A00 /* ResourcesOverview.xib in Resources */ = {isa = PBXBuildFile; fileRef = B83B640526585FE500A75A00 /* ResourcesOverview.xib */; };
 		B83B64082658672500A75A00 /* ResourcesOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83B64072658672500A75A00 /* ResourcesOverview.swift */; };
@@ -54,6 +56,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B814BA6526AB0F1B00FF346A /* ServerListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListVC.swift; sourceTree = "<group>"; };
+		B814BA6726AB1B0200FF346A /* MyServers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyServers.swift; sourceTree = "<group>"; };
 		B83B64032658455C00A75A00 /* Supply+Supplies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supply+Supplies.swift"; sourceTree = "<group>"; };
 		B83B640526585FE500A75A00 /* ResourcesOverview.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ResourcesOverview.xib; sourceTree = "<group>"; };
 		B83B64072658672500A75A00 /* ResourcesOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesOverview.swift; sourceTree = "<group>"; };
@@ -143,9 +147,10 @@
 		B867615B265983D00096BE39 /* Server */ = {
 			isa = PBXGroup;
 			children = (
-				B8B7BC252650579100988758 /* Servers.swift */,
 				B8B7BC2D2650AD5700988758 /* Login.swift */,
 				B84400C326519884001CE771 /* Account.swift */,
+				B8B7BC252650579100988758 /* Servers.swift */,
+				B814BA6726AB1B0200FF346A /* MyServers.swift */,
 			);
 			path = Server;
 			sourceTree = "<group>";
@@ -213,6 +218,7 @@
 				B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */,
 				B8ABC30126641BC10032ADBB /* ShipyardVC.swift */,
 				B8FF0462269E1C69007743B8 /* DefenceVC.swift */,
+				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -362,6 +368,7 @@
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
 				B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */,
 				B8FF0457269DD05F007743B8 /* ShipsCell.swift in Sources */,
+				B814BA6826AB1B0200FF346A /* MyServers.swift in Sources */,
 				B8ABC30226641BC10032ADBB /* ShipyardVC.swift in Sources */,
 				B8B7BC2E2650AD5700988758 /* Login.swift in Sources */,
 				B87331772654366700524FD8 /* Price.swift in Sources */,
@@ -372,6 +379,7 @@
 				B85D7F89265FDDCC00186021 /* Images.swift in Sources */,
 				B8FF0455269DD053007743B8 /* ResearchCell.swift in Sources */,
 				B8E5D993265A8F0E004CF69B /* FacilitiesVC.swift in Sources */,
+				B814BA6626AB0F1B00FF346A /* ServerListVC.swift in Sources */,
 				B86761592659834B0096BE39 /* Buildings.swift in Sources */,
 				B8FF0450269DD01E007743B8 /* ResourceCell.swift in Sources */,
 				B8B2972826550E6F00C59CD4 /* ResourcesVC.swift in Sources */,

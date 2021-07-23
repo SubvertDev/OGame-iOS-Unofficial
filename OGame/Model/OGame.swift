@@ -25,6 +25,8 @@ class OGame {
     private var attempt: Int = 0
     private var serverID: Int?
     private var tokenBearer: String?
+    private var serversList: [Servers]?
+    var serversOnAccount: [MyServers] = []
     private var indexPHP: String?
     private var loginLink: String?
     
@@ -34,19 +36,19 @@ class OGame {
     var planet: String?
     var planetID: Int?
     var celestial: Celestial?
+
     
-    private var didFullInit: Bool = false {
+    private var didInit: Bool = false {
         didSet {
-            NotificationCenter.default.post(name: Notification.Name("didFullInit"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name("didInit"), object: nil)
         }
     }
     
     private init(){}
     
     // MARK: - ALAMOFIRE SECTION
-    func loginIntoAccount(universe: String, username: String, password: String, completion: @escaping (String?) -> Void) {
+    func loginIntoAccount(username: String, password: String, completion: @escaping (String?) -> Void) {
         print(#function)
-        self.universe = universe
         self.username = username
         self.password = password
         self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
@@ -77,7 +79,10 @@ class OGame {
                     self.token = response.value!.token
                     print("TOKEN IS SET TO \(self.token!)")
                     self.attempt = 0
-                    configureServer()
+                    //configureServer()
+                    //configureAccounts()
+                    getServersList()
+                    
                     
                 case .failure(_):
                     print("Status code: \(statusCode)")
@@ -131,6 +136,7 @@ class OGame {
             }
         }
         
+        
         // MARK: - Configure Server
         func configureServer() {
             print(#function)
@@ -138,6 +144,7 @@ class OGame {
                 
                 switch response.result {
                 case .success(let servers):
+                    print("servers response: \(servers)")
                     for server in servers {
                         if server.name == self.universe {
                             self.serverNumber = server.number
@@ -161,6 +168,23 @@ class OGame {
             }
         }
         
+        // MARK: - Get Servers List
+        func getServersList() {
+            print(#function)
+            sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Servers].self) { response in
+                
+                switch response.result {
+                case .success(let servers):
+                    print("servers response: \(servers)")
+                    self.serversList = servers
+                    configureAccounts()
+                    
+                case .failure(_):
+                    completion("Servers list request error, please try again!")
+                }
+            }
+        }
+        
         // MARK: - Configure Accounts
         func configureAccounts() {
             print(#function)
@@ -171,24 +195,41 @@ class OGame {
                 case .success(let accounts):
                     print("Accounts: \(accounts)")
                     for account in accounts {
-                        if account.server.number == self.serverNumber && account.server.language == self.language {
-                            self.serverID = account.id
-                            print("Set serverID to \(account.id)")
-                            configureIndex()
-                            break
-                        } else if account.server.number == self.serverNumber && self.language == nil {
-                            self.serverID = account.id
-                            self.language = account.server.language
-                            print("Set serverID to \(self.serverID!) and Language to '\(self.language!)'")
-                            configureIndex()
-                            break
+                        for server in self.serversList! {
+                            if account.server.number == server.number && account.server.language == server.language {
+                                self.serversOnAccount.append(
+                                    MyServers(serverName: server.name,
+                                              accountName: account.name,
+                                              number: server.number,
+                                              language: server.language,
+                                              serverID: account.id))
+                            }
                         }
                     }
+                    guard !self.serversOnAccount.isEmpty else {
+                        completion("Unable to get any active servers on account, please try again!")
+                        return
+                    }
+                    print("ive got servers, yahoo! \(self.serversOnAccount)")
+                    self.didInit = true
+                // TODO: Add accounts failure check?
+                
                 case .failure(_):
                     completion("Unable to configure account, please try again!")
                 }
             }
         }
+    }
+    
+    
+    func loginIntoSever(with serverInfo: MyServers, completion: @escaping (Result<Bool, NSError>) -> Void) {
+        print(#function)
+        serverID = serverInfo.serverID
+        language = serverInfo.language
+        serverNumber = serverInfo.number
+        universe = serverInfo.serverName
+        
+        configureIndex()
         
         // MARK: - Configure Index
         func configureIndex() {
@@ -210,8 +251,9 @@ class OGame {
                     print("Login link: \(response.value!.url)")
                     self.loginLink = response.value!.url
                     configureIndex2()
+                    
                 case .failure(_):
-                    completion("Failed configuring authorization page, please try again!")
+                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed configuring authorization page, please try again!"])))
                 }
             }
         }
@@ -224,8 +266,9 @@ class OGame {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
                     configureIndex3()
+                    
                 case .failure(_):
-                    completion("Failed configuring login link, please try again!")
+                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed configuring login link, please try again!"])))
                 }
             }
         }
@@ -240,8 +283,9 @@ class OGame {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
                     configurePlayer()
+                    
                 case .failure(_):
-                    completion("Failed configuring ingame page, please try again!")
+                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed configuring ingame page, please try again!"])))
                 }
             }
         }
@@ -261,9 +305,11 @@ class OGame {
                 self.planetID = Int(planetIDContent)
                 //print("Player name (planet): \(player!)")
                 //print("Player id: \(playerID!)")
-                didFullInit = true
+                
+                completion(.success(true))
+                
             } catch {
-                completion("Can't configure player info, please try again!")
+                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Can't configure player info, please try again!"])))
             }
         }
     }

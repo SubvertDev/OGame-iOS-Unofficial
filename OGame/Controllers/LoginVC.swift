@@ -18,7 +18,7 @@ class LoginVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(goToSegue), name: Notification.Name("didFullInit"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(goToSegue), name: Notification.Name("didInit"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,8 +35,7 @@ class LoginVC: UIViewController {
         // TODO: Add check for empty fields
         // TODO: Make a falling list of servers
         loginButton.isEnabled = false
-        OGame.shared.loginIntoAccount(universe: serverNameTextField.text!,
-                                      username: emailTextField.text!,
+        OGame.shared.loginIntoAccount(username: emailTextField.text!,
                                       password: passwordTextField.text!) { errorMessage in
             if let message = errorMessage {
                 self.loginButton.isEnabled = true
@@ -45,11 +44,12 @@ class LoginVC: UIViewController {
                 self.present(alert, animated: true)
             }
         }
+
     }
     
     @objc func goToSegue() {
         loginButton.isEnabled = true
-        performSegue(withIdentifier: "ShowMenuVC", sender: self)
+        performSegue(withIdentifier: "ShowServerListVC", sender: self)
     }
 }
 
