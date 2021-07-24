@@ -36,18 +36,13 @@ class OGame {
     var planet: String?
     var planetID: Int?
     var celestial: Celestial?
-
     
-    private var didInit: Bool = false {
-        didSet {
-            NotificationCenter.default.post(name: Notification.Name("didInit"), object: nil)
-        }
-    }
     
     private init(){}
     
+    
     // MARK: - ALAMOFIRE SECTION
-    func loginIntoAccount(username: String, password: String, completion: @escaping (String?) -> Void) {
+    func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, CustomError>) -> Void) {
         print(#function)
         self.username = username
         self.password = password
@@ -78,10 +73,7 @@ class OGame {
                     self.token = response.value!.token
                     print("TOKEN IS SET TO \(self.token!)")
                     self.attempt = 0
-                    //configureServer()
-                    //configureAccounts()
                     configureServers()
-                    
                     
                 case .failure(_):
                     print("Status code: \(statusCode)")
@@ -92,12 +84,12 @@ class OGame {
                         solveCaptcha(challenge: token)
                     } else if attempt > 10 {
                         guard statusCode != 409 else {
-                            completion("Please, resolve captcha in your browser and then try again!")
+                            completion(.failure(.message("Please, resolve captcha in your browser and then try again!")))
                             return
                         }
                     } else {
                         guard statusCode == 201 else {
-                            completion("Please, check your login data and try again!")
+                            completion(.failure(.message("Please, check your login data and try again!")))
                             // TODO: Also called when can't captcha in
                             return
                         }
@@ -125,12 +117,11 @@ class OGame {
                             self.attempt += 1
                             login(attempt: self.attempt)
                         case .failure(_):
-                            completion("Captcha sending error, please try again!")
+                            completion(.failure(.message("Captcha sending error, please try again!")))
                         }
                     }
                 case .failure(_):
-                    completion("Captcha request error, please try again!")
-                    
+                    completion(.failure(.message("Captcha request error, please try again!")))
                 }
             }
         }
@@ -148,7 +139,7 @@ class OGame {
                     configureAccounts()
                     
                 case .failure(_):
-                    completion("Servers list request error, please try again!")
+                    completion(.failure(.message("Servers list request error, please try again!")))
                 }
             }
         }
@@ -176,21 +167,21 @@ class OGame {
                         }
                     }
                     guard !self.serversOnAccount.isEmpty else {
-                        completion("Unable to get any active servers on account, please try again!")
+                        completion(.failure(.message("Unable to get any active servers on account, please try again!")))
                         return
                     }
-                    print("ive got servers, yahoo! \(self.serversOnAccount)")
-                    self.didInit = true
                 // TODO: Add accounts failure check?
+                    completion(.success(true))
                 
                 case .failure(_):
-                    completion("Unable to configure account, please try again!")
+                    completion(.failure(.message("Unable to configure account, please try again!")))
                 }
             }
         }
     }
     
     
+    // MARK: - Login Into Server
     func loginIntoSever(with serverInfo: MyServers, completion: @escaping (Result<Bool, NSError>) -> Void) {
         print(#function)
         serverID = serverInfo.serverID
@@ -989,3 +980,13 @@ class OGame {
 // getSlotCelestial().used -> Int -> 159
 
 
+enum CustomError: Error, CustomStringConvertible {
+    case message(String)
+    
+    var description: String {
+        switch self {
+        case .message(let message):
+            return NSLocalizedString(message, comment: "")
+        }
+    }
+}
