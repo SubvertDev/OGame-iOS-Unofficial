@@ -14,6 +14,9 @@ class LoginVC: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var saveSwitch: UISwitch!
+    
+    let defaults = UserDefaults.standard
     
     
     override func viewDidLoad() {
@@ -21,6 +24,12 @@ class LoginVC: UIViewController {
         
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tap)
+        
+        if defaults.object(forKey: "username") != nil {
+            emailTextField.text = defaults.string(forKey: "username")
+            passwordTextField.text = defaults.string(forKey: "password")
+            saveSwitch.setOn(true, animated: false)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -34,6 +43,8 @@ class LoginVC: UIViewController {
     }
     
     @IBAction func loginButtonPressed(_ sender: UIButton) {
+        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
         emailTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
@@ -56,13 +67,17 @@ class LoginVC: UIViewController {
                                       password: password) { result in
             switch result {
             case .success(_):
-                print("success")
                 self.loginButton.isHidden = false
                 self.activityIndicator.stopAnimating()
+                
+                if self.saveSwitch.isOn {
+                    self.defaults.set(username, forKey: "username")
+                    self.defaults.set(password, forKey: "password")
+                }
+                
                 self.performSegue(withIdentifier: "ShowServerListVC", sender: self)
                 
             case .failure(let error):
-                print("error")
                 self.loginButton.isEnabled = true
                 let alert = UIAlertController(title: "Error", message: error.description, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
