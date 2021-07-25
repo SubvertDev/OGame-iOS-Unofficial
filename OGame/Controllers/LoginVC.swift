@@ -15,12 +15,18 @@ class LoginVC: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var saveSwitch: UISwitch!
+    @IBOutlet weak var formView: UIView!
     
     let defaults = UserDefaults.standard
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        formView.layer.borderWidth = 2
+        formView.layer.borderColor = UIColor.label.cgColor
+        formView.layer.cornerRadius = 10
+        formView.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.65)
         
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tap)
@@ -87,6 +93,11 @@ class LoginVC: UIViewController {
             self.loginButton.isHidden = false
             self.activityIndicator.stopAnimating()
         }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        formView.layer.borderColor = UIColor.label.cgColor
     }
 }
 
