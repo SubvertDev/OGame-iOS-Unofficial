@@ -8,11 +8,11 @@
 import UIKit
 
 struct FacilityCell {
-    
+
     var facilityBuildings: BuildingsData
-    
+
     init(with facilities: Facilities) {
-        
+
         let roboticsFactory = (name: "Robotics Factory",
                                metal: Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[0],
                                crystal: Price().get(technology: Buildings().roboticsFactory, level: facilities.roboticsFactory.level)[1],
@@ -23,7 +23,7 @@ struct FacilityCell {
                                buildingsID: 14,
                                level: facilities.roboticsFactory.level,
                                condition: facilities.roboticsFactory.condition)
-        
+
         let shipyard = (name: "Shipyard",
                         metal: Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[0],
                         crystal: Price().get(technology: Buildings().shipyard, level: facilities.shipyard.level)[1],
@@ -34,7 +34,7 @@ struct FacilityCell {
                         buildingsID: 21,
                         level: facilities.shipyard.level,
                         condition: facilities.shipyard.condition)
-        
+
         let researchLaboratory = (name: "Research Laboratory",
                                   metal: Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[0],
                                   crystal: Price().get(technology: Buildings().researchLaboratory, level: facilities.researchLaboratory.level)[1],
@@ -45,7 +45,7 @@ struct FacilityCell {
                                   buildingsID: 31,
                                   level: facilities.researchLaboratory.level,
                                   condition: facilities.researchLaboratory.condition)
-        
+
         let allianceDepot = (name: "Alliance Depot",
                              metal: Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[0],
                              crystal: Price().get(technology: Buildings().allianceDepot, level: facilities.allianceDepot.level)[1],
@@ -56,7 +56,7 @@ struct FacilityCell {
                              buildingsID: 34,
                              level: facilities.allianceDepot.level,
                              condition: facilities.allianceDepot.condition)
-        
+
         let missileSilo = (name: "Missile Silo",
                            metal: Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[0],
                            crystal: Price().get(technology: Buildings().missileSilo, level: facilities.missileSilo.level)[1],
@@ -67,7 +67,7 @@ struct FacilityCell {
                            buildingsID: 44,
                            level: facilities.missileSilo.level,
                            condition: facilities.missileSilo.condition)
-        
+
         let naniteFactory = (name: "Nanite Factory",
                              metal: Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[0],
                              crystal: Price().get(technology: Buildings().naniteFactory, level: facilities.naniteFactory.level)[1],
@@ -78,7 +78,7 @@ struct FacilityCell {
                              buildingsID: 15,
                              level: facilities.naniteFactory.level,
                              condition: facilities.naniteFactory.condition)
-        
+
         let terraformer = (name: "Terraformer",
                            metal: Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[0],
                            crystal: Price().get(technology: Buildings().terraformer, level: facilities.terraformer.level)[1],
@@ -89,7 +89,7 @@ struct FacilityCell {
                            buildingsID: 33,
                            level: facilities.terraformer.level,
                            condition: facilities.terraformer.condition)
-        
+
         let repairDock = (name: "Repair Dock",
                           metal: Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[0],
                           crystal: Price().get(technology: Buildings().repairDock, level: facilities.repairDock.level)[1],
@@ -100,11 +100,18 @@ struct FacilityCell {
                           buildingsID: 36,
                           level: facilities.repairDock.level,
                           condition: facilities.repairDock.condition)
-        
+
         // TODO: Implement moonBase
         // TODO: Implement sensorPhalanx
         // TODO: Implement jumpGate
-        
-        facilityBuildings = [roboticsFactory, shipyard, researchLaboratory, allianceDepot, missileSilo, naniteFactory, terraformer, repairDock]
+
+        facilityBuildings = [roboticsFactory,
+                             shipyard,
+                             researchLaboratory,
+                             allianceDepot,
+                             missileSilo,
+                             naniteFactory,
+                             terraformer,
+                             repairDock]
     }
 }

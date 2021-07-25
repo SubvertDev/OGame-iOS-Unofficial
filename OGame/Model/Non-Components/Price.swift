@@ -16,11 +16,11 @@ struct Price {
             }
             return result
         }
-        
+
         func resources(metal: Double = 0.0, crystal: Double = 0.0, deuterium: Double = 0.0) -> [Int] {
             return [Int(metal), Int(crystal), Int(deuterium)]
         }
-        
+
         switch technology.component {
         case "supplies":
             switch technology.id {
@@ -47,7 +47,7 @@ struct Price {
             default:
                 return resources()
             }
-            
+
         case "facilities":
             switch technology.id {
             case 14:
@@ -75,7 +75,7 @@ struct Price {
             default:
                 return resources()
             }
-            
+
         case "research":
             switch technology.id {
             case 113:
@@ -99,7 +99,7 @@ struct Price {
             case 108:
                 return resources(crystal: 400 * pow(2, Double(level)), deuterium: 600 * pow(2, Double(level)))
             case 124:
-                return resources(metal: roundToNearest(4000 * pow(1.75, Double(level)), 100), crystal: roundToNearest(8000 * pow(1.75, Double(level)), 100) , deuterium: roundToNearest(4000 * pow(1.75, Double(level)), 100))
+                return resources(metal: roundToNearest(4000 * pow(1.75, Double(level)), 100), crystal: roundToNearest(8000 * pow(1.75, Double(level)), 100), deuterium: roundToNearest(4000 * pow(1.75, Double(level)), 100))
             case 123:
                 return resources(metal: 240000 * pow(2, Double(level)), crystal: 400000 * pow(2, Double(level)), deuterium: 160000 * pow(2, Double(level)))
             case 109:
@@ -111,7 +111,7 @@ struct Price {
             default:
                 return resources()
             }
-            
+
         case "shipyard":
             switch technology.id {
             case 204:
@@ -151,7 +151,7 @@ struct Price {
             default:
                 return resources()
             }
-            
+
         case "defenses":
             switch technology.id {
             case 401:
@@ -177,7 +177,7 @@ struct Price {
             default:
                 return resources()
             }
-            
+
         default:
             return resources()
         }

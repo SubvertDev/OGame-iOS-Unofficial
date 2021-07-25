@@ -8,7 +8,6 @@
 import Foundation
 
 struct Buildings {
-    
     let metalMine = (1, 1, "supplies")
     let crystalMine = (2, 1, "supplies")
     let deuteriumMine = (3, 1, "supplies")
@@ -19,11 +18,11 @@ struct Buildings {
     let metalStorage = (22, 1, "supplies")
     let crystalStorage = (23, 1, "supplies")
     let deuteriumStorage = (24, 1, "supplies")
-    
+
     static func isSupplies(_ supplies: (Int, Int, String)) -> Bool {
         return supplies.2 == "supplies" ? true : false
     }
-    
+
     let roboticsFactory = (14, 1, "facilities")
     let shipyard = (21, 1, "facilities")
     let researchLaboratory = (31, 1, "facilities")
@@ -35,11 +34,11 @@ struct Buildings {
     let moonBase = (41, 1, "facilities")
     let sensorPhalanx = (42, 1, "facilities")
     let jumpGate = (43, 1, "facilities")
-    
+
     static func isFacilities(_ facilities: (Int, Int, String)) -> Bool {
         return facilities.2 == "facilities" ? true : false
     }
-    
+
     func rocketLauncher(amount: Int = 1) -> (Int, Int, String) { return (401, amount, "defenses") }
     func lightLaser(amount: Int = 1) -> (Int, Int, String) { return (402, amount, "defenses") }
     func heavyLaser(amount: Int = 1) -> (Int, Int, String) { return (403, amount, "defenses") }
@@ -50,7 +49,7 @@ struct Buildings {
     func largeShieldDome(amount: Int = 1) -> (Int, Int, String) { return (408, amount, "defenses") }
     func antiBallisticMissiles(amount: Int = 1) -> (Int, Int, String) { return (502, amount, "defenses") }
     func interplanetaryMissiles(amount: Int = 1) -> (Int, Int, String) { return (503, amount, "defenses") }
-    
+
     static func isDefenses(_ defenses: (Int, Int, String)) -> Bool {
         return defenses.2 == "defenses" ? true : false
     }

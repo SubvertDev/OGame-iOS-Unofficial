@@ -8,9 +8,7 @@
 import UIKit
 
 struct Images {
-    
     struct Resources {
-        
         struct Large {
             static let metalMine = UIImage(named: "metalMine")
             static let crystalMine = UIImage(named: "crystalMine")
@@ -21,7 +19,6 @@ struct Images {
             static let crystalStorage = UIImage(named: "crystalStorage")
             static let deuteriumStorage = UIImage(named: "deuteriumStorage")
         }
-        
         struct SmallAvailable {
             static let metalMine = UIImage(named: "metalMineAvailable")
             static let crystalMine = UIImage(named: "crystalMineAvailable")
@@ -32,7 +29,6 @@ struct Images {
             static let crystalStorage = UIImage(named: "crystalStorageAvailable")
             static let deuteriumStorage = UIImage(named: "deuteriumStorageAvailable")
         }
-        
         struct SmallUnavailable {
             static let metalMine = UIImage(named: "metalMineUnavailable")
             static let crystalMine = UIImage(named: "crystalMineUnavailable")
@@ -43,7 +39,6 @@ struct Images {
             static let crystalStorage = UIImage(named: "crystalStorageUnavailable")
             static let deuteriumStorage = UIImage(named: "deuteriumStorageUnavailable")
         }
-        
         struct SmallDisabled {
             static let metalMine = UIImage(named: "metalMineDisabled")
             static let crystalMine = UIImage(named: "crystalMineDisabled")
@@ -55,10 +50,8 @@ struct Images {
             static let deuteriumStorage = UIImage(named: "deuteriumStorageDisabled")
         }
     }
-    
-    
+
     struct Facilities {
-        
         struct Large {
             static let roboticsFactory = UIImage(named: "roboticsFactory")
             static let shipyard = UIImage(named: "shipyard")
@@ -72,7 +65,6 @@ struct Images {
             static let sensorPhalanx = UIImage(named: "sensorPhalanx")
             static let jumpGate = UIImage(named: "jumpGate")
         }
-        
         struct SmallAvailable {
             static let roboticsFactory = UIImage(named: "roboticsFactoryAvailable")
             static let shipyard = UIImage(named: "shipyardAvailable")
@@ -86,7 +78,6 @@ struct Images {
             static let sensorPhalanx = UIImage(named: "sensorPhalanxAvailable")
             static let jumpGate = UIImage(named: "jumpGateAvailable")
         }
-        
         struct SmallUnavailable {
             static let roboticsFactory = UIImage(named: "roboticsFactoryUnavailable")
             static let shipyard = UIImage(named: "shipyardUnavailable")
@@ -100,7 +91,6 @@ struct Images {
             static let sensorPhalanx = UIImage(named: "sensorPhalanxUnavailable")
             static let jumpGate = UIImage(named: "jumpGateUnavailable")
         }
-        
         struct SmallDisabled {
             static let roboticsFactory = UIImage(named: "roboticsFactoryDisabled")
             static let shipyard = UIImage(named: "shipyardDisabled")
@@ -115,10 +105,8 @@ struct Images {
             static let jumpGate = UIImage(named: "jumpGateDisabled")
         }
     }
-    
-    
+
     struct Researches {
-        
         struct Large {
             static let energy = UIImage(named: "energy")
             static let laser = UIImage(named: "laser")
@@ -137,7 +125,6 @@ struct Images {
             static let shielding = UIImage(named: "shielding")
             static let armor = UIImage(named: "armor")
         }
-        
         struct SmallAvailable {
             static let energy = UIImage(named: "energyAvailable")
             static let laser = UIImage(named: "laserAvailable")
@@ -156,7 +143,6 @@ struct Images {
             static let shielding = UIImage(named: "shieldingAvailable")
             static let armor = UIImage(named: "armorAvailable")
         }
-        
         struct SmallUnavailable {
             static let energy = UIImage(named: "energyUnavailable")
             static let laser = UIImage(named: "laserUnavailable")
@@ -175,7 +161,6 @@ struct Images {
             static let shielding = UIImage(named: "shieldingUnavailable")
             static let armor = UIImage(named: "armorUnavailable")
         }
-        
         struct SmallDisabled {
             static let energy = UIImage(named: "energyDisabled")
             static let laser = UIImage(named: "laserDisabled")
@@ -195,10 +180,8 @@ struct Images {
             static let armor = UIImage(named: "armorDisabled")
         }
     }
-    
-    
+
     struct Ships {
-        
         struct Large {
             static let lightFighter = UIImage(named: "lightFighter")
             static let heavyFighter = UIImage(named: "heavyFighter")
@@ -218,7 +201,6 @@ struct Images {
             static let solarSatellite = UIImage(named: "solarSatellite")
             static let crawler = UIImage(named: "crawler")
         }
-        
         struct SmallAvailable {
             static let lightFighter = UIImage(named: "lightFighterAvailable")
             static let heavyFighter = UIImage(named: "heavyFighterAvailable")
@@ -238,7 +220,6 @@ struct Images {
             static let solarSatellite = UIImage(named: "solarSatelliteAvailable")
             static let crawler = UIImage(named: "crawlerAvailable")
         }
-        
         struct SmallUnavailable {
             static let lightFighter = UIImage(named: "lightFighterUnavailable")
             static let heavyFighter = UIImage(named: "heavyFighterUnavailable")
@@ -258,7 +239,6 @@ struct Images {
             static let solarSatellite = UIImage(named: "solarSatelliteUnavailable")
             static let crawler = UIImage(named: "crawlerUnavailable")
         }
-        
         struct SmallDisabled {
             static let lightFighter = UIImage(named: "lightFighterDisabled")
             static let heavyFighter = UIImage(named: "heavyFighterDisabled")
@@ -279,9 +259,8 @@ struct Images {
             static let crawler = UIImage(named: "crawlerDisabled")
         }
     }
-    
+
     struct Defences {
-        
         struct Large {
             static let rocketLauncher = UIImage(named: "rocketLauncher")
             static let lightLaser = UIImage(named: "lightLaser")
@@ -294,7 +273,6 @@ struct Images {
             static let antiBallisticMissiles = UIImage(named: "antiBallisticMissiles")
             static let interplanetaryMissiles = UIImage(named: "interplanetaryMissiles")
         }
-        
         struct SmallAvailable {
             static let rocketLauncher = UIImage(named: "rocketLauncherAvailable")
             static let lightLaser = UIImage(named: "lightLaserAvailable")
@@ -307,7 +285,6 @@ struct Images {
             static let antiBallisticMissiles = UIImage(named: "antiBallisticMissilesAvailable")
             static let interplanetaryMissiles = UIImage(named: "interplanetaryMissilesAvailable")
         }
-        
         struct SmallUnavailable {
             static let rocketLauncher = UIImage(named: "rocketLauncherUnavailable")
             static let lightLaser = UIImage(named: "lightLaserUnavailable")
@@ -320,7 +297,6 @@ struct Images {
             static let antiBallisticMissiles = UIImage(named: "antiBallisticMissilesUnavailable")
             static let interplanetaryMissiles = UIImage(named: "interplanetaryMissilesUnavailable")
         }
-        
         struct SmallDisabled {
             static let rocketLauncher = UIImage(named: "rocketLauncherDisabled")
             static let lightLaser = UIImage(named: "lightLaserDisabled")

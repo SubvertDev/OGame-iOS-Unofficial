@@ -8,11 +8,10 @@
 import Foundation
 
 struct Ship {
-    
     // TODO: Merge Ship and Ships?
     let amount: Int
     var condition: String
-    
+
     init(_ amount: [Int], _ status: [String], _ type: Int) {
         self.amount = amount[type]
         self.condition = status[type]
@@ -37,9 +36,9 @@ struct Ships {
     let espionageProbe: Ship
     let solarSatellite: Ship
     let crawler: Ship // TODO: Fix crawler moon stuff
-    
+
     let allShips: [Ship]
-    
+
     init(_ ships: [Int], _ status: [String]) {
         self.lightFighter = Ship(ships, status, 0)
         self.heavyFighter = Ship(ships, status, 1)
@@ -58,7 +57,7 @@ struct Ships {
         self.espionageProbe = Ship(ships, status, 14)
         self.solarSatellite = Ship(ships, status, 15)
         self.crawler = Ship(ships, status, 16)
-        
+
         self.allShips = [
             self.lightFighter,
             self.heavyFighter,

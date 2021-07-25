@@ -8,7 +8,6 @@
 import Foundation
 
 struct Researchings {
-    
     let energy = (113, 1, "research")
     let laser = (120, 1, "research")
     let ion = (121, 1, "research")
@@ -25,9 +24,8 @@ struct Researchings {
     let weapons = (109, 1, "research")
     let shielding = (110, 1, "research")
     let armor = (111, 1, "research")
-    
+
     static func isResearch(_ researches: (Int, Int, String)) -> Bool {
         return researches.2 == "research" ? true : false
     }
-    
 }

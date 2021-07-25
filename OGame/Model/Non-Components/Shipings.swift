@@ -8,7 +8,6 @@
 import Foundation
 
 struct Shipings {
-    
     func lightFighter(_ amount: Int = 1) -> (Int, Int, String) { return (204, amount, "shipyard") }
     func heavyFighter(_ amount: Int = 1) -> (Int, Int, String) { return (205, amount, "shipyard") }
     func cruiser(_ amount: Int = 1) -> (Int, Int, String) { return (206, amount, "shipyard") }
@@ -26,16 +25,16 @@ struct Shipings {
     func espionageProbe(_ amount: Int = 1) -> (Int, Int, String) { return (210, amount, "shipyard") }
     func solarSatellite(_ amount: Int = 1) -> (Int, Int, String) { return (212, amount, "shipyard") }
     func crawler(_ amount: Int = 1) -> (Int, Int, String) { return (217, amount, "shipyard") }
-    
+
     static func isShip(_ ships: (Int, Int, String)) -> Bool {
         return ships.2 == "shipyard" ? true : false
     }
-    
+
     // TODO: Do I need these down below?
-    
+
     // ship name
-    
+
     // ship amount
-    
+
     // ship id
 }

@@ -8,7 +8,6 @@
 import Foundation
 
 struct Facility {
-    
     // TODO: Can I merge facility and facilites?
     let level: Int
     let condition: String
@@ -20,7 +19,7 @@ struct Facility {
 }
 
 struct Facilities {
-    
+
     let roboticsFactory: Facility
     let shipyard: Facility
     let researchLaboratory: Facility
@@ -29,9 +28,9 @@ struct Facilities {
     let naniteFactory: Facility
     let terraformer: Facility
     let repairDock: Facility
-    
+
     let allFacilities: [Facility]
-    
+
     init(_ levels: [Int], _ status: [String]) {
         self.roboticsFactory = Facility(levels, status, 0)
         self.shipyard = Facility(levels, status, 1)
@@ -41,7 +40,7 @@ struct Facilities {
         self.naniteFactory = Facility(levels, status, 5)
         self.terraformer = Facility(levels, status, 6)
         self.repairDock = Facility(levels, status, 7)
-        
+
         self.allFacilities = [
             self.roboticsFactory,
             self.shipyard,

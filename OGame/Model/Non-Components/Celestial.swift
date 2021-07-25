@@ -15,7 +15,7 @@ struct Celestial {
     let tempMin: Int
     let tempMax: Int
     let coordinates: [Int]
-    
+
     init(planetSize: Int, usedFields: Int, totalFields: Int, tempMin: Int, tempMax: Int, coordinates: [Int]) {
         self.diameter = planetSize
         self.used = usedFields

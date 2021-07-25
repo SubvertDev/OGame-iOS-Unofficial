@@ -16,21 +16,19 @@ class DefenceVC: UIViewController {
     var defencesCell: DefenceCell?
     var timer: Timer?
     let refreshControl = UIRefreshControl()
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
-        
+
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
-        
+
         refresh()
     }
-    
-    
+
     // MARK: - REFRESH DATA ON SHIPYARD VC
     func refresh() {
         OGame.shared.getResources(forID: 0) { result in
@@ -40,12 +38,12 @@ class DefenceVC: UIViewController {
                                            crystal: resources.crystal,
                                            deuterium: resources.deuterium,
                                            energy: resources.energy)
-                
+
                 for day in resources.dayProduction {
                     let dayDouble = Double(day)
                     self.prodPerSecond.append(dayDouble / 3600)
                 }
-                
+
                 self.timer?.invalidate()
                 self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { _ in
                     self.resourcesOverview.update(metal: self.prodPerSecond[0],
@@ -57,7 +55,7 @@ class DefenceVC: UIViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
         }
-        
+
         OGame.shared.defences(forID: 0) { result in
             switch result {
             case .success(let defences):
@@ -71,35 +69,33 @@ class DefenceVC: UIViewController {
             }
         }
     }
-    
+
     @objc func refreshTableView() {
         refresh()
     }
 }
 
-
 extension DefenceVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 10
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
+
+        guard let defencesCell = self.defencesCell else { return UITableViewCell() }
+
         cell.delegate = self
         cell.amountTextField.delegate = self
-        
-        guard let defencesCell = self.defencesCell else { return UITableViewCell() }
-        
         cell.setDefence(id: indexPath.row, defenceTechnologies: defencesCell.defenceTechnologies)
-        
+
         return cell // FIXME: text field is not properly reused
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-
 
 extension DefenceVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
@@ -109,7 +105,7 @@ extension DefenceVC: BuildingCellDelegate {
         } else {
             typeToBuild = (type.0, Int((cell.amountTextField.text)!)!, type.2)
         }
-        
+
         OGame.shared.build(what: typeToBuild, id: 0) { result in
             switch result {
             case .success(_):

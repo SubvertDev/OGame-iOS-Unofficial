@@ -8,11 +8,10 @@
 import Foundation
 
 struct Research {
-    
     // TODO: Can I merge research and researches?
     let level: Int
     let condition: String
-    
+
     init(_ levels: [Int], _ status: [String], _ type: Int) {
         self.level = levels[type]
         self.condition = status[type]
@@ -20,7 +19,6 @@ struct Research {
 }
 
 struct Researches {
-    
     let energy: Research
     let laser: Research
     let ion: Research
@@ -37,9 +35,9 @@ struct Researches {
     let weapons: Research
     let shielding: Research
     let armor: Research
-    
+
     let allResearches: [Research]
-    
+
     init(_ levels: [Int], _ status: [String]) {
         self.energy = Research(levels, status, 0)
         self.laser = Research(levels, status, 1)
@@ -57,7 +55,7 @@ struct Researches {
         self.weapons = Research(levels, status, 13)
         self.shielding = Research(levels, status, 14)
         self.armor = Research(levels, status, 15)
-        
+
         self.allResearches = [
             self.energy,
             self.laser,

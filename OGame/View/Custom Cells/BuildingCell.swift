@@ -12,7 +12,7 @@ protocol BuildingCellDelegate: AnyObject {
 }
 
 class BuildingCell: UITableViewCell {
-    
+
     @IBOutlet weak var buildingImage: UIImageView!
     @IBOutlet weak var buildingNameLabel: UILabel!
     @IBOutlet weak var metalRequiredLabel: UILabel!
@@ -22,27 +22,26 @@ class BuildingCell: UITableViewCell {
     @IBOutlet weak var levelLabel: UILabel!
     @IBOutlet weak var buildButton: UIButton!
     @IBOutlet weak var amountTextField: UITextField!
-    
+
     var typeOfBuilding: (Int, Int, String)?
-    
+
     weak var delegate: BuildingCellDelegate?
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-    
+
     @IBAction func buildPressed(_ sender: UIButton) {
         delegate?.didTapButton(self, typeOfBuilding!)
     }
-    
-    
+
     // MARK: - SET SUPPLY
     func setSupply(id: Int, resourceBuildings: BuildingsData) {
-        
+
         typeOfBuilding = (resourceBuildings[id].buildingsID, 1, "supplies")
         buildButton.isEnabled = false
         buildingNameLabel.text = resourceBuildings[id].name
@@ -52,7 +51,7 @@ class BuildingCell: UITableViewCell {
         levelLabel.text = "\(resourceBuildings[id].level)"
         timeToBuildLabel.text = ""
         // TODO: Hide 0 resource labels
-        
+
         switch resourceBuildings[id].condition {
         case "on":
             buildingImage.image = resourceBuildings[id].image.available
@@ -68,11 +67,10 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
-    
-    
+
     // MARK: - SET FACILITY
     func setFacility(id: Int, facilityBuildings: BuildingsData) {
-                
+
         typeOfBuilding = (facilityBuildings[id].buildingsID, 1, "supplies")
         buildButton.isEnabled = false
         buildingNameLabel.text = facilityBuildings[id].name
@@ -82,7 +80,7 @@ class BuildingCell: UITableViewCell {
         levelLabel.text = "\(facilityBuildings[id].level)"
         timeToBuildLabel.text = ""
         // TODO: Hide 0 resources labels
-        
+
         switch facilityBuildings[id].condition {
         case "on":
             buildingImage.image = facilityBuildings[id].image.available
@@ -98,11 +96,10 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
-    
-    
+
     // MARK: - SET RESEARCH
     func setResearch(id: Int, researchTechnologies: ResearchesData) {
-                
+
         typeOfBuilding = (researchTechnologies[id].buildingsID, 1, "research")
         buildButton.isEnabled = false
         buildingNameLabel.text = researchTechnologies[id].name
@@ -117,7 +114,7 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = researchTechnologies[id].image.available
             buildButton.isEnabled = true
         case "active":
-            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+            buildingImage.image = UIImage(systemName: "timer")
             levelLabel.text = "\(researchTechnologies[id].level) -> \(researchTechnologies[id].level + 1)"
         case "disabled":
             buildingImage.image = researchTechnologies[id].image.unavailable
@@ -127,11 +124,10 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
-    
-    
+
     // MARK: - SET SHIP
     func setShip(id: Int, shipsTechnologies: ShipsData) {
-                        
+
         typeOfBuilding = (shipsTechnologies[id].buildingsID, 1, "shipyard")
         buildButton.isEnabled = false
         buildingNameLabel.text = shipsTechnologies[id].name
@@ -141,16 +137,14 @@ class BuildingCell: UITableViewCell {
         levelLabel.text = "\(shipsTechnologies[id].amount)"
         timeToBuildLabel.text = ""
         amountTextField.isHidden = false
-        
+
         // TODO: Add building queue for ships
         // This is check to restrict from building more than one type at a time
         var shipActive = false
-        for ship in shipsTechnologies {
-            if ship.condition == "active" {
-                shipActive = true
-            }
+        for ship in shipsTechnologies where ship.condition == "active" {
+            shipActive = true
         }
-        
+
         switch shipsTechnologies[id].condition {
         case "on":
             if shipActive {
@@ -160,9 +154,9 @@ class BuildingCell: UITableViewCell {
                 buildButton.isEnabled = true
             }
         case "active":
-            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+            buildingImage.image = UIImage(systemName: "timer")
             // TODO: Add info about from what amount to what amount building is going
-            //levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
+            // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
             buildingImage.image = shipsTechnologies[id].image.unavailable
         case "off":
@@ -171,11 +165,10 @@ class BuildingCell: UITableViewCell {
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
-    
-    
+
     // MARK: - SET DEFENCE
     func setDefence(id: Int, defenceTechnologies: DefencesData) {
-        
+
         typeOfBuilding = (defenceTechnologies[id].buildingsID, 1, "defenses")
         buildButton.isEnabled = false
         buildingNameLabel.text = defenceTechnologies[id].name
@@ -185,16 +178,14 @@ class BuildingCell: UITableViewCell {
         levelLabel.text = "\(defenceTechnologies[id].amount)"
         timeToBuildLabel.text = ""
         amountTextField.isHidden = false
-        
+
         // TODO: Add building queue for defences
         // This is check to restrict from building more than one type at a time
         var defenceActive = false
-        for defence in defenceTechnologies {
-            if defence.condition == "active" {
-                defenceActive = true
-            }
+        for defence in defenceTechnologies where defence.condition == "active" {
+            defenceActive = true
         }
-        
+        // TODO: Also connect ships
         switch defenceTechnologies[id].condition {
         case "on":
             if defenceActive {
@@ -204,9 +195,9 @@ class BuildingCell: UITableViewCell {
                 buildButton.isEnabled = true
             }
         case "active":
-            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+            buildingImage.image = UIImage(systemName: "timer")
             // TODO: Add info about from what amount to what amount building is going
-            //levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
+            // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
             buildingImage.image = defenceTechnologies[id].image.unavailable
         case "off":

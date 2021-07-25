@@ -8,11 +8,11 @@
 import UIKit
 
 class DefenceCell {
-    
+
     var defenceTechnologies: DefencesData
-    
+
     init(with defences: Defences) {
-        
+
         let rocketLauncher = (name: "Rocket Launcher",
                               metal: Price().get(technology: Buildings().rocketLauncher(), level: defences.rocketLauncher.amount)[0],
                               crystal: Price().get(technology: Buildings().rocketLauncher(), level: defences.rocketLauncher.amount)[1],
@@ -23,7 +23,7 @@ class DefenceCell {
                               buildingsID: 401,
                               amount: defences.rocketLauncher.amount,
                               condition: defences.rocketLauncher.condition)
-        
+
         let lightLaser = (name: "Light Laser",
                                 metal: Price().get(technology: Buildings().lightLaser(), level: defences.lightLaser.amount)[0],
                                 crystal: Price().get(technology: Buildings().lightLaser(), level: defences.lightLaser.amount)[1],
@@ -34,7 +34,7 @@ class DefenceCell {
                                 buildingsID: 402,
                                 amount: defences.lightLaser.amount,
                                 condition: defences.lightLaser.condition)
-        
+
         let heavyLaser = (name: "Heavy Laser",
                                 metal: Price().get(technology: Buildings().heavyLaser(), level: defences.heavyLaser.amount)[0],
                                 crystal: Price().get(technology: Buildings().heavyLaser(), level: defences.heavyLaser.amount)[1],
@@ -45,7 +45,7 @@ class DefenceCell {
                                         buildingsID: 403,
                                         amount: defences.heavyLaser.amount,
                                         condition: defences.heavyLaser.condition)
-        
+
         let gaussCannon = (name: "Gauss Cannon",
                            metal: Price().get(technology: Buildings().gaussCannon(), level: defences.gaussCannon.amount)[0],
                            crystal: Price().get(technology: Buildings().gaussCannon(), level: defences.gaussCannon.amount)[1],
@@ -56,7 +56,7 @@ class DefenceCell {
                            buildingsID: 404,
                            amount: defences.gaussCannon.amount,
                            condition: defences.gaussCannon.condition)
-        
+
         let ionCannon = (name: "Ion Cannon",
                          metal: Price().get(technology: Buildings().ionCannon(), level: defences.ionCannon.amount)[0],
                          crystal: Price().get(technology: Buildings().ionCannon(), level: defences.ionCannon.amount)[1],
@@ -67,7 +67,7 @@ class DefenceCell {
                          buildingsID: 405,
                          amount: defences.ionCannon.amount,
                          condition: defences.ionCannon.condition)
-        
+
         let plasmaCannon = (name: "Plasma Cannon",
                             metal: Price().get(technology: Buildings().plasmaCannon(), level: defences.plasmaCannon.amount)[0],
                             crystal: Price().get(technology: Buildings().plasmaCannon(), level: defences.plasmaCannon.amount)[1],
@@ -78,7 +78,7 @@ class DefenceCell {
                             buildingsID: 406,
                             amount: defences.plasmaCannon.amount,
                             condition: defences.plasmaCannon.condition)
-        
+
         let smallShieldDome = (name: "Small Shield Dome",
                                metal: Price().get(technology: Buildings().smallShieldDome(), level: defences.smallShieldDome.amount)[0],
                                crystal: Price().get(technology: Buildings().smallShieldDome(), level: defences.smallShieldDome.amount)[1],
@@ -89,7 +89,7 @@ class DefenceCell {
                                buildingsID: 407,
                                amount: defences.smallShieldDome.amount,
                                condition: defences.smallShieldDome.condition)
-        
+
         let largeShieldDome = (name: "Large Shield Dome",
                                metal: Price().get(technology: Buildings().largeShieldDome(), level: defences.largeShieldDome.amount)[0],
                                crystal: Price().get(technology: Buildings().largeShieldDome(), level: defences.largeShieldDome.amount)[1],
@@ -100,7 +100,7 @@ class DefenceCell {
                                buildingsID: 408,
                                amount: defences.largeShieldDome.amount,
                                condition: defences.largeShieldDome.condition)
-        
+
         let antiBallisticMissiles = (name: "Anti-Ballistic Missiles",
                                   metal: Price().get(technology: Buildings().antiBallisticMissiles(), level: defences.antiBallisticMissiles.amount)[0],
                                   crystal: Price().get(technology: Buildings().antiBallisticMissiles(), level: defences.antiBallisticMissiles.amount)[1],
@@ -111,7 +111,7 @@ class DefenceCell {
                                   buildingsID: 502,
                                   amount: defences.antiBallisticMissiles.amount,
                                   condition: defences.antiBallisticMissiles.condition)
-        
+
         let interplanetaryMissiles = (name: "Interplanetary Missiles",
                                      metal: Price().get(technology: Buildings().interplanetaryMissiles(), level: defences.interplanetaryMissiles.amount)[0],
                                      crystal: Price().get(technology: Buildings().interplanetaryMissiles(), level: defences.interplanetaryMissiles.amount)[1],
@@ -122,9 +122,7 @@ class DefenceCell {
                                      buildingsID: 503,
                                      amount: defences.interplanetaryMissiles.amount,
                                      condition: defences.interplanetaryMissiles.condition)
-        
-        
-        
+
         defenceTechnologies = [rocketLauncher,
                                lightLaser,
                                heavyLaser,

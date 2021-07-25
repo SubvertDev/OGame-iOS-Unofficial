@@ -8,11 +8,10 @@
 import Foundation
 
 class Defence {
-    
     // TODO: Merge Defence and Defences?
     let amount: Int
     var condition: String
-    
+
     init(_ amount: [Int], _ status: [String], _ type: Int) {
         self.amount = amount[type]
         self.condition = status[type]
@@ -30,7 +29,7 @@ struct Defences {
     let largeShieldDome: Defence
     let antiBallisticMissiles: Defence
     let interplanetaryMissiles: Defence
-    
+
     let allDefences: [Defence]
     
     init(_ defences: [Int], _ status: [String]) {
@@ -44,7 +43,7 @@ struct Defences {
         self.largeShieldDome = Defence(defences, status, 7)
         self.antiBallisticMissiles = Defence(defences, status, 8)
         self.interplanetaryMissiles = Defence(defences, status, 9)
-        
+
         self.allDefences = [
             self.rocketLauncher,
             self.lightLaser,

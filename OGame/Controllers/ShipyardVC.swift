@@ -20,18 +20,17 @@ class ShipyardVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
-        
+
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
-        
+
         refresh()
     }
-    
-    
+
     // MARK: - REFRESH DATA ON SHIPYARD VC
     func refresh() {
         OGame.shared.getResources(forID: 0) { result in
@@ -58,7 +57,7 @@ class ShipyardVC: UIViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
         }
-        
+
         OGame.shared.ships(forID: 0) { result in
             switch result {
             case .success(let ships):
@@ -72,35 +71,33 @@ class ShipyardVC: UIViewController {
             }
         }
     }
-    
+
     @objc func refreshTableView() {
         refresh()
     }
 }
 
-
 extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 17
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
+
+        guard let shipsCell = self.shipsCell else { return UITableViewCell() }
+
         cell.delegate = self
         cell.amountTextField.delegate = self
-        
-        guard let shipsCell = self.shipsCell else { return UITableViewCell() }
-        
         cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies)
-        
+
         return cell // FIXME: text field is not properly reused
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-
 
 extension ShipyardVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
@@ -110,7 +107,7 @@ extension ShipyardVC: BuildingCellDelegate {
         } else {
             typeToBuild = (type.0, Int((cell.amountTextField.text)!)!, type.2)
         }
-        
+
         OGame.shared.build(what: typeToBuild, id: 0) { result in
             switch result {
             case .success(_):

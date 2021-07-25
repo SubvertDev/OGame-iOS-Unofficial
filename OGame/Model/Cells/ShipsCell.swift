@@ -8,11 +8,11 @@
 import UIKit
 
 struct ShipsCell {
-    
+
     var shipsTechnologies: ShipsData
-    
+
     init(with ships: Ships) {
-        
+
         let lightFighter = (name: "Light Fighter",
                           metal: Price().get(technology: Shipings().lightFighter(), level: ships.lightFighter.amount)[0],
                           crystal: Price().get(technology: Shipings().lightFighter(), level: ships.lightFighter.amount)[1],
@@ -23,7 +23,7 @@ struct ShipsCell {
                           buildingsID: 204,
                           amount: ships.lightFighter.amount,
                           condition: ships.lightFighter.condition)
-        
+
         let heavyFighter = (name: "Heavy Fighter",
                           metal: Price().get(technology: Shipings().heavyFighter(), level: ships.heavyFighter.amount)[0],
                           crystal: Price().get(technology: Shipings().heavyFighter(), level: ships.heavyFighter.amount)[1],
@@ -34,7 +34,7 @@ struct ShipsCell {
                           buildingsID: 205,
                           amount: ships.heavyFighter.amount,
                           condition: ships.heavyFighter.condition)
-        
+
         let cruiser = (name: "Cruiser",
                           metal: Price().get(technology: Shipings().cruiser(), level: ships.cruiser.amount)[0],
                           crystal: Price().get(technology: Shipings().cruiser(), level: ships.cruiser.amount)[1],
@@ -45,7 +45,7 @@ struct ShipsCell {
                           buildingsID: 206,
                           amount: ships.cruiser.amount,
                           condition: ships.cruiser.condition)
-        
+
         let battleship = (name: "Battleship",
                           metal: Price().get(technology: Shipings().battleship(), level: ships.battleship.amount)[0],
                           crystal: Price().get(technology: Shipings().battleship(), level: ships.battleship.amount)[1],
@@ -56,7 +56,7 @@ struct ShipsCell {
                           buildingsID: 207,
                           amount: ships.battleship.amount,
                           condition: ships.battleship.condition)
-        
+
         let battlecruiser = (name: "Battlecruiser",
                           metal: Price().get(technology: Shipings().battlecruiser(), level: ships.battlecruiser.amount)[0],
                           crystal: Price().get(technology: Shipings().battlecruiser(), level: ships.battlecruiser.amount)[1],
@@ -67,7 +67,7 @@ struct ShipsCell {
                           buildingsID: 215,
                           amount: ships.battlecruiser.amount,
                           condition: ships.battlecruiser.condition)
-        
+
         let bomber = (name: "Bomber",
                           metal: Price().get(technology: Shipings().bomber(), level: ships.bomber.amount)[0],
                           crystal: Price().get(technology: Shipings().bomber(), level: ships.bomber.amount)[1],
@@ -78,7 +78,7 @@ struct ShipsCell {
                           buildingsID: 211,
                           amount: ships.bomber.amount,
                           condition: ships.bomber.condition)
-        
+
         let destroyer = (name: "Destroyer",
                           metal: Price().get(technology: Shipings().destroyer(), level: ships.destroyer.amount)[0],
                           crystal: Price().get(technology: Shipings().destroyer(), level: ships.destroyer.amount)[1],
@@ -89,7 +89,7 @@ struct ShipsCell {
                           buildingsID: 213,
                           amount: ships.destroyer.amount,
                           condition: ships.destroyer.condition)
-        
+
         let deathstar = (name: "Deathstar",
                           metal: Price().get(technology: Shipings().deathstar(), level: ships.deathstar.amount)[0],
                           crystal: Price().get(technology: Shipings().deathstar(), level: ships.deathstar.amount)[1],
@@ -100,7 +100,7 @@ struct ShipsCell {
                           buildingsID: 214,
                           amount: ships.deathstar.amount,
                           condition: ships.deathstar.condition)
-        
+
         let reaper = (name: "Reaper",
                           metal: Price().get(technology: Shipings().reaper(), level: ships.reaper.amount)[0],
                           crystal: Price().get(technology: Shipings().reaper(), level: ships.reaper.amount)[1],
@@ -111,7 +111,7 @@ struct ShipsCell {
                           buildingsID: 218,
                           amount: ships.reaper.amount,
                           condition: ships.reaper.condition)
-        
+
         let pathfinder = (name: "Pathfinder",
                           metal: Price().get(technology: Shipings().pathfinder(), level: ships.pathfinder.amount)[0],
                           crystal: Price().get(technology: Shipings().pathfinder(), level: ships.pathfinder.amount)[1],
@@ -122,7 +122,7 @@ struct ShipsCell {
                           buildingsID: 219,
                           amount: ships.pathfinder.amount,
                           condition: ships.pathfinder.condition)
-        
+
         let smallCargo = (name: "Small Cargo",
                           metal: Price().get(technology: Shipings().smallCargo(), level: ships.smallCargo.amount)[0],
                           crystal: Price().get(technology: Shipings().smallCargo(), level: ships.smallCargo.amount)[1],
@@ -133,7 +133,7 @@ struct ShipsCell {
                           buildingsID: 202,
                           amount: ships.smallCargo.amount,
                           condition: ships.smallCargo.condition)
-        
+
         let largeCargo = (name: "Large Cargo",
                           metal: Price().get(technology: Shipings().largeCargo(), level: ships.largeCargo.amount)[0],
                           crystal: Price().get(technology: Shipings().largeCargo(), level: ships.largeCargo.amount)[1],
@@ -144,7 +144,7 @@ struct ShipsCell {
                           buildingsID: 203,
                           amount: ships.largeCargo.amount,
                           condition: ships.largeCargo.condition)
-        
+
         let colonyShip = (name: "Colony Ship",
                           metal: Price().get(technology: Shipings().colonyShip(), level: ships.colonyShip.amount)[0],
                           crystal: Price().get(technology: Shipings().colonyShip(), level: ships.colonyShip.amount)[1],
@@ -155,7 +155,7 @@ struct ShipsCell {
                           buildingsID: 208,
                           amount: ships.colonyShip.amount,
                           condition: ships.colonyShip.condition)
-        
+
         let recycler = (name: "Recycler",
                           metal: Price().get(technology: Shipings().recycler(), level: ships.recycler.amount)[0],
                           crystal: Price().get(technology: Shipings().recycler(), level: ships.recycler.amount)[1],
@@ -166,7 +166,7 @@ struct ShipsCell {
                           buildingsID: 209,
                           amount: ships.recycler.amount,
                           condition: ships.recycler.condition)
-        
+
         let espionageProbe = (name: "Espionage Probe",
                           metal: Price().get(technology: Shipings().espionageProbe(), level: ships.espionageProbe.amount)[0],
                           crystal: Price().get(technology: Shipings().espionageProbe(), level: ships.espionageProbe.amount)[1],
@@ -177,7 +177,7 @@ struct ShipsCell {
                           buildingsID: 210,
                           amount: ships.espionageProbe.amount,
                           condition: ships.espionageProbe.condition)
-        
+
         let solarSatellite = (name: "Solar Satellite",
                           metal: Price().get(technology: Shipings().solarSatellite(), level: ships.solarSatellite.amount)[0],
                           crystal: Price().get(technology: Shipings().solarSatellite(), level: ships.solarSatellite.amount)[1],
@@ -188,7 +188,7 @@ struct ShipsCell {
                           buildingsID: 212,
                           amount: ships.solarSatellite.amount,
                           condition: ships.solarSatellite.condition)
-        
+
         let crawler = (name: "Crawler",
                           metal: Price().get(technology: Shipings().crawler(), level: ships.crawler.amount)[0],
                           crystal: Price().get(technology: Shipings().crawler(), level: ships.crawler.amount)[1],
@@ -199,7 +199,23 @@ struct ShipsCell {
                           buildingsID: 217,
                           amount: ships.crawler.amount,
                           condition: ships.crawler.condition)
-        
-        shipsTechnologies = [lightFighter, heavyFighter, cruiser, battleship, battlecruiser, bomber, destroyer, deathstar, reaper, pathfinder, smallCargo, largeCargo, colonyShip, recycler, espionageProbe, solarSatellite, crawler]
+
+        shipsTechnologies = [lightFighter,
+                             heavyFighter,
+                             cruiser,
+                             battleship,
+                             battlecruiser,
+                             bomber,
+                             destroyer,
+                             deathstar,
+                             reaper,
+                             pathfinder,
+                             smallCargo,
+                             largeCargo,
+                             colonyShip,
+                             recycler,
+                             espionageProbe,
+                             solarSatellite,
+                             crawler]
     }
 }

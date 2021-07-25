@@ -8,11 +8,11 @@
 import UIKit
 
 struct ResearchCell {
-    
+
     var researchTechnologies: ResearchesData
-    
+
     init(with researches: Researches) {
-        
+
         let energy = (name: "Energy Technology",
                           metal: Price().get(technology: Researchings().energy, level: researches.energy.level)[0],
                           crystal: Price().get(technology: Researchings().energy, level: researches.energy.level)[1],
@@ -23,7 +23,7 @@ struct ResearchCell {
                           buildingsID: 113,
                           level: researches.energy.level,
                           condition: researches.energy.condition)
-        
+
         let laser = (name: "Laser Technology",
                           metal: Price().get(technology: Researchings().laser, level: researches.laser.level)[0],
                           crystal: Price().get(technology: Researchings().laser, level: researches.laser.level)[1],
@@ -34,7 +34,7 @@ struct ResearchCell {
                           buildingsID: 120,
                           level: researches.laser.level,
                           condition: researches.laser.condition)
-        
+
         let ion = (name: "Ion Technology",
                           metal: Price().get(technology: Researchings().ion, level: researches.ion.level)[0],
                           crystal: Price().get(technology: Researchings().ion, level: researches.ion.level)[1],
@@ -45,7 +45,7 @@ struct ResearchCell {
                           buildingsID: 121,
                           level: researches.ion.level,
                           condition: researches.ion.condition)
-        
+
         let hyperspace = (name: "Hyperspace Technology",
                           metal: Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[0],
                           crystal: Price().get(technology: Researchings().hyperspace, level: researches.hyperspace.level)[1],
@@ -67,7 +67,7 @@ struct ResearchCell {
                           buildingsID: 122,
                           level: researches.plasma.level,
                           condition: researches.plasma.condition)
-        
+
         let combustionDrive = (name: "Combustion Drive",
                           metal: Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[0],
                           crystal: Price().get(technology: Researchings().combustionDrive, level: researches.combustionDrive.level)[1],
@@ -78,7 +78,7 @@ struct ResearchCell {
                           buildingsID: 115,
                           level: researches.combustionDrive.level,
                           condition: researches.combustionDrive.condition)
-        
+
         let impulseDrive = (name: "Impulse Drive",
                           metal: Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[0],
                           crystal: Price().get(technology: Researchings().impulseDrive, level: researches.impulseDrive.level)[1],
@@ -89,7 +89,7 @@ struct ResearchCell {
                           buildingsID: 117,
                           level: researches.impulseDrive.level,
                           condition: researches.impulseDrive.condition)
-        
+
         let hyperspaceDrive = (name: "Hyperspace Drive",
                           metal: Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[0],
                           crystal: Price().get(technology: Researchings().hyperspaceDrive, level: researches.hyperspaceDrive.level)[1],
@@ -100,7 +100,7 @@ struct ResearchCell {
                           buildingsID: 118,
                           level: researches.hyperspaceDrive.level,
                           condition: researches.hyperspaceDrive.condition)
-        
+
         let espionage = (name: "Espionage Technology",
                           metal: Price().get(technology: Researchings().espionage, level: researches.espionage.level)[0],
                           crystal: Price().get(technology: Researchings().espionage, level: researches.espionage.level)[1],
@@ -111,7 +111,7 @@ struct ResearchCell {
                           buildingsID: 106,
                           level: researches.espionage.level,
                           condition: researches.espionage.condition)
-        
+
         let computer = (name: "Computer Technology",
                           metal: Price().get(technology: Researchings().computer, level: researches.computer.level)[0],
                           crystal: Price().get(technology: Researchings().computer, level: researches.computer.level)[1],
@@ -122,7 +122,7 @@ struct ResearchCell {
                           buildingsID: 108,
                           level: researches.computer.level,
                           condition: researches.computer.condition)
-        
+
         let astrophysics = (name: "Astrophysics",
                           metal: Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[0],
                           crystal: Price().get(technology: Researchings().astrophysics, level: researches.astrophysics.level)[1],
@@ -133,7 +133,7 @@ struct ResearchCell {
                           buildingsID: 124,
                           level: researches.astrophysics.level,
                           condition: researches.astrophysics.condition)
-        
+
         let researchNetwork = (name: "Research Network",
                           metal: Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[0],
                           crystal: Price().get(technology: Researchings().researchNetwork, level: researches.researchNetwork.level)[1],
@@ -144,7 +144,7 @@ struct ResearchCell {
                           buildingsID: 123,
                           level: researches.researchNetwork.level,
                           condition: researches.researchNetwork.condition)
-        
+
         let graviton = (name: "Graviton Technology",
                           metal: Price().get(technology: Researchings().graviton, level: researches.graviton.level)[0],
                           crystal: Price().get(technology: Researchings().graviton, level: researches.graviton.level)[1],
@@ -155,7 +155,7 @@ struct ResearchCell {
                           buildingsID: 199,
                           level: researches.graviton.level,
                           condition: researches.graviton.condition)
-        
+
         let weapons = (name: "Weapons Technology",
                           metal: Price().get(technology: Researchings().weapons, level: researches.weapons.level)[0],
                           crystal: Price().get(technology: Researchings().weapons, level: researches.weapons.level)[1],
@@ -166,7 +166,7 @@ struct ResearchCell {
                           buildingsID: 109,
                           level: researches.weapons.level,
                           condition: researches.weapons.condition)
-        
+
         let shielding = (name: "Shielding Technology",
                           metal: Price().get(technology: Researchings().shielding, level: researches.shielding.level)[0],
                           crystal: Price().get(technology: Researchings().shielding, level: researches.shielding.level)[1],
@@ -177,7 +177,7 @@ struct ResearchCell {
                           buildingsID: 110,
                           level: researches.shielding.level,
                           condition: researches.shielding.condition)
-        
+
         let armor = (name: "Armor Technology",
                           metal: Price().get(technology: Researchings().armor, level: researches.armor.level)[0],
                           crystal: Price().get(technology: Researchings().armor, level: researches.armor.level)[1],
@@ -188,7 +188,22 @@ struct ResearchCell {
                           buildingsID: 111,
                           level: researches.armor.level,
                           condition: researches.armor.condition)
-        
-        researchTechnologies = [energy, laser, ion, hyperspace, plasma, combustionDrive, impulseDrive, hyperspaceDrive, espionage, computer, astrophysics, researchNetwork, graviton, weapons, shielding, armor]
+
+        researchTechnologies = [energy,
+                                laser,
+                                ion,
+                                hyperspace,
+                                plasma,
+                                combustionDrive,
+                                impulseDrive,
+                                hyperspaceDrive,
+                                espionage,
+                                computer,
+                                astrophysics,
+                                researchNetwork,
+                                graviton,
+                                weapons,
+                                shielding,
+                                armor]
     }
 }
