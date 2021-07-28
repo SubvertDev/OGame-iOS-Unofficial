@@ -12,9 +12,12 @@ class MenuVC: UIViewController {
     @IBOutlet weak var planetNameLabel: UILabel!
     @IBOutlet weak var serverNameLabel: UILabel!
     @IBOutlet weak var rankLabel: UILabel!
+    @IBOutlet weak var fieldsLabel: UILabel!
+    @IBOutlet weak var coordinatesLabel: UILabel!
 
     @IBOutlet weak var tableView: UITableView!
 
+    
     let menuList = ["Overview",
                     "Resources",
                     "Facilities",
@@ -27,19 +30,28 @@ class MenuVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-        title = "Menu"
 
-        tableView.delegate = self
-        tableView.dataSource = self
-
-        planetNameLabel.text = OGame.shared.planet
-        serverNameLabel.text = OGame.shared.universe
-        rankLabel.text = OGame.shared.rank()
+        configureTableView()
+        configureLabels()
     }
 
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
         OGame.shared.reset()
         navigationController?.popToRootViewController(animated: true)
+    }
+
+    func configureTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.removeExtraCellLines()
+    }
+
+    func configureLabels() {
+        planetNameLabel.text = OGame.shared.planet
+        serverNameLabel.text = OGame.shared.universe
+        rankLabel.text = "Rank: \(OGame.shared.rank!)"
+        fieldsLabel.text = "\(OGame.shared.celestial!.used)/\(OGame.shared.celestial!.total)"
+        coordinatesLabel.text = "[\(OGame.shared.coordinates![0]):\(OGame.shared.coordinates![1]):\(OGame.shared.coordinates![2])]"
     }
 }
 
@@ -57,21 +69,35 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        switch indexPath.row {
-        case 0:
-            performSegue(withIdentifier: "ShowOverviewVC", sender: self)
-        case 1:
-            performSegue(withIdentifier: "ShowResourcesVC", sender: self)
-        case 2:
-            performSegue(withIdentifier: "ShowFacilitiesVC", sender: self)
-        case 3:
-            performSegue(withIdentifier: "ShowResearchVC", sender: self)
-        case 4:
-            performSegue(withIdentifier: "ShowShipyardVC", sender: self)
-        case 5:
-            performSegue(withIdentifier: "ShowDefenceVC", sender: self)
-        default:
-            print(menuList[indexPath.row])
+
+        performSegue(withIdentifier: "ShowGenericVC", sender: indexPath.row)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? GenericVC {
+            let page = sender as! Int
+            switch page {
+            case 0:
+                vc.childVC = OverviewVC()
+                vc.title = menuList[page]
+            case 1:
+                vc.childVC = ResourcesVC()
+                vc.title = menuList[page]
+            case 2:
+                vc.childVC = FacilitiesVC()
+                vc.title = menuList[page]
+            case 3:
+                vc.childVC = ResearchVC()
+                vc.title = menuList[page]
+            case 4:
+                vc.childVC = ShipyardVC()
+                vc.title = menuList[page]
+            case 5:
+                vc.childVC = DefenceVC()
+                vc.title = menuList[page]
+            default:
+                print(sender as! Int)
+            }
         }
     }
 }

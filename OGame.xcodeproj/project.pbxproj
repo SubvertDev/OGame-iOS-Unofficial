@@ -18,6 +18,7 @@
 		B85AF0CE26A5A81D0087C5A7 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85AF0CD26A5A81D0087C5A7 /* Server.swift */; };
 		B85D7F87265FCD3400186021 /* Researchings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D7F86265FCD3400186021 /* Researchings.swift */; };
 		B85D7F89265FDDCC00186021 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D7F88265FDDCC00186021 /* Images.swift */; };
+		B8623A9626B18748003F79C3 /* GenericVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8623A9526B18748003F79C3 /* GenericVC.swift */; };
 		B867614C2659130D0096BE39 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614B2659130D0096BE39 /* UIView+Ext.swift */; };
 		B867614F265945A30096BE39 /* BuildingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614D265945A30096BE39 /* BuildingCell.swift */; };
 		B8676150265945A30096BE39 /* BuildingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B867614E265945A30096BE39 /* BuildingCell.xib */; };
@@ -26,6 +27,8 @@
 		B86761592659834B0096BE39 /* Buildings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86761582659834A0096BE39 /* Buildings.swift */; };
 		B873317526542CB400524FD8 /* OverviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873317426542CB400524FD8 /* OverviewVC.swift */; };
 		B87331772654366700524FD8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87331762654366700524FD8 /* Price.swift */; };
+		B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */; };
+		B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01726AF047B0080AFE5 /* ServerCell.swift */; };
 		B8ABC30026640EF00032ADBB /* Ship+Ships.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC2FF26640EF00032ADBB /* Ship+Ships.swift */; };
 		B8ABC30226641BC10032ADBB /* ShipyardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC30126641BC10032ADBB /* ShipyardVC.swift */; };
 		B8ABC3042664228F0032ADBB /* Shipings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC3032664228F0032ADBB /* Shipings.swift */; };
@@ -67,6 +70,7 @@
 		B85AF0CD26A5A81D0087C5A7 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		B85D7F86265FCD3400186021 /* Researchings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Researchings.swift; sourceTree = "<group>"; };
 		B85D7F88265FDDCC00186021 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
+		B8623A9526B18748003F79C3 /* GenericVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericVC.swift; sourceTree = "<group>"; };
 		B867614B2659130D0096BE39 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		B867614D265945A30096BE39 /* BuildingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingCell.swift; sourceTree = "<group>"; };
 		B867614E265945A30096BE39 /* BuildingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BuildingCell.xib; sourceTree = "<group>"; };
@@ -75,6 +79,8 @@
 		B86761582659834A0096BE39 /* Buildings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildings.swift; sourceTree = "<group>"; };
 		B873317426542CB400524FD8 /* OverviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewVC.swift; sourceTree = "<group>"; };
 		B87331762654366700524FD8 /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
+		B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
+		B883A01726AF047B0080AFE5 /* ServerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCell.swift; sourceTree = "<group>"; };
 		B8ABC2FF26640EF00032ADBB /* Ship+Ships.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ship+Ships.swift"; sourceTree = "<group>"; };
 		B8ABC30126641BC10032ADBB /* ShipyardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShipyardVC.swift; sourceTree = "<group>"; };
 		B8ABC3032664228F0032ADBB /* Shipings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shipings.swift; sourceTree = "<group>"; };
@@ -213,6 +219,7 @@
 				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
 				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
+				B8623A9526B18748003F79C3 /* GenericVC.swift */,
 				B873317426542CB400524FD8 /* OverviewVC.swift */,
 				B8B2972726550E6F00C59CD4 /* ResourcesVC.swift */,
 				B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */,
@@ -238,6 +245,7 @@
 		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
 			isa = PBXGroup;
 			children = (
+				B883A01726AF047B0080AFE5 /* ServerCell.swift */,
 				B867614D265945A30096BE39 /* BuildingCell.swift */,
 				B867614E265945A30096BE39 /* BuildingCell.xib */,
 			);
@@ -257,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				B867614B2659130D0096BE39 /* UIView+Ext.swift */,
+				B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -368,6 +377,7 @@
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
 				B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */,
 				B8FF0457269DD05F007743B8 /* ShipsCell.swift in Sources */,
+				B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */,
 				B814BA6826AB1B0200FF346A /* MyServers.swift in Sources */,
 				B8ABC30226641BC10032ADBB /* ShipyardVC.swift in Sources */,
 				B8B7BC2E2650AD5700988758 /* Login.swift in Sources */,
@@ -382,6 +392,7 @@
 				B814BA6626AB0F1B00FF346A /* ServerListVC.swift in Sources */,
 				B86761592659834B0096BE39 /* Buildings.swift in Sources */,
 				B8FF0450269DD01E007743B8 /* ResourceCell.swift in Sources */,
+				B8623A9626B18748003F79C3 /* GenericVC.swift in Sources */,
 				B8B2972826550E6F00C59CD4 /* ResourcesVC.swift in Sources */,
 				B8ABC30026640EF00032ADBB /* Ship+Ships.swift in Sources */,
 				B8B7BC262650579100988758 /* Servers.swift in Sources */,
@@ -390,6 +401,7 @@
 				B8676155265982DD0096BE39 /* Research+Researches.swift in Sources */,
 				B8B7BC202650524000988758 /* OGame.swift in Sources */,
 				B8FF0463269E1C69007743B8 /* DefenceVC.swift in Sources */,
+				B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */,
 				B84400C426519884001CE771 /* Account.swift in Sources */,
 				B8B29730265703FE00C59CD4 /* Resources.swift in Sources */,
 			);

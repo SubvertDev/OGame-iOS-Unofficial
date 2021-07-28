@@ -36,6 +36,8 @@ class OGame {
     var planet: String?
     var planetID: Int?
     var celestial: Celestial?
+    var rank: Int?
+    var coordinates: [Int]?
 
     private init() {}
 
@@ -256,8 +258,17 @@ class OGame {
 
                 self.planet = planetNameContent
                 self.planetID = Int(planetIDContent)
-
-                completion(.success(true))
+                self.rank = getRank()
+                self.coordinates = getCelestialCoordinates()
+                getCelestial { result in
+                    switch result {
+                    case .success(let celestial):
+                        self.celestial = celestial
+                        completion(.success(true))
+                    case .failure(_):
+                        break
+                    }
+                }
             } catch {
                 completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Can't configure player info, please try again!"])))
             }
@@ -328,8 +339,8 @@ class OGame {
         }
     }
 
-    // MARK: - RANK -> String
-    func rank() -> String {
+    // MARK: - getRank -> Int
+    func getRank() -> Int {
         do {
             let idBar = try doc!.select("[id=bar]").get(0)
             let li = try idBar.select("li").get(1)
@@ -344,9 +355,9 @@ class OGame {
             matches[0].removeLast()
             let rank = matches[0]
 
-            return rank
+            return Int(rank) ?? -1
         } catch {
-            return "-1"
+            return -1
         }
     }
 
@@ -428,9 +439,9 @@ class OGame {
 
     // MARK: - coordinates
 
-    // MARK: - GET CELESTIAL DATA -> @Celestial
-    func getCelestial(forID: Int, completion: @escaping (Result<Celestial, Error>) -> Void) {
-
+    // MARK: - GET CELESTIAL DATA
+    func getCelestial(completion: @escaping (Result<Celestial, Error>) -> Void) {
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=overview&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -466,22 +477,29 @@ class OGame {
 
                 let coordinates = self.getCelestialCoordinates()
 
-                let result = Celestial(planetSize: planetSize,
+                let celestial = Celestial(planetSize: planetSize,
                                        usedFields: planetUsedFields,
                                        totalFields: planetTotalFields,
                                        tempMin: planetTemperatureMin,
                                        tempMax: planetTemperatureMax,
                                        coordinates: coordinates)
+                completion(.success(celestial))
 
-                completion(.success(result))
-            case .failure(let error):
-                completion(.failure(error))
+            case .failure(_):
+                let celestial = Celestial(planetSize: -1,
+                                           usedFields: -1,
+                                           totalFields: -1,
+                                           tempMin: -1,
+                                           tempMax: -1,
+                                           coordinates: [0, 0, 0, 0])
+                completion(.success(celestial))
             }
         }
     }
 
     // MARK: - GET CELESTIAL COORDINATES -> [Int]
     func getCelestialCoordinates() -> [Int] {
+        print(#function)
         // TODO: Check if it works with 2+ planets and moons
         do {
             let page = try SwiftSoup.parse(landingPage!)

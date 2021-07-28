@@ -9,61 +9,70 @@ import UIKit
 
 class ResearchVC: UIViewController {
 
-    @IBOutlet weak var resourcesOverview: ResourcesOverview!
-    @IBOutlet weak var tableView: UITableView!
-
-    var prodPerSecond = [Double]()
-    var researchCell: ResearchCell?
-    var timer: Timer?
+    let tableView = UITableView()
+    let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
+    var researchCell: ResearchCell?
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Research"
 
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
-
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        configureTableView()
+        configureActivityIndicator()
 
         refresh()
     }
 
+    func configureTableView() {
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
+        tableView.removeExtraCellLines()
+        tableView.alpha = 0.5
+        tableView.rowHeight = 88
+
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+    }
+
+    func configureActivityIndicator() {
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.style = .large
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 100),
+            activityIndicator.heightAnchor.constraint(equalToConstant: 100)
+        ])
+
+        activityIndicator.startAnimating()
+    }
+
     // MARK: - REFRESH DATA ON RESEARCHES VC
     func refresh() {
-        OGame.shared.getResources(forID: 0) { result in
-            switch result {
-            case .success(let resources):
-                self.resourcesOverview.set(metal: resources.metal,
-                                           crystal: resources.crystal,
-                                           deuterium: resources.deuterium,
-                                           energy: resources.energy)
-
-                for day in resources.dayProduction {
-                    let dayDouble = Double(day)
-                    self.prodPerSecond.append(dayDouble / 3600)
-                }
-
-                self.timer?.invalidate()
-                self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { _ in
-                    self.resourcesOverview.update(metal: self.prodPerSecond[0],
-                                                  crystal: self.prodPerSecond[1],
-                                                  deuterium: self.prodPerSecond[2],
-                                                  storage: resources)
-                })
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-        }
-
         OGame.shared.research(forID: 0) { result in
             switch result {
             case .success(let researches):
                 self.researchCell = ResearchCell(with: researches)
                 DispatchQueue.main.async {
-                    self.refreshControl.endRefreshing()
                     self.tableView.reloadData()
+                    self.refreshControl.endRefreshing()
+                    self.tableView.isUserInteractionEnabled = true
+                    self.tableView.alpha = 1
+                    self.activityIndicator.stopAnimating()
                 }
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
@@ -99,6 +108,10 @@ extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
 
 extension ResearchVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
+        tableView.isUserInteractionEnabled = false
+        tableView.alpha = 0.5
+        activityIndicator.startAnimating()
+        
         OGame.shared.build(what: type, id: 0) { result in
             switch result {
             case .success(_):
