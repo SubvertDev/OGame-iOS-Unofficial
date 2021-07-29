@@ -35,14 +35,16 @@ class OGame {
     private var doc: Document?
     var planet: String?
     var planetID: Int?
+    var planetNames: [String]?
+    var planetIDs: [Int]?
     var celestial: Celestial?
     var rank: Int?
-    var coordinates: [Int]?
 
     private init() {}
 
     // MARK: - ALAMOFIRE SECTION
     func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, CustomError>) -> Void) {
+        OGame.shared.reset()
         print(#function)
         self.username = username
         self.password = password
@@ -167,7 +169,7 @@ class OGame {
                         completion(.failure(.message("Unable to get any active servers on account, please try again!")))
                         return
                     }
-                // TODO: Add accounts failure check?
+                    // TODO: Add accounts failure check?
                     completion(.success(true))
                 case .failure(_):
                     completion(.failure(.message("Unable to configure account, please try again!")))
@@ -259,7 +261,8 @@ class OGame {
                 self.planet = planetNameContent
                 self.planetID = Int(planetIDContent)
                 self.rank = getRank()
-                self.coordinates = getCelestialCoordinates()
+                self.planetNames = getPlanetNames()
+                self.planetIDs = getPlanetIDs()
                 getCelestial { result in
                     switch result {
                     case .success(let celestial):
@@ -275,7 +278,54 @@ class OGame {
         }
     }
 
-    // MARK: - NON LOGIN FUNCTIONS
+    // MARK: - NON LOGIN FUNCTIONS -
+
+    // MARK: - Set Next Planet
+    func setNextPlanet(completion: @escaping (Error?) -> ()) {
+        if let index = planetNames!.firstIndex(of: planet!) {
+            if index + 1 == planetNames!.count {
+                planet = planetNames![0]
+                planetID = planetIDs![0]
+            } else {
+                planet = planetNames![index + 1]
+                planetID = planetIDs![index + 1]
+            }
+
+            getCelestial { result in
+                switch result {
+                case .success(let celestial):
+                    self.celestial = celestial
+                    completion(nil)
+                case .failure(_):
+                    completion(NSError())
+                }
+            }
+        }
+    }
+
+    // MARK: - Set Previous Planet
+    func setPreviousPlanet(completion: @escaping (Error?) -> ()) {
+        if let index = planetNames!.firstIndex(of: planet!) {
+            if index - 1 == -1 {
+                planet = planetNames!.last
+                planetID = planetIDs!.last
+            } else {
+                planet = planetNames![index - 1]
+                planetID = planetIDs![index - 1]
+            }
+            
+            getCelestial { result in
+                switch result {
+                case .success(let celestial):
+                    self.celestial = celestial
+                    completion(nil)
+                case .failure(_):
+                    completion(NSError())
+                }
+            }
+        }
+    }
+
     // MARK: - ATTACKED -> @Bool
     func attacked(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
@@ -362,7 +412,7 @@ class OGame {
     }
 
     // MARK: - PLANET IDS -> [Int]
-    func planetIDs() -> [Int] {
+    func getPlanetIDs() -> [Int] {
         do {
             var ids = [Int]()
             let planets = try doc!.select("[class*=smallplanet]")
@@ -378,13 +428,13 @@ class OGame {
     }
 
     // MARK: - PLANET NAMES -> [String]
-    func planetNames() -> [String] {
+    func getPlanetNames() -> [String] {
         do {
             var planetNames = [String]()
             let planets = try doc!.select("[class=planet-name]")
-                for planet in planets {
-                    planetNames.append(try planet.text())
-                }
+            for planet in planets {
+                planetNames.append(try planet.text())
+            }
             return planetNames
         } catch {
             return ["Error"]
@@ -392,16 +442,36 @@ class OGame {
     }
 
     // MARK: - ID BY PLANET NAME -> Int
-    func idByPlanetName(_ name: String) -> Int {
+    func getIdByPlanetName(_ name: String) -> Int {
         // TODO: Better way?
         var found: Int?
 
-        for (planetName, id) in zip(planetNames(), planetIDs()) {
+        for (planetName, id) in zip(getPlanetNames(), getPlanetIDs()) {
             if planetName == name {
                 found = id
             }
         }
         return found!
+    }
+
+    // MARK: - PLANET IMAGE DATA -> @Data?
+    func getPlanetImageData(completion: @escaping (Data?) -> Void) {
+        do {
+            let planets = try doc!.select("[class*=smallplanet]")
+            for planet in planets {
+                let idAttribute = try planet.attr("id")
+                let planetID = Int(idAttribute.replacingOccurrences(of: "planet-", with: ""))!
+                if planetID == self.planetID {
+                    let imageAttribute = try planet.select("[width=48]").first()!.attr("src")
+                    sessionAF.request("\(imageAttribute)").response { response in
+                        completion(response.data)
+                    }
+                }
+            }
+            completion(nil)
+        } catch {
+            completion(nil)
+        }
     }
 
     // MARK: - GET SERVER INFO -> Server
@@ -447,6 +517,15 @@ class OGame {
 
             switch response.result {
             case .success(let data):
+
+                let page = try? SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                let noScript = try? page!.select("noscript").text()
+                guard noScript != "You need to enable JavaScript to run this app." else {
+                    print("LOOKS LIKE NOT LOGGED IN (get celestial)")
+                    completion(.failure(NSError()))
+                    return
+                }
+
                 let text = String(data: data!, encoding: .ascii)!
 
                 var pattern = #"textContent\[1] = "(.*)km \(<span>(.*)<(.*)<span>(.*)<"#
@@ -478,20 +557,20 @@ class OGame {
                 let coordinates = self.getCelestialCoordinates()
 
                 let celestial = Celestial(planetSize: planetSize,
-                                       usedFields: planetUsedFields,
-                                       totalFields: planetTotalFields,
-                                       tempMin: planetTemperatureMin,
-                                       tempMax: planetTemperatureMax,
-                                       coordinates: coordinates)
+                                          usedFields: planetUsedFields,
+                                          totalFields: planetTotalFields,
+                                          tempMin: planetTemperatureMin,
+                                          tempMax: planetTemperatureMax,
+                                          coordinates: coordinates)
                 completion(.success(celestial))
 
             case .failure(_):
                 let celestial = Celestial(planetSize: -1,
-                                           usedFields: -1,
-                                           totalFields: -1,
-                                           tempMin: -1,
-                                           tempMax: -1,
-                                           coordinates: [0, 0, 0, 0])
+                                          usedFields: -1,
+                                          totalFields: -1,
+                                          tempMin: -1,
+                                          tempMax: -1,
+                                          coordinates: [0, 0, 0, 0])
                 completion(.success(celestial))
             }
         }
@@ -505,31 +584,26 @@ class OGame {
             let page = try SwiftSoup.parse(landingPage!)
             let allCelestials = try page.select("[class*=smallplanet]")
 
-            let planet = try allCelestials.get(0).select("[class*=planetlink]").get(0)
-            let isPlanetHere = try planet.getElementsByAttributeValueContaining("href", "\(String(planetID!))")
-
-            let moon = try allCelestials.get(0).select("[class*=moonlink]")
-            let isMoonHere = try planet.getElementsByAttributeValueContaining("href", "\(String(planetID!))")
+            let selectedPlanet = try allCelestials.select("[class*=planetlink]").select("[href*=\(String(planetID!))]")
+            let selectedMoon = try allCelestials.select("[class*=moonlink]").select("[href*=\(String(planetID!))]")
 
             // TODO: Is it even working for moons?
-            for celestial in allCelestials {
-                if !isPlanetHere.isEmpty() {
-                    var coordinates = try celestial.select("[class=planet-koords ]").get(0).text()
+                if !selectedPlanet.isEmpty() {
+                    var coordinates = try selectedPlanet.select("[class=planet-koords ]").get(0).text()
                     coordinates.removeFirst()
                     coordinates.removeLast()
                     var arrayOfCoordinates = coordinates.components(separatedBy: ":").compactMap { Int($0) }
                     arrayOfCoordinates.append(1)
                     return arrayOfCoordinates
                 }
-                if !moon.isEmpty() && !isMoonHere.isEmpty() {
-                    var coordinates = try celestial.select("[class=planet-koords ]").get(0).text()
+                if !selectedMoon.isEmpty() {
+                    var coordinates = try selectedMoon.select("[class=planet-koords ]").get(0).text()
                     coordinates.removeFirst()
                     coordinates.removeLast()
                     var arrayOfCoordinates = coordinates.components(separatedBy: ":").compactMap { Int($0) }
                     arrayOfCoordinates.append(3)
                     return arrayOfCoordinates
                 }
-            }
         } catch {
             return [0, 0, 0, 0]
         }

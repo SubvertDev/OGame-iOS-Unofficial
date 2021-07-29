@@ -3,6 +3,7 @@
     <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -208,30 +209,71 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9:999:999" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WGM-zh-oFd">
-                                                <rect key="frame" x="148" y="111.66666666666666" width="94.333333333333314" height="23"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="[9:999:999]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WGM-zh-oFd">
+                                                <rect key="frame" x="140.66666666666666" y="111.66666666666666" width="108.66666666666666" height="23"/>
                                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KUQ-9u-Osf">
+                                                <rect key="frame" x="256" y="81.666666666666657" width="36" height="32"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal">
+                                                    <imageReference key="image" image="arrow.forward.square.fill" catalog="system" symbolScale="default"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="31"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="rightButtonPressed:" destination="lqp-jr-SoF" eventType="touchUpInside" id="Ozf-zL-tgT"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EwQ-6j-jGb">
+                                                <rect key="frame" x="100" y="82" width="34.333333333333343" height="31"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" image="arrow.backward.square.fill" catalog="system">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="30"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="leftButtonPressed:" destination="lqp-jr-SoF" eventType="touchUpInside" id="VaX-Fs-aWR"/>
+                                                </connections>
+                                            </button>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qII-3S-dMI">
+                                                <rect key="frame" x="163" y="13.666666666666671" width="64" height="64"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="64" id="sb2-Kf-1Cc"/>
+                                                    <constraint firstAttribute="width" constant="64" id="u9L-tk-XHd"/>
+                                                </constraints>
+                                            </imageView>
+                                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="fEt-nP-ueW">
+                                                <rect key="frame" x="176.66666666666666" y="142.66666666666666" width="37" height="37"/>
+                                                <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </activityIndicatorView>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstItem="9S3-6R-mdU" firstAttribute="centerX" secondItem="STW-l7-zsf" secondAttribute="centerX" id="2dC-Oi-IKJ"/>
+                                            <constraint firstItem="fEt-nP-ueW" firstAttribute="centerX" secondItem="STW-l7-zsf" secondAttribute="centerX" id="3Gb-II-MLX"/>
                                             <constraint firstItem="ocT-It-ptC" firstAttribute="top" secondItem="STW-l7-zsf" secondAttribute="topMargin" id="6JX-ff-HY2"/>
                                             <constraint firstAttribute="trailing" secondItem="mUV-XH-PYu" secondAttribute="trailing" constant="8" id="6Uq-ja-z7C"/>
                                             <constraint firstItem="ocT-It-ptC" firstAttribute="leading" secondItem="STW-l7-zsf" secondAttribute="leadingMargin" id="6WB-xx-6gU"/>
+                                            <constraint firstItem="KUQ-9u-Osf" firstAttribute="leading" secondItem="9S3-6R-mdU" secondAttribute="trailing" constant="4" id="9iM-FM-CKd"/>
                                             <constraint firstItem="HtR-4n-cqV" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ocT-It-ptC" secondAttribute="trailing" constant="8" symbolic="YES" id="AyE-L1-aAh"/>
                                             <constraint firstItem="yg3-4T-RTI" firstAttribute="leading" secondItem="STW-l7-zsf" secondAttribute="leading" id="Hug-6P-4ea"/>
+                                            <constraint firstItem="EwQ-6j-jGb" firstAttribute="centerY" secondItem="9S3-6R-mdU" secondAttribute="centerY" id="Klt-SY-TzH"/>
                                             <constraint firstAttribute="bottom" secondItem="yg3-4T-RTI" secondAttribute="bottom" id="L5K-L1-Flz"/>
                                             <constraint firstItem="9S3-6R-mdU" firstAttribute="centerY" secondItem="STW-l7-zsf" secondAttribute="centerY" id="Mku-2h-sbq"/>
                                             <constraint firstItem="WGM-zh-oFd" firstAttribute="centerX" secondItem="STW-l7-zsf" secondAttribute="centerX" id="Ovx-zU-vqU"/>
+                                            <constraint firstItem="9S3-6R-mdU" firstAttribute="top" secondItem="qII-3S-dMI" secondAttribute="bottom" constant="8" id="dCj-AQ-Zak"/>
+                                            <constraint firstItem="KUQ-9u-Osf" firstAttribute="centerY" secondItem="9S3-6R-mdU" secondAttribute="centerY" id="ePT-EA-aMo"/>
+                                            <constraint firstItem="qII-3S-dMI" firstAttribute="centerX" secondItem="9S3-6R-mdU" secondAttribute="centerX" id="etY-PX-Cpd"/>
                                             <constraint firstItem="yg3-4T-RTI" firstAttribute="top" secondItem="STW-l7-zsf" secondAttribute="top" id="fHJ-kS-vwx"/>
+                                            <constraint firstItem="fEt-nP-ueW" firstAttribute="top" secondItem="WGM-zh-oFd" secondAttribute="bottom" constant="8" id="giH-xy-RBf"/>
                                             <constraint firstItem="WGM-zh-oFd" firstAttribute="top" secondItem="9S3-6R-mdU" secondAttribute="bottom" constant="2" id="hkk-DE-L2R"/>
                                             <constraint firstItem="HtR-4n-cqV" firstAttribute="top" secondItem="STW-l7-zsf" secondAttribute="topMargin" id="ivi-la-KBR"/>
                                             <constraint firstAttribute="trailing" secondItem="yg3-4T-RTI" secondAttribute="trailing" id="j8V-Py-iII"/>
                                             <constraint firstItem="mUV-XH-PYu" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="STW-l7-zsf" secondAttribute="leading" constant="20" symbolic="YES" id="lOI-51-vhP"/>
+                                            <constraint firstItem="9S3-6R-mdU" firstAttribute="leading" secondItem="EwQ-6j-jGb" secondAttribute="trailing" constant="4" id="uhk-vM-hVv"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="HtR-4n-cqV" secondAttribute="trailing" id="vSO-AL-jgs"/>
                                             <constraint firstAttribute="bottom" secondItem="mUV-XH-PYu" secondAttribute="bottom" constant="8" id="zmJ-ze-Mz1"/>
                                         </constraints>
@@ -285,8 +327,10 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="activityIndicator" destination="fEt-nP-ueW" id="gP9-iH-w8T"/>
                         <outlet property="coordinatesLabel" destination="WGM-zh-oFd" id="cOX-AZ-kQp"/>
                         <outlet property="fieldsLabel" destination="mUV-XH-PYu" id="hVr-90-6ZC"/>
+                        <outlet property="planetImage" destination="qII-3S-dMI" id="pBm-p5-X5T"/>
                         <outlet property="planetNameLabel" destination="9S3-6R-mdU" id="Bxn-Vg-vOc"/>
                         <outlet property="rankLabel" destination="HtR-4n-cqV" id="nXp-u5-l4Z"/>
                         <outlet property="serverNameLabel" destination="ocT-It-ptC" id="TKi-19-IUn"/>
@@ -472,6 +516,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrow.backward.square.fill" catalog="system" width="128" height="114"/>
+        <image name="arrow.forward.square.fill" catalog="system" width="128" height="114"/>
         <image name="login_backrgound" width="1080" height="1920"/>
         <image name="ogame_background" width="1344" height="956"/>
         <image name="ogame_logo" width="150" height="50"/>

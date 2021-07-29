@@ -14,10 +14,10 @@ class MenuVC: UIViewController {
     @IBOutlet weak var rankLabel: UILabel!
     @IBOutlet weak var fieldsLabel: UILabel!
     @IBOutlet weak var coordinatesLabel: UILabel!
-
+    @IBOutlet weak var planetImage: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
 
-    
     let menuList = ["Overview",
                     "Resources",
                     "Facilities",
@@ -25,7 +25,8 @@ class MenuVC: UIViewController {
                     "Shipyard",
                     "Defence",
                     "Fleet",
-                    "Galaxy"]
+                    "Galaxy",
+                    "Settings"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,8 +37,31 @@ class MenuVC: UIViewController {
     }
 
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
-        OGame.shared.reset()
         navigationController?.popToRootViewController(animated: true)
+    }
+
+    @IBAction func rightButtonPressed(_ sender: UIButton) {
+        activityIndicator.startAnimating()
+        OGame.shared.setNextPlanet { error in
+            if let _ = error {
+                self.navigationController?.popToRootViewController(animated: true)
+            } else {
+                self.configureLabels()
+                self.activityIndicator.stopAnimating()
+            }
+        }
+    }
+
+    @IBAction func leftButtonPressed(_ sender: UIButton) {
+        activityIndicator.startAnimating()
+        OGame.shared.setPreviousPlanet { error in
+            if let _ = error {
+                self.navigationController?.popToRootViewController(animated: true)
+            } else {
+                self.configureLabels()
+                self.activityIndicator.stopAnimating()
+            }
+        }
     }
 
     func configureTableView() {
@@ -51,7 +75,12 @@ class MenuVC: UIViewController {
         serverNameLabel.text = OGame.shared.universe
         rankLabel.text = "Rank: \(OGame.shared.rank!)"
         fieldsLabel.text = "\(OGame.shared.celestial!.used)/\(OGame.shared.celestial!.total)"
-        coordinatesLabel.text = "[\(OGame.shared.coordinates![0]):\(OGame.shared.coordinates![1]):\(OGame.shared.coordinates![2])]"
+        coordinatesLabel.text = "[\(OGame.shared.celestial!.coordinates[0]):\(OGame.shared.celestial!.coordinates[1]):\(OGame.shared.celestial!.coordinates[2])]"
+        OGame.shared.getPlanetImageData { data in
+            if let data = data {
+                self.planetImage.image = UIImage(data: data)
+            }
+        }
     }
 }
 
@@ -95,6 +124,8 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             case 5:
                 vc.childVC = DefenceVC()
                 vc.title = menuList[page]
+            case 6:
+                vc.childVC = FleetVC()
             default:
                 print(sender as! Int)
             }
