@@ -126,6 +126,10 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
                 vc.title = menuList[page]
             case 6:
                 vc.childVC = FleetVC()
+                vc.title = menuList[page]
+            case 7:
+                vc.childVC = GalaxyVC()
+                vc.title = menuList[page]
             default:
                 print(sender as! Int)
             }

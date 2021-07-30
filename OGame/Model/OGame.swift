@@ -35,6 +35,8 @@ class OGame {
     private var doc: Document?
     var planet: String?
     var planetID: Int?
+    var playerName: String?
+    var playerID: Int?
     var planetNames: [String]?
     var planetIDs: [Int]?
     var celestial: Celestial?
@@ -258,8 +260,13 @@ class OGame {
                 let planetNameContent = try planetName.get(0).attr("content")
                 let planetIDContent = try planetID.get(0).attr("content")
 
+                let playerName = try doc!.select("[name=ogame-player-name]").get(0).attr("content")
+                let playerID = try doc!.select("[name=ogame-player-id]").get(0).attr("content")
+
                 self.planet = planetNameContent
                 self.planetID = Int(planetIDContent)
+                self.playerName = playerName
+                self.playerID = Int(playerID)
                 self.rank = getRank()
                 self.planetNames = getPlanetNames()
                 self.planetIDs = getPlanetIDs()
@@ -859,6 +866,98 @@ class OGame {
     }
 
     // MARK: - GET GALAXY
+    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position], Error>) -> Void) {
+        let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
+        let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
+        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
+
+        sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseJSON { response in
+            switch response.result {
+            case .success(let data):
+                let checkData = data as! [String: Any]
+                let galaxyJson = checkData["galaxy"] as! String
+
+                let galaxyInfo = try! SwiftSoup.parse(galaxyJson)
+                let players = try! galaxyInfo.select("[id*=player]")
+                let alliances = try! galaxyInfo.select("[id*=alliance]")
+
+                var playerNames = [String: String]()
+                var playerRanks = [String: Int]()
+                var playerAlliances = [String: String]()
+
+                for player in players {
+                    let nameKey = try! player.attr("id").replacingOccurrences(of: "player", with: "")
+                    let nameValue = try! player.select("span").text()
+                    playerNames[nameKey] = nameValue
+
+                    let rankKey = try! player.attr("id").replacingOccurrences(of: "player", with: "")
+                    let rankValue = Int(try! player.select("a").get(0).text()) ?? -1
+                    playerRanks[rankKey] = rankValue
+                }
+
+                for alliance in alliances {
+                    let allianceKey = try! alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
+                    let allianceValue = try! alliance.select("h1").get(0).text()
+                    playerAlliances[allianceKey] = allianceValue
+                }
+
+                var planets = [Position]()
+
+                for row in try! galaxyInfo.select("#galaxytable .row") {
+                    let status = try! row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
+                    var planetStatus = ""
+                    var playerID = 0
+
+                    let staffCheckID = try! row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
+
+                    if status.contains("empty_filter") {
+                        continue
+                    } else if status.count == 0 {
+                        if playerRanks[staffCheckID] == -1 {
+                            planetStatus = "staff"
+                            playerID = Int(staffCheckID)!
+                        } else {
+                            planetStatus = "yourself"
+                            playerID = self.playerID!
+                            playerNames[String(playerID)] = self.playerName
+                            playerRanks[String(playerID)] = self.rank
+                        }
+                    } else {
+                        planetStatus = "\(status)"
+
+                        let player = try! row.select("[rel~=player[0-9]+]").attr("rel")
+                        if player.isEmpty { continue }
+
+                        playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
+                        if playerID == 99999 { continue }
+                    }
+
+                    let planetPosition = try! row.select("[class*=position]").text()
+                    let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
+                    let moonPosition = try! row.select("[rel*=moon]").attr("rel")
+                    let allianceID = try! row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
+                    let planetName = try! row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
+
+                    let position = Position(coordinates: planetCoordinates,
+                                            planetName: planetName,
+                                            playerName: playerNames[String(playerID)]!,
+                                            playerID: playerID,
+                                            rank: playerRanks[String(playerID)]!,
+                                            status: planetStatus,
+                                            moon: moonPosition != "",
+                                            alliance: playerAlliances[allianceID])
+
+                    planets.append(position)
+                }
+                completion(.success(planets))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+
 
     // MARK: - GET ALLY
 
@@ -941,9 +1040,6 @@ class OGame {
             }
         }
     }
-
-    // MARK: - DO RESEARCH
-    // TODO: Do I need this? Looks like build function can do it on its own
 
     // MARK: - COLLECT RUBBLE FIELD
 

@@ -42,6 +42,7 @@ class ShipyardVC: UIViewController {
         tableView.removeExtraCellLines()
         tableView.alpha = 0.5
         tableView.rowHeight = 88
+        tableView.keyboardDismissMode = .onDrag
 
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
