@@ -99,7 +99,11 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        performSegue(withIdentifier: "ShowGenericVC", sender: indexPath.row)
+        if indexPath.row == 7 {
+            performSegue(withIdentifier: "ShowGalaxyVC", sender: self)
+        } else {
+            performSegue(withIdentifier: "ShowGenericVC", sender: indexPath.row)
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

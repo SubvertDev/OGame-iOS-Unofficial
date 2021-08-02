@@ -336,6 +336,7 @@
                         <outlet property="serverNameLabel" destination="ocT-It-ptC" id="TKi-19-IUn"/>
                         <outlet property="tableView" destination="JEN-27-DL1" id="HNV-qz-19Y"/>
                         <segue destination="wA0-cr-FlI" kind="show" identifier="ShowGenericVC" id="RRQ-Ig-31f"/>
+                        <segue destination="mgk-PW-LDP" kind="show" identifier="ShowGalaxyVC" id="UsA-cu-Wct"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W40-vo-J8V" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -514,10 +515,101 @@
             </objects>
             <point key="canvasLocation" x="4443" y="68"/>
         </scene>
+        <!--Galaxy view-->
+        <scene sceneID="98F-ol-GjP">
+            <objects>
+                <viewController id="mgk-PW-LDP" customClass="GalaxyVC" customModule="OGame" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="EjG-Se-pw0">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="24r-0B-eqG">
+                                <rect key="frame" x="16" y="104" width="358" height="34"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="Mug-Qu-OwO">
+                                        <rect key="frame" x="0.0" y="0.0" width="174.66666666666666" height="34"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f73-wz-YDn">
+                                                <rect key="frame" x="0.0" y="0.0" width="31" height="34"/>
+                                                <state key="normal" image="arrow.left" catalog="system"/>
+                                                <connections>
+                                                    <action selector="galaxyLeftPressed:" destination="mgk-PW-LDP" eventType="touchUpInside" id="efT-dJ-vmb"/>
+                                                </connections>
+                                            </button>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Galaxy" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L9q-r5-EgT">
+                                                <rect key="frame" x="31.000000000000007" y="0.0" width="112.66666666666669" height="34"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EA8-KR-6zb">
+                                                <rect key="frame" x="143.66666666666666" y="0.0" width="31" height="34"/>
+                                                <state key="normal" image="arrow.right" catalog="system"/>
+                                                <connections>
+                                                    <action selector="galaxyRightPressed:" destination="mgk-PW-LDP" eventType="touchUpInside" id="3s1-yE-9hv"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="lSM-dV-Uxh">
+                                        <rect key="frame" x="183.66666666666663" y="0.0" width="174.33333333333337" height="34"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kPC-vx-cfe">
+                                                <rect key="frame" x="0.0" y="0.0" width="29.666666666666668" height="34"/>
+                                                <state key="normal" image="arrow.left" catalog="system"/>
+                                                <connections>
+                                                    <action selector="systemLeftPressed:" destination="mgk-PW-LDP" eventType="touchUpInside" id="Sdw-Cl-pE5"/>
+                                                </connections>
+                                            </button>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="System" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1k2-Y0-um3">
+                                                <rect key="frame" x="29.666666666666686" y="0.0" width="115" height="34"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sYc-ge-Dr7">
+                                                <rect key="frame" x="144.66666666666666" y="0.0" width="29.666666666666657" height="34"/>
+                                                <state key="normal" image="arrow.right" catalog="system"/>
+                                                <connections>
+                                                    <action selector="systemRightPressed:" destination="mgk-PW-LDP" eventType="touchUpInside" id="OlF-dD-i8U"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="UdK-J1-g1s">
+                                <rect key="frame" x="0.0" y="154" width="390" height="656"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Vme-bC-m9a"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="UdK-J1-g1s" firstAttribute="leading" secondItem="Vme-bC-m9a" secondAttribute="leading" id="82d-Kz-mbF"/>
+                            <constraint firstItem="UdK-J1-g1s" firstAttribute="top" secondItem="24r-0B-eqG" secondAttribute="bottom" constant="16" id="8Nl-LK-s3U"/>
+                            <constraint firstItem="Vme-bC-m9a" firstAttribute="trailing" secondItem="UdK-J1-g1s" secondAttribute="trailing" id="Cb2-8h-0Nb"/>
+                            <constraint firstItem="24r-0B-eqG" firstAttribute="leading" secondItem="Vme-bC-m9a" secondAttribute="leading" constant="16" id="HTQ-D2-RUN"/>
+                            <constraint firstItem="Vme-bC-m9a" firstAttribute="trailing" secondItem="24r-0B-eqG" secondAttribute="trailing" constant="16" id="SBR-BW-2lQ"/>
+                            <constraint firstItem="24r-0B-eqG" firstAttribute="top" secondItem="Vme-bC-m9a" secondAttribute="top" constant="16" id="boK-fG-Sd4"/>
+                            <constraint firstItem="Vme-bC-m9a" firstAttribute="bottom" secondItem="UdK-J1-g1s" secondAttribute="bottom" id="dpP-0g-C8S"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Galaxy view" id="3YY-5P-49X"/>
+                    <connections>
+                        <outlet property="galaxyTextField" destination="L9q-r5-EgT" id="ZoM-W5-hOe"/>
+                        <outlet property="systemTextField" destination="1k2-Y0-um3" id="1jn-zp-QK8"/>
+                        <outlet property="tableView" destination="UdK-J1-g1s" id="ecD-ag-1Fl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0zD-hm-Uo3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5184.6153846153848" y="67.535545023696685"/>
+        </scene>
     </scenes>
     <resources>
         <image name="arrow.backward.square.fill" catalog="system" width="128" height="114"/>
         <image name="arrow.forward.square.fill" catalog="system" width="128" height="114"/>
+        <image name="arrow.left" catalog="system" width="128" height="98"/>
+        <image name="arrow.right" catalog="system" width="128" height="98"/>
         <image name="login_backrgound" width="1080" height="1920"/>
         <image name="ogame_background" width="1344" height="956"/>
         <image name="ogame_logo" width="150" height="50"/>

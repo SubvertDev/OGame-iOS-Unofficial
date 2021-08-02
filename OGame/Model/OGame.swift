@@ -866,7 +866,7 @@ class OGame {
     }
 
     // MARK: - GET GALAXY
-    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position], Error>) -> Void) {
+    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], Error>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
         let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
@@ -901,7 +901,7 @@ class OGame {
                     playerAlliances[allianceKey] = allianceValue
                 }
 
-                var planets = [Position]()
+                var planets = [Position?]()
 
                 for row in try! galaxyInfo.select("#galaxytable .row") {
                     let status = try! row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
@@ -911,6 +911,7 @@ class OGame {
                     let staffCheckID = try! row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
 
                     if status.contains("empty_filter") {
+                        planets.append(nil)
                         continue
                     } else if status.count == 0 {
                         if playerRanks[staffCheckID] == -1 {
@@ -926,10 +927,16 @@ class OGame {
                         planetStatus = "\(status)"
 
                         let player = try! row.select("[rel~=player[0-9]+]").attr("rel")
-                        if player.isEmpty { continue }
+                        if player.isEmpty {
+                            planets.append(nil)
+                            continue
+                        }
 
                         playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
-                        if playerID == 99999 { continue }
+                        if playerID == 99999 {
+                            planets.append(nil)
+                            continue
+                        }
                     }
 
                     let planetPosition = try! row.select("[class*=position]").text()
@@ -946,7 +953,6 @@ class OGame {
                                             status: planetStatus,
                                             moon: moonPosition != "",
                                             alliance: playerAlliances[allianceID])
-
                     planets.append(position)
                 }
                 completion(.success(planets))
