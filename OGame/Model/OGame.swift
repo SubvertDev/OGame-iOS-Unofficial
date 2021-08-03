@@ -884,7 +884,7 @@ class OGame {
                 let imagesParse = try! galaxyInfo.select("li").select("[class*=planetTooltip]")
                 var images: [String] = []
                 for image in imagesParse {
-                    images.append(try! image.attr("src"))
+                    images.append(try! image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
                 }
 
                 var playerNames = [String: String]()
@@ -951,6 +951,14 @@ class OGame {
                     let allianceID = try! row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
                     let planetName = try! row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
 
+                    var imageString = ""
+                    let noNilsCount = planets.filter({ $0 != nil}).count
+                    if noNilsCount == 0 {
+                        imageString = images[0]
+                    } else {
+                        imageString = images[noNilsCount]
+                    }
+
                     let position = Position(coordinates: planetCoordinates,
                                             planetName: planetName,
                                             playerName: playerNames[String(playerID)]!,
@@ -958,7 +966,8 @@ class OGame {
                                             rank: playerRanks[String(playerID)]!,
                                             status: planetStatus,
                                             moon: moonPosition != "",
-                                            alliance: playerAlliances[allianceID])
+                                            alliance: playerAlliances[allianceID],
+                                            imageString: imageString)
                     planets.append(position)
                 }
                 completion(.success(planets))

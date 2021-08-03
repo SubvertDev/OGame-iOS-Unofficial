@@ -16,4 +16,5 @@ struct Position {
     let status: String
     let moon: Bool
     let alliance: String?
+    let imageString: String
 }

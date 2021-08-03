@@ -33,7 +33,7 @@ class GalaxyCell: UITableViewCell {
     func set(with systemInfo: [Position?], indexPath: IndexPath) {
         if systemInfo[indexPath.row] != nil {
             planetPositionLabel.text = "\(indexPath.row + 1)"
-            planetImage.image = UIImage(systemName: "circle.fill")
+            planetImage.image = UIImage(named: "\(systemInfo[indexPath.row]!.imageString)")
             planetNameLabel.text = "\(systemInfo[indexPath.row]!.planetName)"
             playerNameLabel.text = "\(systemInfo[indexPath.row]!.playerName) (\(systemInfo[indexPath.row]!.status))"
             allianceNameLabel.text = "\(systemInfo[indexPath.row]!.alliance ?? "")"
