@@ -544,7 +544,10 @@
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Galaxy" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L9q-r5-EgT">
                                                 <rect key="frame" x="31.000000000000007" y="0.0" width="112.66666666666669" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                <connections>
+                                                    <action selector="galaxyTextFieldChanged:" destination="mgk-PW-LDP" eventType="editingChanged" id="g7U-fK-75q"/>
+                                                </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EA8-KR-6zb">
                                                 <rect key="frame" x="143.66666666666666" y="0.0" width="31" height="34"/>
@@ -568,7 +571,10 @@
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="System" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1k2-Y0-um3">
                                                 <rect key="frame" x="29.666666666666686" y="0.0" width="115" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                <connections>
+                                                    <action selector="systemTextFieldChanged:" destination="mgk-PW-LDP" eventType="editingChanged" id="f8f-ik-tw2"/>
+                                                </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sYc-ge-Dr7">
                                                 <rect key="frame" x="144.66666666666666" y="0.0" width="29.666666666666657" height="34"/>

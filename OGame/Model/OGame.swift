@@ -881,6 +881,12 @@ class OGame {
                 let players = try! galaxyInfo.select("[id*=player]")
                 let alliances = try! galaxyInfo.select("[id*=alliance]")
 
+                let imagesParse = try! galaxyInfo.select("li").select("[class*=planetTooltip]")
+                var images: [String] = []
+                for image in imagesParse {
+                    images.append(try! image.attr("src"))
+                }
+
                 var playerNames = [String: String]()
                 var playerRanks = [String: Int]()
                 var playerAlliances = [String: String]()
@@ -918,13 +924,13 @@ class OGame {
                             planetStatus = "staff"
                             playerID = Int(staffCheckID)!
                         } else {
-                            planetStatus = "yourself"
+                            planetStatus = "you"
                             playerID = self.playerID!
                             playerNames[String(playerID)] = self.playerName
                             playerRanks[String(playerID)] = self.rank
                         }
                     } else {
-                        planetStatus = "\(status)"
+                        planetStatus = "\(status[status.startIndex])"
 
                         let player = try! row.select("[rel~=player[0-9]+]").attr("rel")
                         if player.isEmpty {
