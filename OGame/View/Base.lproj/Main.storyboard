@@ -520,7 +520,7 @@
             </objects>
             <point key="canvasLocation" x="4443" y="68"/>
         </scene>
-        <!--Galaxy view-->
+        <!--Galaxy-->
         <scene sceneID="98F-ol-GjP">
             <objects>
                 <viewController id="mgk-PW-LDP" customClass="GalaxyVC" customModule="OGame" customModuleProvider="target" sceneMemberID="viewController">
@@ -541,12 +541,12 @@
                                                     <action selector="galaxyLeftPressed:" destination="mgk-PW-LDP" eventType="touchUpInside" id="efT-dJ-vmb"/>
                                                 </connections>
                                             </button>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Galaxy" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L9q-r5-EgT">
+                                            <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Galaxy" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L9q-r5-EgT">
                                                 <rect key="frame" x="31.000000000000007" y="0.0" width="112.66666666666669" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                 <connections>
-                                                    <action selector="galaxyTextFieldChanged:" destination="mgk-PW-LDP" eventType="editingChanged" id="g7U-fK-75q"/>
+                                                    <action selector="galaxyTextFieldChanged:" destination="mgk-PW-LDP" eventType="editingDidEnd" id="HFg-GH-6Cw"/>
                                                 </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EA8-KR-6zb">
@@ -568,12 +568,12 @@
                                                     <action selector="systemLeftPressed:" destination="mgk-PW-LDP" eventType="touchUpInside" id="Sdw-Cl-pE5"/>
                                                 </connections>
                                             </button>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="System" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1k2-Y0-um3">
+                                            <textField opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="System" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1k2-Y0-um3">
                                                 <rect key="frame" x="29.666666666666686" y="0.0" width="115" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                 <connections>
-                                                    <action selector="systemTextFieldChanged:" destination="mgk-PW-LDP" eventType="editingChanged" id="f8f-ik-tw2"/>
+                                                    <action selector="systemTextFieldChanged:" destination="mgk-PW-LDP" eventType="editingDidEnd" id="yTO-wH-bVO"/>
                                                 </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sYc-ge-Dr7">
@@ -591,6 +591,9 @@
                                 <rect key="frame" x="0.0" y="154" width="390" height="656"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="2rw-RT-l1l">
+                                <rect key="frame" x="176.66666666666666" y="463.66666666666669" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Vme-bC-m9a"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -599,13 +602,16 @@
                             <constraint firstItem="UdK-J1-g1s" firstAttribute="top" secondItem="24r-0B-eqG" secondAttribute="bottom" constant="16" id="8Nl-LK-s3U"/>
                             <constraint firstItem="Vme-bC-m9a" firstAttribute="trailing" secondItem="UdK-J1-g1s" secondAttribute="trailing" id="Cb2-8h-0Nb"/>
                             <constraint firstItem="24r-0B-eqG" firstAttribute="leading" secondItem="Vme-bC-m9a" secondAttribute="leading" constant="16" id="HTQ-D2-RUN"/>
+                            <constraint firstItem="2rw-RT-l1l" firstAttribute="centerY" secondItem="UdK-J1-g1s" secondAttribute="centerY" id="LJx-t0-u7b"/>
                             <constraint firstItem="Vme-bC-m9a" firstAttribute="trailing" secondItem="24r-0B-eqG" secondAttribute="trailing" constant="16" id="SBR-BW-2lQ"/>
                             <constraint firstItem="24r-0B-eqG" firstAttribute="top" secondItem="Vme-bC-m9a" secondAttribute="top" constant="16" id="boK-fG-Sd4"/>
                             <constraint firstItem="Vme-bC-m9a" firstAttribute="bottom" secondItem="UdK-J1-g1s" secondAttribute="bottom" id="dpP-0g-C8S"/>
+                            <constraint firstItem="2rw-RT-l1l" firstAttribute="centerX" secondItem="UdK-J1-g1s" secondAttribute="centerX" id="mIp-nR-Oq2"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Galaxy view" id="3YY-5P-49X"/>
+                    <navigationItem key="navigationItem" title="Galaxy" id="3YY-5P-49X"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="2rw-RT-l1l" id="d4t-9f-br3"/>
                         <outlet property="galaxyTextField" destination="L9q-r5-EgT" id="ZoM-W5-hOe"/>
                         <outlet property="systemTextField" destination="1k2-Y0-um3" id="1jn-zp-QK8"/>
                         <outlet property="tableView" destination="UdK-J1-g1s" id="ecD-ag-1Fl"/>
