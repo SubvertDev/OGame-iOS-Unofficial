@@ -136,7 +136,7 @@ class OGame {
 
                 switch response.result {
                 case .success(let servers):
-                    print("servers response: \(servers)")
+                    //print("servers response: \(servers)")
                     self.serversList = servers
                     configureAccounts()
 
@@ -993,10 +993,256 @@ class OGame {
     }
 
     // MARK: - GET FLEET
+    func getFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
+        var fleets = [Fleets]()
+        
+//        attacked { result in
+//            switch result {
+//            case .success(let attacked):
+//                if attacked {
+//                    self.getHostileFleet { result in
+//                        switch result {
+//                        case .success(let hostileFleet):
+//                            for fleet in hostileFleet {
+//                                fleets.append(fleet)
+//                            }
+//
+//                        case .failure(let error):
+//                            completion(.failure(error))
+//                        }
+//                    }
+//                }
+//            case .failure(let error):
+//                completion(.failure(error))
+//            }
+//        }
+        
+        friendly { result in
+            switch result {
+            case .success(let friendly):
+                if friendly {
+                    self.getFriendlyFleet { result in
+                        switch result {
+                        case .success(let friendlyFleet):
+                            for fleet in friendlyFleet {
+                                fleets.append(fleet)
+                            }
+                            completion(.success(fleets))
+                            
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 
     // MARK: - GET HOSTILE FLEET
+    
+    // TODO: UNFINISHED
+    
+    func getHostileFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
+        let link = "\(indexPHP!)page=componentOnly&component=eventList"
+        sessionAF.request(link).response { response in
+            
+            switch response.result {
+            case .success(let data):
+                let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                print("PAGE FOUND: \(page)")
+                
+                let eventFleet = try! page.select("[class=eventFleet]")
+                for event in eventFleet {
+                    print("EVENT DETECTED: \(event)")
+                    let test = try! event.select("[class*=hostile]").get(0)
+                    print("TEST EVENT DETECTED: \(test)")
+                }
+                
+                var fleetIDs = [Int]()
+                for element in eventFleet {
+                    let fleetID = Int(try! element.attr("id").replacingOccurrences(of: "event-", with: ""))!
+                    print("FLEETID: \(fleetID)")
+                    fleetIDs.append(fleetID)
+                }
+                
+                var arrivalTimes = [Int]()
+                for event in eventFleet {
+                    arrivalTimes.append(Int(try! event.attr("data-arrival-time"))!)
+                    let time = Int(try! event.attr("data-arrival-time"))!
+                    let date = Date(timeIntervalSince1970: TimeInterval(time))
+                    let formatter = DateFormatter()
+                    formatter.timeZone = TimeZone.current
+                    formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
+                    print("ENEMY DATE ARRIVAL: \(formatter.string(from: date))")
+                }
+                
+                let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
+                let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
+                
+                var playerNames = [String]()
+                for name in eventFleet {
+                    playerNames.append(try! name.select("[class*=sendMail ]").attr("title"))
+                }
+                
+                var playerIDs = [Int]()
+                for id in eventFleet {
+                    print("ERROR IS HERE: \(try! id.select("[class*=sendMail ]").attr("data-playerid"))")
+                    playerIDs.append(Int(try! id.select("[class*=sendMail ]").attr("data-playerid"))!)
+                }
+                
+                var fleet: [Fleets] = []
+                for i in 0...fleetIDs.count - 1 {
+                    fleet.append(Fleets(id: fleetIDs[i],
+                                       mission: 1,
+                                       diplomacy: "hostile",
+                                       playerName: playerNames[i],
+                                       playerID: playerIDs[i],
+                                       returns: false,
+                                       arrivalTime: arrivalTimes[i],
+                                       endTime: nil,
+                                       origin: origins[i],
+                                       destination: destinations[i]))
+                }
+                completion(.success(fleet))
+                
+            case .failure(_):
+                break
+            }
+        }
+    }
 
     // MARK: - GET FRIENDLY FLEET
+    func getFriendlyFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
+        let link = "\(indexPHP!)page=ingame&component=movement"
+        sessionAF.request(link).response { response in
+            
+            switch response.result {
+            case .success(let data):
+                let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+    
+                let fleetDetails = try! page.select("[class*=fleetDetails]")
+                var fleetIDs = [Int]()
+                for element in fleetDetails {
+                    fleetIDs.append(Int(try! element.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
+                }
+                
+                // 1 - attacked
+                // 3 - transport
+                // 4 - deployment
+                // 8 - recycle/harvest
+                // 15 - expedition
+                var missionTypes = [Int]()
+                for event in fleetDetails {
+                    missionTypes.append(Int(try! event.attr("data-mission-type"))!)
+                    print(missionTypes)
+                }
+                
+                var returnFlights = [Bool]()
+                for event in fleetDetails {
+                    if try! event.attr("data-return-flight") == "1" {
+                        returnFlights.append(true)
+                    } else {
+                        returnFlights.append(false)
+                    }
+                }
+                
+                var arrivalTimes = [Int]()
+                var endTimes = [Int]()
+                for event in fleetDetails {
+                    arrivalTimes.append(Int(try! event.attr("data-arrival-time"))!)
+                    let time = Int(try! event.attr("data-arrival-time"))!
+                    let date = Date(timeIntervalSince1970: TimeInterval(time))
+                    let formatter = DateFormatter()
+                    formatter.timeZone = TimeZone.current
+                    formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
+                    print("DATE ARRIVAL: \(formatter.string(from: date))")
+                    
+                    endTimes.append(Int(try! event.select("[data-end-time]").attr("data-end-time"))!)
+                    let endTime = Int(try! event.select("[data-end-time]").attr("data-end-time"))!
+                    let endDate = Date(timeIntervalSince1970: TimeInterval(endTime))
+                    let endFormatter = DateFormatter()
+                    endFormatter.timeZone = TimeZone.current
+                    endFormatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
+                    print("DATE ENDTIME: \(formatter.string(from: endDate))")
+                }
+                // TODO: Make a function to convert epoch to normal time
+                // if type is 1 (attacked) use ???
+                // if type is 3 (transport) use endtime>arrival
+                // if type is 4 (deployment) use endtime
+                // if type is 8 (recycle/harvest) use endtime>arrival
+                // if type is 15 (expedition) use endtime?>arrival?
+                
+                print("predest")
+                let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
+                let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
+                print("postdest")
+                            
+                var fleet: [Fleets] = []
+                for i in 0...fleetIDs.count - 1 {
+                    fleet.append(Fleets(id: fleetIDs[i],
+                                       mission: missionTypes[i],
+                                       diplomacy: "friendly",
+                                       playerName: self.playerName!,
+                                       playerID: self.playerID!,
+                                       returns: returnFlights[i],
+                                       arrivalTime: arrivalTimes[i],
+                                       endTime: endTimes[i],
+                                       origin: origins[i],
+                                       destination: destinations[i]))
+                }
+                
+                completion(.success(fleet))
+                
+            case .failure(_):
+                break
+            }
+        }
+    }
+    
+    // MARK: - GET FLEET COORDINATES
+    func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
+        
+        // TODO: Test with moon/expedition
+        
+        var coordinates = [[Int]]()
+
+        for detail in details {
+            var coordinateString = try! detail.select("[class*=\(type)]").text().trimmingCharacters(in: .whitespacesAndNewlines)
+            coordinateString.removeFirst()
+            coordinateString.removeLast()
+            var coordinate = coordinateString.components(separatedBy: ":").compactMap { Int($0) }
+            
+            var destination = String()
+            if type == "destinationCoords" {
+                let figure = try! detail.select("figure")
+                if figure.count == 1 {
+                    destination = "expedition"
+                } else {
+                    destination = try! figure.get(1).select("[class*=planetIcon]").attr("class").replacingOccurrences(of: "planetIcon ", with: "")
+                }
+            } else {
+                let figure = try! detail.select("figure").get(0)
+                destination = try! figure.select("[class*=planetIcon]").attr("class").replacingOccurrences(of: "planetIcon ", with: "")
+            }
+            
+            switch destination {
+            case "expedition":
+                coordinate.append(0) // expedition
+            case "moon":
+                coordinate.append(3) // moon
+            case "tf":
+                coordinate.append(2) // debris
+            default:
+                coordinate.append(1) // planet
+            }
+            
+            coordinates.append(coordinate)
+        }
+        
+        return coordinates
+    }
 
     // MARK: - GET PHALANX
 

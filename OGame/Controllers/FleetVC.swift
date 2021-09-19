@@ -11,6 +11,14 @@ class FleetVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        OGame.shared.getFleet { result in
+            switch result {
+            case .success(let success):
+                print("ITS WORKING: \(success)")
+            case .failure(_):
+                print("FATAL ERROR")
+            }
+        }
     }
 }

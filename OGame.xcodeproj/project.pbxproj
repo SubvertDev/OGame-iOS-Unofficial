@@ -19,6 +19,7 @@
 		B85D7F87265FCD3400186021 /* Researchings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D7F86265FCD3400186021 /* Researchings.swift */; };
 		B85D7F89265FDDCC00186021 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D7F88265FDDCC00186021 /* Images.swift */; };
 		B8623A9626B18748003F79C3 /* GenericVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8623A9526B18748003F79C3 /* GenericVC.swift */; };
+		B867077E26F6857D00F7372E /* Fleets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867077D26F6857D00F7372E /* Fleets.swift */; };
 		B867614C2659130D0096BE39 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614B2659130D0096BE39 /* UIView+Ext.swift */; };
 		B867614F265945A30096BE39 /* BuildingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614D265945A30096BE39 /* BuildingCell.swift */; };
 		B8676150265945A30096BE39 /* BuildingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B867614E265945A30096BE39 /* BuildingCell.xib */; };
@@ -76,6 +77,7 @@
 		B85D7F86265FCD3400186021 /* Researchings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Researchings.swift; sourceTree = "<group>"; };
 		B85D7F88265FDDCC00186021 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		B8623A9526B18748003F79C3 /* GenericVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericVC.swift; sourceTree = "<group>"; };
+		B867077D26F6857D00F7372E /* Fleets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fleets.swift; sourceTree = "<group>"; };
 		B867614B2659130D0096BE39 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		B867614D265945A30096BE39 /* BuildingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingCell.swift; sourceTree = "<group>"; };
 		B867614E265945A30096BE39 /* BuildingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BuildingCell.xib; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				B85AF0CB26A5912E0087C5A7 /* Slot.swift */,
 				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
 				B8D1AEFA26B464F50064DE34 /* Position.swift */,
+				B867077D26F6857D00F7372E /* Fleets.swift */,
 			);
 			path = "Non-Components";
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				B8FF0453269DD049007743B8 /* FacilityCell.swift in Sources */,
 				B83B64082658672500A75A00 /* ResourcesOverview.swift in Sources */,
 				B85D7F87265FCD3400186021 /* Researchings.swift in Sources */,
+				B867077E26F6857D00F7372E /* Fleets.swift in Sources */,
 				B873317526542CB400524FD8 /* OverviewVC.swift in Sources */,
 				B8B7BC0C26504F8A00988758 /* AppDelegate.swift in Sources */,
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
@@ -573,6 +577,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7353CQCGQC;
 				INFOPLIST_FILE = OGame/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -592,6 +597,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7353CQCGQC;
 				INFOPLIST_FILE = OGame/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
