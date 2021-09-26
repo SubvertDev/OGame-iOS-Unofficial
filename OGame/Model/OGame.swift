@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import SwiftSoup
+import UIKit
 
 class OGame {
 
@@ -40,11 +41,14 @@ class OGame {
     var planetNames: [String]?
     var planetIDs: [Int]?
     var celestial: Celestial?
+    var celestials: [Celestial]?
+    var planetImage: UIImage?
+    var planetImages: [UIImage] = []
     var rank: Int?
 
     private init() {}
 
-    // MARK: - ALAMOFIRE SECTION
+    // MARK: - LOGIN FUNCTIONS -
     func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, CustomError>) -> Void) {
         OGame.shared.reset()
         print(#function)
@@ -136,7 +140,6 @@ class OGame {
 
                 switch response.result {
                 case .success(let servers):
-                    //print("servers response: \(servers)")
                     self.serversList = servers
                     configureAccounts()
 
@@ -270,68 +273,34 @@ class OGame {
                 self.rank = getRank()
                 self.planetNames = getPlanetNames()
                 self.planetIDs = getPlanetIDs()
-                getCelestial { result in
-                    switch result {
-                    case .success(let celestial):
-                        self.celestial = celestial
-                        completion(.success(true))
-                    case .failure(_):
-                        break
+                
+                getAllPlanetImages { images in
+                    self.planetImage = images[0]
+                    self.planetImages = images
+                    
+                    self.getAllCelestials { result in
+                        switch result {
+                        case .success(let celestials):
+                            self.celestial = celestials[0]
+                            self.celestials = celestials
+                            completion(.success(true))
+                        case .failure(_):
+                            completion(.failure(NSError()))
+                        }
                     }
                 }
+                
+                
             } catch {
                 completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Can't configure player info, please try again!"])))
             }
         }
     }
 
+
     // MARK: - NON LOGIN FUNCTIONS -
 
-    // MARK: - Set Next Planet
-    func setNextPlanet(completion: @escaping (Error?) -> ()) {
-        if let index = planetNames!.firstIndex(of: planet!) {
-            if index + 1 == planetNames!.count {
-                planet = planetNames![0]
-                planetID = planetIDs![0]
-            } else {
-                planet = planetNames![index + 1]
-                planetID = planetIDs![index + 1]
-            }
 
-            getCelestial { result in
-                switch result {
-                case .success(let celestial):
-                    self.celestial = celestial
-                    completion(nil)
-                case .failure(_):
-                    completion(NSError())
-                }
-            }
-        }
-    }
-
-    // MARK: - Set Previous Planet
-    func setPreviousPlanet(completion: @escaping (Error?) -> ()) {
-        if let index = planetNames!.firstIndex(of: planet!) {
-            if index - 1 == -1 {
-                planet = planetNames!.last
-                planetID = planetIDs!.last
-            } else {
-                planet = planetNames![index - 1]
-                planetID = planetIDs![index - 1]
-            }
-            
-            getCelestial { result in
-                switch result {
-                case .success(let celestial):
-                    self.celestial = celestial
-                    completion(nil)
-                case .failure(_):
-                    completion(NSError())
-                }
-            }
-        }
-    }
 
     // MARK: - ATTACKED -> @Bool
     func attacked(completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -354,6 +323,7 @@ class OGame {
         }
     }
 
+
     // MARK: - NEUTRAL -> @Bool
     func neutral(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
@@ -375,6 +345,7 @@ class OGame {
         }
     }
 
+
     // MARK: - FRIENDLY -> @Bool
     func friendly(completion: @escaping (Result<Bool, Error>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
@@ -395,6 +366,7 @@ class OGame {
             }
         }
     }
+
 
     // MARK: - getRank -> Int
     func getRank() -> Int {
@@ -418,6 +390,7 @@ class OGame {
         }
     }
 
+
     // MARK: - PLANET IDS -> [Int]
     func getPlanetIDs() -> [Int] {
         do {
@@ -434,6 +407,7 @@ class OGame {
         }
     }
 
+
     // MARK: - PLANET NAMES -> [String]
     func getPlanetNames() -> [String] {
         do {
@@ -448,6 +422,7 @@ class OGame {
         }
     }
 
+
     // MARK: - ID BY PLANET NAME -> Int
     func getIdByPlanetName(_ name: String) -> Int {
         // TODO: Better way?
@@ -461,25 +436,6 @@ class OGame {
         return found!
     }
 
-    // MARK: - PLANET IMAGE DATA -> @Data?
-    func getPlanetImageData(completion: @escaping (Data?) -> Void) {
-        do {
-            let planets = try doc!.select("[class*=smallplanet]")
-            for planet in planets {
-                let idAttribute = try planet.attr("id")
-                let planetID = Int(idAttribute.replacingOccurrences(of: "planet-", with: ""))!
-                if planetID == self.planetID {
-                    let imageAttribute = try planet.select("[width=48]").first()!.attr("src")
-                    sessionAF.request("\(imageAttribute)").response { response in
-                        completion(response.data)
-                    }
-                }
-            }
-            completion(nil)
-        } catch {
-            completion(nil)
-        }
-    }
 
     // MARK: - GET SERVER INFO -> Server
     func getServerInfo() -> Server {
@@ -502,6 +458,7 @@ class OGame {
         }
     }
 
+
     // MARK: - GET CHARACTER CLASS -> String
     func getCharacterClass() -> String {
         if let character = try? doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
@@ -511,112 +468,138 @@ class OGame {
         }
     }
 
+
     // MARK: - GET MOON IDS
     // TODO: Get a moon
+    
 
-    // MARK: - coordinates
-
-    // MARK: - GET CELESTIAL DATA
-    func getCelestial(completion: @escaping (Result<Celestial, Error>) -> Void) {
-        print(#function)
-        let link = "\(self.indexPHP!)page=ingame&component=overview&cp=\(planetID!)"
+    // MARK: - GET ALL CELESTIALS (NEW)
+    func getAllCelestials(completion: @escaping (Result<[Celestial], Error>) -> Void) {
+        let link = "\(self.indexPHP!)page=ingame&component=overview"
+        
         sessionAF.request(link).validate().response { response in
+            var celestials: [Celestial] = []
 
             switch response.result {
             case .success(let data):
-
-                let page = try? SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-                let noScript = try? page!.select("noscript").text()
-                guard noScript != "You need to enable JavaScript to run this app." else {
-                    print("LOOKS LIKE NOT LOGGED IN (get celestial)")
-                    completion(.failure(NSError()))
-                    return
-                }
-
                 let text = String(data: data!, encoding: .ascii)!
-
-                var pattern = #"textContent\[1] = "(.*)km \(<span>(.*)<(.*)<span>(.*)<"#
-                var regex = try! NSRegularExpression(pattern: pattern, options: [])
-                var nsString = text as NSString
-                var results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
-                let stringPlanetSize = results.map { nsString.substring(with: $0.range)}
-
-                var stringSize = stringPlanetSize.first!.components(separatedBy: #" ""#)[1].components(separatedBy: " ")[0]
-                stringSize.removeLast(2)
-                let planetSize = Int(stringSize.replacingOccurrences(of: ".", with: ""))!
-                let planetUsedFields = Int(stringPlanetSize.first!.components(separatedBy: ">")[1].components(separatedBy: "<")[0])!
-                let planetTotalFields = Int(stringPlanetSize.first!.components(separatedBy: ">")[3].components(separatedBy: "<")[0])!
-
-                // TODO: It's actually three versions? ->
-                //                "textContent\[3] = "(.*) \\u00b0C \\u00e0(.*)(.*)\\"
-                //                "textContent\[3] = "(.*)\\u00b0C to (.*)\\u00b0C""
-                //                "textContent\[3] = "(.*) \\u00b0C (.*) (.*) \\u00b0C""
-                pattern = #"textContent\[3] = "(.*)\\u00b0C (.*) (.*)""#
-                regex = try! NSRegularExpression(pattern: pattern, options: [])
-                nsString = text as NSString
-                results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
-                let stringPlanetTemperature = results.map { nsString.substring(with: $0.range)}
-
-                let stringTemperature = stringPlanetTemperature.first!.components(separatedBy: #"""#)[1]
-                let planetTemperatureMin = Int(stringTemperature.components(separatedBy: "\\")[0])!
-                let planetTemperatureMax = Int(stringTemperature.components(separatedBy: "to ").last!.components(separatedBy: "\\").first!)!
-
-                let coordinates = self.getCelestialCoordinates()
-
-                let celestial = Celestial(planetSize: planetSize,
-                                          usedFields: planetUsedFields,
-                                          totalFields: planetTotalFields,
-                                          tempMin: planetTemperatureMin,
-                                          tempMax: planetTemperatureMax,
-                                          coordinates: coordinates)
-                completion(.success(celestial))
+                let page = try? SwiftSoup.parse(text)
+                
+                let planets = try! page!.select("[id=planetList]").get(0)
+                let planetsInfo = try! planets.select("[id*=planet-]")
+                for planet in planetsInfo {
+                    let title = try! planet.select("a").get(0).attr("title")
+                    let textArray = title.components(separatedBy: "><")
+                    
+                    // FIXME: Not tested for moons
+                    var coordinatesString = textArray[0].components(separatedBy: " ")[1].replacingOccurrences(of: "</b", with: "")
+                    coordinatesString.removeFirst()
+                    coordinatesString.removeLast()
+                    var coordinates = coordinatesString.components(separatedBy: ":").compactMap { Int($0) }
+                    coordinates.append(1)
+                    
+                    var planetSizeString = textArray[1].components(separatedBy: " ")[0]
+                    planetSizeString.removeFirst(4)
+                    planetSizeString.removeLast(2)
+                    let planetSize = Int(planetSizeString.replacingOccurrences(of: ".", with: ""))!
+                    
+                    var planetFieldsString = textArray[1].components(separatedBy: " ")[1]
+                    planetFieldsString = planetFieldsString.components(separatedBy: ")")[0]
+                    planetFieldsString.removeFirst()
+                    let planetFieldUsed = Int(planetFieldsString.components(separatedBy: "/")[0])!
+                    let planetFieldTotal = Int(planetFieldsString.components(separatedBy: "/")[1])!
+                    
+                    var planetMinTemperatureString = textArray[1].components(separatedBy: " ")[1]
+                    planetMinTemperatureString = planetMinTemperatureString.components(separatedBy: "<br>")[1]
+                    let planetMinTemperature = Int(planetMinTemperatureString.components(separatedBy: "Â")[0])!
+                    let planetMaxTemperatureString = textArray[1].components(separatedBy: " ")[3]
+                    let planetMaxTemperature = Int(planetMaxTemperatureString.components(separatedBy: "Â")[0])!
+                    
+                    let celestial = Celestial(planetSize: planetSize,
+                                              usedFields: planetFieldUsed,
+                                              totalFields: planetFieldTotal,
+                                              tempMin: planetMinTemperature,
+                                              tempMax: planetMaxTemperature,
+                                              coordinates: coordinates)
+                    celestials.append(celestial)
+                }
 
             case .failure(_):
-                let celestial = Celestial(planetSize: -1,
-                                          usedFields: -1,
-                                          totalFields: -1,
-                                          tempMin: -1,
-                                          tempMax: -1,
-                                          coordinates: [0, 0, 0, 0])
-                completion(.success(celestial))
+                completion(.failure(NSError()))
+            }
+            self.celestial = celestials[0]
+            completion(.success(celestials))
+        }
+    }
+    
+    
+    // MARK: - Set Next Planet
+    func setNextPlanet(completion: @escaping (Error?) -> ()) {
+        print(#function)
+        if let index = planetNames!.firstIndex(of: planet!) {
+            if index + 1 == planetNames!.count {
+                planet = planetNames![0]
+                planetID = planetIDs![0]
+                celestial = celestials![0]
+                planetImage = planetImages[0]
+                completion(nil)
+            } else {
+                planet = planetNames![index + 1]
+                planetID = planetIDs![index + 1]
+                celestial = celestials![index + 1]
+                planetImage = planetImages[index + 1]
+                completion(nil)
+            }
+        } else {
+            completion(NSError())
+        }
+    }
+
+
+    // MARK: - Set Previous Planet
+    func setPreviousPlanet(completion: @escaping (Error?) -> ()) {
+        if let index = planetNames!.firstIndex(of: planet!) {
+            if index - 1 == -1 {
+                planet = planetNames!.last
+                planetID = planetIDs!.last
+                celestial = celestials!.last
+                planetImage = planetImages.last
+                completion(nil)
+            } else {
+                planet = planetNames![index - 1]
+                planetID = planetIDs![index - 1]
+                celestial = celestials![index - 1]
+                planetImage = planetImages[index - 1]
+                completion(nil)
+            }
+        } else {
+            completion(NSError())
+        }
+    }
+    
+    
+    // MARK: - GET PLANET IMAGES (NEW)
+    func getAllPlanetImages(completion: @escaping ([UIImage]) -> Void) {
+        var images: [UIImage] = []
+        let dispatchGroup = DispatchGroup()
+        
+        let planets = try! doc!.select("[class*=smallplanet]")
+        for planet in planets {
+            dispatchGroup.enter()
+            let imageAttribute = try! planet.select("[width=48]").first()!.attr("src")
+            sessionAF.request("\(imageAttribute)").response { response in
+                let image = UIImage(data: response.data!)
+                images.append(image!)
+                dispatchGroup.leave()
             }
         }
-    }
-
-    // MARK: - GET CELESTIAL COORDINATES -> [Int]
-    func getCelestialCoordinates() -> [Int] {
-        print(#function)
-        // TODO: Check if it works with 2+ planets and moons
-        do {
-            let page = try SwiftSoup.parse(landingPage!)
-            let allCelestials = try page.select("[class*=smallplanet]")
-
-            let selectedPlanet = try allCelestials.select("[class*=planetlink]").select("[href*=\(String(planetID!))]")
-            let selectedMoon = try allCelestials.select("[class*=moonlink]").select("[href*=\(String(planetID!))]")
-
-            // TODO: Is it even working for moons?
-                if !selectedPlanet.isEmpty() {
-                    var coordinates = try selectedPlanet.select("[class=planet-koords ]").get(0).text()
-                    coordinates.removeFirst()
-                    coordinates.removeLast()
-                    var arrayOfCoordinates = coordinates.components(separatedBy: ":").compactMap { Int($0) }
-                    arrayOfCoordinates.append(1)
-                    return arrayOfCoordinates
-                }
-                if !selectedMoon.isEmpty() {
-                    var coordinates = try selectedMoon.select("[class=planet-koords ]").get(0).text()
-                    coordinates.removeFirst()
-                    coordinates.removeLast()
-                    var arrayOfCoordinates = coordinates.components(separatedBy: ":").compactMap { Int($0) }
-                    arrayOfCoordinates.append(3)
-                    return arrayOfCoordinates
-                }
-        } catch {
-            return [0, 0, 0, 0]
+        
+        dispatchGroup.notify(queue: .main) {
+            completion(images)
         }
-        return [0, 0, 0, 0]
     }
 
+    
     // MARK: - GET RESOURCES
     func getResources(forID: Int, completion: @escaping (Result<Resources, Error>) -> Void) {
         // FIXME: Fix planetID
@@ -646,7 +629,29 @@ class OGame {
             }
         }
     }
+    
+    @available(iOS 15.0.0, *)
+    func getResourcesAsync() async throws -> Resources {
+        let url = URL(string: "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)")!
+        let (data, _) = try await URLSession.shared.data(from: url)
+        
+        do {
+            let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
+            
+            let noScript = try page.select("noscript").text()
+            guard noScript != "You need to enable JavaScript to run this app." else {
+                print("LOOKS LIKE NOT LOGGED IN (resources info)")
+                throw NSError()
+            }
+            
+            let resources = Resources(from: page)
+            return resources
+        } catch {
+            throw NSError()
+        }
+    }
 
+    
     // MARK: - GET SUPPLY
     func supply(forID: Int, completion: @escaping (Result<Supplies, Error>) -> Void) {
         // FIXME: Fix forID insertion in link
@@ -691,6 +696,7 @@ class OGame {
         }
     }
 
+
     // MARK: - GET FACILITIES
     func facilities(forID: Int, completion: @escaping (Result<Facilities, Error>) -> Void) {
         // FIXME: Fix forID insertion in link
@@ -730,8 +736,10 @@ class OGame {
         }
     }
 
+
     // MARK: - GET MOON FACILITIES
     // TODO: Get a moon
+
 
     // MARK: - GET RESEARCH
     func research(forID: Int, completion: @escaping (Result<Researches, Error>) -> Void) {
@@ -778,6 +786,7 @@ class OGame {
         }
     }
 
+
     // MARK: - GET SHIPS
     func ships(forID: Int, completion: @escaping (Result<Ships, Error>) -> Void) {
         // FIXME: Fix planetID
@@ -822,6 +831,7 @@ class OGame {
         }
     }
 
+
     // MARK: - GET DEFENCES
     func defences(forID: Int, completion: @escaping (Result<Defences, Error>) -> Void) {
         // FIXME: Fix planetID
@@ -864,6 +874,7 @@ class OGame {
             }
         }
     }
+
 
     // MARK: - GET GALAXY
     func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], Error>) -> Void) {
@@ -979,8 +990,8 @@ class OGame {
     }
 
 
-
     // MARK: - GET ALLY
+
 
     // MARK: - GET SLOT -> Slot
     func getSlotCelestial() -> Slot {
@@ -991,6 +1002,7 @@ class OGame {
             return Slot.init(with: [0, 0])
         }
     }
+
 
     // MARK: - GET FLEET
     func getFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
@@ -1040,10 +1052,9 @@ class OGame {
         }
     }
 
+
     // MARK: - GET HOSTILE FLEET
-    
     // TODO: UNFINISHED
-    
     func getHostileFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
         let link = "\(indexPHP!)page=componentOnly&component=eventList"
         sessionAF.request(link).response { response in
@@ -1112,6 +1123,7 @@ class OGame {
             }
         }
     }
+
 
     // MARK: - GET FRIENDLY FLEET
     func getFriendlyFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
@@ -1200,7 +1212,8 @@ class OGame {
             }
         }
     }
-    
+
+
     // MARK: - GET FLEET COORDINATES
     func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
         
@@ -1244,15 +1257,21 @@ class OGame {
         return coordinates
     }
 
-    // MARK: - GET PHALANX
 
-    // MARK: - GET SPYREPORTS
+    // GET PHALANX
 
-    // MARK: - SEND FLEET
 
-    // MARK: - RETURN FLEET
+    // GET SPYREPORTS
 
-    // MARK: - SEND MESSAGE
+
+    // SEND FLEET
+
+
+    // RETURN FLEET
+
+
+    // SEND MESSAGE
+
 
     // MARK: - BUILD BUILDING/SHIPS
     func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -1308,7 +1327,9 @@ class OGame {
         }
     }
 
-    // MARK: - COLLECT RUBBLE FIELD
+
+    // COLLECT RUBBLE FIELD
+
 
     // MARK: - IS LOGGED IN
     // TODO: Do I need this?
@@ -1331,9 +1352,12 @@ class OGame {
         }
     }
 
-    // MARK: - RELOGIN
 
-    // MARK: - LOGOUT
+    // RELOGIN
+
+
+    // LOGOUT
+
 
     // MARK: - Reset
     func reset() {
@@ -1357,6 +1381,8 @@ class OGame {
         planet = nil
         planetID = nil
         celestial = nil
+        celestials = nil
+        planetImages = []
     }
 }
 

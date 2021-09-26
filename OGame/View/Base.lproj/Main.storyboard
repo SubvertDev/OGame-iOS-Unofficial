@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wEZ-vH-u9o">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wEZ-vH-u9o">
     <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -290,7 +291,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MenuCell" textLabel="Ktf-f6-01B" style="IBUITableViewCellStyleDefault" id="Gjp-nV-4Fp">
-                                        <rect key="frame" x="0.0" y="24.333333969116211" width="390" height="47.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="44.666666030883789" width="390" height="47.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Gjp-nV-4Fp" id="sUS-kt-d91">
                                             <rect key="frame" x="0.0" y="0.0" width="360.33333333333331" height="47.666667938232422"/>
@@ -335,9 +336,11 @@
                         <outlet property="activityIndicator" destination="fEt-nP-ueW" id="gP9-iH-w8T"/>
                         <outlet property="coordinatesLabel" destination="WGM-zh-oFd" id="cOX-AZ-kQp"/>
                         <outlet property="fieldsLabel" destination="mUV-XH-PYu" id="hVr-90-6ZC"/>
+                        <outlet property="leftButton" destination="EwQ-6j-jGb" id="dSo-ib-x9e"/>
                         <outlet property="planetImage" destination="qII-3S-dMI" id="pBm-p5-X5T"/>
                         <outlet property="planetNameLabel" destination="9S3-6R-mdU" id="Bxn-Vg-vOc"/>
                         <outlet property="rankLabel" destination="HtR-4n-cqV" id="nXp-u5-l4Z"/>
+                        <outlet property="rightButton" destination="KUQ-9u-Osf" id="bKL-DW-cnW"/>
                         <outlet property="serverNameLabel" destination="ocT-It-ptC" id="TKi-19-IUn"/>
                         <outlet property="tableView" destination="JEN-27-DL1" id="HNV-qz-19Y"/>
                         <segue destination="wA0-cr-FlI" kind="show" identifier="ShowGenericVC" id="RRQ-Ig-31f"/>
@@ -364,7 +367,7 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ServerCell" rowHeight="80" id="VJm-0o-u4f" customClass="ServerCell" customModule="OGame" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="24.333333969116211" width="358" height="80"/>
+                                        <rect key="frame" x="0.0" y="44.666666030883789" width="358" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VJm-0o-u4f" id="ZFH-Us-afl">
                                             <rect key="frame" x="0.0" y="0.0" width="328.33333333333331" height="80"/>
