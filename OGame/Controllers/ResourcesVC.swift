@@ -8,7 +8,7 @@
 import UIKit
 
 class ResourcesVC: UIViewController {
-    
+
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
@@ -44,7 +44,7 @@ class ResourcesVC: UIViewController {
         tableView.rowHeight = 88
 
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
 
     func configureActivityIndicator() {
@@ -62,7 +62,7 @@ class ResourcesVC: UIViewController {
     }
 
     // MARK: - REFRESH DATA ON RESOURCES VC
-    func refresh() {
+    @objc func refresh() {
         OGame.shared.supply(forID: 0) { result in
             switch result {
             case .success(let supplies):
@@ -78,10 +78,6 @@ class ResourcesVC: UIViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
         }
-    }
-
-    @objc func refreshTableView() {
-        refresh()
     }
 }
 
@@ -116,6 +112,7 @@ extension ResourcesVC: BuildingCellDelegate {
             switch result {
             case .success(_):
                 self.refresh()
+                NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }

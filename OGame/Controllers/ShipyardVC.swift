@@ -125,6 +125,7 @@ extension ShipyardVC: BuildingCellDelegate {
             switch result {
             case .success(_):
                 self.refresh()
+                NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }

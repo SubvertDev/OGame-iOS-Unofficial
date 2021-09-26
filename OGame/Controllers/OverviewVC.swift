@@ -83,6 +83,7 @@ class OverviewVC: UIViewController {
             self.refreshControl.endRefreshing()
             self.activityIndicator.stopAnimating()
             self.tableView.reloadData()
+            NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         }
     }
 

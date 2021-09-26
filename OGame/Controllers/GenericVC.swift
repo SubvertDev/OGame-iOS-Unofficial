@@ -19,6 +19,7 @@ class GenericVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(refresh), name: Notification.Name("Build"), object: nil)
 
         configureChildVC()
         refresh()
@@ -33,7 +34,7 @@ class GenericVC: UIViewController {
         }
     }
 
-    func refresh() {
+    @objc func refresh() {
         OGame.shared.getResources(forID: 0) { result in
             switch result {
             case .success(let resources):
