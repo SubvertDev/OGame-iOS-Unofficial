@@ -33,7 +33,12 @@ class MenuVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-        
+
+        if OGame.shared.celestials!.count == 1 {
+            leftButton.isEnabled = false
+            rightButton.isEnabled = false
+        }
+
         configureTableView()
         configureLabels()
     }

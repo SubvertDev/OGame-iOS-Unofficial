@@ -180,7 +180,7 @@
                                         <rect key="frame" x="8" y="8" width="109.33333333333333" height="23"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="63" id="Guy-jh-gSP"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" id="Guy-jh-gSP"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -190,7 +190,7 @@
                                         <rect key="frame" x="280.66666666666669" y="8" width="101.33333333333331" height="23"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="63" id="NM6-K7-gFv"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" id="NM6-K7-gFv"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
