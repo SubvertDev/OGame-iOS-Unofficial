@@ -8,7 +8,7 @@
 import UIKit
 
 class OverviewVC: UIViewController {
-    // TODO: Finish this VC
+    
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
@@ -24,6 +24,8 @@ class OverviewVC: UIViewController {
     var researchesActive = false
     var shipyardActive = false
     var defencesActive = false
+    
+    let requestGroup = DispatchGroup()
 
     
     override func viewDidLoad() {
@@ -53,7 +55,7 @@ class OverviewVC: UIViewController {
         tableView.rowHeight = 88
 
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
 
     func configureActivityIndicator() {
@@ -70,21 +72,22 @@ class OverviewVC: UIViewController {
         activityIndicator.startAnimating()
     }
 
-    func refresh() {
+    @objc func refresh() {
         getResources()
         getFacilities()
         getResearches()
         getShips()
         getDefences()
-        refreshControl.endRefreshing()
-        activityIndicator.stopAnimating()
-    }
-
-    @objc func refreshTableView() {
-        refresh()
+                
+        requestGroup.notify(queue: .main) {
+            self.refreshControl.endRefreshing()
+            self.activityIndicator.stopAnimating()
+            self.tableView.reloadData()
+        }
     }
 
     func getResources() {
+        requestGroup.enter()
         OGame.shared.supply(forID: 0) { result in
             switch result {
             case .success(let supplies):
@@ -92,22 +95,20 @@ class OverviewVC: UIViewController {
                 for item in self.resourceCell!.resourceBuildings {
                     if item.condition == "active" {
                         self.resourcesActive = true
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            self.activityIndicator.stopAnimating()
-                        }
                         break
                     }
                 }
 
-
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            
+            self.requestGroup.leave()
         }
     }
 
     func getFacilities() {
+        requestGroup.enter()
         OGame.shared.facilities(forID: 0) { result in
             switch result {
             case .success(let facilities):
@@ -115,11 +116,6 @@ class OverviewVC: UIViewController {
                 for item in self.facilityCell!.facilityBuildings {
                     if item.condition == "active" {
                         self.facilitiesActive = true
-                        self.activityIndicator.stopAnimating()
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            self.activityIndicator.stopAnimating()
-                        }
                         break
                     }
                 }
@@ -127,10 +123,13 @@ class OverviewVC: UIViewController {
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            
+            self.requestGroup.leave()
         }
     }
 
     func getResearches() {
+        requestGroup.enter()
         OGame.shared.research(forID: 0) { result in
             switch result {
             case .success(let researches):
@@ -138,10 +137,6 @@ class OverviewVC: UIViewController {
                 for item in self.researchCell!.researchTechnologies {
                     if item.condition == "active" {
                         self.researchesActive = true
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            self.activityIndicator.stopAnimating()
-                        }
                         break
                     }
                 }
@@ -149,10 +144,13 @@ class OverviewVC: UIViewController {
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            
+            self.requestGroup.leave()
         }
     }
 
     func getShips() {
+        requestGroup.enter()
         OGame.shared.ships(forID: 0) { result in
             switch result {
             case .success(let ships):
@@ -160,10 +158,6 @@ class OverviewVC: UIViewController {
                 for item in self.shipsCell!.shipsTechnologies {
                     if item.condition == "active" {
                         self.shipyardActive = true
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            self.activityIndicator.stopAnimating()
-                        }
                         break
                     }
                 }
@@ -171,10 +165,13 @@ class OverviewVC: UIViewController {
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            
+            self.requestGroup.leave()
         }
     }
 
     func getDefences() {
+        requestGroup.enter()
         OGame.shared.defences(forID: 0) { result in
             switch result {
             case .success(let defences):
@@ -182,10 +179,6 @@ class OverviewVC: UIViewController {
                 for item in self.defencesCell!.defenceTechnologies {
                     if item.condition == "active" {
                         self.defencesActive = true
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            self.activityIndicator.stopAnimating()
-                        }
                         break
                     }
                 }
@@ -193,6 +186,8 @@ class OverviewVC: UIViewController {
             case .failure(_):
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            
+            self.requestGroup.leave()
         }
     }
 }
