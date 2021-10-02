@@ -290,7 +290,6 @@ class OGame {
                     }
                 }
                 
-                
             } catch {
                 completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Can't configure player info, please try again!"])))
             }
@@ -604,6 +603,7 @@ class OGame {
     func getResources(forID: Int, completion: @escaping (Result<Resources, Error>) -> Void) {
         // FIXME: Fix planetID
         let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
+        print("LINK: \(link)")
         sessionAF.request(link).validate().response { response in
 
             switch response.result {
@@ -629,32 +629,66 @@ class OGame {
             }
         }
     }
-    
-    @available(iOS 15.0.0, *)
-    func getResourcesAsync() async throws -> Resources {
-        let url = URL(string: "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)")!
-        let (data, _) = try await URLSession.shared.data(from: url)
-        
-        do {
-            let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
-            
-            let noScript = try page.select("noscript").text()
-            guard noScript != "You need to enable JavaScript to run this app." else {
-                print("LOOKS LIKE NOT LOGGED IN (resources info)")
-                throw NSError()
+
+
+    // MARK: - GET OVERVIEW
+    func getOverview(completion: @escaping (Result<[Overview?], Error>) -> Void) {
+        let link = "\(self.indexPHP!)page=ingame&component=overview"
+        sessionAF.request(link).validate().response { response in
+
+            switch response.result {
+            case .success(let data):
+                let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                // TODO: Countdowns are showing "load..." instead of actual time
+
+                var overviewInfo: [Overview?] = [nil, nil, nil]
+
+                let buildingsParseCheck = try! page.select("[id=productionboxbuildingcomponent]").get(0).select("tr").count
+                if buildingsParseCheck != 1 {
+                    let buildingsParse = try! page.select("[id=productionboxbuildingcomponent]").get(0)
+                    let buildingName = try! buildingsParse.select("tr").get(0).select("th").get(0).text()
+                    let buildingLevel = try! buildingsParse.select("tr").get(1).select("td").get(1).select("span").text()
+                    //let buildingCountdown = try! buildingsParse.select("tr").get(3).select("td").get(0).select("span").text()
+
+                    overviewInfo[0] = Overview(buildingName: buildingName,
+                                                 upgradeLevel: buildingLevel)
+                }
+
+                let researchParseCheck = try! page.select("[id=productionboxresearchcomponent]").get(0).select("tr").count
+                if researchParseCheck != 1 {
+                    let researchParse = try! page.select("[id=productionboxresearchcomponent]").get(0)
+                    let researchName = try! researchParse.select("tr").get(0).select("th").get(0).text()
+                    let researchLevel = try! researchParse.select("tr").get(1).select("td").get(1).select("span").text()
+                    //let researchCountdown = try! researchParse.select("tr").get(3).select("td").get(0).select("span").text()
+
+                    overviewInfo[1] = Overview(buildingName: researchName,
+                                                 upgradeLevel: researchLevel)
+                }
+
+                let shipyardParseCheck = try! page.select("[id=productionboxshipyardcomponent]").get(0).select("tr").count
+                if shipyardParseCheck != 1 {
+                    let shipyardParse = try! page.select("[id=productionboxshipyardcomponent]").get(0)
+                    let shipyardName = try! shipyardParse.select("tr").get(0).select("th").get(0).text()
+                    let shipyardCount = try! shipyardParse.select("tr").get(1).select("td").get(0).select("div").get(1).text()
+                    //let shipyardCountdownNext = try! shipyardParse.select("tr").get(3).select("td").get(0).select("span").text()
+                    //let shipyardCountdownTotal = try! shipyardParse.select("tr").get(5).select("td").get(0).select("span").text()
+
+                    overviewInfo[2] = Overview(buildingName: shipyardName,
+                                                 upgradeLevel: shipyardCount)
+                }
+
+                completion(.success(overviewInfo))
+            case .failure(_):
+                print("FAILURE")
             }
-            
-            let resources = Resources(from: page)
-            return resources
-        } catch {
-            throw NSError()
         }
     }
 
-    
+
     // MARK: - GET SUPPLY
     func supply(forID: Int, completion: @escaping (Result<Supplies, Error>) -> Void) {
         // FIXME: Fix forID insertion in link
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -668,14 +702,12 @@ class OGame {
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
-                    print("Levels of buildings: \(levels)")
 
                     let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print("Status of buildings: \(technologyStatus)")
 
                     guard !levels.isEmpty, !technologyStatus.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN (resources)")
@@ -700,6 +732,7 @@ class OGame {
     // MARK: - GET FACILITIES
     func facilities(forID: Int, completion: @escaping (Result<Facilities, Error>) -> Void) {
         // FIXME: Fix forID insertion in link
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -713,14 +746,12 @@ class OGame {
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
-                    print("Levels of facilities: \(levels)")
 
                     let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print("Status of facilities: \(technologyStatus)")
 
                     let facilitiesObject = Facilities(levels, technologyStatus)
 
@@ -744,6 +775,7 @@ class OGame {
     // MARK: - GET RESEARCH
     func research(forID: Int, completion: @escaping (Result<Researches, Error>) -> Void) {
         // FIXME: Fix forID insertion in link
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=research&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -757,14 +789,12 @@ class OGame {
                     for level in levelsParse {
                         levels.append(Int(try level.text())!)
                     }
-                    print("Levels of researches: \(levels)")
 
                     let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print("Status of researches: \(technologyStatus)")
 
                     guard !levels.isEmpty && !technologyStatus.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN (research)")
@@ -790,6 +820,7 @@ class OGame {
     // MARK: - GET SHIPS
     func ships(forID: Int, completion: @escaping (Result<Ships, Error>) -> Void) {
         // FIXME: Fix planetID
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -803,14 +834,12 @@ class OGame {
                     for ship in shipsParse {
                         ships.append(Int(try ship.text())!)
                     }
-                    print("Amount of ships: \(ships)")
 
                     let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print("Ships Status: \(technologyStatus)")
 
                     guard !ships.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN (ships)")
@@ -835,8 +864,9 @@ class OGame {
     // MARK: - GET DEFENCES
     func defences(forID: Int, completion: @escaping (Result<Defences, Error>) -> Void) {
         // FIXME: Fix planetID
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
+        sessionAF.request(link).validate().response  { response in
             switch response.result {
             case .success(let data):
                 do {
@@ -847,14 +877,12 @@ class OGame {
                     for defence in defencesParse {
                         defences.append(Int(try defence.text())!)
                     }
-                    print("Amount of defences: \(defences)")
 
                     let technologyStatusParse = try page.select("li[class*=technology]")
                     var technologyStatus = [String]()
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print("Defences Status: \(technologyStatus)")
 
                     guard !defences.isEmpty else {
                         print("LOOKS LIKE NOT LOGGED IN (defences)")

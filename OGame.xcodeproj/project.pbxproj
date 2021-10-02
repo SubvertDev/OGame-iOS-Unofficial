@@ -26,6 +26,7 @@
 		B8676153265982B00096BE39 /* Facility+Facilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8676152265982B00096BE39 /* Facility+Facilities.swift */; };
 		B8676155265982DD0096BE39 /* Research+Researches.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8676154265982DD0096BE39 /* Research+Researches.swift */; };
 		B86761592659834B0096BE39 /* Buildings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86761582659834A0096BE39 /* Buildings.swift */; };
+		B872AAD42708CB6B00BAC4C9 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */; };
 		B873317526542CB400524FD8 /* OverviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873317426542CB400524FD8 /* OverviewVC.swift */; };
 		B87331772654366700524FD8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87331762654366700524FD8 /* Price.swift */; };
 		B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */; };
@@ -54,6 +55,9 @@
 		B8E5D993265A8F0E004CF69B /* FacilitiesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */; };
 		B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F144E426B8872200B2C31B /* GalaxyCell.swift */; };
 		B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8F144E526B8872200B2C31B /* GalaxyCell.xib */; };
+		B8FA6DE22708B90300924D3D /* OverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FA6DE02708B90300924D3D /* OverviewCell.swift */; };
+		B8FA6DE32708B90300924D3D /* OverviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8FA6DE12708B90300924D3D /* OverviewCell.xib */; };
+		B8FA6DE52708BD4100924D3D /* Overview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FA6DE42708BD4100924D3D /* Overview.swift */; };
 		B8FF0450269DD01E007743B8 /* ResourceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF044F269DD01E007743B8 /* ResourceCell.swift */; };
 		B8FF0453269DD049007743B8 /* FacilityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF0452269DD049007743B8 /* FacilityCell.swift */; };
 		B8FF0455269DD053007743B8 /* ResearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF0454269DD053007743B8 /* ResearchCell.swift */; };
@@ -84,6 +88,7 @@
 		B8676152265982B00096BE39 /* Facility+Facilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Facility+Facilities.swift"; sourceTree = "<group>"; };
 		B8676154265982DD0096BE39 /* Research+Researches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Research+Researches.swift"; sourceTree = "<group>"; };
 		B86761582659834A0096BE39 /* Buildings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildings.swift; sourceTree = "<group>"; };
+		B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
 		B873317426542CB400524FD8 /* OverviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewVC.swift; sourceTree = "<group>"; };
 		B87331762654366700524FD8 /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 		B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
@@ -112,6 +117,9 @@
 		B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilitiesVC.swift; sourceTree = "<group>"; };
 		B8F144E426B8872200B2C31B /* GalaxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyCell.swift; sourceTree = "<group>"; };
 		B8F144E526B8872200B2C31B /* GalaxyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalaxyCell.xib; sourceTree = "<group>"; };
+		B8FA6DE02708B90300924D3D /* OverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCell.swift; sourceTree = "<group>"; };
+		B8FA6DE12708B90300924D3D /* OverviewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OverviewCell.xib; sourceTree = "<group>"; };
+		B8FA6DE42708BD4100924D3D /* Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overview.swift; sourceTree = "<group>"; };
 		B8FF044F269DD01E007743B8 /* ResourceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceCell.swift; sourceTree = "<group>"; };
 		B8FF0452269DD049007743B8 /* FacilityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityCell.swift; sourceTree = "<group>"; };
 		B8FF0454269DD053007743B8 /* ResearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResearchCell.swift; sourceTree = "<group>"; };
@@ -160,6 +168,7 @@
 				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
 				B8D1AEFA26B464F50064DE34 /* Position.swift */,
 				B867077D26F6857D00F7372E /* Fleets.swift */,
+				B8FA6DE42708BD4100924D3D /* Overview.swift */,
 			);
 			path = "Non-Components";
 			sourceTree = "<group>";
@@ -254,6 +263,7 @@
 				B85D7F88265FDDCC00186021 /* Images.swift */,
 				B8FF0458269DDD35007743B8 /* Typealiases.swift */,
 				B8B7BC1426504F8F00988758 /* Assets.xcassets */,
+				B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -262,6 +272,8 @@
 			isa = PBXGroup;
 			children = (
 				B883A01726AF047B0080AFE5 /* ServerCell.swift */,
+				B8FA6DE02708B90300924D3D /* OverviewCell.swift */,
+				B8FA6DE12708B90300924D3D /* OverviewCell.xib */,
 				B867614D265945A30096BE39 /* BuildingCell.swift */,
 				B867614E265945A30096BE39 /* BuildingCell.xib */,
 				B8F144E426B8872200B2C31B /* GalaxyCell.swift */,
@@ -369,6 +381,7 @@
 				B83B640626585FE500A75A00 /* ResourcesOverview.xib in Resources */,
 				B8676150265945A30096BE39 /* BuildingCell.xib in Resources */,
 				B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */,
+				B8FA6DE32708B90300924D3D /* OverviewCell.xib in Resources */,
 				B8B7BC1526504F8F00988758 /* Assets.xcassets in Resources */,
 				B8B7BC1326504F8A00988758 /* Main.storyboard in Resources */,
 			);
@@ -399,6 +412,7 @@
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
 				B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */,
 				B8FF0457269DD05F007743B8 /* ShipsCell.swift in Sources */,
+				B872AAD42708CB6B00BAC4C9 /* String+Ext.swift in Sources */,
 				B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */,
 				B814BA6826AB1B0200FF346A /* MyServers.swift in Sources */,
 				B8ABC30226641BC10032ADBB /* ShipyardVC.swift in Sources */,
@@ -408,6 +422,7 @@
 				B8B2972C26552FD500C59CD4 /* MenuVC.swift in Sources */,
 				B85AF0CC26A5912E0087C5A7 /* Slot.swift in Sources */,
 				B8FF0459269DDD35007743B8 /* Typealiases.swift in Sources */,
+				B8FA6DE52708BD4100924D3D /* Overview.swift in Sources */,
 				B85D7F89265FDDCC00186021 /* Images.swift in Sources */,
 				B8FF0455269DD053007743B8 /* ResearchCell.swift in Sources */,
 				B8E5D993265A8F0E004CF69B /* FacilitiesVC.swift in Sources */,
@@ -417,6 +432,7 @@
 				B8623A9626B18748003F79C3 /* GenericVC.swift in Sources */,
 				B8A9A34926B2D2430099E8CD /* GalaxyVC.swift in Sources */,
 				B8B2972826550E6F00C59CD4 /* ResourcesVC.swift in Sources */,
+				B8FA6DE22708B90300924D3D /* OverviewCell.swift in Sources */,
 				B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */,
 				B8ABC30026640EF00032ADBB /* Ship+Ships.swift in Sources */,
 				B8B7BC262650579100988758 /* Servers.swift in Sources */,

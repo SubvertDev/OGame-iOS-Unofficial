@@ -13,20 +13,8 @@ class OverviewVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
-    var resourceCell: ResourceCell?
-    var facilityCell: FacilityCell?
-    var researchCell: ResearchCell?
-    var shipsCell: ShipsCell?
-    var defencesCell: DefenceCell?
-
-    var resourcesActive = false
-    var facilitiesActive = false
-    var researchesActive = false
-    var shipyardActive = false
-    var defencesActive = false
-    
+    var overviewInfo: [Overview?]?
     let requestGroup = DispatchGroup()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +37,8 @@ class OverviewVC: UIViewController {
 
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
+        //tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
+        tableView.register(UINib(nibName: "OverviewCell", bundle: nil), forCellReuseIdentifier: "OverviewCell")
         tableView.removeExtraCellLines()
         //tableView.alpha = 0.5
         tableView.rowHeight = 88
@@ -73,122 +62,21 @@ class OverviewVC: UIViewController {
     }
 
     @objc func refresh() {
-        getResources()
-        getFacilities()
-        getResearches()
-        getShips()
-        getDefences()
-                
-        requestGroup.notify(queue: .main) {
-            self.refreshControl.endRefreshing()
-            self.activityIndicator.stopAnimating()
-            self.tableView.reloadData()
-            NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-        }
-    }
-
-    func getResources() {
-        requestGroup.enter()
-        OGame.shared.supply(forID: 0) { result in
+        tableView.isUserInteractionEnabled = false
+        OGame.shared.getOverview { result in
             switch result {
-            case .success(let supplies):
-                self.resourceCell = ResourceCell(with: supplies)
-                for item in self.resourceCell!.resourceBuildings {
-                    if item.condition == "active" {
-                        self.resourcesActive = true
-                        break
-                    }
+            case .success(let data):
+                self.overviewInfo = data
+                DispatchQueue.main.async {
+                    self.tableView.isUserInteractionEnabled = true
+                    self.refreshControl.endRefreshing()
+                    self.activityIndicator.stopAnimating()
+                    self.tableView.reloadData()
+                    NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
                 }
-
             case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
+                print("FAILURE OVERVIEWINFO")
             }
-            
-            self.requestGroup.leave()
-        }
-    }
-
-    func getFacilities() {
-        requestGroup.enter()
-        OGame.shared.facilities(forID: 0) { result in
-            switch result {
-            case .success(let facilities):
-                self.facilityCell = FacilityCell(with: facilities)
-                for item in self.facilityCell!.facilityBuildings {
-                    if item.condition == "active" {
-                        self.facilitiesActive = true
-                        break
-                    }
-                }
-
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-            
-            self.requestGroup.leave()
-        }
-    }
-
-    func getResearches() {
-        requestGroup.enter()
-        OGame.shared.research(forID: 0) { result in
-            switch result {
-            case .success(let researches):
-                self.researchCell = ResearchCell(with: researches)
-                for item in self.researchCell!.researchTechnologies {
-                    if item.condition == "active" {
-                        self.researchesActive = true
-                        break
-                    }
-                }
-
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-            
-            self.requestGroup.leave()
-        }
-    }
-
-    func getShips() {
-        requestGroup.enter()
-        OGame.shared.ships(forID: 0) { result in
-            switch result {
-            case .success(let ships):
-                self.shipsCell = ShipsCell(with: ships)
-                for item in self.shipsCell!.shipsTechnologies {
-                    if item.condition == "active" {
-                        self.shipyardActive = true
-                        break
-                    }
-                }
-
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-            
-            self.requestGroup.leave()
-        }
-    }
-
-    func getDefences() {
-        requestGroup.enter()
-        OGame.shared.defences(forID: 0) { result in
-            switch result {
-            case .success(let defences):
-                self.defencesCell = DefenceCell(with: defences)
-                for item in self.defencesCell!.defenceTechnologies {
-                    if item.condition == "active" {
-                        self.defencesActive = true
-                        break
-                    }
-                }
-
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-            
-            self.requestGroup.leave()
         }
     }
 }
@@ -216,75 +104,27 @@ extension OverviewVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "OverviewCell", for: indexPath) as! OverviewCell
 
         switch indexPath.section {
         case 0:
-            if resourcesActive {
-                for (index, item) in resourceCell!.resourceBuildings.enumerated() {
-                    if item.condition == "active" {
-                        cell.setSupply(id: index, resourceBuildings: resourceCell!.resourceBuildings)
-                        cell.buildingImage.image = resourceCell!.resourceBuildings[index].image.available
-                        cell.buildButton.isHidden = true
-                        return cell
-                    }
-                }
-            } else if facilitiesActive {
-                for (index, item) in facilityCell!.facilityBuildings.enumerated() {
-                    if item.condition == "active" {
-                        cell.setFacility(id: index, facilityBuildings: facilityCell!.facilityBuildings)
-                        cell.buildingImage.image = facilityCell!.facilityBuildings[index].image.available
-                        cell.buildButton.isHidden = true
-                        return cell
-                    }
-                }
-            }
+            guard let info = overviewInfo?[0] else { return UITableViewCell() }
+            cell.set(name: info.buildingName, level: info.upgradeLevel, type: .resourcesAndFacilities)
+            return cell
         case 1:
-            if researchesActive {
-                for (index, item) in researchCell!.researchTechnologies.enumerated() {
-                    if item.condition == "active" {
-                        cell.setResearch(id: index, researchTechnologies: researchCell!.researchTechnologies)
-                        cell.buildingImage.image = researchCell!.researchTechnologies[index].image.available
-                        cell.buildButton.isHidden = true
-                        return cell
-                    }
-                }
-            }
+            guard let info = overviewInfo?[1] else { return UITableViewCell() }
+            cell.set(name: info.buildingName, level: info.upgradeLevel, type: .researches)
+            return cell
         case 2:
-            if shipyardActive {
-                for (index, item) in shipsCell!.shipsTechnologies.enumerated() {
-                    if item.condition == "active" {
-                        cell.setShip(id: index, shipsTechnologies: shipsCell!.shipsTechnologies)
-                        cell.buildingImage.image = shipsCell!.shipsTechnologies[index].image.available
-                        cell.buildButton.isHidden = true
-                        cell.amountTextField.isHidden = true
-                        return cell
-                    }
-                }
-            } else if defencesActive {
-                for (index, item) in defencesCell!.defenceTechnologies.enumerated() {
-                    if item.condition == "active" {
-                        cell.setDefence(id: index, defenceTechnologies: defencesCell!.defenceTechnologies)
-                        cell.buildingImage.image = defencesCell!.defenceTechnologies[index].image.available
-                        cell.buildButton.isHidden = true
-                        cell.amountTextField.isHidden = true
-                        return cell
-                    }
-                }
-            }
+            guard let info = overviewInfo?[2] else { return UITableViewCell() }
+            cell.set(name: info.buildingName, level: info.upgradeLevel, type: .shipyardAndDefences)
+            return cell
         default:
             return UITableViewCell()
         }
-
-        return UITableViewCell()
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-extension OverviewVC: BuildingCellDelegate {
-    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
     }
 }
