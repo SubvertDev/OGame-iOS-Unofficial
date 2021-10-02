@@ -64,7 +64,7 @@ class ShipyardVC: UIViewController {
 
     // MARK: - REFRESH DATA ON SHIPYARD VC
     func refresh() {
-        OGame.shared.ships(forID: 0) { result in
+        OGame.shared.ships() { result in
             switch result {
             case .success(let ships):
                 self.shipsCell = ShipsCell(with: ships)

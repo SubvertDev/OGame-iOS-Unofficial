@@ -64,7 +64,7 @@ class DefenceVC: UIViewController {
 
     // MARK: - REFRESH DATA ON SHIPYARD VC
     func refresh() {
-        OGame.shared.defences(forID: 0) { result in
+        OGame.shared.defences() { result in
             switch result {
             case .success(let defences):
                 self.defencesCell = DefenceCell(with: defences)

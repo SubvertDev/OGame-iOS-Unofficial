@@ -63,7 +63,7 @@ class FacilitiesVC: UIViewController {
 
     // MARK: - REFRESH DATA ON FACILITIES VC
     func refresh() {
-        OGame.shared.facilities(forID: 0) { result in
+        OGame.shared.facilities() { result in
             switch result {
             case .success(let facilities):
                 self.facilityCell = FacilityCell(with: facilities)

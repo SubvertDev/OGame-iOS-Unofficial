@@ -600,10 +600,8 @@ class OGame {
 
     
     // MARK: - GET RESOURCES
-    func getResources(forID: Int, completion: @escaping (Result<Resources, Error>) -> Void) {
-        // FIXME: Fix planetID
+    func getResources(completion: @escaping (Result<Resources, Error>) -> Void) {
         let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
-        print("LINK: \(link)")
         sessionAF.request(link).validate().response { response in
 
             switch response.result {
@@ -686,9 +684,7 @@ class OGame {
 
 
     // MARK: - GET SUPPLY
-    func supply(forID: Int, completion: @escaping (Result<Supplies, Error>) -> Void) {
-        // FIXME: Fix forID insertion in link
-        print(#function)
+    func supply(completion: @escaping (Result<Supplies, Error>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -730,9 +726,7 @@ class OGame {
 
 
     // MARK: - GET FACILITIES
-    func facilities(forID: Int, completion: @escaping (Result<Facilities, Error>) -> Void) {
-        // FIXME: Fix forID insertion in link
-        print(#function)
+    func facilities(completion: @escaping (Result<Facilities, Error>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -773,9 +767,7 @@ class OGame {
 
 
     // MARK: - GET RESEARCH
-    func research(forID: Int, completion: @escaping (Result<Researches, Error>) -> Void) {
-        // FIXME: Fix forID insertion in link
-        print(#function)
+    func research(completion: @escaping (Result<Researches, Error>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=research&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -818,9 +810,7 @@ class OGame {
 
 
     // MARK: - GET SHIPS
-    func ships(forID: Int, completion: @escaping (Result<Ships, Error>) -> Void) {
-        // FIXME: Fix planetID
-        print(#function)
+    func ships(completion: @escaping (Result<Ships, Error>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -862,11 +852,10 @@ class OGame {
 
 
     // MARK: - GET DEFENCES
-    func defences(forID: Int, completion: @escaping (Result<Defences, Error>) -> Void) {
-        // FIXME: Fix planetID
-        print(#function)
+    func defences(completion: @escaping (Result<Defences, Error>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
         sessionAF.request(link).validate().response  { response in
+
             switch response.result {
             case .success(let data):
                 do {

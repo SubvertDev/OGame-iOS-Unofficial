@@ -35,7 +35,7 @@ class GenericVC: UIViewController {
     }
 
     @objc func refresh() {
-        OGame.shared.getResources(forID: 0) { result in
+        OGame.shared.getResources() { result in
             switch result {
             case .success(let resources):
                 self.resourcesOverview.set(metal: resources.metal,

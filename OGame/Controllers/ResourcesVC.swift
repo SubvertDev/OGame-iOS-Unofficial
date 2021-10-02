@@ -63,7 +63,7 @@ class ResourcesVC: UIViewController {
 
     // MARK: - REFRESH DATA ON RESOURCES VC
     @objc func refresh() {
-        OGame.shared.supply(forID: 0) { result in
+        OGame.shared.supply() { result in
             switch result {
             case .success(let supplies):
                 self.resourceCell = ResourceCell(with: supplies)

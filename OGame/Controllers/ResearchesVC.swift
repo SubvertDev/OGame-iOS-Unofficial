@@ -63,7 +63,7 @@ class ResearchVC: UIViewController {
 
     // MARK: - REFRESH DATA ON RESEARCHES VC
     func refresh() {
-        OGame.shared.research(forID: 0) { result in
+        OGame.shared.research() { result in
             switch result {
             case .success(let researches):
                 self.researchCell = ResearchCell(with: researches)
