@@ -280,7 +280,7 @@ class OGame {
 
 
     // MARK: - ATTACKED -> @Bool
-    func attacked(completion: @escaping (Result<Bool, Error>) -> Void) {
+    func attacked(completion: @escaping (Result<Bool, OGError>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
         sessionAF.request(link, headers: headers).responseJSON { response in
@@ -294,15 +294,14 @@ class OGame {
                     completion(.success(false))
                 }
             case .failure(let error):
-                print("error \(error)")
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Attacked request network error", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - NEUTRAL -> @Bool
-    func neutral(completion: @escaping (Result<Bool, Error>) -> Void) {
+    func neutral(completion: @escaping (Result<Bool, OGError>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
         sessionAF.request(link, headers: headers).responseJSON { response in
@@ -316,15 +315,14 @@ class OGame {
                     completion(.success(false))
                 }
             case .failure(let error):
-                print("error \(error)")
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Neutral request network error", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - FRIENDLY -> @Bool
-    func friendly(completion: @escaping (Result<Bool, Error>) -> Void) {
+    func friendly(completion: @escaping (Result<Bool, OGError>) -> Void) {
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
         let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
         sessionAF.request(link, headers: headers).responseJSON { response in
@@ -338,8 +336,7 @@ class OGame {
                     completion(.success(false))
                 }
             case .failure(let error):
-                print("error \(error)")
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Friendly request network error", detailed: error.localizedDescription)))
             }
         }
     }
@@ -451,7 +448,7 @@ class OGame {
     
 
     // MARK: - GET ALL CELESTIALS (NEW)
-    func getAllCelestials(completion: @escaping (Result<[Celestial], Error>) -> Void) {
+    func getAllCelestials(completion: @escaping (Result<[Celestial], OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=overview"
         
         sessionAF.request(link).validate().response { response in
@@ -459,50 +456,60 @@ class OGame {
 
             switch response.result {
             case .success(let data):
-                let text = String(data: data!, encoding: .ascii)!
-                let page = try? SwiftSoup.parse(text)
-                
-                let planets = try! page!.select("[id=planetList]").get(0)
-                let planetsInfo = try! planets.select("[id*=planet-]")
-                for planet in planetsInfo {
-                    let title = try! planet.select("a").get(0).attr("title")
-                    let textArray = title.components(separatedBy: "><")
-                    
-                    // FIXME: Not tested for moons
-                    var coordinatesString = textArray[0].components(separatedBy: " ")[1].replacingOccurrences(of: "</b", with: "")
-                    coordinatesString.removeFirst()
-                    coordinatesString.removeLast()
-                    var coordinates = coordinatesString.components(separatedBy: ":").compactMap { Int($0) }
-                    coordinates.append(1)
-                    
-                    var planetSizeString = textArray[1].components(separatedBy: " ")[0]
-                    planetSizeString.removeFirst(4)
-                    planetSizeString.removeLast(2)
-                    let planetSize = Int(planetSizeString.replacingOccurrences(of: ".", with: ""))!
-                    
-                    var planetFieldsString = textArray[1].components(separatedBy: " ")[1]
-                    planetFieldsString = planetFieldsString.components(separatedBy: ")")[0]
-                    planetFieldsString.removeFirst()
-                    let planetFieldUsed = Int(planetFieldsString.components(separatedBy: "/")[0])!
-                    let planetFieldTotal = Int(planetFieldsString.components(separatedBy: "/")[1])!
-                    
-                    var planetMinTemperatureString = textArray[1].components(separatedBy: " ")[1]
-                    planetMinTemperatureString = planetMinTemperatureString.components(separatedBy: "<br>")[1]
-                    let planetMinTemperature = Int(planetMinTemperatureString.components(separatedBy: "Â")[0])!
-                    let planetMaxTemperatureString = textArray[1].components(separatedBy: " ")[3]
-                    let planetMaxTemperature = Int(planetMaxTemperatureString.components(separatedBy: "Â")[0])!
-                    
-                    let celestial = Celestial(planetSize: planetSize,
-                                              usedFields: planetFieldUsed,
-                                              totalFields: planetFieldTotal,
-                                              tempMin: planetMinTemperature,
-                                              tempMax: planetMaxTemperature,
-                                              coordinates: coordinates)
-                    celestials.append(celestial)
+                do {
+                    let text = String(data: data!, encoding: .ascii)!
+                    let page = try SwiftSoup.parse(text)
+
+                    let noScript = try page.select("noscript").text()
+                    guard noScript != "You need to enable JavaScript to run this app." else {
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Celestials login check failed")))
+                        return
+                    }
+
+                    let planets = try page.select("[id=planetList]").get(0)
+                    let planetsInfo = try planets.select("[id*=planet-]")
+                    for planet in planetsInfo {
+                        let title = try planet.select("a").get(0).attr("title")
+                        let textArray = title.components(separatedBy: "><")
+
+                        // FIXME: Not tested for moons
+                        var coordinatesString = textArray[0].components(separatedBy: " ")[1].replacingOccurrences(of: "</b", with: "")
+                        coordinatesString.removeFirst()
+                        coordinatesString.removeLast()
+                        var coordinates = coordinatesString.components(separatedBy: ":").compactMap { Int($0) }
+                        coordinates.append(1)
+
+                        var planetSizeString = textArray[1].components(separatedBy: " ")[0]
+                        planetSizeString.removeFirst(4)
+                        planetSizeString.removeLast(2)
+                        let planetSize = Int(planetSizeString.replacingOccurrences(of: ".", with: ""))!
+
+                        var planetFieldsString = textArray[1].components(separatedBy: " ")[1]
+                        planetFieldsString = planetFieldsString.components(separatedBy: ")")[0]
+                        planetFieldsString.removeFirst()
+                        let planetFieldUsed = Int(planetFieldsString.components(separatedBy: "/")[0])!
+                        let planetFieldTotal = Int(planetFieldsString.components(separatedBy: "/")[1])!
+
+                        var planetMinTemperatureString = textArray[1].components(separatedBy: " ")[1]
+                        planetMinTemperatureString = planetMinTemperatureString.components(separatedBy: "<br>")[1]
+                        let planetMinTemperature = Int(planetMinTemperatureString.components(separatedBy: "Â")[0])!
+                        let planetMaxTemperatureString = textArray[1].components(separatedBy: " ")[3]
+                        let planetMaxTemperature = Int(planetMaxTemperatureString.components(separatedBy: "Â")[0])!
+
+                        let celestial = Celestial(planetSize: planetSize,
+                                                  usedFields: planetFieldUsed,
+                                                  totalFields: planetFieldTotal,
+                                                  tempMin: planetMinTemperature,
+                                                  tempMax: planetMaxTemperature,
+                                                  coordinates: coordinates)
+                        celestials.append(celestial)
+                    }
+                } catch {
+                    completion(.failure(OGError(message: "Celestialse parse error", detailed: error.localizedDescription)))
                 }
 
-            case .failure(_):
-                completion(.failure(NSError()))
+            case .failure(let error):
+                completion(.failure(OGError(message: "Celestials request network error", detailed: error.localizedDescription)))
             }
             self.celestial = celestials[0]
             completion(.success(celestials))
@@ -588,7 +595,7 @@ class OGame {
 
                     let noScript = try page.select("noscript").text()
                     guard noScript != "You need to enable JavaScript to run this app." else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Overview login check failed")))
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Resources login check failed")))
                         return
                     }
 
@@ -631,8 +638,7 @@ class OGame {
                         let buildingLevel = try buildingsParse.select("tr").get(1).select("td").get(1).select("span").text()
                         //let buildingCountdown = try buildingsParse.select("tr").get(3).select("td").get(0).select("span").text()
 
-                        overviewInfo[0] = Overview(buildingName: buildingName,
-                                                   upgradeLevel: buildingLevel)
+                        overviewInfo[0] = Overview(buildingName: buildingName, upgradeLevel: buildingLevel)
                     }
 
                     let researchParseCheck = try page.select("[id=productionboxresearchcomponent]").get(0).select("tr").count
@@ -642,8 +648,7 @@ class OGame {
                         let researchLevel = try researchParse.select("tr").get(1).select("td").get(1).select("span").text()
                         //let researchCountdown = try researchParse.select("tr").get(3).select("td").get(0).select("span").text()
 
-                        overviewInfo[1] = Overview(buildingName: researchName,
-                                                   upgradeLevel: researchLevel)
+                        overviewInfo[1] = Overview(buildingName: researchName, upgradeLevel: researchLevel)
                     }
 
                     let shipyardParseCheck = try page.select("[id=productionboxshipyardcomponent]").get(0).select("tr").count
@@ -654,8 +659,7 @@ class OGame {
                         //let shipyardCountdownNext = try shipyardParse.select("tr").get(3).select("td").get(0).select("span").text()
                         //let shipyardCountdownTotal = try shipyardParse.select("tr").get(5).select("td").get(0).select("span").text()
 
-                        overviewInfo[2] = Overview(buildingName: shipyardName,
-                                                   upgradeLevel: shipyardCount)
+                        overviewInfo[2] = Overview(buildingName: shipyardName, upgradeLevel: shipyardCount)
                     }
 
                     completion(.success(overviewInfo))
@@ -766,7 +770,7 @@ class OGame {
                     let levelsParse = try page.select("span[class=level]").select("[data-value]")
                     var levels = [Int]()
                     for level in levelsParse {
-                        levels.append(Int(try level.text())!)
+                        levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
                     }
 
                     let technologyStatusParse = try page.select("li[class*=technology]")
@@ -1010,39 +1014,18 @@ class OGame {
     func getFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
         var fleets = [Fleets]()
         
-//        attacked { result in
-//            switch result {
-//            case .success(let attacked):
-//                if attacked {
-//                    self.getHostileFleet { result in
-//                        switch result {
-//                        case .success(let hostileFleet):
-//                            for fleet in hostileFleet {
-//                                fleets.append(fleet)
-//                            }
-//
-//                        case .failure(let error):
-//                            completion(.failure(error))
-//                        }
-//                    }
-//                }
-//            case .failure(let error):
-//                completion(.failure(error))
-//            }
-//        }
-        
-        friendly { result in
+        attacked { result in
             switch result {
-            case .success(let friendly):
-                if friendly {
-                    self.getFriendlyFleet { result in
+            case .success(let attacked):
+                if attacked {
+                    self.getHostileFleet { result in
                         switch result {
-                        case .success(let friendlyFleet):
-                            for fleet in friendlyFleet {
+                        case .success(let hostileFleet):
+                            for fleet in hostileFleet {
                                 fleets.append(fleet)
                             }
-                            completion(.success(fleets))
-                            
+                            checkFriendlyFleets()
+
                         case .failure(let error):
                             completion(.failure(error))
                         }
@@ -1052,76 +1035,102 @@ class OGame {
                 completion(.failure(error))
             }
         }
+
+        func checkFriendlyFleets() {
+            friendly { result in
+                switch result {
+                case .success(let friendly):
+                    if friendly {
+                        self.getFriendlyFleet { result in
+                            switch result {
+                            case .success(let friendlyFleet):
+                                for fleet in friendlyFleet {
+                                    fleets.append(fleet)
+                                }
+                                completion(.success(fleets))
+
+                            case .failure(let error):
+                                completion(.failure(error))
+                            }
+                        }
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
     }
 
 
     // MARK: - GET HOSTILE FLEET
-    // TODO: UNFINISHED
-    func getHostileFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
+    func getHostileFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
         let link = "\(indexPHP!)page=componentOnly&component=eventList"
         sessionAF.request(link).response { response in
             
             switch response.result {
             case .success(let data):
-                let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-                print("PAGE FOUND: \(page)")
-                
-                let eventFleet = try! page.select("[class=eventFleet]")
-                for event in eventFleet {
-                    print("EVENT DETECTED: \(event)")
-                    let test = try! event.select("[class*=hostile]").get(0)
-                    print("TEST EVENT DETECTED: \(test)")
+                do {
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+
+                    let eventFleetParse = try page.select("[class=eventFleet]").select("[class*=hostile]")
+                    let eventFleet = Elements()
+                    for event in eventFleetParse {
+                        if let fleet = event.parent()?.parent() {
+                            eventFleet.add(fleet)
+                        }
+                    }
+
+                    var fleetIDs = [Int]()
+                    for element in eventFleet {
+                        let fleetID = Int(try element.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!
+                        fleetIDs.append(fleetID)
+                    }
+
+                    var arrivalTimes = [Int]()
+                    for event in eventFleet {
+                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                        // let time = Int(try! event.attr("data-arrival-time"))!
+                        // let date = Date(timeIntervalSince1970: TimeInterval(time))
+                        // let formatter = DateFormatter()
+                        // formatter.timeZone = TimeZone.current
+                        // formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
+                        // print("ENEMY DATE ARRIVAL: \(formatter.string(from: date))")
+                    }
+
+                    let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
+                    let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
+
+                    var playerNames = [String]()
+                    for name in eventFleet {
+                        playerNames.append(try name.select("[class*=sendMail ]").attr("title"))
+                    }
+
+                    var playerIDs = [Int]()
+                    for id in eventFleet {
+                        playerIDs.append(Int(try id.select("[class*=sendMail ]").attr("data-playerid"))!)
+                    }
+
+                    var fleets: [Fleets] = []
+                    for i in 0...fleetIDs.count - 1 {
+                        let fleet = Fleets(id: fleetIDs[i],
+                                           mission: 1,
+                                           diplomacy: "hostile",
+                                           playerName: playerNames[i],
+                                           playerID: playerIDs[i],
+                                           returns: false,
+                                           arrivalTime: arrivalTimes[i],
+                                           endTime: nil,
+                                           origin: origins[i],
+                                           destination: destinations[i])
+                        fleets.append(fleet)
+                    }
+                    completion(.success(fleets))
+
+                } catch {
+                    completion(.failure(OGError(message: "Hostile fleet parse error", detailed: error.localizedDescription)))
                 }
-                
-                var fleetIDs = [Int]()
-                for element in eventFleet {
-                    let fleetID = Int(try! element.attr("id").replacingOccurrences(of: "event-", with: ""))!
-                    print("FLEETID: \(fleetID)")
-                    fleetIDs.append(fleetID)
-                }
-                
-                var arrivalTimes = [Int]()
-                for event in eventFleet {
-                    arrivalTimes.append(Int(try! event.attr("data-arrival-time"))!)
-                    let time = Int(try! event.attr("data-arrival-time"))!
-                    let date = Date(timeIntervalSince1970: TimeInterval(time))
-                    let formatter = DateFormatter()
-                    formatter.timeZone = TimeZone.current
-                    formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
-                    print("ENEMY DATE ARRIVAL: \(formatter.string(from: date))")
-                }
-                
-                let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
-                let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
-                
-                var playerNames = [String]()
-                for name in eventFleet {
-                    playerNames.append(try! name.select("[class*=sendMail ]").attr("title"))
-                }
-                
-                var playerIDs = [Int]()
-                for id in eventFleet {
-                    print("ERROR IS HERE: \(try! id.select("[class*=sendMail ]").attr("data-playerid"))")
-                    playerIDs.append(Int(try! id.select("[class*=sendMail ]").attr("data-playerid"))!)
-                }
-                
-                var fleet: [Fleets] = []
-                for i in 0...fleetIDs.count - 1 {
-                    fleet.append(Fleets(id: fleetIDs[i],
-                                       mission: 1,
-                                       diplomacy: "hostile",
-                                       playerName: playerNames[i],
-                                       playerID: playerIDs[i],
-                                       returns: false,
-                                       arrivalTime: arrivalTimes[i],
-                                       endTime: nil,
-                                       origin: origins[i],
-                                       destination: destinations[i]))
-                }
-                completion(.success(fleet))
-                
-            case .failure(_):
-                break
+            case .failure(let error):
+                completion(.failure(OGError(message: "Get hostile fleet error", detailed: error.localizedDescription)))
             }
         }
     }
@@ -1134,83 +1143,84 @@ class OGame {
             
             switch response.result {
             case .success(let data):
-                let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-    
-                let fleetDetails = try! page.select("[class*=fleetDetails]")
-                var fleetIDs = [Int]()
-                for element in fleetDetails {
-                    fleetIDs.append(Int(try! element.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
-                }
-                
-                // 1 - attacked
-                // 3 - transport
-                // 4 - deployment
-                // 8 - recycle/harvest
-                // 15 - expedition
-                var missionTypes = [Int]()
-                for event in fleetDetails {
-                    missionTypes.append(Int(try! event.attr("data-mission-type"))!)
-                    print(missionTypes)
-                }
-                
-                var returnFlights = [Bool]()
-                for event in fleetDetails {
-                    if try! event.attr("data-return-flight") == "1" {
-                        returnFlights.append(true)
-                    } else {
-                        returnFlights.append(false)
+                do {
+                    let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+
+                    let fleetDetails = try! page.select("[class*=fleetDetails]")
+                    var fleetIDs = [Int]()
+                    for element in fleetDetails {
+                        fleetIDs.append(Int(try element.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
                     }
+
+                    var missionTypes = [Int]()
+                    // 1 - attacked
+                    // 3 - transport
+                    // 4 - deployment
+                    // 8 - recycle/harvest
+                    // 15 - expedition
+                    for event in fleetDetails {
+                        missionTypes.append(Int(try event.attr("data-mission-type"))!)
+                    }
+
+                    var returnFlights = [Bool]()
+                    for event in fleetDetails {
+                        if try event.attr("data-return-flight") == "1" {
+                            returnFlights.append(true)
+                        } else {
+                            returnFlights.append(false)
+                        }
+                    }
+
+                    var arrivalTimes = [Int]()
+                    var endTimes = [Int]()
+                    for event in fleetDetails {
+                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                        // let time = Int(try! event.attr("data-arrival-time"))!
+                        // let date = Date(timeIntervalSince1970: TimeInterval(time))
+                        // let formatter = DateFormatter()
+                        // formatter.timeZone = TimeZone.current
+                        // formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
+                        // print("DATE ARRIVAL: \(formatter.string(from: date))")
+
+                        endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
+                        // let endTime = Int(try! event.select("[data-end-time]").attr("data-end-time"))!
+                        // let endDate = Date(timeIntervalSince1970: TimeInterval(endTime))
+                        // let endFormatter = DateFormatter()
+                        // endFormatter.timeZone = TimeZone.current
+                        // endFormatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
+                        // print("DATE ENDTIME: \(formatter.string(from: endDate))")
+                    }
+
+                    // TODO: Make a function to convert epoch to normal time
+                    // if type is 1 (attacked) use ???
+                    // if type is 3 (transport) use endtime>arrival
+                    // if type is 4 (deployment) use endtime
+                    // if type is 8 (recycle/harvest) use endtime>arrival
+                    // if type is 15 (expedition) use endtime?>arrival?
+
+                    let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
+                    let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
+
+                    var fleet = [Fleets]()
+                    for i in 0...fleetIDs.count - 1 {
+                        fleet.append(Fleets(id: fleetIDs[i],
+                                            mission: missionTypes[i],
+                                            diplomacy: "friendly",
+                                            playerName: self.playerName!,
+                                            playerID: self.playerID!,
+                                            returns: returnFlights[i],
+                                            arrivalTime: arrivalTimes[i],
+                                            endTime: endTimes[i],
+                                            origin: origins[i],
+                                            destination: destinations[i]))
+                    }
+                    completion(.success(fleet))
+
+                } catch {
+                    completion(.failure(OGError(message: "Friendly fleet parse error", detailed: error.localizedDescription)))
                 }
-                
-                var arrivalTimes = [Int]()
-                var endTimes = [Int]()
-                for event in fleetDetails {
-                    arrivalTimes.append(Int(try! event.attr("data-arrival-time"))!)
-                    let time = Int(try! event.attr("data-arrival-time"))!
-                    let date = Date(timeIntervalSince1970: TimeInterval(time))
-                    let formatter = DateFormatter()
-                    formatter.timeZone = TimeZone.current
-                    formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
-                    print("DATE ARRIVAL: \(formatter.string(from: date))")
-                    
-                    endTimes.append(Int(try! event.select("[data-end-time]").attr("data-end-time"))!)
-                    let endTime = Int(try! event.select("[data-end-time]").attr("data-end-time"))!
-                    let endDate = Date(timeIntervalSince1970: TimeInterval(endTime))
-                    let endFormatter = DateFormatter()
-                    endFormatter.timeZone = TimeZone.current
-                    endFormatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
-                    print("DATE ENDTIME: \(formatter.string(from: endDate))")
-                }
-                // TODO: Make a function to convert epoch to normal time
-                // if type is 1 (attacked) use ???
-                // if type is 3 (transport) use endtime>arrival
-                // if type is 4 (deployment) use endtime
-                // if type is 8 (recycle/harvest) use endtime>arrival
-                // if type is 15 (expedition) use endtime?>arrival?
-                
-                print("predest")
-                let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
-                let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
-                print("postdest")
-                            
-                var fleet: [Fleets] = []
-                for i in 0...fleetIDs.count - 1 {
-                    fleet.append(Fleets(id: fleetIDs[i],
-                                       mission: missionTypes[i],
-                                       diplomacy: "friendly",
-                                       playerName: self.playerName!,
-                                       playerID: self.playerID!,
-                                       returns: returnFlights[i],
-                                       arrivalTime: arrivalTimes[i],
-                                       endTime: endTimes[i],
-                                       origin: origins[i],
-                                       destination: destinations[i]))
-                }
-                
-                completion(.success(fleet))
-                
-            case .failure(_):
-                break
+            case .failure(let error):
+                completion(.failure(OGError(message: "Get friendly fleet error", detailed: error.localizedDescription)))
             }
         }
     }
@@ -1260,9 +1270,6 @@ class OGame {
     }
 
 
-    // GET PHALANX
-
-
     // GET SPYREPORTS
 
 
@@ -1277,11 +1284,9 @@ class OGame {
 
     // MARK: - BUILD BUILDING/SHIPS
     func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, OGError>) -> Void) {
-        let type = what.0
-        let amount = what.1
-        let component = what.2
+        let build = (type: what.0, amount: what.1, component: what.2)
 
-        let link = "\(self.indexPHP!)page=ingame&component=\(component)&cp=\(planetID!)"
+        let link = "\(self.indexPHP!)page=ingame&component=\(build.component)&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
             switch response.result {
             case .success(let data):
@@ -1305,11 +1310,11 @@ class OGame {
 
                 let parameters: Parameters = [
                     "page": "ingame",
-                    "component": component,
+                    "component": build.component,
                     "modus": 1,
                     "token": buildToken,
-                    "type": type,
-                    "menge": amount
+                    "type": build.type,
+                    "menge": build.amount
                 ]
 
                 self.sessionAF.request(self.indexPHP!, parameters: parameters).response { response in
@@ -1420,14 +1425,3 @@ class OGame {
 // getSlotCelestial().total -> Int -> 180
 // getSlotCelestial().free -> Int -> 21
 // getSlotCelestial().used -> Int -> 159
-
-//enum CustomError: Error, CustomStringConvertible {
-//    case message(String)
-//
-//    var description: String {
-//        switch self {
-//        case .message(let message):
-//            return NSLocalizedString(message, comment: "")
-//        }
-//    }
-//}

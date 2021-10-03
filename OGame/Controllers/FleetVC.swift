@@ -15,7 +15,9 @@ class FleetVC: UIViewController {
         OGame.shared.getFleet { result in
             switch result {
             case .success(let success):
-                print("ITS WORKING: \(success)")
+                for fleet in success {
+                    print("FLEET: \(fleet)")
+                }
             case .failure(_):
                 print("FATAL ERROR")
             }
