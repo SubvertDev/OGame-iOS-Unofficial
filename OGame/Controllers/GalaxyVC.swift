@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class GalaxyVC: UIViewController {
 
@@ -32,7 +33,7 @@ class GalaxyVC: UIViewController {
 
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.rowHeight = 88
+        tableView.rowHeight = 66
         tableView.keyboardDismissMode = .onDrag
         tableView.register(UINib(nibName: "GalaxyCell", bundle: nil), forCellReuseIdentifier: "GalaxyCell")
 

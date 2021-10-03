@@ -31,7 +31,7 @@ class OverviewCell: UITableViewCell {
         case .researches:
             upgradeLevel.text = "Research to: \(level)"
         case .shipyardAndDefences:
-            upgradeLevel.text = "Build amount: \(level)"
+            upgradeLevel.text = "Constructions left: \(level)"
         }
     }
 }

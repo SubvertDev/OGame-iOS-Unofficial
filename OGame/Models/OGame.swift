@@ -906,7 +906,7 @@ class OGame {
                         playerNames[nameKey] = nameValue
 
                         let rankKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
-                        let rankValue = Int(try player.select("a").get(0).text())!
+                        let rankValue = Int(try player.select("a").get(0).text()) ?? 0
                         playerRanks[rankKey] = rankValue
                     }
 

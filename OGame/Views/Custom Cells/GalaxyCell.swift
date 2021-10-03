@@ -14,37 +14,29 @@ class GalaxyCell: UITableViewCell {
     @IBOutlet weak var planetNameLabel: UILabel!
     @IBOutlet weak var playerNameLabel: UILabel!
     @IBOutlet weak var allianceNameLabel: UILabel!
-    @IBOutlet weak var espionageButton: UIButton!
-    @IBOutlet weak var messageButton: UIButton!
-    @IBOutlet weak var buddyRequestButton: UIButton!
-    @IBOutlet weak var missileAttackButton: UIButton!
-    @IBOutlet var allButtons: [UIButton]!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
-        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
 
     func set(with systemInfo: [Position?], indexPath: IndexPath) {
-        if systemInfo[indexPath.row] != nil {
+        let position = systemInfo[indexPath.row]
+        if let position = position {
             planetPositionLabel.text = "\(indexPath.row + 1)"
-            planetImage.image = UIImage(named: "\(systemInfo[indexPath.row]!.imageString)")
-            planetNameLabel.text = "\(systemInfo[indexPath.row]!.planetName)"
-            playerNameLabel.text = "\(systemInfo[indexPath.row]!.playerName) (\(systemInfo[indexPath.row]!.status))"
-            allianceNameLabel.text = "\(systemInfo[indexPath.row]!.alliance ?? "")"
-            allButtons.forEach { button in button.isHidden = false }
+            planetImage.image = UIImage(named: "\(position.imageString)")
+            planetNameLabel.text = "\(position.planetName)"
+            playerNameLabel.text = "\(position.playerName) (\(position.status)) (\(position.rank))"
+            allianceNameLabel.text = "\(position.alliance ?? "")"
         } else {
             planetPositionLabel.text = "\(indexPath.row + 1)"
             planetImage.image = nil
             planetNameLabel.text = ""
             playerNameLabel.text = ""
             allianceNameLabel.text = ""
-            allButtons.forEach { button in button.isHidden = true }
         }
     }
 }
