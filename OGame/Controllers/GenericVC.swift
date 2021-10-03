@@ -49,12 +49,14 @@ class GenericVC: UIViewController {
                 }
 
                 self.timer?.invalidate()
-                self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { _ in
+                self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                     self.resourcesOverview.update(metal: self.prodPerSecond[0],
                                                   crystal: self.prodPerSecond[1],
                                                   deuterium: self.prodPerSecond[2],
                                                   storage: resources)
-                })
+                }
+                RunLoop.main.add(self.timer!, forMode: .common)
+
             case .failure(let error):
                 self.logoutAndShowError(error)
             }

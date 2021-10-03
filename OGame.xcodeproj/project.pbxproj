@@ -236,7 +236,6 @@
 				B8B7BC1126504F8A00988758 /* Main.storyboard */,
 				B8E5D990265A5457004CF69B /* Custom Views */,
 				B8E5D98F265A5448004CF69B /* Custom Cells */,
-				B8E5D991265A5464004CF69B /* Extensions */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -313,13 +312,6 @@
 				B83B640526585FE500A75A00 /* ResourcesOverview.xib */,
 			);
 			path = "Custom Views";
-			sourceTree = "<group>";
-		};
-		B8E5D991265A5464004CF69B /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		B8FF0451269DD023007743B8 /* Cells */ = {
