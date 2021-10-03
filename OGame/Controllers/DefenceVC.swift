@@ -75,8 +75,8 @@ class DefenceVC: UIViewController {
                     self.tableView.alpha = 1
                     self.activityIndicator.stopAnimating()
                 }
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
+            case .failure(let error):
+                self.logoutAndShowError(error)
             }
         }
     }
@@ -126,8 +126,9 @@ extension DefenceVC: BuildingCellDelegate {
             case .success(_):
                 self.refresh()
                 NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
+                
+            case .failure(let error):
+                self.logoutAndShowError(error)
             }
         }
     }

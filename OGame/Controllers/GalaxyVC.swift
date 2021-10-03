@@ -14,10 +14,10 @@ class GalaxyVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
-
     var systemInfo: [Position?]?
     var currentCoordinates = [1, 1]
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -29,9 +29,6 @@ class GalaxyVC: UIViewController {
 
         galaxyTextField.text = "\(currentCoordinates[0])"
         systemTextField.text = "\(currentCoordinates[1])"
-
-//        galaxyTextField.delegate = self
-//        systemTextField.delegate = self
 
         tableView.delegate = self
         tableView.dataSource = self
@@ -49,8 +46,8 @@ class GalaxyVC: UIViewController {
                     self.tableView.reloadData()
                     self.stoppedUpdating()
                 }
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
+            case .failure(let error):
+                self.logoutAndShowError(error)
             }
         }
     }
@@ -87,8 +84,8 @@ class GalaxyVC: UIViewController {
                         self.tableView.reloadData()
                         self.stoppedUpdating()
                     }
-                case .failure(_):
-                    self.navigationController?.popToRootViewController(animated: true)
+                case .failure(let error):
+                    self.logoutAndShowError(error)
                 }
             }
         } else {
@@ -116,8 +113,8 @@ class GalaxyVC: UIViewController {
                         self.tableView.reloadData()
                         self.stoppedUpdating()
                     }
-                case .failure(_):
-                    self.navigationController?.popToRootViewController(animated: true)
+                case .failure(let error):
+                    self.logoutAndShowError(error)
                 }
             }
         } else {

@@ -19,6 +19,7 @@ class LoginVC: UIViewController {
 
     let defaults = UserDefaults.standard
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -48,7 +49,6 @@ class LoginVC: UIViewController {
     }
 
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
 
         emailTextField.resignFirstResponder()
@@ -68,8 +68,7 @@ class LoginVC: UIViewController {
         loginButton.isHidden = true
         activityIndicator.startAnimating()
 
-        OGame.shared.loginIntoAccount(username: username,
-                                      password: password) { result in
+        OGame.shared.loginIntoAccount(username: username, password: password) { result in
             switch result {
             case .success(_):
                 self.loginButton.isHidden = false
@@ -84,7 +83,7 @@ class LoginVC: UIViewController {
 
             case .failure(let error):
                 self.loginButton.isEnabled = true
-                let alert = UIAlertController(title: "Error", message: error.description, preferredStyle: .alert)
+                let alert = UIAlertController(title: error.message, message: error.detailed, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
                 self.present(alert, animated: true)
             }

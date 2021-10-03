@@ -21,7 +21,6 @@ class ServerListVC: UIViewController {
     }
 
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
-        OGame.shared.reset()
         navigationController?.popToRootViewController(animated: true)
     }
 
@@ -59,22 +58,17 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
         activityIndicator.startAnimating()
 
         OGame.shared.loginIntoSever(with: OGame.shared.serversOnAccount[indexPath.row]) { result in
+            tableView.alpha = 1
+            tableView.isUserInteractionEnabled = true
+            self.activityIndicator.stopAnimating()
 
             switch result {
             case .success(_):
-                tableView.alpha = 1
-                self.activityIndicator.stopAnimating()
                 self.performSegue(withIdentifier: "ShowMenuVC", sender: self)
                 
             case .failure(let error):
-                let alert = UIAlertController(title: "Error", message: error.description, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+                self.logoutAndShowError(error)
             }
-
-            tableView.isUserInteractionEnabled = true
-            tableView.alpha = 1
-            self.activityIndicator.stopAnimating()
         }
     }
 

@@ -29,6 +29,7 @@ class MenuVC: UIViewController {
                     "Fleet",
                     "Galaxy",
                     "Settings"]
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,8 +50,8 @@ class MenuVC: UIViewController {
     
     @IBAction func rightButtonPressed(_ sender: UIButton) {
         OGame.shared.setNextPlanet { error in
-            if let _ = error {
-                self.navigationController?.popToRootViewController(animated: true)
+            if let error = error {
+                self.logoutAndShowError(error)
             } else {
                 self.configureLabels()
             }
@@ -59,8 +60,8 @@ class MenuVC: UIViewController {
     
     @IBAction func leftButtonPressed(_ sender: UIButton) {
         OGame.shared.setPreviousPlanet { error in
-            if let _ = error {
-                self.navigationController?.popToRootViewController(animated: true)
+            if let error = error {
+                self.logoutAndShowError(error)
             } else {
                 self.configureLabels()
             }

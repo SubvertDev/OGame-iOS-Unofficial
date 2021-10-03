@@ -49,9 +49,9 @@ class OGame {
     private init() {}
 
     // MARK: - LOGIN FUNCTIONS -
-    func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, CustomError>) -> Void) {
+    func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, OGError>) -> Void) {
         OGame.shared.reset()
-        print(#function)
+
         self.username = username
         self.password = password
         self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
@@ -60,8 +60,6 @@ class OGame {
 
         // MARK: - Login
         func login(attempt: Int) {
-            print(#function)
-            //let _ = sessionAF.request("https://lobby.ogame.gameforge.com/") // TODO: Delete this?
             let parameters = LoginData(identity: self.username,
                                        password: self.password,
                                        locale: "en_EN",
@@ -75,29 +73,25 @@ class OGame {
                 let statusCode = response.response!.statusCode
 
                 switch response.result {
-                case .success(let login):
-                    print("Login successful, data: \(login)")
+                case .success(_):
                     self.token = response.value!.token
-                    print("TOKEN IS SET TO \(self.token!)")
                     self.attempt = 0
                     configureServers()
 
-                case .failure(_):
-                    print("Status code: \(statusCode)")
+                case .failure(let error):
                     if statusCode == 409 && attempt < 10 {
                         let captchaToken = response.response?.headers["gf-challenge-id"]
                         let token = captchaToken!.replacingOccurrences(of: ";https://challenge.gameforge.com", with: "")
-                        print("captcha token: \(token)")
                         solveCaptcha(challenge: token)
                     } else if attempt > 10 {
                         guard statusCode != 409 else {
-                            completion(.failure(.message("Please, resolve captcha in your browser and then try again!")))
+                            completion(.failure(OGError(message: "Captcha error", detailed: "Couldn't resolve captcha, try to solve it in browser and try again. (\(error.localizedDescription)")))
                             return
                         }
                     } else {
                         guard statusCode == 201 else {
-                            completion(.failure(.message("Please, check your login data and try again!")))
-                            // TODO: Also called when can't captcha in
+                            completion(.failure(OGError(message: "Login error", detailed: "Check your login data and try again. (\(error.localizedDescription)")))
+                            // Also called when can't captcha in
                             return
                         }
                     }
@@ -107,13 +101,9 @@ class OGame {
 
         // MARK: - Solve Captcha
         func solveCaptcha(challenge: String) {
-            print(#function)
-            let getHeaders: HTTPHeaders = [
-                "Cookie": "",
-                "Connection": "close"
-            ]
-            sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", headers: getHeaders).response { response in
+            let getHeaders: HTTPHeaders = ["Cookie": "", "Connection": "close"]
 
+            sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", headers: getHeaders).response { response in
                 switch response.result {
                 case .success(_):
                     let postHeaders: HTTPHeaders = ["Content-type": "application/json"]
@@ -123,41 +113,38 @@ class OGame {
                         case .success(_):
                             self.attempt += 1
                             login(attempt: self.attempt)
-                        case .failure(_):
-                            completion(.failure(.message("Captcha sending error, please try again!")))
+
+                        case .failure(let error):
+                            completion(.failure(OGError(message: "Captcha network post error", detailed: (error.localizedDescription))))
                         }
                     }
-                case .failure(_):
-                    completion(.failure(.message("Captcha request error, please try again!")))
+                case .failure(let error):
+                    completion(.failure(OGError(message: "Captcha network request error", detailed: error.localizedDescription)))
                 }
             }
         }
 
         // MARK: - Configure Servers List
         func configureServers() {
-            print(#function)
             sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Servers].self) { response in
-
                 switch response.result {
                 case .success(let servers):
                     self.serversList = servers
                     configureAccounts()
 
-                case .failure(_):
-                    completion(.failure(.message("Servers list request error, please try again!")))
+                case .failure(let error):
+                    completion(.failure(OGError(message: "Server list network request error", detailed: error.localizedDescription)))
                 }
             }
         }
 
         // MARK: - Configure Accounts
         func configureAccounts() {
-            print(#function)
             let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
-            sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
 
+            sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
                 switch response.result {
                 case .success(let accounts):
-                    print("Accounts: \(accounts)")
                     for account in accounts {
                         for server in self.serversList! {
                             if account.server.number == server.number && account.server.language == server.language {
@@ -171,21 +158,21 @@ class OGame {
                         }
                     }
                     guard !self.serversOnAccount.isEmpty else {
-                        completion(.failure(.message("Unable to get any active servers on account, please try again!")))
+                        completion(.failure(OGError(message: "No servers error", detailed: "Unable to get any active servers on account, make one and/or try again")))
                         return
                     }
                     // TODO: Add accounts failure check?
                     completion(.success(true))
-                case .failure(_):
-                    completion(.failure(.message("Unable to configure account, please try again!")))
+
+                case .failure(let error):
+                    completion(.failure(OGError(message: "Configuration error", detailed: error.localizedDescription)))
                 }
             }
         }
     }
 
     // MARK: - Login Into Server
-    func loginIntoSever(with serverInfo: MyServers, completion: @escaping (Result<Bool, NSError>) -> Void) {
-        print(#function)
+    func loginIntoSever(with serverInfo: MyServers, completion: @escaping (Result<Bool, OGError>) -> Void) {
         serverID = serverInfo.serverID
         language = serverInfo.language
         serverNumber = serverInfo.number
@@ -195,7 +182,6 @@ class OGame {
 
         // MARK: - Configure Index
         func configureIndex() {
-            print(#function)
             indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
             let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
             let parameters: Parameters = [
@@ -204,57 +190,49 @@ class OGame {
                 "server[number]": "\(self.serverNumber!)",
                 "clickedButton": "account_list"
             ]
-
             let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
-            sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).validate().responseDecodable(of: Index.self) { response in
 
+            sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).validate().responseDecodable(of: Index.self) { response in
                 switch response.result {
                 case .success(_):
-                    print("Login link: \(response.value!.url)")
                     self.loginLink = response.value!.url
                     configureIndex2()
 
-                case .failure(_):
-                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed configuring authorization page, please try again!"])))
+                case .failure(let error):
+                    completion(.failure(OGError(message: "Index page error", detailed: error.localizedDescription)))
                 }
             }
         }
 
         func configureIndex2() {
-            print(#function)
             sessionAF.request(loginLink!).validate().response { response in
-
                 switch response.result {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
                     configureIndex3()
 
-                case .failure(_):
-                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed configuring login link, please try again!"])))
+                case .failure(let error):
+                    completion(.failure(OGError(message: "Landing page error", detailed: error.localizedDescription)))
                 }
             }
         }
 
         func configureIndex3() {
-            print(#function)
             let link = "\(indexPHP!)&page=ingame"
-            print("Got ingame page: \(link)")
             sessionAF.request(link).validate().response { response in
-
                 switch response.result {
                 case .success(let data):
                     self.landingPage = String(data: data!, encoding: .ascii)
                     configurePlayer()
 
-                case .failure(_):
-                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed configuring ingame page, please try again!"])))
+                case .failure(let error):
+                    completion(.failure(OGError(message: "Landing page error", detailed: error.localizedDescription)))
                 }
             }
         }
 
         // MARK: - Configure Player
         func configurePlayer() {
-            print(#function)
             do {
                 doc = try SwiftSoup.parse(self.landingPage!)
                 let planetName = try doc!.select("[name=ogame-planet-name]")
@@ -284,14 +262,14 @@ class OGame {
                             self.celestial = celestials[0]
                             self.celestials = celestials
                             completion(.success(true))
-                        case .failure(_):
-                            completion(.failure(NSError()))
+                        case .failure(let error):
+                            completion(.failure(OGError(message: "Celestials network error", detailed: error.localizedDescription)))
                         }
                     }
                 }
                 
             } catch {
-                completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Can't configure player info, please try again!"])))
+                completion(.failure(OGError(message: "Player configuration error", detailed: error.localizedDescription)))
             }
         }
     }
@@ -533,8 +511,7 @@ class OGame {
     
     
     // MARK: - Set Next Planet
-    func setNextPlanet(completion: @escaping (Error?) -> ()) {
-        print(#function)
+    func setNextPlanet(completion: @escaping (OGError?) -> ()) {
         if let index = planetNames!.firstIndex(of: planet!) {
             if index + 1 == planetNames!.count {
                 planet = planetNames![0]
@@ -550,13 +527,13 @@ class OGame {
                 completion(nil)
             }
         } else {
-            completion(NSError())
+            completion(OGError(message: "Error setting next planet", detailed: ""))
         }
     }
 
 
     // MARK: - Set Previous Planet
-    func setPreviousPlanet(completion: @escaping (Error?) -> ()) {
+    func setPreviousPlanet(completion: @escaping (OGError?) -> ()) {
         if let index = planetNames!.firstIndex(of: planet!) {
             if index - 1 == -1 {
                 planet = planetNames!.last
@@ -572,7 +549,7 @@ class OGame {
                 completion(nil)
             }
         } else {
-            completion(NSError())
+            completion(OGError(message: "Error setting previous planet", detailed: ""))
         }
     }
     
@@ -600,7 +577,7 @@ class OGame {
 
     
     // MARK: - GET RESOURCES
-    func getResources(completion: @escaping (Result<Resources, Error>) -> Void) {
+    func getResources(completion: @escaping (Result<Resources, OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -611,80 +588,89 @@ class OGame {
 
                     let noScript = try page.select("noscript").text()
                     guard noScript != "You need to enable JavaScript to run this app." else {
-                        print("LOOKS LIKE NOT LOGGED IN (resources info)")
-                        completion(.failure(NSError()))
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Overview login check failed")))
                         return
                     }
+
                     let resourceObject = Resources(from: page)
                     completion(.success(resourceObject))
+
                 } catch {
-                    print(error)
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)))
                 }
             case .failure(let error):
-                print(error)
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Resources network request failed", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - GET OVERVIEW
-    func getOverview(completion: @escaping (Result<[Overview?], Error>) -> Void) {
+    func getOverview(completion: @escaping (Result<[Overview?], OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=overview"
         sessionAF.request(link).validate().response { response in
 
             switch response.result {
             case .success(let data):
-                let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-                // TODO: Countdowns are showing "load..." instead of actual time
+                do {
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+                    // TODO: Countdowns are showing "load..." instead of actual time
 
-                var overviewInfo: [Overview?] = [nil, nil, nil]
+                    let noScript = try page.select("noscript").text()
+                    guard noScript != "You need to enable JavaScript to run this app." else {
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Overview login check failed")))
+                        return
+                    }
 
-                let buildingsParseCheck = try! page.select("[id=productionboxbuildingcomponent]").get(0).select("tr").count
-                if buildingsParseCheck != 1 {
-                    let buildingsParse = try! page.select("[id=productionboxbuildingcomponent]").get(0)
-                    let buildingName = try! buildingsParse.select("tr").get(0).select("th").get(0).text()
-                    let buildingLevel = try! buildingsParse.select("tr").get(1).select("td").get(1).select("span").text()
-                    //let buildingCountdown = try! buildingsParse.select("tr").get(3).select("td").get(0).select("span").text()
+                    var overviewInfo: [Overview?] = [nil, nil, nil]
 
-                    overviewInfo[0] = Overview(buildingName: buildingName,
-                                                 upgradeLevel: buildingLevel)
+                    let buildingsParseCheck = try page.select("[id=productionboxbuildingcomponent]").get(0).select("tr").count
+                    if buildingsParseCheck != 1 {
+                        let buildingsParse = try page.select("[id=productionboxbuildingcomponent]").get(0)
+                        let buildingName = try buildingsParse.select("tr").get(0).select("th").get(0).text()
+                        let buildingLevel = try buildingsParse.select("tr").get(1).select("td").get(1).select("span").text()
+                        //let buildingCountdown = try buildingsParse.select("tr").get(3).select("td").get(0).select("span").text()
+
+                        overviewInfo[0] = Overview(buildingName: buildingName,
+                                                   upgradeLevel: buildingLevel)
+                    }
+
+                    let researchParseCheck = try page.select("[id=productionboxresearchcomponent]").get(0).select("tr").count
+                    if researchParseCheck != 1 {
+                        let researchParse = try page.select("[id=productionboxresearchcomponent]").get(0)
+                        let researchName = try researchParse.select("tr").get(0).select("th").get(0).text()
+                        let researchLevel = try researchParse.select("tr").get(1).select("td").get(1).select("span").text()
+                        //let researchCountdown = try researchParse.select("tr").get(3).select("td").get(0).select("span").text()
+
+                        overviewInfo[1] = Overview(buildingName: researchName,
+                                                   upgradeLevel: researchLevel)
+                    }
+
+                    let shipyardParseCheck = try page.select("[id=productionboxshipyardcomponent]").get(0).select("tr").count
+                    if shipyardParseCheck != 1 {
+                        let shipyardParse = try page.select("[id=productionboxshipyardcomponent]").get(0)
+                        let shipyardName = try shipyardParse.select("tr").get(0).select("th").get(0).text()
+                        let shipyardCount = try shipyardParse.select("tr").get(1).select("td").get(0).select("div").get(1).text()
+                        //let shipyardCountdownNext = try shipyardParse.select("tr").get(3).select("td").get(0).select("span").text()
+                        //let shipyardCountdownTotal = try shipyardParse.select("tr").get(5).select("td").get(0).select("span").text()
+
+                        overviewInfo[2] = Overview(buildingName: shipyardName,
+                                                   upgradeLevel: shipyardCount)
+                    }
+
+                    completion(.success(overviewInfo))
+                } catch {
+                    completion(.failure(OGError(message: "Failed to parse overview data", detailed: error.localizedDescription)))
                 }
-
-                let researchParseCheck = try! page.select("[id=productionboxresearchcomponent]").get(0).select("tr").count
-                if researchParseCheck != 1 {
-                    let researchParse = try! page.select("[id=productionboxresearchcomponent]").get(0)
-                    let researchName = try! researchParse.select("tr").get(0).select("th").get(0).text()
-                    let researchLevel = try! researchParse.select("tr").get(1).select("td").get(1).select("span").text()
-                    //let researchCountdown = try! researchParse.select("tr").get(3).select("td").get(0).select("span").text()
-
-                    overviewInfo[1] = Overview(buildingName: researchName,
-                                                 upgradeLevel: researchLevel)
-                }
-
-                let shipyardParseCheck = try! page.select("[id=productionboxshipyardcomponent]").get(0).select("tr").count
-                if shipyardParseCheck != 1 {
-                    let shipyardParse = try! page.select("[id=productionboxshipyardcomponent]").get(0)
-                    let shipyardName = try! shipyardParse.select("tr").get(0).select("th").get(0).text()
-                    let shipyardCount = try! shipyardParse.select("tr").get(1).select("td").get(0).select("div").get(1).text()
-                    //let shipyardCountdownNext = try! shipyardParse.select("tr").get(3).select("td").get(0).select("span").text()
-                    //let shipyardCountdownTotal = try! shipyardParse.select("tr").get(5).select("td").get(0).select("span").text()
-
-                    overviewInfo[2] = Overview(buildingName: shipyardName,
-                                                 upgradeLevel: shipyardCount)
-                }
-
-                completion(.success(overviewInfo))
-            case .failure(_):
-                print("FAILURE")
+            case .failure(let error):
+                completion(.failure(OGError(message: "Overview network request failed", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - GET SUPPLY
-    func supply(completion: @escaping (Result<Supplies, Error>) -> Void) {
+    func supply(completion: @escaping (Result<Supplies, OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -706,27 +692,25 @@ class OGame {
                     }
 
                     guard !levels.isEmpty, !technologyStatus.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN (resources)")
-                        completion(.failure(NSError()))
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Supply login check failed")))
                         return
                     }
-                    let suppliesObject = Supplies(levels, technologyStatus)
 
+                    let suppliesObject = Supplies(levels, technologyStatus)
                     completion(.success(suppliesObject))
+
                 } catch {
-                    print(error)
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Failed to parse supplies data", detailed: error.localizedDescription)))
                 }
             case .failure(let error):
-                print(error)
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Supplies network request failed", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - GET FACILITIES
-    func facilities(completion: @escaping (Result<Facilities, Error>) -> Void) {
+    func facilities(completion: @escaping (Result<Facilities, OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -747,16 +731,19 @@ class OGame {
                         technologyStatus.append(try status.attr("data-status"))
                     }
 
-                    let facilitiesObject = Facilities(levels, technologyStatus)
+                    guard !levels.isEmpty, !technologyStatus.isEmpty else {
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Facilities login check failed")))
+                        return
+                    }
 
+                    let facilitiesObject = Facilities(levels, technologyStatus)
                     completion(.success(facilitiesObject))
+
                 } catch {
-                    print(error)
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Failed to parse overview data", detailed: error.localizedDescription)))
                 }
             case .failure(let error):
-                print(error)
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Overview network request failed", detailed: error.localizedDescription)))
             }
         }
     }
@@ -767,7 +754,7 @@ class OGame {
 
 
     // MARK: - GET RESEARCH
-    func research(completion: @escaping (Result<Researches, Error>) -> Void) {
+    func research(completion: @escaping (Result<Researches, OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=research&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -789,28 +776,25 @@ class OGame {
                     }
 
                     guard !levels.isEmpty && !technologyStatus.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN (research)")
-                        completion(.failure(NSError()))
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Research login check failed")))
                         return
                     }
 
                     let researchesObject = Researches(levels, technologyStatus)
-
                     completion(.success(researchesObject))
+
                 } catch {
-                    print(error)
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Failed to parse research data", detailed: error.localizedDescription)))
                 }
             case .failure(let error):
-                print(error)
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Research network request failed", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - GET SHIPS
-    func ships(completion: @escaping (Result<Ships, Error>) -> Void) {
+    func ships(completion: @escaping (Result<Ships, OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -832,27 +816,25 @@ class OGame {
                     }
 
                     guard !ships.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN (ships)")
-                        completion(.failure(NSError()))
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Ships login check failed")))
                         return
                     }
 
                     let shipsObject = Ships(ships, technologyStatus)
-
                     completion(.success(shipsObject))
+
                 } catch {
-                    print(error)
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Failed to parse ships data", detailed: error.localizedDescription)))
                 }
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Ships network request failed", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - GET DEFENCES
-    func defences(completion: @escaping (Result<Defences, Error>) -> Void) {
+    func defences(completion: @escaping (Result<Defences, OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
         sessionAF.request(link).validate().response  { response in
 
@@ -874,27 +856,25 @@ class OGame {
                     }
 
                     guard !defences.isEmpty else {
-                        print("LOOKS LIKE NOT LOGGED IN (defences)")
-                        completion(.failure(NSError()))
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Defences login check failed")))
                         return
                     }
 
                     let defencesObject = Defences(defences, technologyStatus)
-
                     completion(.success(defencesObject))
+
                 } catch {
-                    print(error)
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Failed to parse defences data", detailed: error.localizedDescription)))
                 }
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Defences network request failed", detailed: error.localizedDescription)))
             }
         }
     }
 
 
     // MARK: - GET GALAXY
-    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], Error>) -> Void) {
+    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
         let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
@@ -902,106 +882,111 @@ class OGame {
         sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
-                let checkData = data as! [String: Any]
-                let galaxyJson = checkData["galaxy"] as! String
+                do {
+                    let checkData = data as! [String: Any]
+                    let galaxyJson = checkData["galaxy"] as! String
 
-                let galaxyInfo = try! SwiftSoup.parse(galaxyJson)
-                let players = try! galaxyInfo.select("[id*=player]")
-                let alliances = try! galaxyInfo.select("[id*=alliance]")
+                    let galaxyInfo = try SwiftSoup.parse(galaxyJson)
+                    let players = try galaxyInfo.select("[id*=player]")
+                    let alliances = try galaxyInfo.select("[id*=alliance]")
 
-                let imagesParse = try! galaxyInfo.select("li").select("[class*=planetTooltip]")
-                var images: [String] = []
-                for image in imagesParse {
-                    images.append(try! image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
-                }
+                    let imagesParse = try galaxyInfo.select("li").select("[class*=planetTooltip]")
+                    var images: [String] = []
+                    for image in imagesParse {
+                        images.append(try image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
+                    }
 
-                var playerNames = [String: String]()
-                var playerRanks = [String: Int]()
-                var playerAlliances = [String: String]()
+                    var playerNames = [String: String]()
+                    var playerRanks = [String: Int]()
+                    var playerAlliances = [String: String]()
 
-                for player in players {
-                    let nameKey = try! player.attr("id").replacingOccurrences(of: "player", with: "")
-                    let nameValue = try! player.select("span").text()
-                    playerNames[nameKey] = nameValue
+                    for player in players {
+                        let nameKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
+                        let nameValue = try player.select("span").text()
+                        playerNames[nameKey] = nameValue
 
-                    let rankKey = try! player.attr("id").replacingOccurrences(of: "player", with: "")
-                    let rankValue = Int(try! player.select("a").get(0).text()) ?? -1
-                    playerRanks[rankKey] = rankValue
-                }
+                        let rankKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
+                        let rankValue = Int(try player.select("a").get(0).text())!
+                        playerRanks[rankKey] = rankValue
+                    }
 
-                for alliance in alliances {
-                    let allianceKey = try! alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
-                    let allianceValue = try! alliance.select("h1").get(0).text()
-                    playerAlliances[allianceKey] = allianceValue
-                }
+                    for alliance in alliances {
+                        let allianceKey = try alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
+                        let allianceValue = try alliance.select("h1").get(0).text()
+                        playerAlliances[allianceKey] = allianceValue
+                    }
 
-                var planets = [Position?]()
+                    var planets = [Position?]()
 
-                for row in try! galaxyInfo.select("#galaxytable .row") {
-                    let status = try! row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
-                    var planetStatus = ""
-                    var playerID = 0
+                    for row in try galaxyInfo.select("#galaxytable .row") {
+                        let status = try row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
+                        var planetStatus = ""
+                        var playerID = 0
 
-                    let staffCheckID = try! row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
+                        let staffCheckID = try row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
 
-                    if status.contains("empty_filter") {
-                        planets.append(nil)
-                        continue
-                    } else if status.count == 0 {
-                        if playerRanks[staffCheckID] == -1 {
-                            planetStatus = "staff"
-                            playerID = Int(staffCheckID)!
+                        if status.contains("empty_filter") {
+                            planets.append(nil)
+                            continue
+                        } else if status.count == 0 {
+                            if playerRanks[staffCheckID] == -1 {
+                                planetStatus = "staff"
+                                playerID = Int(staffCheckID)!
+                            } else {
+                                planetStatus = "you"
+                                playerID = self.playerID!
+                                playerNames[String(playerID)] = self.playerName
+                                playerRanks[String(playerID)] = self.rank
+                            }
                         } else {
-                            planetStatus = "you"
-                            playerID = self.playerID!
-                            playerNames[String(playerID)] = self.playerName
-                            playerRanks[String(playerID)] = self.rank
-                        }
-                    } else {
-                        planetStatus = "\(status[status.startIndex])"
+                            planetStatus = "\(status[status.startIndex])"
 
-                        let player = try! row.select("[rel~=player[0-9]+]").attr("rel")
-                        if player.isEmpty {
-                            planets.append(nil)
-                            continue
+                            let player = try row.select("[rel~=player[0-9]+]").attr("rel")
+                            if player.isEmpty {
+                                planets.append(nil)
+                                continue
+                            }
+
+                            playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
+                            if playerID == 99999 {
+                                planets.append(nil)
+                                continue
+                            }
                         }
 
-                        playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
-                        if playerID == 99999 {
-                            planets.append(nil)
-                            continue
+                        let planetPosition = try row.select("[class*=position]").text()
+                        let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
+                        let moonPosition = try row.select("[rel*=moon]").attr("rel")
+                        let allianceID = try row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
+                        let planetName = try row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
+
+                        var imageString = ""
+                        let noNilsCount = planets.filter({ $0 != nil}).count
+                        if noNilsCount == 0 {
+                            imageString = images[0]
+                        } else {
+                            imageString = images[noNilsCount]
                         }
+
+                        let position = Position(coordinates: planetCoordinates,
+                                                planetName: planetName,
+                                                playerName: playerNames[String(playerID)]!,
+                                                playerID: playerID,
+                                                rank: playerRanks[String(playerID)]!,
+                                                status: planetStatus,
+                                                moon: moonPosition != "",
+                                                alliance: playerAlliances[allianceID],
+                                                imageString: imageString)
+                        planets.append(position)
                     }
 
-                    let planetPosition = try! row.select("[class*=position]").text()
-                    let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
-                    let moonPosition = try! row.select("[rel*=moon]").attr("rel")
-                    let allianceID = try! row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
-                    let planetName = try! row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
+                    completion(.success(planets))
 
-                    var imageString = ""
-                    let noNilsCount = planets.filter({ $0 != nil}).count
-                    if noNilsCount == 0 {
-                        imageString = images[0]
-                    } else {
-                        imageString = images[noNilsCount]
-                    }
-
-                    let position = Position(coordinates: planetCoordinates,
-                                            planetName: planetName,
-                                            playerName: playerNames[String(playerID)]!,
-                                            playerID: playerID,
-                                            rank: playerRanks[String(playerID)]!,
-                                            status: planetStatus,
-                                            moon: moonPosition != "",
-                                            alliance: playerAlliances[allianceID],
-                                            imageString: imageString)
-                    planets.append(position)
+                } catch {
+                    completion(.failure(OGError(message: "Failed to parse galaxy data", detailed: error.localizedDescription)))
                 }
-                completion(.success(planets))
-
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Galaxy network request failed", detailed: error.localizedDescription)))
             }
         }
     }
@@ -1291,16 +1276,15 @@ class OGame {
 
 
     // MARK: - BUILD BUILDING/SHIPS
-    func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, OGError>) -> Void) {
         let type = what.0
         let amount = what.1
         let component = what.2
-        // FIXME: fix planet id
+
         let link = "\(self.indexPHP!)page=ingame&component=\(component)&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
             switch response.result {
             case .success(let data):
-                // TODO: this is a mess, i hate regex
                 let text = String(data: data!, encoding: .ascii)!
                 // Can i just delete that below and change it to .range(of:) ?
                 let pattern = "var urlQueueAdd = (.*)token=(.*)';"
@@ -1309,7 +1293,7 @@ class OGame {
                 let results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
                 let matches = results.map { nsString.substring(with: $0.range)}
                 guard !matches.isEmpty else {
-                    completion(.failure(NSError()))
+                    completion(.failure(OGError(message: "Building error", detailed: "Regex matches are empty")))
                     return
                 }
                 let match = matches[0]
@@ -1318,7 +1302,6 @@ class OGame {
                 var final = match[strIndex!...]
                 final.removeLast(2)
                 let buildToken = final
-                print("Build token: \(buildToken)")
 
                 let parameters: Parameters = [
                     "page": "ingame",
@@ -1328,18 +1311,17 @@ class OGame {
                     "type": type,
                     "menge": amount
                 ]
+
                 self.sessionAF.request(self.indexPHP!, parameters: parameters).response { response in
                     switch response.result {
                     case .success(_):
                         completion(.success(true))
                     case .failure(let error):
-                        print(error)
-                        completion(.failure(error))
+                        completion(.failure(OGError(message: "Building network post request error", detailed: error.localizedDescription)))
                     }
                 }
             case .failure(let error):
-                print(error)
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Building network get request error", detailed: error.localizedDescription)))
             }
         }
     }
@@ -1439,13 +1421,13 @@ class OGame {
 // getSlotCelestial().free -> Int -> 21
 // getSlotCelestial().used -> Int -> 159
 
-enum CustomError: Error, CustomStringConvertible {
-    case message(String)
-
-    var description: String {
-        switch self {
-        case .message(let message):
-            return NSLocalizedString(message, comment: "")
-        }
-    }
-}
+//enum CustomError: Error, CustomStringConvertible {
+//    case message(String)
+//
+//    var description: String {
+//        switch self {
+//        case .message(let message):
+//            return NSLocalizedString(message, comment: "")
+//        }
+//    }
+//}

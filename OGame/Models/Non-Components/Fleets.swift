@@ -18,5 +18,4 @@ struct Fleets {
     let endTime: Int?
     let origin: [Int]
     let destination: [Int]
-    //let list:
 }

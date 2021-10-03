@@ -8,7 +8,7 @@
 import UIKit
 
 struct ResourceCell {
-
+    
     var resourceBuildings: BuildingsData
 
     init(with supplies: Supplies) {

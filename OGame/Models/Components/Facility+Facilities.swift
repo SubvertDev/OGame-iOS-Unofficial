@@ -19,7 +19,6 @@ struct Facility {
 }
 
 struct Facilities {
-
     let roboticsFactory: Facility
     let shipyard: Facility
     let researchLaboratory: Facility

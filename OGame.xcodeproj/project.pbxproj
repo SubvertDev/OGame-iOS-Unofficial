@@ -27,6 +27,8 @@
 		B8676155265982DD0096BE39 /* Research+Researches.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8676154265982DD0096BE39 /* Research+Researches.swift */; };
 		B86761592659834B0096BE39 /* Buildings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86761582659834A0096BE39 /* Buildings.swift */; };
 		B872AAD42708CB6B00BAC4C9 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */; };
+		B872AAD62708E62300BAC4C9 /* OGError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872AAD52708E62300BAC4C9 /* OGError.swift */; };
+		B872AAD82708EE7000BAC4C9 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872AAD72708EE7000BAC4C9 /* UIViewController+Ext.swift */; };
 		B873317526542CB400524FD8 /* OverviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873317426542CB400524FD8 /* OverviewVC.swift */; };
 		B87331772654366700524FD8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87331762654366700524FD8 /* Price.swift */; };
 		B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */; };
@@ -89,6 +91,8 @@
 		B8676154265982DD0096BE39 /* Research+Researches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Research+Researches.swift"; sourceTree = "<group>"; };
 		B86761582659834A0096BE39 /* Buildings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buildings.swift; sourceTree = "<group>"; };
 		B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
+		B872AAD52708E62300BAC4C9 /* OGError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGError.swift; sourceTree = "<group>"; };
+		B872AAD72708EE7000BAC4C9 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		B873317426542CB400524FD8 /* OverviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewVC.swift; sourceTree = "<group>"; };
 		B87331762654366700524FD8 /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 		B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
@@ -203,16 +207,18 @@
 		B8B7BC0A26504F8A00988758 /* OGame */ = {
 			isa = PBXGroup;
 			children = (
-				B8B7BC222650576000988758 /* View */,
+				B8B7BC222650576000988758 /* Views */,
 				B8B7BC232650576700988758 /* Controllers */,
-				B8B7BC212650575B00988758 /* Model */,
+				B8B7BC212650575B00988758 /* Models */,
 				B8B7BC242650577B00988758 /* Utilities */,
+				B8B7CE90270A213300C8EFAE /* Extensions */,
+				B8B7CE91270A217000C8EFAE /* Support */,
 				B8B7BC1926504F8F00988758 /* Info.plist */,
 			);
 			path = OGame;
 			sourceTree = "<group>";
 		};
-		B8B7BC212650575B00988758 /* Model */ = {
+		B8B7BC212650575B00988758 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				B8B7BC1F2650524000988758 /* OGame.swift */,
@@ -221,19 +227,18 @@
 				B8FF0451269DD023007743B8 /* Cells */,
 				B867615B265983D00096BE39 /* Server */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
-		B8B7BC222650576000988758 /* View */ = {
+		B8B7BC222650576000988758 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B8B7BC1126504F8A00988758 /* Main.storyboard */,
-				B8B7BC1626504F8F00988758 /* LaunchScreen.storyboard */,
 				B8E5D990265A5457004CF69B /* Custom Views */,
 				B8E5D98F265A5448004CF69B /* Custom Cells */,
 				B8E5D991265A5464004CF69B /* Extensions */,
 			);
-			path = View;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B8B7BC232650576700988758 /* Controllers */ = {
@@ -258,14 +263,33 @@
 		B8B7BC242650577B00988758 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				B8B7BC0B26504F8A00988758 /* AppDelegate.swift */,
-				B8B7BC0D26504F8A00988758 /* SceneDelegate.swift */,
 				B85D7F88265FDDCC00186021 /* Images.swift */,
 				B8FF0458269DDD35007743B8 /* Typealiases.swift */,
-				B8B7BC1426504F8F00988758 /* Assets.xcassets */,
-				B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */,
+				B872AAD52708E62300BAC4C9 /* OGError.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		B8B7CE90270A213300C8EFAE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B872AAD72708EE7000BAC4C9 /* UIViewController+Ext.swift */,
+				B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */,
+				B867614B2659130D0096BE39 /* UIView+Ext.swift */,
+				B872AAD32708CB6B00BAC4C9 /* String+Ext.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B8B7CE91270A217000C8EFAE /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				B8B7BC0B26504F8A00988758 /* AppDelegate.swift */,
+				B8B7BC0D26504F8A00988758 /* SceneDelegate.swift */,
+				B8B7BC1626504F8F00988758 /* LaunchScreen.storyboard */,
+				B8B7BC1426504F8F00988758 /* Assets.xcassets */,
+			);
+			path = Support;
 			sourceTree = "<group>";
 		};
 		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
@@ -294,8 +318,6 @@
 		B8E5D991265A5464004CF69B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				B867614B2659130D0096BE39 /* UIView+Ext.swift */,
-				B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -408,6 +430,7 @@
 				B85D7F87265FCD3400186021 /* Researchings.swift in Sources */,
 				B867077E26F6857D00F7372E /* Fleets.swift in Sources */,
 				B873317526542CB400524FD8 /* OverviewVC.swift in Sources */,
+				B872AAD82708EE7000BAC4C9 /* UIViewController+Ext.swift in Sources */,
 				B8B7BC0C26504F8A00988758 /* AppDelegate.swift in Sources */,
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
 				B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */,
@@ -416,6 +439,7 @@
 				B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */,
 				B814BA6826AB1B0200FF346A /* MyServers.swift in Sources */,
 				B8ABC30226641BC10032ADBB /* ShipyardVC.swift in Sources */,
+				B872AAD62708E62300BAC4C9 /* OGError.swift in Sources */,
 				B8B7BC2E2650AD5700988758 /* Login.swift in Sources */,
 				B87331772654366700524FD8 /* Price.swift in Sources */,
 				B8FF0467269E1F11007743B8 /* Defence+Defences.swift in Sources */,

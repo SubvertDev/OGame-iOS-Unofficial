@@ -55,8 +55,8 @@ class GenericVC: UIViewController {
                                                   deuterium: self.prodPerSecond[2],
                                                   storage: resources)
                 })
-            case .failure(_):
-                self.navigationController?.popToRootViewController(animated: true)
+            case .failure(let error):
+                self.logoutAndShowError(error)
             }
         }
     }

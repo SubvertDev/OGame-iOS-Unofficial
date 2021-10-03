@@ -15,6 +15,7 @@ class OverviewVC: UIViewController {
 
     var overviewInfo: [Overview?]?
     let requestGroup = DispatchGroup()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,10 +38,8 @@ class OverviewVC: UIViewController {
 
         tableView.delegate = self
         tableView.dataSource = self
-        //tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
         tableView.register(UINib(nibName: "OverviewCell", bundle: nil), forCellReuseIdentifier: "OverviewCell")
         tableView.removeExtraCellLines()
-        //tableView.alpha = 0.5
         tableView.rowHeight = 88
 
         tableView.refreshControl = refreshControl
@@ -63,6 +62,7 @@ class OverviewVC: UIViewController {
 
     @objc func refresh() {
         tableView.isUserInteractionEnabled = false
+
         OGame.shared.getOverview { result in
             switch result {
             case .success(let data):
@@ -74,8 +74,8 @@ class OverviewVC: UIViewController {
                     self.tableView.reloadData()
                     NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
                 }
-            case .failure(_):
-                print("FAILURE OVERVIEWINFO")
+            case .failure(let error):
+                self.logoutAndShowError(error)
             }
         }
     }

@@ -19,7 +19,6 @@ struct Supply {
 }
 
 struct Supplies {
-
     let metalMine: Supply
     let crystalMine: Supply
     let deuteriumMine: Supply
