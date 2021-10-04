@@ -60,6 +60,7 @@ class BuildingCell: UITableViewCell {
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(supply.level) -> \(supply.level + 1)"
+            buildButton.isEnabled = OGame.shared.commander!
         case "disabled":
             buildingImage.image = supply.image.unavailable
         case "off":
@@ -90,6 +91,7 @@ class BuildingCell: UITableViewCell {
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(facility.level) -> \(facility.level + 1)"
+            buildButton.isEnabled = OGame.shared.commander!
         case "disabled":
             buildingImage.image = facility.image.unavailable
         case "off":
@@ -119,6 +121,7 @@ class BuildingCell: UITableViewCell {
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
             levelLabel.text = "\(research.level) -> \(research.level + 1)"
+            buildButton.isEnabled = OGame.shared.commander!
         case "disabled":
             buildingImage.image = research.image.unavailable
         case "off":
@@ -141,27 +144,18 @@ class BuildingCell: UITableViewCell {
         levelLabel.text = "\(ship.amount)"
         timeToBuildLabel.text = ""
 
-        // TODO: Add building queue for ships
-        // This is check to restrict from building more than one type at a time
-        var shipActive = false
-        for ship in shipsTechnologies where ship.condition == "active" {
-            shipActive = true
-        }
-
         switch ship.condition {
         case "on":
-            if shipActive {
-                buildingImage.image = ship.image.unavailable
-            } else {
-                buildingImage.image = ship.image.available
-                buildButton.isEnabled = true
-            }
+            buildingImage.image = ship.image.available
+            buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
+            buildButton.isEnabled = true
             // TODO: Add info about from what amount to what amount building is going
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
             buildingImage.image = ship.image.unavailable
+            buildButton.isEnabled = OGame.shared.commander!
         case "off":
             buildingImage.image = ship.image.disabled
         default:
@@ -182,27 +176,18 @@ class BuildingCell: UITableViewCell {
         levelLabel.text = "\(defence.amount)"
         timeToBuildLabel.text = ""
 
-        // TODO: Add building queue for defences
-        // This is check to restrict from building more than one type at a time
-        var defenceActive = false
-        for defence in defenceTechnologies where defence.condition == "active" {
-            defenceActive = true
-        }
-        // TODO: Also connect ships
         switch defence.condition {
         case "on":
-            if defenceActive {
-                buildingImage.image = defence.image.unavailable
-            } else {
-                buildingImage.image = defence.image.available
-                buildButton.isEnabled = true
-            }
+            buildingImage.image = defence.image.available
+            buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
+            buildButton.isEnabled = true
             // TODO: Add info about from what amount to what amount building is going
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
             buildingImage.image = defence.image.unavailable
+            buildButton.isEnabled = OGame.shared.commander!
         case "off":
             buildingImage.image = defence.image.disabled
         default:

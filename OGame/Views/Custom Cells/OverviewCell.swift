@@ -24,6 +24,7 @@ class OverviewCell: UITableViewCell {
     func set(name: String, level: String, type: OverviewType) {
         buildingName.text = name
         buildingImage.image = UIImage(named: name.lowerCamelCased)
+        buildingImage.layer.cornerRadius = 5
 
         switch type {
         case .resourcesAndFacilities:

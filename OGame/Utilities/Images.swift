@@ -12,7 +12,7 @@ struct Images {
         struct Large {
             static let metalMine = UIImage(named: "metalMine")
             static let crystalMine = UIImage(named: "crystalMine")
-            static let deuteriumMine = UIImage(named: "deuteriumMine")
+            static let deuteriumMine = UIImage(named: "deuteriumSynthesizer")
             static let solarPlant = UIImage(named: "solarPlant")
             static let fusionPlant = UIImage(named: "fusionReactor")
             static let metalStorage = UIImage(named: "metalStorage")

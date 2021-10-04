@@ -35,16 +35,18 @@ class OGame {
     private var landingPage: String? // Is it?
     private var doc: Document?
     var planet: String?
-    var planetID: Int?
-    var playerName: String?
-    var playerID: Int?
-    var planetNames: [String]?
-    var planetIDs: [Int]?
+    private var planetID: Int?
+    private var playerName: String?
+    private var playerID: Int?
+    private var planetNames: [String]?
+    private var planetIDs: [Int]?
     var celestial: Celestial?
     var celestials: [Celestial]?
     var planetImage: UIImage?
-    var planetImages: [UIImage] = []
+    private var planetImages: [UIImage] = []
     var rank: Int?
+    var commander: Bool?
+
 
     private init() {}
 
@@ -251,6 +253,7 @@ class OGame {
                 self.rank = getRank()
                 self.planetNames = getPlanetNames()
                 self.planetIDs = getPlanetIDs()
+                self.commander = getCommander()
                 
                 getAllPlanetImages { images in
                     self.planetImage = images[0]
@@ -435,10 +438,22 @@ class OGame {
 
     // MARK: - GET CHARACTER CLASS -> String
     func getCharacterClass() -> String {
+        // TODO: test on no class
         if let character = try? doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
             return character
         } else {
             return "error"
+        }
+    }
+
+
+    // MARK: - GET COMMANDER -> Bool
+    func getCommander() -> Bool {
+        // TODO: test on 3 days commander account
+        if let commanders = try? doc!.select("[id=officers]").select("[class*=tooltipHTML  on]").select("[class*=commander]") {
+            return !commanders.isEmpty() ? true : false
+        } else {
+            return false
         }
     }
 
