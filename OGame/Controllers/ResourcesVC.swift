@@ -91,6 +91,7 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
+        cell.buildButton.tag = indexPath.row
         cell.setSupply(id: indexPath.row, resourceBuildings: resourceCell.resourceBuildings)
 
         return cell
@@ -102,20 +103,30 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension ResourcesVC: BuildingCellDelegate {
-    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
-        tableView.isUserInteractionEnabled = false
-        tableView.alpha = 0.5
-        activityIndicator.startAnimating()
+    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
+        let buildingInfo = resourceCell!.resourceBuildings[sender.tag]
+        
+        let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.level + 1)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "No", style: .cancel) { _ in
+            self.refresh()
+        })
+        alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+            self.tableView.isUserInteractionEnabled = false
+            self.tableView.alpha = 0.5
+            self.activityIndicator.startAnimating()
 
-        OGame.shared.build(what: type, id: 0) { result in
-            switch result {
-            case .success(_):
-                self.refresh()
-                NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-                
-            case .failure(let error):
-                self.logoutAndShowError(error)
+            OGame.shared.build(what: type) { result in
+                switch result {
+                case .success(_):
+                    self.refresh()
+                    NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+
+                case .failure(let error):
+                    self.logoutAndShowError(error)
+                }
             }
-        }
+        })
+        present(alert, animated: true)
     }
 }
+

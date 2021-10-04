@@ -86,7 +86,7 @@ class ShipyardVC: UIViewController {
     }
 }
 
-extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+extension ShipyardVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 17
     }
@@ -96,10 +96,10 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
-        cell.amountTextField.delegate = self
+        cell.buildButton.tag = indexPath.row
         cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies)
 
-        return cell // FIXME: text field is not properly reused
+        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -108,27 +108,39 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
 }
 
 extension ShipyardVC: BuildingCellDelegate {
-    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String)) {
-        tableView.isUserInteractionEnabled = false
-        tableView.alpha = 0.5
-        activityIndicator.startAnimating()
-        
-        var typeToBuild = type
-        if cell.amountTextField.text == "" || cell.amountTextField.text == "0" {
-            typeToBuild = (type.0, 1, type.2)
-        } else {
-            typeToBuild = (type.0, Int((cell.amountTextField.text)!)!, type.2)
-        }
+    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
+        let buildingInfo = shipsCell!.shipsTechnologies[sender.tag]
 
-        OGame.shared.build(what: typeToBuild, id: 0) { result in
-            switch result {
-            case .success(_):
-                self.refresh()
-                NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-                
-            case .failure(let error):
-                self.logoutAndShowError(error)
-            }
+        let alertAmount = UIAlertController(title: "\(buildingInfo.name)", message: "Enter an amount for construction", preferredStyle: .alert)
+        alertAmount.addTextField { textField in
+            textField.keyboardType = .numberPad
         }
+        alertAmount.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertAmount.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            let ships = Int(alertAmount.textFields![0].text!) ?? 1
+
+            let alert = UIAlertController(title: "Construct \(buildingInfo.name)?", message: "\(ships) ships will be constructed (\(buildingInfo.amount) available)", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "No", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+                self.tableView.isUserInteractionEnabled = false
+                self.tableView.alpha = 0.5
+                self.activityIndicator.startAnimating()
+
+                let typeToBuild = (type.0, ships, type.2)
+
+                OGame.shared.build(what: typeToBuild) { result in
+                    switch result {
+                    case .success(_):
+                        self.refresh()
+                        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+
+                    case .failure(let error):
+                        self.logoutAndShowError(error)
+                    }
+                }
+            })
+            self.present(alert, animated: true)
+        })
+        present(alertAmount, animated: true)
     }
 }

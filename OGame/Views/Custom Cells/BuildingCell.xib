@@ -73,27 +73,16 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gGX-fL-LLw">
-                        <rect key="frame" x="210" y="27" width="51" height="34"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="51" id="Rqv-RD-Zi4"/>
-                            <constraint firstAttribute="height" constant="34" id="kJV-PP-7d1"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                        <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="vcu-0x-J0s" firstAttribute="leading" secondItem="ENA-tV-loT" secondAttribute="leading" id="4SW-qk-9qo"/>
                     <constraint firstAttribute="bottomMargin" secondItem="gnO-3z-gss" secondAttribute="bottom" id="6Lx-He-vlN"/>
                     <constraint firstItem="2t6-H2-wvG" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="DUi-Dp-Lfj"/>
                     <constraint firstItem="2t6-H2-wvG" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Gpf-50-xiZ"/>
-                    <constraint firstItem="gGX-fL-LLw" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="N3q-rf-o9t"/>
                     <constraint firstItem="2t6-H2-wvG" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="Uio-gE-7f4"/>
                     <constraint firstItem="ENA-tV-loT" firstAttribute="top" secondItem="2t6-H2-wvG" secondAttribute="top" id="Y7g-NN-Q7p"/>
                     <constraint firstItem="vcu-0x-J0s" firstAttribute="top" secondItem="ENA-tV-loT" secondAttribute="bottom" constant="1" id="cUV-st-L4k"/>
                     <constraint firstItem="gnO-3z-gss" firstAttribute="centerX" secondItem="2t6-H2-wvG" secondAttribute="centerX" id="h7B-69-1a0"/>
-                    <constraint firstItem="FG1-1F-cPM" firstAttribute="leading" secondItem="gGX-fL-LLw" secondAttribute="trailing" constant="8" symbolic="YES" id="jlb-ih-ebV"/>
                     <constraint firstAttribute="trailing" secondItem="FG1-1F-cPM" secondAttribute="trailing" constant="16" id="kJt-fN-zqa"/>
                     <constraint firstAttribute="bottom" secondItem="2t6-H2-wvG" secondAttribute="bottom" constant="8" id="kfk-xj-IkJ"/>
                     <constraint firstItem="FG1-1F-cPM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="mVa-Mk-beV"/>
@@ -102,7 +91,6 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="amountTextField" destination="gGX-fL-LLw" id="U7n-8G-zCL"/>
                 <outlet property="buildButton" destination="FG1-1F-cPM" id="Zvw-0N-mc5"/>
                 <outlet property="buildingImage" destination="2t6-H2-wvG" id="Kqn-qo-QfH"/>
                 <outlet property="buildingNameLabel" destination="ENA-tV-loT" id="5z9-3L-vKm"/>

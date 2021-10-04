@@ -1021,9 +1021,7 @@ class OGame {
                     self.getHostileFleet { result in
                         switch result {
                         case .success(let hostileFleet):
-                            for fleet in hostileFleet {
-                                fleets.append(fleet)
-                            }
+                            fleets.append(contentsOf: hostileFleet)
                             checkFriendlyFleets()
 
                         case .failure(let error):
@@ -1046,15 +1044,15 @@ class OGame {
                         self.getFriendlyFleet { result in
                             switch result {
                             case .success(let friendlyFleet):
-                                for fleet in friendlyFleet {
-                                    fleets.append(fleet)
-                                }
+                                fleets.append(contentsOf: friendlyFleet)
                                 completion(.success(fleets))
 
                             case .failure(let error):
                                 completion(.failure(OGError(message: "Error getting friendly fleet", detailed: error.localizedDescription)))
                             }
                         }
+                    } else {
+                        completion(.success(fleets))
                     }
                 case .failure(let error):
                     completion(.failure(OGError(message: "Error getting friendly state", detailed: error.localizedDescription)))
@@ -1255,7 +1253,7 @@ class OGame {
 
 
     // MARK: - BUILD BUILDING/SHIPS
-    func build(what: (Int, Int, String), id: Int, completion: @escaping (Result<Bool, OGError>) -> Void) {
+    func build(what: (Int, Int, String), completion: @escaping (Result<Bool, OGError>) -> Void) {
         let build = (type: what.0, amount: what.1, component: what.2)
 
         let link = "\(self.indexPHP!)page=ingame&component=\(build.component)&cp=\(planetID!)"

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol BuildingCellDelegate: AnyObject {
-    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String))
+    func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton)
 }
 
 class BuildingCell: UITableViewCell {
@@ -21,7 +21,6 @@ class BuildingCell: UITableViewCell {
     @IBOutlet weak var timeToBuildLabel: UILabel!
     @IBOutlet weak var levelLabel: UILabel!
     @IBOutlet weak var buildButton: UIButton!
-    @IBOutlet weak var amountTextField: UITextField!
 
     var typeOfBuilding: (Int, Int, String)?
 
@@ -37,7 +36,7 @@ class BuildingCell: UITableViewCell {
     }
 
     @IBAction func buildPressed(_ sender: UIButton) {
-        delegate?.didTapButton(self, typeOfBuilding!)
+        delegate?.didTapButton(self, typeOfBuilding!, sender)
     }
 
     // MARK: - SET SUPPLY
@@ -141,7 +140,6 @@ class BuildingCell: UITableViewCell {
         deuteriumRequiredLabel.text = "Deuterium: \(ship.deuterium)"
         levelLabel.text = "\(ship.amount)"
         timeToBuildLabel.text = ""
-        amountTextField.isHidden = false
 
         // TODO: Add building queue for ships
         // This is check to restrict from building more than one type at a time
@@ -183,7 +181,6 @@ class BuildingCell: UITableViewCell {
         deuteriumRequiredLabel.text = "Deuterium: \(defence.deuterium)"
         levelLabel.text = "\(defence.amount)"
         timeToBuildLabel.text = ""
-        amountTextField.isHidden = false
 
         // TODO: Add building queue for defences
         // This is check to restrict from building more than one type at a time

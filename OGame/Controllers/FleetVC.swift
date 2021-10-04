@@ -67,13 +67,11 @@ class FleetVC: UIViewController {
             switch result {
             case .success(let fleets):
                 self.fleets = fleets
-                for fleet in fleets {
-                    print(fleet)
-                }
+                for fleet in fleets { print(fleet) }
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    self.refreshControl.endRefreshing()
                     self.tableView.alpha = 1
+                    self.refreshControl.endRefreshing()
                     self.activityIndicator.stopAnimating()
                 }
             case .failure(let error):
