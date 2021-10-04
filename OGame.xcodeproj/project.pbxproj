@@ -33,6 +33,8 @@
 		B87331772654366700524FD8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87331762654366700524FD8 /* Price.swift */; };
 		B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */; };
 		B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01726AF047B0080AFE5 /* ServerCell.swift */; };
+		B8879464270A6E3B00CDDF16 /* FleetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8879462270A6E3B00CDDF16 /* FleetCell.swift */; };
+		B8879465270A6E3B00CDDF16 /* FleetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8879463270A6E3B00CDDF16 /* FleetCell.xib */; };
 		B8A9A34726B2D2360099E8CD /* FleetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A34626B2D2360099E8CD /* FleetVC.swift */; };
 		B8A9A34926B2D2430099E8CD /* GalaxyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A34826B2D2430099E8CD /* GalaxyVC.swift */; };
 		B8ABC30026640EF00032ADBB /* Ship+Ships.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC2FF26640EF00032ADBB /* Ship+Ships.swift */; };
@@ -97,6 +99,8 @@
 		B87331762654366700524FD8 /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 		B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
 		B883A01726AF047B0080AFE5 /* ServerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCell.swift; sourceTree = "<group>"; };
+		B8879462270A6E3B00CDDF16 /* FleetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetCell.swift; sourceTree = "<group>"; };
+		B8879463270A6E3B00CDDF16 /* FleetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FleetCell.xib; sourceTree = "<group>"; };
 		B8A9A34626B2D2360099E8CD /* FleetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetVC.swift; sourceTree = "<group>"; };
 		B8A9A34826B2D2430099E8CD /* GalaxyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyVC.swift; sourceTree = "<group>"; };
 		B8ABC2FF26640EF00032ADBB /* Ship+Ships.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ship+Ships.swift"; sourceTree = "<group>"; };
@@ -301,6 +305,8 @@
 				B867614E265945A30096BE39 /* BuildingCell.xib */,
 				B8F144E426B8872200B2C31B /* GalaxyCell.swift */,
 				B8F144E526B8872200B2C31B /* GalaxyCell.xib */,
+				B8879462270A6E3B00CDDF16 /* FleetCell.swift */,
+				B8879463270A6E3B00CDDF16 /* FleetCell.xib */,
 			);
 			path = "Custom Cells";
 			sourceTree = "<group>";
@@ -397,6 +403,7 @@
 				B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */,
 				B8FA6DE32708B90300924D3D /* OverviewCell.xib in Resources */,
 				B8B7BC1526504F8F00988758 /* Assets.xcassets in Resources */,
+				B8879465270A6E3B00CDDF16 /* FleetCell.xib in Resources */,
 				B8B7BC1326504F8A00988758 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -437,6 +444,7 @@
 				B8FF0467269E1F11007743B8 /* Defence+Defences.swift in Sources */,
 				B8B2972C26552FD500C59CD4 /* MenuVC.swift in Sources */,
 				B85AF0CC26A5912E0087C5A7 /* Slot.swift in Sources */,
+				B8879464270A6E3B00CDDF16 /* FleetCell.swift in Sources */,
 				B8FF0459269DDD35007743B8 /* Typealiases.swift in Sources */,
 				B8FA6DE52708BD4100924D3D /* Overview.swift in Sources */,
 				B85D7F89265FDDCC00186021 /* Images.swift in Sources */,

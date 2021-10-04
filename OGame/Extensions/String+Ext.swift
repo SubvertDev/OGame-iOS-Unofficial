@@ -24,4 +24,12 @@ extension String {
         let upperCased = self.upperCamelCased
         return upperCased.prefix(1).lowercased() + upperCased.dropFirst()
     }
+
+    func convertDateToString() -> String {
+        let endDate = Date(timeIntervalSince1970: TimeInterval(self)!)
+        let endFormatter = DateFormatter()
+        endFormatter.timeZone = TimeZone.current
+        endFormatter.dateFormat = "HH:mm:ss"
+        return endFormatter.string(from: endDate)
+    }
 }

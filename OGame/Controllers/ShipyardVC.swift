@@ -92,10 +92,9 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
-
         guard let shipsCell = self.shipsCell else { return UITableViewCell() }
 
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.amountTextField.delegate = self
         cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies)

@@ -449,7 +449,7 @@ class OGame {
 
     // MARK: - GET ALL CELESTIALS (NEW)
     func getAllCelestials(completion: @escaping (Result<[Celestial], OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=overview"
+        let link = "\(self.indexPHP!)page=ingame&component=overview" // FIXME: Fatal error while Logout on server list loading
         
         sessionAF.request(link).validate().response { response in
             var celestials: [Celestial] = []
@@ -1011,7 +1011,7 @@ class OGame {
 
 
     // MARK: - GET FLEET
-    func getFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
+    func getFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
         var fleets = [Fleets]()
         
         attacked { result in
@@ -1027,12 +1027,14 @@ class OGame {
                             checkFriendlyFleets()
 
                         case .failure(let error):
-                            completion(.failure(error))
+                            completion(.failure(OGError(message: "Error getting hostile fleet", detailed: error.localizedDescription)))
                         }
                     }
+                } else {
+                    checkFriendlyFleets()
                 }
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(OGError(message: "Error getting attacked state", detailed: error.localizedDescription)))
             }
         }
 
@@ -1050,12 +1052,12 @@ class OGame {
                                 completion(.success(fleets))
 
                             case .failure(let error):
-                                completion(.failure(error))
+                                completion(.failure(OGError(message: "Error getting friendly fleet", detailed: error.localizedDescription)))
                             }
                         }
                     }
                 case .failure(let error):
-                    completion(.failure(error))
+                    completion(.failure(OGError(message: "Error getting friendly state", detailed: error.localizedDescription)))
                 }
             }
         }
@@ -1081,42 +1083,35 @@ class OGame {
                     }
 
                     var fleetIDs = [Int]()
-                    for element in eventFleet {
-                        let fleetID = Int(try element.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!
-                        fleetIDs.append(fleetID)
-                    }
-
                     var arrivalTimes = [Int]()
+                    var playerNames = [String]()
+                    var playerIDs = [Int]()
+                    var playerPlanet = [String]()
+                    var enemyPlanet = [String]()
+
                     for event in eventFleet {
+                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!)
                         arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
-                        // let time = Int(try! event.attr("data-arrival-time"))!
-                        // let date = Date(timeIntervalSince1970: TimeInterval(time))
-                        // let formatter = DateFormatter()
-                        // formatter.timeZone = TimeZone.current
-                        // formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
-                        // print("ENEMY DATE ARRIVAL: \(formatter.string(from: date))")
+                        playerNames.append(try event.select("[class*=sendMail ]").attr("title"))
+                        playerIDs.append(Int(try event.select("[class*=sendMail ]").attr("data-playerid"))!)
+                        playerPlanet.append(try event.select("[class=destFleet]").text())
+                        enemyPlanet.append(try event.select("[class=originFleet]").text())
                     }
 
                     let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
                     let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
 
-                    var playerNames = [String]()
-                    for name in eventFleet {
-                        playerNames.append(try name.select("[class*=sendMail ]").attr("title"))
-                    }
-
-                    var playerIDs = [Int]()
-                    for id in eventFleet {
-                        playerIDs.append(Int(try id.select("[class*=sendMail ]").attr("data-playerid"))!)
-                    }
-
                     var fleets: [Fleets] = []
                     for i in 0...fleetIDs.count - 1 {
                         let fleet = Fleets(id: fleetIDs[i],
-                                           mission: 1,
+                                           mission: "Attacked",
                                            diplomacy: "hostile",
-                                           playerName: playerNames[i],
-                                           playerID: playerIDs[i],
+                                           playerName: self.playerName!,
+                                           playerID: self.playerID!,
+                                           playerPlanet: playerPlanet[i],
+                                           enemyName: playerNames[i],
+                                           enemyID: playerIDs[i],
+                                           enemyPlanet: enemyPlanet[i],
                                            returns: false,
                                            arrivalTime: arrivalTimes[i],
                                            endTime: nil,
@@ -1147,56 +1142,31 @@ class OGame {
                     let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
 
                     let fleetDetails = try! page.select("[class*=fleetDetails]")
+
                     var fleetIDs = [Int]()
-                    for element in fleetDetails {
-                        fleetIDs.append(Int(try element.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
-                    }
-
-                    var missionTypes = [Int]()
-                    // 1 - attacked
-                    // 3 - transport
-                    // 4 - deployment
-                    // 8 - recycle/harvest
-                    // 15 - expedition
-                    for event in fleetDetails {
-                        missionTypes.append(Int(try event.attr("data-mission-type"))!)
-                    }
-
+                    var missionTypes = [String]()
+                    var missionDiplomacy = [String]()
+                    var arrivalTimes = [Int]()
+                    var endTimes = [Int]()
                     var returnFlights = [Bool]()
+                    var playerPlanet = [String]()
+                    var enemyPlanet = [String]()
+
                     for event in fleetDetails {
+                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
+                        missionDiplomacy.append(try event.select("span[class*=mission]").attr("class").components(separatedBy: " ")[1])
+                        missionTypes.append(try event.select("span[class*=mission]").get(0).text())
+                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                        endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
+                        playerPlanet.append(try event.select("[class=originPlanet]").text())
+                        enemyPlanet.append(try event.select("[class=destinationData]").text().components(separatedBy: " ")[0])
+
                         if try event.attr("data-return-flight") == "1" {
                             returnFlights.append(true)
                         } else {
                             returnFlights.append(false)
                         }
                     }
-
-                    var arrivalTimes = [Int]()
-                    var endTimes = [Int]()
-                    for event in fleetDetails {
-                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
-                        // let time = Int(try! event.attr("data-arrival-time"))!
-                        // let date = Date(timeIntervalSince1970: TimeInterval(time))
-                        // let formatter = DateFormatter()
-                        // formatter.timeZone = TimeZone.current
-                        // formatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
-                        // print("DATE ARRIVAL: \(formatter.string(from: date))")
-
-                        endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
-                        // let endTime = Int(try! event.select("[data-end-time]").attr("data-end-time"))!
-                        // let endDate = Date(timeIntervalSince1970: TimeInterval(endTime))
-                        // let endFormatter = DateFormatter()
-                        // endFormatter.timeZone = TimeZone.current
-                        // endFormatter.dateFormat = "d MMM yyyy HH:mm:ss Z"
-                        // print("DATE ENDTIME: \(formatter.string(from: endDate))")
-                    }
-
-                    // TODO: Make a function to convert epoch to normal time
-                    // if type is 1 (attacked) use ???
-                    // if type is 3 (transport) use endtime>arrival
-                    // if type is 4 (deployment) use endtime
-                    // if type is 8 (recycle/harvest) use endtime>arrival
-                    // if type is 15 (expedition) use endtime?>arrival?
 
                     let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
                     let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
@@ -1205,9 +1175,13 @@ class OGame {
                     for i in 0...fleetIDs.count - 1 {
                         fleet.append(Fleets(id: fleetIDs[i],
                                             mission: missionTypes[i],
-                                            diplomacy: "friendly",
+                                            diplomacy: missionDiplomacy[i],
                                             playerName: self.playerName!,
                                             playerID: self.playerID!,
+                                            playerPlanet: playerPlanet[i],
+                                            enemyName: nil,
+                                            enemyID: nil,
+                                            enemyPlanet: enemyPlanet[i],
                                             returns: returnFlights[i],
                                             arrivalTime: arrivalTimes[i],
                                             endTime: endTimes[i],
@@ -1228,9 +1202,7 @@ class OGame {
 
     // MARK: - GET FLEET COORDINATES
     func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
-        
         // TODO: Test with moon/expedition
-        
         var coordinates = [[Int]]()
 
         for detail in details {

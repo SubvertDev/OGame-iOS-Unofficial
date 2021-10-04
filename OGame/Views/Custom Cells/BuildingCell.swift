@@ -42,28 +42,29 @@ class BuildingCell: UITableViewCell {
 
     // MARK: - SET SUPPLY
     func setSupply(id: Int, resourceBuildings: BuildingsData) {
+        let supply = resourceBuildings[id]
 
-        typeOfBuilding = (resourceBuildings[id].buildingsID, 1, "supplies")
+        typeOfBuilding = (supply.buildingsID, 1, "supplies")
         buildButton.isEnabled = false
-        buildingNameLabel.text = resourceBuildings[id].name
-        metalRequiredLabel.text = "Metal: \(resourceBuildings[id].metal)"
-        crystalRequiredLabel.text = "Crystal: \(resourceBuildings[id].crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(resourceBuildings[id].deuterium)"
-        levelLabel.text = "\(resourceBuildings[id].level)"
+        buildingNameLabel.text = supply.name
+        metalRequiredLabel.text = "Metal: \(supply.metal)"
+        crystalRequiredLabel.text = "Crystal: \(supply.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(supply.deuterium)"
+        levelLabel.text = "\(supply.level)"
         timeToBuildLabel.text = ""
-        // TODO: Hide 0 resource labels
+        // TODO: Hide 0 resources labels
 
-        switch resourceBuildings[id].condition {
+        switch supply.condition {
         case "on":
-            buildingImage.image = resourceBuildings[id].image.available
+            buildingImage.image = supply.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
-            levelLabel.text = "\(resourceBuildings[id].level) -> \(resourceBuildings[id].level + 1)"
+            levelLabel.text = "\(supply.level) -> \(supply.level + 1)"
         case "disabled":
-            buildingImage.image = resourceBuildings[id].image.unavailable
+            buildingImage.image = supply.image.unavailable
         case "off":
-            buildingImage.image = resourceBuildings[id].image.disabled
+            buildingImage.image = supply.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
@@ -71,28 +72,29 @@ class BuildingCell: UITableViewCell {
 
     // MARK: - SET FACILITY
     func setFacility(id: Int, facilityBuildings: BuildingsData) {
+        let facility = facilityBuildings[id]
 
-        typeOfBuilding = (facilityBuildings[id].buildingsID, 1, "supplies")
+        typeOfBuilding = (facility.buildingsID, 1, "supplies")
         buildButton.isEnabled = false
-        buildingNameLabel.text = facilityBuildings[id].name
-        metalRequiredLabel.text = "Metal: \(facilityBuildings[id].metal)"
-        crystalRequiredLabel.text = "Crystal: \(facilityBuildings[id].crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(facilityBuildings[id].deuterium)"
-        levelLabel.text = "\(facilityBuildings[id].level)"
+        buildingNameLabel.text = facility.name
+        metalRequiredLabel.text = "Metal: \(facility.metal)"
+        crystalRequiredLabel.text = "Crystal: \(facility.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(facility.deuterium)"
+        levelLabel.text = "\(facility.level)"
         timeToBuildLabel.text = ""
         // TODO: Hide 0 resources labels
 
-        switch facilityBuildings[id].condition {
+        switch facility.condition {
         case "on":
-            buildingImage.image = facilityBuildings[id].image.available
+            buildingImage.image = facility.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
-            levelLabel.text = "\(facilityBuildings[id].level) -> \(facilityBuildings[id].level + 1)"
+            levelLabel.text = "\(facility.level) -> \(facility.level + 1)"
         case "disabled":
-            buildingImage.image = facilityBuildings[id].image.unavailable
+            buildingImage.image = facility.image.unavailable
         case "off":
-            buildingImage.image = facilityBuildings[id].image.disabled
+            buildingImage.image = facility.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
@@ -100,27 +102,28 @@ class BuildingCell: UITableViewCell {
 
     // MARK: - SET RESEARCH
     func setResearch(id: Int, researchTechnologies: ResearchesData) {
+        let research = researchTechnologies[id]
 
-        typeOfBuilding = (researchTechnologies[id].buildingsID, 1, "research")
+        typeOfBuilding = (research.buildingsID, 1, "research")
         buildButton.isEnabled = false
-        buildingNameLabel.text = researchTechnologies[id].name
-        metalRequiredLabel.text = "Metal: \(researchTechnologies[id].metal)"
-        crystalRequiredLabel.text = "Crystal: \(researchTechnologies[id].crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(researchTechnologies[id].deuterium)"
-        levelLabel.text = "\(researchTechnologies[id].level)"
+        buildingNameLabel.text = research.name
+        metalRequiredLabel.text = "Metal: \(research.metal)"
+        crystalRequiredLabel.text = "Crystal: \(research.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(research.deuterium)"
+        levelLabel.text = "\(research.level)"
         timeToBuildLabel.text = ""
 
-        switch researchTechnologies[id].condition {
+        switch research.condition {
         case "on":
-            buildingImage.image = researchTechnologies[id].image.available
+            buildingImage.image = research.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
-            levelLabel.text = "\(researchTechnologies[id].level) -> \(researchTechnologies[id].level + 1)"
+            levelLabel.text = "\(research.level) -> \(research.level + 1)"
         case "disabled":
-            buildingImage.image = researchTechnologies[id].image.unavailable
+            buildingImage.image = research.image.unavailable
         case "off":
-            buildingImage.image = researchTechnologies[id].image.disabled
+            buildingImage.image = research.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
@@ -128,14 +131,15 @@ class BuildingCell: UITableViewCell {
 
     // MARK: - SET SHIP
     func setShip(id: Int, shipsTechnologies: ShipsData) {
+        let ship = shipsTechnologies[id]
 
-        typeOfBuilding = (shipsTechnologies[id].buildingsID, 1, "shipyard")
+        typeOfBuilding = (ship.buildingsID, 1, "shipyard")
         buildButton.isEnabled = false
-        buildingNameLabel.text = shipsTechnologies[id].name
-        metalRequiredLabel.text = "Metal: \(shipsTechnologies[id].metal)"
-        crystalRequiredLabel.text = "Crystal: \(shipsTechnologies[id].crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(shipsTechnologies[id].deuterium)"
-        levelLabel.text = "\(shipsTechnologies[id].amount)"
+        buildingNameLabel.text = ship.name
+        metalRequiredLabel.text = "Metal: \(ship.metal)"
+        crystalRequiredLabel.text = "Crystal: \(ship.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(ship.deuterium)"
+        levelLabel.text = "\(ship.amount)"
         timeToBuildLabel.text = ""
         amountTextField.isHidden = false
 
@@ -146,12 +150,12 @@ class BuildingCell: UITableViewCell {
             shipActive = true
         }
 
-        switch shipsTechnologies[id].condition {
+        switch ship.condition {
         case "on":
             if shipActive {
-                buildingImage.image = shipsTechnologies[id].image.unavailable
+                buildingImage.image = ship.image.unavailable
             } else {
-                buildingImage.image = shipsTechnologies[id].image.available
+                buildingImage.image = ship.image.available
                 buildButton.isEnabled = true
             }
         case "active":
@@ -159,9 +163,9 @@ class BuildingCell: UITableViewCell {
             // TODO: Add info about from what amount to what amount building is going
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
-            buildingImage.image = shipsTechnologies[id].image.unavailable
+            buildingImage.image = ship.image.unavailable
         case "off":
-            buildingImage.image = shipsTechnologies[id].image.disabled
+            buildingImage.image = ship.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
@@ -169,14 +173,15 @@ class BuildingCell: UITableViewCell {
 
     // MARK: - SET DEFENCE
     func setDefence(id: Int, defenceTechnologies: DefencesData) {
+        let defence = defenceTechnologies[id]
 
-        typeOfBuilding = (defenceTechnologies[id].buildingsID, 1, "defenses")
+        typeOfBuilding = (defence.buildingsID, 1, "defenses")
         buildButton.isEnabled = false
-        buildingNameLabel.text = defenceTechnologies[id].name
-        metalRequiredLabel.text = "Metal: \(defenceTechnologies[id].metal)"
-        crystalRequiredLabel.text = "Crystal: \(defenceTechnologies[id].crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(defenceTechnologies[id].deuterium)"
-        levelLabel.text = "\(defenceTechnologies[id].amount)"
+        buildingNameLabel.text = defence.name
+        metalRequiredLabel.text = "Metal: \(defence.metal)"
+        crystalRequiredLabel.text = "Crystal: \(defence.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(defence.deuterium)"
+        levelLabel.text = "\(defence.amount)"
         timeToBuildLabel.text = ""
         amountTextField.isHidden = false
 
@@ -187,12 +192,12 @@ class BuildingCell: UITableViewCell {
             defenceActive = true
         }
         // TODO: Also connect ships
-        switch defenceTechnologies[id].condition {
+        switch defence.condition {
         case "on":
             if defenceActive {
-                buildingImage.image = defenceTechnologies[id].image.unavailable
+                buildingImage.image = defence.image.unavailable
             } else {
-                buildingImage.image = defenceTechnologies[id].image.available
+                buildingImage.image = defence.image.available
                 buildButton.isEnabled = true
             }
         case "active":
@@ -200,9 +205,9 @@ class BuildingCell: UITableViewCell {
             // TODO: Add info about from what amount to what amount building is going
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
-            buildingImage.image = defenceTechnologies[id].image.unavailable
+            buildingImage.image = defence.image.unavailable
         case "off":
-            buildingImage.image = defenceTechnologies[id].image.disabled
+            buildingImage.image = defence.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }

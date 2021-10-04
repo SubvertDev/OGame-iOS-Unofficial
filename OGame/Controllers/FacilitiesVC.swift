@@ -91,10 +91,9 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
-
         guard let facilityCell = self.facilityCell else { return UITableViewCell() }
 
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.setFacility(id: indexPath.row, facilityBuildings: facilityCell.facilityBuildings)
 

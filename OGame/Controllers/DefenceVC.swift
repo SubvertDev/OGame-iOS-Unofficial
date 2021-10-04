@@ -92,10 +92,9 @@ extension DefenceVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDele
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
-
         guard let defencesCell = self.defencesCell else { return UITableViewCell() }
 
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.amountTextField.delegate = self
         cell.setDefence(id: indexPath.row, defenceTechnologies: defencesCell.defenceTechnologies)

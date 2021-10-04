@@ -9,10 +9,14 @@ import Foundation
 
 struct Fleets {
     let id: Int
-    let mission: Int
+    let mission: String
     let diplomacy: String
     let playerName: String
     let playerID: Int
+    let playerPlanet: String
+    let enemyName: String?
+    let enemyID: Int?
+    let enemyPlanet: String?
     let returns: Bool
     let arrivalTime: Int
     let endTime: Int?

@@ -91,10 +91,9 @@ extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
-
         guard let researchCell = self.researchCell else { return UITableViewCell() }
 
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.setResearch(id: indexPath.row, researchTechnologies: researchCell.researchTechnologies)
 
