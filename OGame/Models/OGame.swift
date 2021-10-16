@@ -47,8 +47,8 @@ class OGame {
     var rank: Int?
     var commander: Bool?
 
-
     private init() {}
+    
 
     // MARK: - LOGIN FUNCTIONS -
     func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, OGError>) -> Void) {
