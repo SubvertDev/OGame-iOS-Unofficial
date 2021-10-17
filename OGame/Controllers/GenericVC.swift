@@ -8,23 +8,28 @@
 import UIKit
 
 class GenericVC: UIViewController {
-
+    
     @IBOutlet weak var resourcesOverview: ResourcesOverview!
     @IBOutlet weak var viewForVC: UIView!
-
-    var prodPerSecond = [Double]()
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     var timer: Timer?
     var childVC: UIViewController?
-
+    
+    var resources: Resources?
+    var prodPerSecond: [Double]?
+    var isFirstLoad = true
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(refresh), name: Notification.Name("Build"), object: nil)
-
+        
+        resourcesOverview.bringSubviewToFront(activityIndicator)
         configureChildVC()
-        refresh()
+        //refresh() no need because childvc calls refresh by notification
     }
-
+    
     func configureChildVC() {
         if let childVC = childVC {
             addChild(childVC)
@@ -33,30 +38,46 @@ class GenericVC: UIViewController {
             childVC.didMove(toParent: self)
         }
     }
-
+    
     @objc func refresh() {
+        resourcesOverview.alpha = 0.5
+        activityIndicator.startAnimating()
+        
+        if isFirstLoad && resources != nil {
+            self.resourcesOverview.set(metal: resources!.metal,
+                                       crystal: resources!.crystal,
+                                       deuterium: resources!.deuterium,
+                                       energy: resources!.energy)
+            isFirstLoad = false
+        }
+        
         OGame.shared.getResources() { result in
             switch result {
             case .success(let resources):
+                self.resourcesOverview.alpha = 1
+                self.activityIndicator.stopAnimating()
+                
                 self.resourcesOverview.set(metal: resources.metal,
                                            crystal: resources.crystal,
                                            deuterium: resources.deuterium,
                                            energy: resources.energy)
-
+                
+                var production = [Double]()
                 for day in resources.dayProduction {
                     let dayDouble = Double(day)
-                    self.prodPerSecond.append(dayDouble / 3600)
+                    production.append(dayDouble / 3600)
                 }
-
+                self.prodPerSecond = production
+                
                 self.timer?.invalidate()
                 self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    self.resourcesOverview.update(metal: self.prodPerSecond[0],
-                                                  crystal: self.prodPerSecond[1],
-                                                  deuterium: self.prodPerSecond[2],
+                    self.resourcesOverview.update(metal: self.prodPerSecond![0],
+                                                  crystal: self.prodPerSecond![1],
+                                                  deuterium: self.prodPerSecond![2],
                                                   storage: resources)
                 }
                 RunLoop.main.add(self.timer!, forMode: .common)
-
+                
             case .failure(let error):
                 self.logoutAndShowError(error)
             }

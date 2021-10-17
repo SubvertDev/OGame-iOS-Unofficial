@@ -63,6 +63,10 @@ class ResourcesVC: UIViewController {
 
     // MARK: - REFRESH DATA ON RESOURCES VC
     @objc func refresh() {
+        tableView.alpha = 0.5
+        tableView.isUserInteractionEnabled = false
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+        
         OGame.shared.supply() { result in
             switch result {
             case .success(let supplies):

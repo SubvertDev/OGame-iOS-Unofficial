@@ -64,6 +64,10 @@ class DefenceVC: UIViewController {
 
     // MARK: - REFRESH DATA ON SHIPYARD VC
     func refresh() {
+        tableView.alpha = 0.5
+        tableView.isUserInteractionEnabled = false
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+        
         OGame.shared.defences() { result in
             switch result {
             case .success(let defences):

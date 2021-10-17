@@ -63,6 +63,10 @@ class ResearchVC: UIViewController {
 
     // MARK: - REFRESH DATA ON RESEARCHES VC
     func refresh() {
+        tableView.alpha = 0.5
+        tableView.isUserInteractionEnabled = false
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+        
         OGame.shared.research() { result in
             switch result {
             case .success(let researches):

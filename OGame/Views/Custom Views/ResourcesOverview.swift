@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ResourcesOverview: UIView {
+@IBDesignable class ResourcesOverview: UIView {
     
     @IBOutlet private weak var metalLabel: UILabel!
     @IBOutlet private weak var crystalLabel: UILabel!
@@ -47,6 +47,7 @@ class ResourcesOverview: UIView {
     }
 
     func update(metal: Double, crystal: Double, deuterium: Double, storage: Resources) {
+        print("\(metal)\n\(crystal)\n\(deuterium)\n\(storage)\n")
         if Int(self.metal!) < storage.storage[0] {
             self.metal! += metal
         }

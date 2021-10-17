@@ -15,10 +15,17 @@ class MenuVC: UIViewController {
     @IBOutlet weak var fieldsLabel: UILabel!
     @IBOutlet weak var coordinatesLabel: UILabel!
     @IBOutlet weak var planetImage: UIImageView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var resourcesActivityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var leftButton: UIButton!
     @IBOutlet weak var rightButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var resourcesOverview: ResourcesOverview!
+    
+    let refreshControl = UIRefreshControl()
+    
+    var timer: Timer?
+    var resources: Resources?
+    var prodPerSecond: [Double]?
     
     let menuList = ["Overview",
                     "Resources",
@@ -42,6 +49,12 @@ class MenuVC: UIViewController {
 
         configureTableView()
         configureLabels()
+        refreshResourcesView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        refreshResourcesView()
     }
     
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
@@ -54,6 +67,7 @@ class MenuVC: UIViewController {
                 self.logoutAndShowError(error)
             } else {
                 self.configureLabels()
+                self.refreshResourcesView()
             }
         }
     }
@@ -64,6 +78,7 @@ class MenuVC: UIViewController {
                 self.logoutAndShowError(error)
             } else {
                 self.configureLabels()
+                self.refreshResourcesView()
             }
         }
     }
@@ -72,6 +87,10 @@ class MenuVC: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.removeExtraCellLines()
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshResourcesView), for: .valueChanged)
+        refreshControl.backgroundColor = .clear
+        refreshControl.tintColor = .clear
     }
     
     func configureLabels() {
@@ -81,6 +100,46 @@ class MenuVC: UIViewController {
         fieldsLabel.text = "\(OGame.shared.celestial!.used)/\(OGame.shared.celestial!.total)"
         coordinatesLabel.text = "[\(OGame.shared.celestial!.coordinates[0]):\(OGame.shared.celestial!.coordinates[1]):\(OGame.shared.celestial!.coordinates[2])]"
         planetImage.image = OGame.shared.planetImage
+    }
+    
+    @objc func refreshResourcesView() {
+        resourcesOverview.bringSubviewToFront(resourcesActivityIndicator)
+        resourcesOverview.alpha = 0.5
+        resourcesActivityIndicator.startAnimating()
+        refreshControl.endRefreshing()
+        
+        OGame.shared.getResources() { result in
+            switch result {
+            case .success(let resources):
+                self.resourcesOverview.alpha = 1
+                self.resourcesActivityIndicator.stopAnimating()
+                
+                self.resources = resources
+                self.resourcesOverview.set(metal: resources.metal,
+                                           crystal: resources.crystal,
+                                           deuterium: resources.deuterium,
+                                           energy: resources.energy)
+
+                var production = [Double]()
+                for day in resources.dayProduction {
+                    let dayDouble = Double(day)
+                    production.append(dayDouble / 3600)
+                }
+                self.prodPerSecond = production
+
+                self.timer?.invalidate()
+                self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                    self.resourcesOverview.update(metal: self.prodPerSecond![0],
+                                                  crystal: self.prodPerSecond![1],
+                                                  deuterium: self.prodPerSecond![2],
+                                                  storage: resources)
+                }
+                RunLoop.main.add(self.timer!, forMode: .common)
+
+            case .failure(let error):
+                self.logoutAndShowError(error)
+            }
+        }
     }
 }
 
@@ -112,31 +171,27 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             switch page {
             case 0:
                 vc.childVC = OverviewVC()
-                vc.title = menuList[page]
             case 1:
                 vc.childVC = ResourcesVC()
-                vc.title = menuList[page]
             case 2:
                 vc.childVC = FacilitiesVC()
-                vc.title = menuList[page]
             case 3:
                 vc.childVC = ResearchVC()
-                vc.title = menuList[page]
             case 4:
                 vc.childVC = ShipyardVC()
-                vc.title = menuList[page]
             case 5:
                 vc.childVC = DefenceVC()
-                vc.title = menuList[page]
             case 6:
                 vc.childVC = FleetVC()
-                vc.title = menuList[page]
             case 7:
                 vc.childVC = GalaxyVC()
-                vc.title = menuList[page]
             default:
                 print(sender as! Int)
             }
+            
+            vc.title = menuList[page]
+            vc.resources = resources
+            vc.prodPerSecond = prodPerSecond
         }
     }
 }

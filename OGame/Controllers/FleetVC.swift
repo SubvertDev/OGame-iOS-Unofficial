@@ -63,6 +63,10 @@ class FleetVC: UIViewController {
     }
 
     @objc func refresh() {
+        tableView.alpha = 0.5
+        tableView.isUserInteractionEnabled = false
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+        
         OGame.shared.getFleet { result in
             switch result {
             case .success(let fleets):

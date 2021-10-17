@@ -28,9 +28,9 @@ class OverviewCell: UITableViewCell {
 
         switch type {
         case .resourcesAndFacilities:
-            upgradeLevel.text = "Improve to: \(level)"
+            upgradeLevel.text = "Improves to: \(level)"
         case .researches:
-            upgradeLevel.text = "Research to: \(level)"
+            upgradeLevel.text = "Researches to: \(level)"
         case .shipyardAndDefences:
             upgradeLevel.text = "Constructions left: \(level)"
         }

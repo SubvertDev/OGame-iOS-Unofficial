@@ -41,7 +41,6 @@ class OverviewVC: UIViewController {
         tableView.register(UINib(nibName: "OverviewCell", bundle: nil), forCellReuseIdentifier: "OverviewCell")
         tableView.removeExtraCellLines()
         tableView.rowHeight = 88
-
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
@@ -61,18 +60,20 @@ class OverviewVC: UIViewController {
     }
 
     @objc func refresh() {
+        tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
 
         OGame.shared.getOverview { result in
             switch result {
             case .success(let data):
                 self.overviewInfo = data
                 DispatchQueue.main.async {
+                    self.tableView.alpha = 1
                     self.tableView.isUserInteractionEnabled = true
                     self.refreshControl.endRefreshing()
                     self.activityIndicator.stopAnimating()
                     self.tableView.reloadData()
-                    NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
                 }
             case .failure(let error):
                 self.logoutAndShowError(error)
