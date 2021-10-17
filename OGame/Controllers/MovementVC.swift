@@ -7,21 +7,23 @@
 
 import UIKit
 
-class FleetVC: UIViewController {
+class MovementVC: UIViewController {
 
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
+    let fleetLabel = UILabel()
 
     var fleets: [Fleets]?
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Fleet"
+        title = "Movement"
 
         configureTableView()
         configureActivityIndicator()
+        configureLabel()
 
         refresh()
     }
@@ -61,20 +63,34 @@ class FleetVC: UIViewController {
 
         activityIndicator.startAnimating()
     }
+    
+    func configureLabel() {
+        view.addSubview(fleetLabel)
+        fleetLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            fleetLabel.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
+            fleetLabel.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
+            fleetLabel.topAnchor.constraint(equalTo: tableView.topAnchor),
+            fleetLabel.bottomAnchor.constraint(equalTo: tableView.bottomAnchor)
+        ])
+        
+        fleetLabel.text = "No fleet movement at the moment"
+        fleetLabel.textAlignment = .center
+        fleetLabel.isHidden = true
+    }
 
     @objc func refresh() {
         tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         OGame.shared.getFleet { result in
             switch result {
             case .success(let fleets):
                 self.fleets = fleets
-                for fleet in fleets { print(fleet) }
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                     self.tableView.alpha = 1
+                    self.fleetLabel.isHidden = !fleets.isEmpty
                     self.refreshControl.endRefreshing()
                     self.activityIndicator.stopAnimating()
                 }
@@ -85,7 +101,7 @@ class FleetVC: UIViewController {
     }
 }
 
-extension FleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+extension MovementVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let fleets = fleets {
             return fleets.count
@@ -96,10 +112,10 @@ extension FleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelega
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let fleets = fleets else { return UITableViewCell() }
-
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "FleetCell", for: indexPath) as! FleetCell
         cell.set(with: fleets[indexPath.row])
-
+        
         return cell
     }
 

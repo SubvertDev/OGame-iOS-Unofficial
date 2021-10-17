@@ -279,73 +279,10 @@ class OGame {
 
 
     // MARK: - NON LOGIN FUNCTIONS -
+    
 
 
-
-    // MARK: - ATTACKED -> @Bool
-    func attacked(completion: @escaping (Result<Bool, OGError>) -> Void) {
-        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-        let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
-        sessionAF.request(link, headers: headers).responseJSON { response in
-
-            switch response.result {
-            case .success(let data):
-                let checkData = data as? [String: Any]
-                if checkData?["hostile"] as? Int ?? 0 > 0 {
-                    completion(.success(true))
-                } else {
-                    completion(.success(false))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Attacked request network error", detailed: error.localizedDescription)))
-            }
-        }
-    }
-
-
-    // MARK: - NEUTRAL -> @Bool
-    func neutral(completion: @escaping (Result<Bool, OGError>) -> Void) {
-        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-        let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
-        sessionAF.request(link, headers: headers).responseJSON { response in
-
-            switch response.result {
-            case .success(let data):
-                let checkData = data as? [String: Any]
-                if checkData?["neutral"] as? Int ?? 0 > 0 {
-                    completion(.success(true))
-                } else {
-                    completion(.success(false))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Neutral request network error", detailed: error.localizedDescription)))
-            }
-        }
-    }
-
-
-    // MARK: - FRIENDLY -> @Bool
-    func friendly(completion: @escaping (Result<Bool, OGError>) -> Void) {
-        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-        let link = "\(indexPHP!)page=componentOnly&component=eventList&action=fetchEventBox&ajax=1&asJson=1"
-        sessionAF.request(link, headers: headers).responseJSON { response in
-
-            switch response.result {
-            case .success(let data):
-                let checkData = data as? [String: Any]
-                if checkData?["friendly"] as? Int ?? 0 > 0 {
-                    completion(.success(true))
-                } else {
-                    completion(.success(false))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Friendly request network error", detailed: error.localizedDescription)))
-            }
-        }
-    }
-
-
-    // MARK: - getRank -> Int
+    // MARK: - GET RANK -> Int
     func getRank() -> Int {
         do {
             let idBar = try doc!.select("[id=bar]").get(0)
@@ -586,6 +523,24 @@ class OGame {
             dispatchGroup.enter()
             let imageAttribute = try! planet.select("[width=48]").first()!.attr("src")
             sessionAF.request("\(imageAttribute)").response { response in
+                let image = UIImage(data: response.data!)
+                images.append(image!)
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            completion(images)
+        }
+    }
+    
+    func getImagesFromUrl(_ urls: [String], completion: @escaping ([UIImage]) -> Void) {
+        var images: [UIImage] = []
+        let dispatchGroup = DispatchGroup()
+
+        for url in urls {
+            dispatchGroup.enter()
+            sessionAF.request(url).response { response in
                 let image = UIImage(data: response.data!)
                 images.append(image!)
                 dispatchGroup.leave()
@@ -892,6 +847,295 @@ class OGame {
     }
 
 
+    // MARK: - GET ALLY
+
+
+    // MARK: - GET SLOT -> Slot
+    func getSlotCelestial() -> Slot {
+        do {
+            let slots = try doc!.select("[class=textCenter]").get(1).text().components(separatedBy: " ")[0].components(separatedBy: "/").compactMap { Int($0) }
+            return Slot.init(with: slots)
+        } catch {
+            return Slot.init(with: [0, 0])
+        }
+    }
+
+
+    // MARK: - GET FLEET (NEW)
+    func getFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
+        var fleets = [Fleets]()
+        let dispatchGroup = DispatchGroup()
+        
+        dispatchGroup.enter()
+        getHostileFleet { result in
+            switch result {
+            case .success(let hostileFleet):
+                fleets.append(contentsOf: hostileFleet)
+                
+            case .failure(let error):
+                completion(.failure(OGError(message: "Error getting hostile fleet", detailed: error.localizedDescription)))
+            }
+            dispatchGroup.leave()
+        }
+                
+        dispatchGroup.enter()
+        getFriendlyFleet { result in
+            switch result {
+            case .success(let friendlyFleet):
+                fleets.append(contentsOf: friendlyFleet)
+                
+            case .failure(let error):
+                completion(.failure(OGError(message: "Error getting friendly fleet", detailed: error.localizedDescription)))
+            }
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            completion(.success(fleets))
+        }
+    }
+
+
+    // MARK: - GET HOSTILE FLEET
+    func getHostileFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
+        let link = "\(indexPHP!)page=componentOnly&component=eventList"
+        sessionAF.request(link).response { response in
+            
+            switch response.result {
+            case .success(let data):
+                do {
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+
+                    let eventFleetParse = try page.select("[class=eventFleet]").select("[class*=hostile]")
+                    let eventFleet = Elements()
+                    for event in eventFleetParse {
+                        if let fleet = event.parent()?.parent() {
+                            eventFleet.add(fleet)
+                        }
+                    }
+
+                    var fleetIDs = [Int]()
+                    var arrivalTimes = [Int]()
+                    var playerNames = [String]()
+                    var playerIDs = [Int]()
+                    var playerPlanet = [String]()
+                    var enemyPlanet = [String]()
+                    
+                    var playerPlanetImageUrl = [String]()
+                    var enemyPlanetImageUrl = [String]()
+                    
+                    var playerPlanetImages = [UIImage]()
+                    var enemyPlanetImages = [UIImage]()
+
+                    for event in eventFleet {
+                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!)
+                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                        playerNames.append(try event.select("[class*=sendMail ]").attr("title"))
+                        playerIDs.append(Int(try event.select("[class*=sendMail ]").attr("data-playerid"))!)
+                        playerPlanet.append(try event.select("[class=destFleet]").text())
+                        enemyPlanet.append(try event.select("[class=originFleet]").text())
+                        
+                        playerPlanetImageUrl.append(try event.select("[class=origin fixed]").select("[class*=tooltipHTML]").attr("src"))
+                        enemyPlanetImageUrl.append(try event.select("[class=destination fixed]").select("[class*=tooltipHTML]").attr("src"))
+                    }
+
+                    let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
+                    let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
+
+                    var fleets: [Fleets] = []
+                    
+                    guard !fleetIDs.isEmpty else {
+                        completion(.success(fleets))
+                        return
+                    }
+                    
+                    let dispatchGroup = DispatchGroup()
+                    dispatchGroup.enter()
+                    self.getImagesFromUrl(playerPlanetImageUrl) { images in
+                        playerPlanetImages.append(contentsOf: images)
+                        dispatchGroup.leave()
+                    }
+                    dispatchGroup.enter()
+                    self.getImagesFromUrl(enemyPlanetImageUrl) { images in
+                        enemyPlanetImages.append(contentsOf: images)
+                        dispatchGroup.leave()
+                    }
+                    
+                    dispatchGroup.notify(queue: .main) {
+                        for i in 0...fleetIDs.count - 1 {
+                            let fleet = Fleets(id: fleetIDs[i],
+                                               mission: "Attacked",
+                                               diplomacy: "hostile",
+                                               playerName: self.playerName!,
+                                               playerID: self.playerID!,
+                                               playerPlanet: playerPlanet[i],
+                                               playerPlanetImage: playerPlanetImages[i],
+                                               enemyName: playerNames[i],
+                                               enemyID: playerIDs[i],
+                                               enemyPlanet: enemyPlanet[i],
+                                               enemyPlanetImage: enemyPlanetImages[i],
+                                               returns: false,
+                                               arrivalTime: arrivalTimes[i],
+                                               endTime: nil,
+                                               origin: origins[i],
+                                               destination: destinations[i])
+                            fleets.append(fleet)
+                        }
+                        completion(.success(fleets))
+                    }
+
+                } catch {
+                    completion(.failure(OGError(message: "Hostile fleet parse error", detailed: error.localizedDescription)))
+                }
+            case .failure(let error):
+                completion(.failure(OGError(message: "Get hostile fleet error", detailed: error.localizedDescription)))
+            }
+        }
+    }
+
+
+    // MARK: - GET FRIENDLY FLEET
+    func getFriendlyFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
+        let link = "\(indexPHP!)page=ingame&component=movement"
+        sessionAF.request(link).response { response in
+            
+            switch response.result {
+            case .success(let data):
+                do {
+                    let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+
+                    let fleetDetails = try! page.select("[class*=fleetDetails]")
+
+                    var fleetIDs = [Int]()
+                    var missionTypes = [String]()
+                    var missionDiplomacy = [String]()
+                    var arrivalTimes = [Int]()
+                    var endTimes = [Int]()
+                    var returnFlights = [Bool]()
+                    var playerPlanet = [String]()
+                    var enemyPlanet = [String]()
+                    
+                    var playerPlanetImageUrl = [String]()
+                    var enemyPlanetImageUrl = [String]()
+                    
+                    var playerPlanetImages = [UIImage]()
+                    var enemyPlanetImages = [UIImage]()
+
+                    for event in fleetDetails {
+                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
+                        missionDiplomacy.append(try event.select("span[class*=mission]").attr("class").components(separatedBy: " ")[1])
+                        missionTypes.append(try event.select("span[class*=mission]").get(0).text())
+                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                        endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
+                        playerPlanet.append(try event.select("[class=originPlanet]").text())
+                        enemyPlanet.append(try event.select("[class=destinationData]").text().components(separatedBy: " ")[0])
+
+                        if try event.attr("data-return-flight") == "1" {
+                            returnFlights.append(true)
+                        } else {
+                            returnFlights.append(false)
+                        }
+                        
+                        playerPlanetImageUrl.append(try event.select("[class=origin fixed]").select("[class*=tooltipHTML]").attr("src"))
+                        enemyPlanetImageUrl.append(try event.select("[class=destination fixed]").select("[class*=tooltipHTML]").attr("src"))
+                    }
+
+                    let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
+                    let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
+
+                    var fleets = [Fleets]()
+                    
+                    guard !fleetIDs.isEmpty else {
+                        completion(.success(fleets))
+                        return
+                    }
+                    
+                    let dispatchGroup = DispatchGroup()
+                    dispatchGroup.enter()
+                    self.getImagesFromUrl(playerPlanetImageUrl) { images in
+                        playerPlanetImages.append(contentsOf: images)
+                        dispatchGroup.leave()
+                    }
+                    dispatchGroup.enter()
+                    self.getImagesFromUrl(enemyPlanetImageUrl) { images in
+                        enemyPlanetImages.append(contentsOf: images)
+                        dispatchGroup.leave()
+                    }
+                    
+                    dispatchGroup.notify(queue: .main) {
+                        for i in 0...fleetIDs.count - 1 {
+                            fleets.append(Fleets(id: fleetIDs[i],
+                                                mission: missionTypes[i],
+                                                diplomacy: missionDiplomacy[i],
+                                                playerName: self.playerName!,
+                                                playerID: self.playerID!,
+                                                playerPlanet: playerPlanet[i],
+                                                playerPlanetImage: playerPlanetImages[i],
+                                                enemyName: nil,
+                                                enemyID: nil,
+                                                enemyPlanet: enemyPlanet[i],
+                                                enemyPlanetImage: enemyPlanetImages[i],
+                                                returns: returnFlights[i],
+                                                arrivalTime: arrivalTimes[i],
+                                                endTime: endTimes[i],
+                                                origin: origins[i],
+                                                destination: destinations[i]))
+                        }
+                        completion(.success(fleets))
+                    }
+
+                } catch {
+                    completion(.failure(OGError(message: "Friendly fleet parse error", detailed: error.localizedDescription)))
+                }
+            case .failure(let error):
+                completion(.failure(OGError(message: "Get friendly fleet error", detailed: error.localizedDescription)))
+            }
+        }
+    }
+
+
+    // MARK: - GET FLEET COORDINATES
+    func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
+        // TODO: Test with moon/expedition
+        var coordinates = [[Int]]()
+
+        for detail in details {
+            var coordinateString = try! detail.select("[class*=\(type)]").text().trimmingCharacters(in: .whitespacesAndNewlines)
+            coordinateString.removeFirst()
+            coordinateString.removeLast()
+            var coordinate = coordinateString.components(separatedBy: ":").compactMap { Int($0) }
+            
+            var destination = String()
+            if type == "destinationCoords" {
+                let figure = try! detail.select("figure")
+                if figure.count == 1 {
+                    destination = "expedition"
+                } else {
+                    destination = try! figure.get(1).select("[class*=planetIcon]").attr("class").replacingOccurrences(of: "planetIcon ", with: "")
+                }
+            } else {
+                let figure = try! detail.select("figure").get(0)
+                destination = try! figure.select("[class*=planetIcon]").attr("class").replacingOccurrences(of: "planetIcon ", with: "")
+            }
+            
+            switch destination {
+            case "expedition":
+                coordinate.append(0) // expedition
+            case "moon":
+                coordinate.append(3) // moon
+            case "tf":
+                coordinate.append(2) // debris
+            default:
+                coordinate.append(1) // planet
+            }
+            
+            coordinates.append(coordinate)
+        }
+        
+        return coordinates
+    }
+    
+    
     // MARK: - GET GALAXY
     func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
@@ -1008,250 +1252,6 @@ class OGame {
                 completion(.failure(OGError(message: "Galaxy network request failed", detailed: error.localizedDescription)))
             }
         }
-    }
-
-
-    // MARK: - GET ALLY
-
-
-    // MARK: - GET SLOT -> Slot
-    func getSlotCelestial() -> Slot {
-        do {
-            let slots = try doc!.select("[class=textCenter]").get(1).text().components(separatedBy: " ")[0].components(separatedBy: "/").compactMap { Int($0) }
-            return Slot.init(with: slots)
-        } catch {
-            return Slot.init(with: [0, 0])
-        }
-    }
-
-
-    // MARK: - GET FLEET
-    func getFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
-        var fleets = [Fleets]()
-        
-        attacked { result in
-            switch result {
-            case .success(let attacked):
-                if attacked {
-                    self.getHostileFleet { result in
-                        switch result {
-                        case .success(let hostileFleet):
-                            fleets.append(contentsOf: hostileFleet)
-                            checkFriendlyFleets()
-
-                        case .failure(let error):
-                            completion(.failure(OGError(message: "Error getting hostile fleet", detailed: error.localizedDescription)))
-                        }
-                    }
-                } else {
-                    checkFriendlyFleets()
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Error getting attacked state", detailed: error.localizedDescription)))
-            }
-        }
-
-        func checkFriendlyFleets() {
-            friendly { result in
-                switch result {
-                case .success(let friendly):
-                    if friendly {
-                        self.getFriendlyFleet { result in
-                            switch result {
-                            case .success(let friendlyFleet):
-                                fleets.append(contentsOf: friendlyFleet)
-                                completion(.success(fleets))
-
-                            case .failure(let error):
-                                completion(.failure(OGError(message: "Error getting friendly fleet", detailed: error.localizedDescription)))
-                            }
-                        }
-                    } else {
-                        completion(.success(fleets))
-                    }
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Error getting friendly state", detailed: error.localizedDescription)))
-                }
-            }
-        }
-    }
-
-
-    // MARK: - GET HOSTILE FLEET
-    func getHostileFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
-        let link = "\(indexPHP!)page=componentOnly&component=eventList"
-        sessionAF.request(link).response { response in
-            
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let eventFleetParse = try page.select("[class=eventFleet]").select("[class*=hostile]")
-                    let eventFleet = Elements()
-                    for event in eventFleetParse {
-                        if let fleet = event.parent()?.parent() {
-                            eventFleet.add(fleet)
-                        }
-                    }
-
-                    var fleetIDs = [Int]()
-                    var arrivalTimes = [Int]()
-                    var playerNames = [String]()
-                    var playerIDs = [Int]()
-                    var playerPlanet = [String]()
-                    var enemyPlanet = [String]()
-
-                    for event in eventFleet {
-                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!)
-                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
-                        playerNames.append(try event.select("[class*=sendMail ]").attr("title"))
-                        playerIDs.append(Int(try event.select("[class*=sendMail ]").attr("data-playerid"))!)
-                        playerPlanet.append(try event.select("[class=destFleet]").text())
-                        enemyPlanet.append(try event.select("[class=originFleet]").text())
-                    }
-
-                    let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
-                    let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
-
-                    var fleets: [Fleets] = []
-                    for i in 0...fleetIDs.count - 1 {
-                        let fleet = Fleets(id: fleetIDs[i],
-                                           mission: "Attacked",
-                                           diplomacy: "hostile",
-                                           playerName: self.playerName!,
-                                           playerID: self.playerID!,
-                                           playerPlanet: playerPlanet[i],
-                                           enemyName: playerNames[i],
-                                           enemyID: playerIDs[i],
-                                           enemyPlanet: enemyPlanet[i],
-                                           returns: false,
-                                           arrivalTime: arrivalTimes[i],
-                                           endTime: nil,
-                                           origin: origins[i],
-                                           destination: destinations[i])
-                        fleets.append(fleet)
-                    }
-                    completion(.success(fleets))
-
-                } catch {
-                    completion(.failure(OGError(message: "Hostile fleet parse error", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Get hostile fleet error", detailed: error.localizedDescription)))
-            }
-        }
-    }
-
-
-    // MARK: - GET FRIENDLY FLEET
-    func getFriendlyFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
-        let link = "\(indexPHP!)page=ingame&component=movement"
-        sessionAF.request(link).response { response in
-            
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let fleetDetails = try! page.select("[class*=fleetDetails]")
-
-                    var fleetIDs = [Int]()
-                    var missionTypes = [String]()
-                    var missionDiplomacy = [String]()
-                    var arrivalTimes = [Int]()
-                    var endTimes = [Int]()
-                    var returnFlights = [Bool]()
-                    var playerPlanet = [String]()
-                    var enemyPlanet = [String]()
-
-                    for event in fleetDetails {
-                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
-                        missionDiplomacy.append(try event.select("span[class*=mission]").attr("class").components(separatedBy: " ")[1])
-                        missionTypes.append(try event.select("span[class*=mission]").get(0).text())
-                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
-                        endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
-                        playerPlanet.append(try event.select("[class=originPlanet]").text())
-                        enemyPlanet.append(try event.select("[class=destinationData]").text().components(separatedBy: " ")[0])
-
-                        if try event.attr("data-return-flight") == "1" {
-                            returnFlights.append(true)
-                        } else {
-                            returnFlights.append(false)
-                        }
-                    }
-
-                    let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
-                    let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
-
-                    var fleet = [Fleets]()
-                    for i in 0...fleetIDs.count - 1 {
-                        fleet.append(Fleets(id: fleetIDs[i],
-                                            mission: missionTypes[i],
-                                            diplomacy: missionDiplomacy[i],
-                                            playerName: self.playerName!,
-                                            playerID: self.playerID!,
-                                            playerPlanet: playerPlanet[i],
-                                            enemyName: nil,
-                                            enemyID: nil,
-                                            enemyPlanet: enemyPlanet[i],
-                                            returns: returnFlights[i],
-                                            arrivalTime: arrivalTimes[i],
-                                            endTime: endTimes[i],
-                                            origin: origins[i],
-                                            destination: destinations[i]))
-                    }
-                    completion(.success(fleet))
-
-                } catch {
-                    completion(.failure(OGError(message: "Friendly fleet parse error", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Get friendly fleet error", detailed: error.localizedDescription)))
-            }
-        }
-    }
-
-
-    // MARK: - GET FLEET COORDINATES
-    func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
-        // TODO: Test with moon/expedition
-        var coordinates = [[Int]]()
-
-        for detail in details {
-            var coordinateString = try! detail.select("[class*=\(type)]").text().trimmingCharacters(in: .whitespacesAndNewlines)
-            coordinateString.removeFirst()
-            coordinateString.removeLast()
-            var coordinate = coordinateString.components(separatedBy: ":").compactMap { Int($0) }
-            
-            var destination = String()
-            if type == "destinationCoords" {
-                let figure = try! detail.select("figure")
-                if figure.count == 1 {
-                    destination = "expedition"
-                } else {
-                    destination = try! figure.get(1).select("[class*=planetIcon]").attr("class").replacingOccurrences(of: "planetIcon ", with: "")
-                }
-            } else {
-                let figure = try! detail.select("figure").get(0)
-                destination = try! figure.select("[class*=planetIcon]").attr("class").replacingOccurrences(of: "planetIcon ", with: "")
-            }
-            
-            switch destination {
-            case "expedition":
-                coordinate.append(0) // expedition
-            case "moon":
-                coordinate.append(3) // moon
-            case "tf":
-                coordinate.append(2) // debris
-            default:
-                coordinate.append(1) // planet
-            }
-            
-            coordinates.append(coordinate)
-        }
-        
-        return coordinates
     }
 
 
@@ -1374,11 +1374,6 @@ class OGame {
         planetImages = []
     }
 }
-
-// ongoing fleets
-// attacked(@) -> @Bool -> true/false
-// neutral(@) -> @Bool -> true/false
-// friendly(@) -> @Bool -> true/false
 
 // rank() -> String -> 999
 

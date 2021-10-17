@@ -33,9 +33,10 @@ class MenuVC: UIViewController {
                     "Research",
                     "Shipyard",
                     "Defence",
-                    "Fleet",
+                    "Fleet (unavailable)",
+                    "Movement",
                     "Galaxy",
-                    "Settings"]
+                    "Settings (unavailable)"]
 
     
     override func viewDidLoad() {
@@ -158,7 +159,7 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 7 {
+        if indexPath.row == 8 {
             performSegue(withIdentifier: "ShowGalaxyVC", sender: self)
         } else {
             performSegue(withIdentifier: "ShowGenericVC", sender: indexPath.row)
@@ -182,8 +183,10 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             case 5:
                 vc.childVC = DefenceVC()
             case 6:
-                vc.childVC = FleetVC()
+                print("fleet vc")
             case 7:
+                vc.childVC = MovementVC()
+            case 8:
                 vc.childVC = GalaxyVC()
             default:
                 print(sender as! Int)

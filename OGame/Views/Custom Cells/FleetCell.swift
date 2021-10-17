@@ -18,7 +18,8 @@ class FleetCell: UITableViewCell {
     @IBOutlet weak var friendlyArrivalTimeLabel: UILabel!
     @IBOutlet weak var enemyArrivalTimeLabel: UILabel!
     @IBOutlet weak var missionTypeLabel: UILabel!
-
+    @IBOutlet weak var missionTypeImage: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
     }
@@ -31,6 +32,8 @@ class FleetCell: UITableViewCell {
 
         switch fleet.mission {
         case "Attacked":
+            missionTypeLabel.text = "Attack"
+
             friendlyArrivalTimeLabel.text = " "
             friendlyPlanetNameLabel.text = fleet.enemyPlanet
             friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
@@ -39,9 +42,9 @@ class FleetCell: UITableViewCell {
             enemyPlanetNameLabel.text = fleet.playerPlanet
             enemyPlanetCoordinatesLabel.text = destinationToString(fleet.destination)
 
-            missionTypeLabel.text = ">>> Attack >>>"
-
         case "Transport", "Transport (R)":
+            missionTypeLabel.text = "\(fleet.mission)"
+
             friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
             friendlyPlanetNameLabel.text = fleet.playerPlanet
             friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
@@ -52,12 +55,12 @@ class FleetCell: UITableViewCell {
 
             if fleet.mission == "Transport (R)" {
                 enemyArrivalTimeLabel.text = " "
-                missionTypeLabel.text = "<<< \(fleet.mission) <<<"
-            } else {
-                missionTypeLabel.text = ">>> \(fleet.mission) >>>"
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
         case "Deployment", "Deployment (R)":
+            missionTypeLabel.text = "\(fleet.mission)"
+
             friendlyArrivalTimeLabel.text = " "
             friendlyPlanetNameLabel.text = fleet.playerPlanet
             friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
@@ -66,16 +69,17 @@ class FleetCell: UITableViewCell {
             enemyPlanetNameLabel.text = fleet.enemyPlanet
             enemyPlanetCoordinatesLabel.text = destinationToString(fleet.destination)
 
-            missionTypeLabel.text = ">>> \(fleet.mission) >>>"
+            missionTypeLabel.text = "\(fleet.mission)"
 
             if fleet.mission == "Deployment (R)" {
                 enemyArrivalTimeLabel.text = " "
-                missionTypeLabel.text = "<<< \(fleet.mission) <<<"
-            } else {
-                missionTypeLabel.text = ">>> \(fleet.mission) >>>"
+                friendlyArrivalTimeLabel.text = String(fleet.endTime!).convertDateToString()
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
         case "Harvest", "Harvest (R)":
+            missionTypeLabel.text = "\(fleet.mission)"
+
             friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
             friendlyPlanetNameLabel.text = fleet.playerPlanet
             friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
@@ -88,12 +92,12 @@ class FleetCell: UITableViewCell {
 
             if fleet.mission == "Harvest (R)" {
                 enemyArrivalTimeLabel.text = " "
-                missionTypeLabel.text = "<<< \(fleet.mission) <<<"
-            } else {
-                missionTypeLabel.text = ">>> \(fleet.mission) >>>"
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
         case "Expedition", "Expedition (R)":
+            missionTypeLabel.text = "\(fleet.mission)"
+
             friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
             friendlyPlanetNameLabel.text = fleet.playerPlanet
             friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
@@ -106,14 +110,17 @@ class FleetCell: UITableViewCell {
 
             if fleet.mission == "Expedition (R)" {
                 enemyArrivalTimeLabel.text = " "
-                missionTypeLabel.text = "<<< \(fleet.mission) <<<"
-            } else {
-                missionTypeLabel.text = ">>> \(fleet.mission) >>>"
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
+        // TODO: Colonisation, Espionage, ACS Defend, ACS Attack, Moon Destruction
+            
         default:
             break
         }
+        
+        friendlyPlanetImage.image = fleet.playerPlanetImage
+        enemyPlanetImage.image = fleet.enemyPlanetImage
     }
 
     func destinationToString(_ destination: [Int]) -> String {

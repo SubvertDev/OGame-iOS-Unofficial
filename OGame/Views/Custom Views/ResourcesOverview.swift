@@ -47,7 +47,6 @@ import UIKit
     }
 
     func update(metal: Double, crystal: Double, deuterium: Double, storage: Resources) {
-        print("\(metal)\n\(crystal)\n\(deuterium)\n\(storage)\n")
         if Int(self.metal!) < storage.storage[0] {
             self.metal! += metal
         }

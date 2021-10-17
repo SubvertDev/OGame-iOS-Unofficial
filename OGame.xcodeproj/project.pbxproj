@@ -35,7 +35,7 @@
 		B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01726AF047B0080AFE5 /* ServerCell.swift */; };
 		B8879464270A6E3B00CDDF16 /* FleetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8879462270A6E3B00CDDF16 /* FleetCell.swift */; };
 		B8879465270A6E3B00CDDF16 /* FleetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8879463270A6E3B00CDDF16 /* FleetCell.xib */; };
-		B8A9A34726B2D2360099E8CD /* FleetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A34626B2D2360099E8CD /* FleetVC.swift */; };
+		B8A9A34726B2D2360099E8CD /* MovementVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A34626B2D2360099E8CD /* MovementVC.swift */; };
 		B8A9A34926B2D2430099E8CD /* GalaxyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A34826B2D2430099E8CD /* GalaxyVC.swift */; };
 		B8ABC30026640EF00032ADBB /* Ship+Ships.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC2FF26640EF00032ADBB /* Ship+Ships.swift */; };
 		B8ABC30226641BC10032ADBB /* ShipyardVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABC30126641BC10032ADBB /* ShipyardVC.swift */; };
@@ -101,7 +101,7 @@
 		B883A01726AF047B0080AFE5 /* ServerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCell.swift; sourceTree = "<group>"; };
 		B8879462270A6E3B00CDDF16 /* FleetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetCell.swift; sourceTree = "<group>"; };
 		B8879463270A6E3B00CDDF16 /* FleetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FleetCell.xib; sourceTree = "<group>"; };
-		B8A9A34626B2D2360099E8CD /* FleetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetVC.swift; sourceTree = "<group>"; };
+		B8A9A34626B2D2360099E8CD /* MovementVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementVC.swift; sourceTree = "<group>"; };
 		B8A9A34826B2D2430099E8CD /* GalaxyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyVC.swift; sourceTree = "<group>"; };
 		B8ABC2FF26640EF00032ADBB /* Ship+Ships.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ship+Ships.swift"; sourceTree = "<group>"; };
 		B8ABC30126641BC10032ADBB /* ShipyardVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShipyardVC.swift; sourceTree = "<group>"; };
@@ -257,7 +257,7 @@
 				B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */,
 				B8ABC30126641BC10032ADBB /* ShipyardVC.swift */,
 				B8FF0462269E1C69007743B8 /* DefenceVC.swift */,
-				B8A9A34626B2D2360099E8CD /* FleetVC.swift */,
+				B8A9A34626B2D2360099E8CD /* MovementVC.swift */,
 				B8A9A34826B2D2430099E8CD /* GalaxyVC.swift */,
 			);
 			path = Controllers;
@@ -422,7 +422,7 @@
 				B83B64042658455C00A75A00 /* Supply+Supplies.swift in Sources */,
 				B8B7BC1026504F8A00988758 /* LoginVC.swift in Sources */,
 				B8676153265982B00096BE39 /* Facility+Facilities.swift in Sources */,
-				B8A9A34726B2D2360099E8CD /* FleetVC.swift in Sources */,
+				B8A9A34726B2D2360099E8CD /* MovementVC.swift in Sources */,
 				B8D1AEFB26B464F50064DE34 /* Position.swift in Sources */,
 				B8FF0453269DD049007743B8 /* FacilityCell.swift in Sources */,
 				B83B64082658672500A75A00 /* ResourcesOverview.swift in Sources */,
