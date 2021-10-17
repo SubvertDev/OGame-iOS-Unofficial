@@ -31,14 +31,14 @@ struct Facilities {
     let allFacilities: [Facility]
 
     init(_ levels: [Int], _ status: [String]) {
-        self.roboticsFactory = Facility(levels, status, 0)
-        self.shipyard = Facility(levels, status, 1)
-        self.researchLaboratory = Facility(levels, status, 2)
-        self.allianceDepot = Facility(levels, status, 3)
-        self.missileSilo = Facility(levels, status, 4)
-        self.naniteFactory = Facility(levels, status, 5)
-        self.terraformer = Facility(levels, status, 6)
-        self.repairDock = Facility(levels, status, 7)
+        self.roboticsFactory = Facility(levels, status, 14)
+        self.shipyard = Facility(levels, status, 21)
+        self.researchLaboratory = Facility(levels, status, 31)
+        self.allianceDepot = Facility(levels, status, 34)
+        self.missileSilo = Facility(levels, status, 44)
+        self.naniteFactory = Facility(levels, status, 15)
+        self.terraformer = Facility(levels, status, 33)
+        self.repairDock = Facility(levels, status, 36)
 
         self.allFacilities = [
             self.roboticsFactory,

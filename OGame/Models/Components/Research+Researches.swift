@@ -39,22 +39,22 @@ struct Researches {
     let allResearches: [Research]
 
     init(_ levels: [Int], _ status: [String]) {
-        self.energy = Research(levels, status, 0)
-        self.laser = Research(levels, status, 1)
-        self.ion = Research(levels, status, 2)
-        self.hyperspace = Research(levels, status, 3)
-        self.plasma = Research(levels, status, 4)
-        self.combustionDrive = Research(levels, status, 5)
-        self.impulseDrive = Research(levels, status, 6)
-        self.hyperspaceDrive = Research(levels, status, 7)
-        self.espionage = Research(levels, status, 8)
-        self.computer = Research(levels, status, 9)
-        self.astrophysics = Research(levels, status, 10)
-        self.researchNetwork = Research(levels, status, 11)
-        self.graviton = Research(levels, status, 12)
-        self.weapons = Research(levels, status, 13)
-        self.shielding = Research(levels, status, 14)
-        self.armor = Research(levels, status, 15)
+        self.energy = Research(levels, status, 113)
+        self.laser = Research(levels, status, 120)
+        self.ion = Research(levels, status, 121)
+        self.hyperspace = Research(levels, status, 114)
+        self.plasma = Research(levels, status, 122)
+        self.combustionDrive = Research(levels, status, 115)
+        self.impulseDrive = Research(levels, status, 117)
+        self.hyperspaceDrive = Research(levels, status, 118)
+        self.espionage = Research(levels, status, 106)
+        self.computer = Research(levels, status, 108)
+        self.astrophysics = Research(levels, status, 124)
+        self.researchNetwork = Research(levels, status, 123)
+        self.graviton = Research(levels, status, 199)
+        self.weapons = Research(levels, status, 109)
+        self.shielding = Research(levels, status, 110)
+        self.armor = Research(levels, status, 111)
 
         self.allResearches = [
             self.energy,

@@ -33,16 +33,16 @@ struct Defences {
     let allDefences: [Defence]
     
     init(_ defences: [Int], _ status: [String]) {
-        self.rocketLauncher = Defence(defences, status, 0)
-        self.lightLaser = Defence(defences, status, 1)
-        self.heavyLaser = Defence(defences, status, 2)
-        self.gaussCannon = Defence(defences, status, 3)
-        self.ionCannon = Defence(defences, status, 4)
-        self.plasmaCannon = Defence(defences, status, 5)
-        self.smallShieldDome = Defence(defences, status, 6)
-        self.largeShieldDome = Defence(defences, status, 7)
-        self.antiBallisticMissiles = Defence(defences, status, 8)
-        self.interplanetaryMissiles = Defence(defences, status, 9)
+        self.rocketLauncher = Defence(defences, status, 401)
+        self.lightLaser = Defence(defences, status, 402)
+        self.heavyLaser = Defence(defences, status, 403)
+        self.gaussCannon = Defence(defences, status, 404)
+        self.ionCannon = Defence(defences, status, 405)
+        self.plasmaCannon = Defence(defences, status, 406)
+        self.smallShieldDome = Defence(defences, status, 407)
+        self.largeShieldDome = Defence(defences, status, 408)
+        self.antiBallisticMissiles = Defence(defences, status, 502)
+        self.interplanetaryMissiles = Defence(defences, status, 503)
 
         self.allDefences = [
             self.rocketLauncher,

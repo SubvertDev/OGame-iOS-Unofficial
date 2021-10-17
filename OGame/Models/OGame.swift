@@ -1136,6 +1136,32 @@ class OGame {
     }
     
     
+    func getBuildingTime(type: Int, completion: @escaping (Result<DateComponents, OGError>) -> Void) {
+        let link = "\(self.indexPHP!)page=ingame&component=technologydetails&ajax=1"
+        let parameters: Parameters = ["action": "getDetails", "technology": type]
+        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
+
+        sessionAF.request(link, method: .get, parameters: parameters, headers: headers).response { response in
+            switch response.result {
+            case .success(let data):
+                let text = String(data: data!, encoding: .ascii)!
+                let page = try! SwiftSoup.parse(text)
+                print(page)
+                
+                let item = try! page.select("[datetime]").attr("datetime")
+                var isoTime = item.components(separatedBy: "\"")[1]
+                isoTime.removeLast()
+                
+                let timeComponents = DateComponents.durationFrom8601String(isoTime)
+                completion(.success(timeComponents!))
+                
+            case .failure(let error):
+                completion(.failure(OGError(message: "Building time parse error", detailed: "\(error)")))
+            }
+        }
+    }
+    
+    
     // MARK: - GET GALAXY
     func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"

@@ -35,14 +35,14 @@ struct Supplies {
         var fixedStatus = status
         fixedStatus.removeSubrange(5...6)
 
-        self.metalMine = Supply(levels, fixedStatus, 0)
-        self.crystalMine = Supply(levels, fixedStatus, 1)
-        self.deuteriumMine = Supply(levels, fixedStatus, 2)
-        self.solarPlant = Supply(levels, fixedStatus, 3)
-        self.fusionPlant = Supply(levels, fixedStatus, 4)
-        self.metalStorage = Supply(levels, fixedStatus, 5)
-        self.crystalStorage = Supply(levels, fixedStatus, 6)
-        self.deuteriumStorage = Supply(levels, fixedStatus, 7)
+        self.metalMine = Supply(levels, fixedStatus, 1)
+        self.crystalMine = Supply(levels, fixedStatus, 2)
+        self.deuteriumMine = Supply(levels, fixedStatus, 3)
+        self.solarPlant = Supply(levels, fixedStatus, 4)
+        self.fusionPlant = Supply(levels, fixedStatus, 12)
+        self.metalStorage = Supply(levels, fixedStatus, 22)
+        self.crystalStorage = Supply(levels, fixedStatus, 23)
+        self.deuteriumStorage = Supply(levels, fixedStatus, 24)
 
         self.allSupplies = [
             self.metalMine,
