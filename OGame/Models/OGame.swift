@@ -645,6 +645,7 @@ class OGame {
 
     // MARK: - GET SUPPLY
     func supply(completion: @escaping (Result<Supplies, OGError>) -> Void) {
+        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -664,6 +665,7 @@ class OGame {
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
+                    print(levels, technologyStatus)
 
                     guard !levels.isEmpty, !technologyStatus.isEmpty else {
                         completion(.failure(OGError(message: "Not logged in", detailed: "Supply login check failed")))
@@ -671,6 +673,7 @@ class OGame {
                     }
 
                     let suppliesObject = Supplies(levels, technologyStatus)
+                    print("completion")
                     completion(.success(suppliesObject))
 
                 } catch {

@@ -12,9 +12,9 @@ struct Facility {
     let level: Int
     let condition: String
     
-    init(_ levels: [Int], _ status: [String], _ type: Int) {
-        self.level = levels[type]
-        self.condition = status[type]
+    init(_ level: Int, _ status: String, _ type: Int) {
+        self.level = level
+        self.condition = status
     }
 }
 
@@ -31,14 +31,14 @@ struct Facilities {
     let allFacilities: [Facility]
 
     init(_ levels: [Int], _ status: [String]) {
-        self.roboticsFactory = Facility(levels, status, 14)
-        self.shipyard = Facility(levels, status, 21)
-        self.researchLaboratory = Facility(levels, status, 31)
-        self.allianceDepot = Facility(levels, status, 34)
-        self.missileSilo = Facility(levels, status, 44)
-        self.naniteFactory = Facility(levels, status, 15)
-        self.terraformer = Facility(levels, status, 33)
-        self.repairDock = Facility(levels, status, 36)
+        self.roboticsFactory = Facility(levels[0], status[0], 14)
+        self.shipyard = Facility(levels[1], status[1], 21)
+        self.researchLaboratory = Facility(levels[2], status[2], 31)
+        self.allianceDepot = Facility(levels[3], status[3], 34)
+        self.missileSilo = Facility(levels[4], status[4], 44)
+        self.naniteFactory = Facility(levels[5], status[5], 15)
+        self.terraformer = Facility(levels[6], status[6], 33)
+        self.repairDock = Facility(levels[7], status[7], 36)
 
         self.allFacilities = [
             self.roboticsFactory,

@@ -12,9 +12,9 @@ class Defence {
     let amount: Int
     var condition: String
 
-    init(_ amount: [Int], _ status: [String], _ type: Int) {
-        self.amount = amount[type]
-        self.condition = status[type]
+    init(_ amount: Int, _ status: String, _ type: Int) {
+        self.amount = amount
+        self.condition = status
     }
 }
 
@@ -33,16 +33,16 @@ struct Defences {
     let allDefences: [Defence]
     
     init(_ defences: [Int], _ status: [String]) {
-        self.rocketLauncher = Defence(defences, status, 401)
-        self.lightLaser = Defence(defences, status, 402)
-        self.heavyLaser = Defence(defences, status, 403)
-        self.gaussCannon = Defence(defences, status, 404)
-        self.ionCannon = Defence(defences, status, 405)
-        self.plasmaCannon = Defence(defences, status, 406)
-        self.smallShieldDome = Defence(defences, status, 407)
-        self.largeShieldDome = Defence(defences, status, 408)
-        self.antiBallisticMissiles = Defence(defences, status, 502)
-        self.interplanetaryMissiles = Defence(defences, status, 503)
+        self.rocketLauncher = Defence(defences[0], status[0], 401)
+        self.lightLaser = Defence(defences[1], status[1], 402)
+        self.heavyLaser = Defence(defences[2], status[2], 403)
+        self.gaussCannon = Defence(defences[3], status[3], 404)
+        self.ionCannon = Defence(defences[4], status[4], 405)
+        self.plasmaCannon = Defence(defences[5], status[5], 406)
+        self.smallShieldDome = Defence(defences[6], status[6], 407)
+        self.largeShieldDome = Defence(defences[7], status[7], 408)
+        self.antiBallisticMissiles = Defence(defences[8], status[8], 502)
+        self.interplanetaryMissiles = Defence(defences[9], status[9], 503)
 
         self.allDefences = [
             self.rocketLauncher,

@@ -12,9 +12,9 @@ struct Supply {
     let level: Int
     let condition: String
 
-    init(_ levels: [Int], _ status: [String], _ type: Int) {
-        self.level = levels[type]
-        self.condition = status[type]
+    init(_ level: Int, _ status: String, _ type: Int) {
+        self.level = level
+        self.condition = status
     }
 }
 
@@ -35,14 +35,14 @@ struct Supplies {
         var fixedStatus = status
         fixedStatus.removeSubrange(5...6)
 
-        self.metalMine = Supply(levels, fixedStatus, 1)
-        self.crystalMine = Supply(levels, fixedStatus, 2)
-        self.deuteriumMine = Supply(levels, fixedStatus, 3)
-        self.solarPlant = Supply(levels, fixedStatus, 4)
-        self.fusionPlant = Supply(levels, fixedStatus, 12)
-        self.metalStorage = Supply(levels, fixedStatus, 22)
-        self.crystalStorage = Supply(levels, fixedStatus, 23)
-        self.deuteriumStorage = Supply(levels, fixedStatus, 24)
+        self.metalMine = Supply(levels[0], fixedStatus[0], 1)
+        self.crystalMine = Supply(levels[1], fixedStatus[1], 2)
+        self.deuteriumMine = Supply(levels[2], fixedStatus[2], 3)
+        self.solarPlant = Supply(levels[3], fixedStatus[3], 4)
+        self.fusionPlant = Supply(levels[4], fixedStatus[4], 12)
+        self.metalStorage = Supply(levels[5], fixedStatus[5], 22)
+        self.crystalStorage = Supply(levels[6], fixedStatus[6], 23)
+        self.deuteriumStorage = Supply(levels[7], fixedStatus[7], 24)
 
         self.allSupplies = [
             self.metalMine,
