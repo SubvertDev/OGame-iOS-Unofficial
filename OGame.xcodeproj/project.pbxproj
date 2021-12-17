@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -51,10 +51,8 @@
 		B8B7BC1826504F8F00988758 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8B7BC1626504F8F00988758 /* LaunchScreen.storyboard */; };
 		B8B7BC202650524000988758 /* OGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC1F2650524000988758 /* OGame.swift */; };
 		B8B7BC262650579100988758 /* Servers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC252650579100988758 /* Servers.swift */; };
-		B8B7BC292650654200988758 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = B8B7BC282650654200988758 /* Alamofire */; };
 		B8B7BC2E2650AD5700988758 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC2D2650AD5700988758 /* Login.swift */; };
 		B8C3E817265ECD1A00BBF5A3 /* ResearchesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */; };
-		B8CD61152651D3EF00B3E7FD /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = B8CD61142651D3EF00B3E7FD /* SwiftSoup */; };
 		B8D1AEFB26B464F50064DE34 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D1AEFA26B464F50064DE34 /* Position.swift */; };
 		B8E5D993265A8F0E004CF69B /* FacilitiesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */; };
 		B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F144E426B8872200B2C31B /* GalaxyCell.swift */; };
@@ -70,9 +68,11 @@
 		B8FF0463269E1C69007743B8 /* DefenceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF0462269E1C69007743B8 /* DefenceVC.swift */; };
 		B8FF0465269E1D4E007743B8 /* DefenceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF0464269E1D4E007743B8 /* DefenceCell.swift */; };
 		B8FF0467269E1F11007743B8 /* Defence+Defences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF0466269E1F11007743B8 /* Defence+Defences.swift */; };
+		F5F1C15F82B492BDCA3BB99B /* Pods_OGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA6799B26AB5796AB89C6858 /* Pods_OGame.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4C2671C7EC7F0A0A69679B5E /* Pods-OGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OGame.release.xcconfig"; path = "Target Support Files/Pods-OGame/Pods-OGame.release.xcconfig"; sourceTree = "<group>"; };
 		B814BA6526AB0F1B00FF346A /* ServerListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListVC.swift; sourceTree = "<group>"; };
 		B814BA6726AB1B0200FF346A /* MyServers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyServers.swift; sourceTree = "<group>"; };
 		B83B64032658455C00A75A00 /* Supply+Supplies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supply+Supplies.swift"; sourceTree = "<group>"; };
@@ -136,6 +136,8 @@
 		B8FF0462269E1C69007743B8 /* DefenceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefenceVC.swift; sourceTree = "<group>"; };
 		B8FF0464269E1D4E007743B8 /* DefenceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefenceCell.swift; sourceTree = "<group>"; };
 		B8FF0466269E1F11007743B8 /* Defence+Defences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Defence+Defences.swift"; sourceTree = "<group>"; };
+		BA6799B26AB5796AB89C6858 /* Pods_OGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEB4BC9E9A5EF9796C8C9A8A /* Pods-OGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OGame.debug.xcconfig"; path = "Target Support Files/Pods-OGame/Pods-OGame.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,14 +145,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B8B7BC292650654200988758 /* Alamofire in Frameworks */,
-				B8CD61152651D3EF00B3E7FD /* SwiftSoup in Frameworks */,
+				F5F1C15F82B492BDCA3BB99B /* Pods_OGame.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03E0E99FF65DDECB267C724D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BA6799B26AB5796AB89C6858 /* Pods_OGame.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AF1F3FCDFC17DB85871E779E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CEB4BC9E9A5EF9796C8C9A8A /* Pods-OGame.debug.xcconfig */,
+				4C2671C7EC7F0A0A69679B5E /* Pods-OGame.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		B86761572659831A0096BE39 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -197,6 +215,8 @@
 			children = (
 				B8B7BC0A26504F8A00988758 /* OGame */,
 				B8B7BC0926504F8A00988758 /* Products */,
+				AF1F3FCDFC17DB85871E779E /* Pods */,
+				03E0E99FF65DDECB267C724D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -339,19 +359,17 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B8B7BC1C26504F8F00988758 /* Build configuration list for PBXNativeTarget "OGame" */;
 			buildPhases = (
+				4AD9F8355D943CAE08533CAA /* [CP] Check Pods Manifest.lock */,
 				B8B7BC0426504F8A00988758 /* Sources */,
 				B8B7BC0526504F8A00988758 /* Frameworks */,
 				B8B7BC0626504F8A00988758 /* Resources */,
+				623F48B571F2FA580023FFA2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = OGame;
-			packageProductDependencies = (
-				B8B7BC282650654200988758 /* Alamofire */,
-				B8CD61142651D3EF00B3E7FD /* SwiftSoup */,
-			);
 			productName = OGame;
 			productReference = B8B7BC0826504F8A00988758 /* OGame.app */;
 			productType = "com.apple.product-type.application";
@@ -379,10 +397,6 @@
 				Base,
 			);
 			mainGroup = B8B7BBFF26504F8A00988758;
-			packageReferences = (
-				B8B7BC272650654200988758 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				B8CD61132651D3EF00B3E7FD /* XCRemoteSwiftPackageReference "SwiftSoup" */,
-			);
 			productRefGroup = B8B7BC0926504F8A00988758 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -409,6 +423,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4AD9F8355D943CAE08533CAA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OGame-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		623F48B571F2FA580023FFA2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OGame/Pods-OGame-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OGame/Pods-OGame-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-OGame/Pods-OGame-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B8B7BC0426504F8A00988758 /* Sources */ = {
@@ -544,13 +600,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -599,25 +656,27 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		B8B7BC1D26504F8F00988758 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CEB4BC9E9A5EF9796C8C9A8A /* Pods-OGame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7353CQCGQC;
 				INFOPLIST_FILE = OGame/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -631,13 +690,14 @@
 		};
 		B8B7BC1E26504F8F00988758 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4C2671C7EC7F0A0A69679B5E /* Pods-OGame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7353CQCGQC;
 				INFOPLIST_FILE = OGame/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -671,38 +731,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		B8B7BC272650654200988758 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.4.3;
-			};
-		};
-		B8CD61132651D3EF00B3E7FD /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B8B7BC282650654200988758 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B8B7BC272650654200988758 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
-		B8CD61142651D3EF00B3E7FD /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B8CD61132651D3EF00B3E7FD /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B8B7BC0026504F8A00988758 /* Project object */;
 }
