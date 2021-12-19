@@ -73,6 +73,7 @@ class OGame {
             sessionAF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).responseDecodable(of: Login.self) { response in
 
                 let statusCode = response.response!.statusCode
+                // error with fast internet turn on/off and relogin
 
                 switch response.result {
                 case .success(_):
@@ -554,31 +555,47 @@ class OGame {
 
     
     // MARK: - GET RESOURCES
-    func getResources(completion: @escaping (Result<Resources, OGError>) -> Void) {
+//    func getResources(completion: @escaping (Result<Resources, OGError>) -> Void) {
+//        let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
+//        sessionAF.request(link).validate().response { response in
+//
+//            switch response.result {
+//            case .success(let data):
+//                do {
+//                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+//
+//                    let noScript = try page.select("noscript").text()
+//                    guard noScript != "You need to enable JavaScript to run this app." else {
+//                        completion(.failure(OGError(message: "Not logged in", detailed: "Resources login check failed")))
+//                        return
+//                    }
+//
+//                    let resourceObject = Resources(from: page)
+//                    completion(.success(resourceObject))
+//
+//                } catch {
+//                    completion(.failure(OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)))
+//                }
+//            case .failure(let error):
+//                completion(.failure(OGError(message: "Resources network request failed", detailed: error.localizedDescription)))
+//            }
+//        }
+//    }
+    
+    func getResourcesAwait() async throws -> Resources {
         let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
+        let value = await sessionAF.request(link).serializingData().response.value
+        
+        guard let data = value
+        else { throw OGError(message: "Error parsing resources", detailed: "Request data is nil") }
+        
+        let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
 
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let noScript = try page.select("noscript").text()
-                    guard noScript != "You need to enable JavaScript to run this app." else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Resources login check failed")))
-                        return
-                    }
-
-                    let resourceObject = Resources(from: page)
-                    completion(.success(resourceObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Resources network request failed", detailed: error.localizedDescription)))
-            }
-        }
+        guard !noScriptCheck(with: page)
+        else { throw OGError(message: "Not logged in", detailed: "Resources login check failed") }
+        
+        let resourceObject = Resources(from: page)
+        return resourceObject
     }
 
 
@@ -645,7 +662,6 @@ class OGame {
 
     // MARK: - GET SUPPLY
     func supply(completion: @escaping (Result<Supplies, OGError>) -> Void) {
-        print(#function)
         let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
         sessionAF.request(link).validate().response { response in
 
@@ -665,7 +681,7 @@ class OGame {
                     for status in technologyStatusParse {
                         technologyStatus.append(try status.attr("data-status"))
                     }
-                    print(levels, technologyStatus)
+                    //print(levels, technologyStatus)
 
                     guard !levels.isEmpty, !technologyStatus.isEmpty else {
                         completion(.failure(OGError(message: "Not logged in", detailed: "Supply login check failed")))
@@ -673,7 +689,6 @@ class OGame {
                     }
 
                     let suppliesObject = Supplies(levels, technologyStatus)
-                    print("completion")
                     completion(.success(suppliesObject))
 
                 } catch {
@@ -1164,21 +1179,22 @@ class OGame {
         }
     }
     
-    
+
     // MARK: - GET GALAXY
     func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
         let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
+        
+        struct GalaxyResponse: Codable {
+            let galaxy: String
+        }
 
-        sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseJSON { response in
+        sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseDecodable(of: GalaxyResponse.self) { response in
             switch response.result {
             case .success(let data):
                 do {
-                    let checkData = data as! [String: Any]
-                    let galaxyJson = checkData["galaxy"] as! String
-
-                    let galaxyInfo = try SwiftSoup.parse(galaxyJson)
+                    let galaxyInfo = try SwiftSoup.parse(data.galaxy)
                     let players = try galaxyInfo.select("[id*=player]")
                     let alliances = try galaxyInfo.select("[id*=alliance]")
 
@@ -1349,28 +1365,6 @@ class OGame {
     // COLLECT RUBBLE FIELD
 
 
-    // MARK: - IS LOGGED IN
-    // TODO: Do I need this?
-    func isLoggedIn(completion: @escaping (Bool) -> Void) {
-        let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
-        sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", headers: headers).responseJSON { response in
-            switch response.result {
-            case .success(let data):
-                let checkData = data as? [String: Any]
-                if checkData?["error"] != nil {
-                    print("error not logged in")
-                    completion(false)
-                    return
-                }
-                print("logged in!")
-                completion(true)
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-
-
     // RELOGIN
 
 
@@ -1402,7 +1396,17 @@ class OGame {
         celestials = nil
         planetImages = []
     }
+    
+    func noScriptCheck(with page: Document) -> Bool {
+        let noScript = try? page.select("noscript").text()
+        if noScript == "You need to enable JavaScript to run this app." {
+            return true
+        } else {
+            return false
+        }
+    }
 }
+
 
 // rank() -> String -> 999
 

@@ -37,25 +37,24 @@ class MenuVC: UIViewController {
                     "Movement",
                     "Galaxy",
                     "Settings (unavailable)"]
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-
+        
         if OGame.shared.celestials!.count == 1 {
             leftButton.isEnabled = false
             rightButton.isEnabled = false
         }
-
+        
         configureTableView()
         configureLabels()
-        refreshResourcesView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        refreshResourcesView()
+        refresh()
     }
     
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
@@ -68,7 +67,7 @@ class MenuVC: UIViewController {
                 self.logoutAndShowError(error)
             } else {
                 self.configureLabels()
-                self.refreshResourcesView()
+                self.refresh()
             }
         }
     }
@@ -79,7 +78,7 @@ class MenuVC: UIViewController {
                 self.logoutAndShowError(error)
             } else {
                 self.configureLabels()
-                self.refreshResourcesView()
+                self.refresh()
             }
         }
     }
@@ -89,7 +88,7 @@ class MenuVC: UIViewController {
         tableView.dataSource = self
         tableView.removeExtraCellLines()
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshResourcesView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         refreshControl.backgroundColor = .clear
         refreshControl.tintColor = .clear
     }
@@ -103,44 +102,47 @@ class MenuVC: UIViewController {
         planetImage.image = OGame.shared.planetImage
     }
     
-    @objc func refreshResourcesView() {
+    @objc func refresh() {
         resourcesOverview.bringSubviewToFront(resourcesActivityIndicator)
         resourcesOverview.alpha = 0.5
         resourcesActivityIndicator.startAnimating()
         refreshControl.endRefreshing()
         
-        OGame.shared.getResources() { result in
-            switch result {
-            case .success(let resources):
-                self.resourcesOverview.alpha = 1
-                self.resourcesActivityIndicator.stopAnimating()
-                
+        Task {
+            do {
+                let resources = try await OGame.shared.getResourcesAwait()
                 self.resources = resources
-                self.resourcesOverview.set(metal: resources.metal,
-                                           crystal: resources.crystal,
-                                           deuterium: resources.deuterium,
-                                           energy: resources.energy)
-
-                var production = [Double]()
-                for day in resources.dayProduction {
-                    let dayDouble = Double(day)
-                    production.append(dayDouble / 3600)
-                }
-                self.prodPerSecond = production
-
-                self.timer?.invalidate()
-                self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    self.resourcesOverview.update(metal: self.prodPerSecond![0],
-                                                  crystal: self.prodPerSecond![1],
-                                                  deuterium: self.prodPerSecond![2],
-                                                  storage: resources)
-                }
-                RunLoop.main.add(self.timer!, forMode: .common)
-
-            case .failure(let error):
-                self.logoutAndShowError(error)
+                refreshResourcesView(with: resources)
+            } catch {
+                self.logoutAndShowError(error as! OGError)
             }
         }
+    }
+    
+    func refreshResourcesView(with resources: Resources) {
+        resourcesOverview.set(metal: resources.metal,
+                              crystal: resources.crystal,
+                              deuterium: resources.deuterium,
+                              energy: resources.energy)
+        
+        var production = [Double]()
+        for day in resources.dayProduction {
+            let dayDouble = Double(day)
+            production.append(dayDouble / 3600)
+        }
+        prodPerSecond = production
+        
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            self.resourcesOverview.update(metal: self.prodPerSecond![0],
+                                          crystal: self.prodPerSecond![1],
+                                          deuterium: self.prodPerSecond![2],
+                                          storage: resources)
+        }
+        RunLoop.main.add(timer!, forMode: .common)
+        
+        resourcesOverview.alpha = 1
+        resourcesActivityIndicator.stopAnimating()
     }
 }
 
