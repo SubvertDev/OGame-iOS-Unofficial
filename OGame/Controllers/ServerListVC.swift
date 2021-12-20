@@ -57,17 +57,15 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
         tableView.alpha = 0.5
         activityIndicator.startAnimating()
 
-        OGame.shared.loginIntoSever(with: OGame.shared.serversOnAccount[indexPath.row]) { result in
-            tableView.alpha = 1
-            tableView.isUserInteractionEnabled = true
-            self.activityIndicator.stopAnimating()
-
-            switch result {
-            case .success(_):
-                self.performSegue(withIdentifier: "ShowMenuVC", sender: self)
-                
-            case .failure(let error):
-                self.logoutAndShowError(error)
+        Task {
+            do {
+                try await OGame.shared.loginIntoSever(with: OGame.shared.serversOnAccount[indexPath.row])
+                tableView.alpha = 1
+                tableView.isUserInteractionEnabled = true
+                activityIndicator.stopAnimating()
+                performSegue(withIdentifier: "ShowMenuVC", sender: self)
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }

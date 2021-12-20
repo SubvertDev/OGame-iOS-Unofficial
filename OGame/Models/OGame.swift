@@ -46,6 +46,10 @@ class OGame {
     private var planetImages: [UIImage] = []
     var rank: Int?
     var commander: Bool?
+    
+    // Necessary for build time check
+    var roboticsFactoryLevel: Int?
+    var naniteFactoryLevel: Int?
 
     private init() {}
     
@@ -72,8 +76,12 @@ class OGame {
 
             sessionAF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).responseDecodable(of: Login.self) { response in
 
+                guard response.response != nil else {
+                    completion(.failure(OGError(message: "Network response error", detailed: "Try again")))
+                    return
+                }
+                
                 let statusCode = response.response!.statusCode
-                // error with fast internet turn on/off and relogin
 
                 switch response.result {
                 case .success(_):
@@ -175,16 +183,19 @@ class OGame {
     }
 
     // MARK: - Login Into Server
-    func loginIntoSever(with serverInfo: MyServers, completion: @escaping (Result<Bool, OGError>) -> Void) {
+    func loginIntoSever(with serverInfo: MyServers) async throws {
         serverID = serverInfo.serverID
         language = serverInfo.language
         serverNumber = serverInfo.number
         universe = serverInfo.serverName
 
-        configureIndex()
+        try await configureIndex()
+        try await configureIndex2()
+        try await configureIndex3()
+        try await configurePlayer()
 
         // MARK: - Configure Index
-        func configureIndex() {
+        func configureIndex() async throws {
             indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
             let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
             let parameters: Parameters = [
@@ -195,47 +206,35 @@ class OGame {
             ]
             let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
 
-            sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).validate().responseDecodable(of: Index.self) { response in
-                switch response.result {
-                case .success(_):
-                    self.loginLink = response.value!.url
-                    configureIndex2()
-
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Index page error", detailed: error.localizedDescription)))
-                }
+            do {
+                let response = try await sessionAF.request(link, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers).serializingDecodable(Index.self).value
+                self.loginLink = response.url
+            } catch {
+                throw OGError(message: "Index page configuring error", detailed: error.localizedDescription)
             }
         }
 
-        func configureIndex2() {
-            sessionAF.request(loginLink!).validate().response { response in
-                switch response.result {
-                case .success(let data):
-                    self.landingPage = String(data: data!, encoding: .ascii)
-                    configureIndex3()
-
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Landing page error", detailed: error.localizedDescription)))
-                }
+        func configureIndex2() async throws {
+            do {
+                let response = try await sessionAF.request(loginLink!).serializingData().value
+                self.landingPage = String(data: response, encoding: .ascii)
+            } catch {
+                throw OGError(message: "Landing page error", detailed: error.localizedDescription)
             }
         }
 
-        func configureIndex3() {
-            let link = "\(indexPHP!)&page=ingame"
-            sessionAF.request(link).validate().response { response in
-                switch response.result {
-                case .success(let data):
-                    self.landingPage = String(data: data!, encoding: .ascii)
-                    configurePlayer()
-
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Landing page error", detailed: error.localizedDescription)))
-                }
+        func configureIndex3() async throws {
+            do {
+                let link = "\(indexPHP!)&page=ingame"
+                let response = try await sessionAF.request(link).serializingData().value
+                self.landingPage = String(data: response, encoding: .ascii)
+            } catch {
+                throw OGError(message: "Landing page error", detailed: error.localizedDescription)
             }
         }
 
         // MARK: - Configure Player
-        func configurePlayer() {
+        func configurePlayer() async throws {
             do {
                 doc = try SwiftSoup.parse(self.landingPage!)
                 let planetName = try doc!.select("[name=ogame-planet-name]")
@@ -256,24 +255,26 @@ class OGame {
                 self.planetIDs = getPlanetIDs()
                 self.commander = getCommander()
                 
-                getAllPlanetImages { images in
-                    self.planetImage = images[0]
-                    self.planetImages = images
-                    
-                    self.getAllCelestials { result in
-                        switch result {
-                        case .success(let celestials):
-                            self.celestial = celestials[0]
-                            self.celestials = celestials
-                            completion(.success(true))
-                        case .failure(let error):
-                            completion(.failure(OGError(message: "Celestials network error", detailed: error.localizedDescription)))
-                        }
+                await withThrowingTaskGroup(of: Void.self) { group in
+                    group.addTask {
+                        let images = try await self.getAllPlanetImagesAwait()
+                        self.planetImage = images[0]
+                        self.planetImages = images
+                    }
+                    group.addTask {
+                        let celestials = try await self.getAllCelestialsAwait()
+                        self.celestial = celestials[0]
+                        self.celestials = celestials
+                    }
+                    group.addTask {
+                        let facilities = try await self.facilities()
+                        self.roboticsFactoryLevel = facilities.roboticsFactory.level
+                        self.naniteFactoryLevel = facilities.naniteFactory.level
                     }
                 }
                 
             } catch {
-                completion(.failure(OGError(message: "Player configuration error", detailed: error.localizedDescription)))
+                throw OGError(message: "Player configuration error", detailed: error.localizedDescription)
             }
         }
     }
@@ -470,6 +471,66 @@ class OGame {
     }
     
     
+    func getAllCelestialsAwait() async throws -> [Celestial] {
+        let link = "\(self.indexPHP!)page=ingame&component=overview" // FIXME: Fatal error while Logout on server list loading
+        
+        let response = try await sessionAF.request(link).serializingData().value
+        var celestials: [Celestial] = []
+        
+        do {
+            let text = String(data: response, encoding: .ascii)!
+            let page = try SwiftSoup.parse(text)
+            
+            guard !noScriptCheck(with: page)
+            else { throw OGError(message: "Not logged in", detailed: "Celestials login check failed") }
+            
+            let planets = try page.select("[id=planetList]").get(0)
+            let planetsInfo = try planets.select("[id*=planet-]")
+            for planet in planetsInfo {
+                let title = try planet.select("a").get(0).attr("title")
+                let textArray = title.components(separatedBy: "><")
+                
+                // TODO: Not tested for moons
+                var coordinatesString = textArray[0].components(separatedBy: " ")[1].replacingOccurrences(of: "</b", with: "")
+                coordinatesString.removeFirst()
+                coordinatesString.removeLast()
+                var coordinates = coordinatesString.components(separatedBy: ":").compactMap { Int($0) }
+                coordinates.append(1)
+                
+                var planetSizeString = textArray[1].components(separatedBy: " ")[0]
+                planetSizeString.removeFirst(4)
+                planetSizeString.removeLast(2)
+                let planetSize = Int(planetSizeString.replacingOccurrences(of: ".", with: ""))!
+                
+                var planetFieldsString = textArray[1].components(separatedBy: " ")[1]
+                planetFieldsString = planetFieldsString.components(separatedBy: ")")[0]
+                planetFieldsString.removeFirst()
+                let planetFieldUsed = Int(planetFieldsString.components(separatedBy: "/")[0])!
+                let planetFieldTotal = Int(planetFieldsString.components(separatedBy: "/")[1])!
+                
+                var planetMinTemperatureString = textArray[1].components(separatedBy: " ")[1]
+                planetMinTemperatureString = planetMinTemperatureString.components(separatedBy: "<br>")[1]
+                let planetMinTemperature = Int(planetMinTemperatureString.components(separatedBy: "Â")[0])!
+                let planetMaxTemperatureString = textArray[1].components(separatedBy: " ")[3]
+                let planetMaxTemperature = Int(planetMaxTemperatureString.components(separatedBy: "Â")[0])!
+                
+                let celestial = Celestial(planetSize: planetSize,
+                                          usedFields: planetFieldUsed,
+                                          totalFields: planetFieldTotal,
+                                          tempMin: planetMinTemperature,
+                                          tempMax: planetMaxTemperature,
+                                          coordinates: coordinates)
+                celestials.append(celestial)
+            }
+        } catch {
+            throw OGError(message: "Celestialse parse error", detailed: error.localizedDescription)
+        }
+        
+        self.celestial = celestials[0]
+        return celestials
+    }
+    
+    
     // MARK: - Set Next Planet
     func setNextPlanet(completion: @escaping (OGError?) -> ()) {
         if let index = planetNames!.firstIndex(of: planet!) {
@@ -535,6 +596,27 @@ class OGame {
         }
     }
     
+    func getAllPlanetImagesAwait() async throws -> [UIImage] {
+        var images: [UIImage] = []
+        let planets = try! doc!.select("[class*=smallplanet]")
+
+        try await withThrowingTaskGroup(of: UIImage.self) { group in
+            for planet in planets {
+                group.addTask {
+                    let imageAttribute = try! planet.select("[width=48]").first()!.attr("src")
+                    let response = try await self.sessionAF.request("\(imageAttribute)").serializingData().value
+                    let image = UIImage(data: response)
+                    return image!
+                }
+            }
+            for try await image in group {
+                images.append(image)
+            }
+        }
+        
+        return images
+    }
+    
     func getImagesFromUrl(_ urls: [String], completion: @escaping ([UIImage]) -> Void) {
         var images: [UIImage] = []
         let dispatchGroup = DispatchGroup()
@@ -555,44 +637,41 @@ class OGame {
 
     
     // MARK: - GET RESOURCES
-//    func getResources(completion: @escaping (Result<Resources, OGError>) -> Void) {
-//        let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
-//        sessionAF.request(link).validate().response { response in
-//
-//            switch response.result {
-//            case .success(let data):
-//                do {
-//                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-//
-//                    let noScript = try page.select("noscript").text()
-//                    guard noScript != "You need to enable JavaScript to run this app." else {
-//                        completion(.failure(OGError(message: "Not logged in", detailed: "Resources login check failed")))
-//                        return
-//                    }
-//
-//                    let resourceObject = Resources(from: page)
-//                    completion(.success(resourceObject))
-//
-//                } catch {
-//                    completion(.failure(OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)))
-//                }
-//            case .failure(let error):
-//                completion(.failure(OGError(message: "Resources network request failed", detailed: error.localizedDescription)))
-//            }
-//        }
-//    }
+    func getResources(completion: @escaping (Result<Resources, OGError>) -> Void) {
+        let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
+        sessionAF.request(link).validate().response { response in
+
+            switch response.result {
+            case .success(let data):
+                do {
+                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
+
+                    let noScript = try page.select("noscript").text()
+                    guard noScript != "You need to enable JavaScript to run this app." else {
+                        completion(.failure(OGError(message: "Not logged in", detailed: "Resources login check failed")))
+                        return
+                    }
+
+                    let resourceObject = Resources(from: page)
+                    completion(.success(resourceObject))
+
+                } catch {
+                    completion(.failure(OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)))
+                }
+            case .failure(let error):
+                completion(.failure(OGError(message: "Resources network request failed", detailed: error.localizedDescription)))
+            }
+        }
+    }
     
     func getResourcesAwait() async throws -> Resources {
         let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
-        let value = await sessionAF.request(link).serializingData().response.value
+        let value = try await sessionAF.request(link).serializingData().value
         
-        guard let data = value
-        else { throw OGError(message: "Error parsing resources", detailed: "Request data is nil") }
-        
-        let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
+        let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
 
         guard !noScriptCheck(with: page)
-        else { throw OGError(message: "Not logged in", detailed: "Resources login check failed") }
+        else { throw OGError(message: "Not logged in", detailed: "Resources view login check failed") }
         
         let resourceObject = Resources(from: page)
         return resourceObject
@@ -702,42 +781,28 @@ class OGame {
 
 
     // MARK: - GET FACILITIES
-    func facilities(completion: @escaping (Result<Facilities, OGError>) -> Void) {
+    func facilities() async throws -> Facilities {
         let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
+        let data = try await sessionAF.request(link).serializingData().value
+        let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
 
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let levelsParse = try page.select("span[class=level]").select("[data-value]")
-                    var levels = [Int]()
-                    for level in levelsParse {
-                        levels.append(Int(try level.text())!)
-                    }
-
-                    let technologyStatusParse = try page.select("li[class*=technology]")
-                    var technologyStatus = [String]()
-                    for status in technologyStatusParse {
-                        technologyStatus.append(try status.attr("data-status"))
-                    }
-
-                    guard !levels.isEmpty, !technologyStatus.isEmpty else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Facilities login check failed")))
-                        return
-                    }
-
-                    let facilitiesObject = Facilities(levels, technologyStatus)
-                    completion(.success(facilitiesObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse overview data", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Overview network request failed", detailed: error.localizedDescription)))
-            }
+        let levelsParse = try page.select("span[class=level]").select("[data-value]")
+        var levels = [Int]()
+        for level in levelsParse {
+            levels.append(Int(try level.text())!)
         }
+
+        let technologyStatusParse = try page.select("li[class*=technology]")
+        var technologyStatus = [String]()
+        for status in technologyStatusParse {
+            technologyStatus.append(try status.attr("data-status"))
+        }
+
+        guard !noScriptCheck(with: page)
+        else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
+
+        let facilitiesObject = Facilities(levels, technologyStatus)
+        return facilitiesObject
     }
 
 
@@ -1154,29 +1219,72 @@ class OGame {
     }
     
     
-    func getBuildingTime(type: Int, completion: @escaping (Result<DateComponents, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=technologydetails&ajax=1"
-        let parameters: Parameters = ["action": "getDetails", "technology": type]
-        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-
-        sessionAF.request(link, method: .get, parameters: parameters, headers: headers).response { response in
-            switch response.result {
-            case .success(let data):
-                let text = String(data: data!, encoding: .ascii)!
-                let page = try! SwiftSoup.parse(text)
-                print(page)
-                
-                let item = try! page.select("[datetime]").attr("datetime")
-                var isoTime = item.components(separatedBy: "\"")[1]
-                isoTime.removeLast()
-                
-                let timeComponents = DateComponents.durationFrom8601String(isoTime)
-                completion(.success(timeComponents!))
-                
-            case .failure(let error):
-                completion(.failure(OGError(message: "Building time parse error", detailed: "\(error)")))
-            }
+//    func getBuildingTimeOnline(type: Int, completion: @escaping (Result<DateComponents, OGError>) -> Void) {
+//        let link = "\(self.indexPHP!)page=ingame&component=technologydetails&ajax=1"
+//        let parameters: Parameters = ["action": "getDetails", "technology": type]
+//        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
+//
+//        sessionAF.request(link, method: .get, parameters: parameters, headers: headers).response { response in
+//            switch response.result {
+//            case .success(let data):
+//                let text = String(data: data!, encoding: .ascii)!
+//                let page = try! SwiftSoup.parse(text)
+//
+//                guard !self.noScriptCheck(with: page) else {
+//                    completion(.failure(OGError(message: "Resource check failed", detailed: "Not logged in")))
+//                    return
+//                }
+//
+//                let item = try! page.select("[datetime]").attr("datetime")
+//                var isoTime = item.components(separatedBy: "\"")[1]
+//                isoTime.removeLast()
+//
+//                let timeComponents = DateComponents.durationFrom8601String(isoTime)
+//                completion(.success(timeComponents!))
+//
+//            case .failure(let error):
+//                completion(.failure(OGError(message: "Building time parse error", detailed: "\(error)")))
+//            }
+//        }
+//    }
+    
+    func getBuildingTimeOffline(building: BuildingData) -> String {
+        let resources = building.metal + building.crystal
+        let robotics = 1 + self.roboticsFactoryLevel!
+        let nanites = NSDecimalNumber(decimal: pow(2, self.naniteFactoryLevel!))
+        let speed = self.getServerInfo().speed.universe
+        
+        var time = 0
+        if building.level < 5 {
+            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * Double(2) / Double(7 - building.level) * 3600)
+        } else {
+            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * 3600)
         }
+        
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.day, .hour, .minute, .second]
+        return formatter.string(from: TimeInterval(time)) ?? "nil"
+    }
+    
+    
+    func getBuildingTimeOfflineAwait(building: BuildingData) -> String {
+        let resources = building.metal + building.crystal
+        let robotics = 1 + self.roboticsFactoryLevel!
+        let nanites = NSDecimalNumber(decimal: pow(2, self.naniteFactoryLevel!))
+        let speed = self.getServerInfo().speed.universe
+        
+        var time = 0
+        if building.level < 5 {
+            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * Double(2) / Double(7 - building.level) * 3600)
+        } else {
+            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * 3600)
+        }
+
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.day, .hour, .minute, .second]
+        return formatter.string(from: TimeInterval(time)) ?? "nil"
     }
     
 

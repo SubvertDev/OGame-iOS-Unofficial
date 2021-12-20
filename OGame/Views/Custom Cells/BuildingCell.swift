@@ -40,7 +40,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET SUPPLY
-    func setSupply(id: Int, resourceBuildings: BuildingsData) {
+    func setSupply(id: Int, resourceBuildings: BuildingsData, buildingTime: String) {
         let supply = resourceBuildings[id]
 
         typeOfBuilding = (supply.buildingsID, 1, "supplies")
@@ -50,7 +50,7 @@ class BuildingCell: UITableViewCell {
         crystalRequiredLabel.text = "Crystal: \(supply.crystal)"
         deuteriumRequiredLabel.text = "Deuterium: \(supply.deuterium)"
         levelLabel.text = "\(supply.level)"
-        timeToBuildLabel.text = ""
+        timeToBuildLabel.text = "\(buildingTime)"
         // TODO: Hide 0 resources labels
 
         switch supply.condition {

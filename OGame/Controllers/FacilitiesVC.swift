@@ -67,20 +67,14 @@ class FacilitiesVC: UIViewController {
         tableView.isUserInteractionEnabled = false
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
-        OGame.shared.facilities() { result in
-            switch result {
-            case .success(let facilities):
-                self.facilityCell = FacilityCell(with: facilities)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.refreshControl.endRefreshing()
-                    self.tableView.isUserInteractionEnabled = true
-                    self.tableView.alpha = 1
-                    self.activityIndicator.stopAnimating()
-                }
-            case .failure(let error):
-                self.logoutAndShowError(error)
-            }
+        Task {
+            let facilities = try await OGame.shared.facilities()
+            self.facilityCell = FacilityCell(with: facilities)
+            self.tableView.reloadData()
+            self.refreshControl.endRefreshing()
+            self.tableView.isUserInteractionEnabled = true
+            self.tableView.alpha = 1
+            self.activityIndicator.stopAnimating()
         }
     }
 
