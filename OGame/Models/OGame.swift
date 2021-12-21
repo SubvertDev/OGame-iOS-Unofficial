@@ -55,17 +55,17 @@ class OGame {
     
 
     // MARK: - LOGIN FUNCTIONS -
-    func loginIntoAccount(username: String, password: String, completion: @escaping (Result<Bool, OGError>) -> Void) {
+    func loginIntoAccount(username: String, password: String) async throws {
         OGame.shared.reset()
-
+        
         self.username = username
         self.password = password
-        self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1"]
-
-        login(attempt: attempt)
-
+        self.userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1"]
+        
+        try await login(attempt: attempt)
+        
         // MARK: - Login
-        func login(attempt: Int) {
+        func login(attempt: Int) async throws {
             let parameters = LoginData(identity: self.username,
                                        password: self.password,
                                        locale: "en_EN",
@@ -74,113 +74,102 @@ class OGame {
                                        gameEnvironmentId: "0a31d605-ffaf-43e7-aa02-d06df7116fc8",
                                        autoGameAccountCreation: false)
 
-            sessionAF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).responseDecodable(of: Login.self) { response in
+            let response = await sessionAF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).serializingDecodable(Login.self).response
+            
+            guard response.response != nil
+            else { throw OGError(message: "Network response error", detailed: "Try again later") }
+            
+            let statusCode = response.response!.statusCode
 
-                guard response.response != nil else {
-                    completion(.failure(OGError(message: "Network response error", detailed: "Try again")))
-                    return
+            switch response.result {
+            case .success(_):
+                self.token = response.value!.token
+                self.attempt = 0
+                try await configureServers()
+                
+            case .failure(let error):
+                if statusCode == 409 && attempt < 10 {
+                    let captchaToken = response.response?.headers["gf-challenge-id"]
+                    let token = captchaToken!.replacingOccurrences(of: ";https://challenge.gameforge.com", with: "")
+                    try await solveCaptcha(challenge: token)
+                } else if attempt > 10 {
+                    guard statusCode != 409 else {
+                        throw OGError(message: "Captcha error", detailed: "Couldn't resolve captcha, try to solve it in browser and try again. (\(error.localizedDescription)")
+                    }
+                } else {
+                    guard statusCode == 201 else {
+                        throw OGError(message: "Login error", detailed: "Check your login data and try again. (\(error.localizedDescription)")
+                        // Also called when can't captcha in
+                    }
+                }
+            }
+        }
+        
+        // MARK: - Solve Captcha
+        func solveCaptcha(challenge: String) async throws {
+            do {
+                let getHeaders: HTTPHeaders = ["Cookie": "", "Connection": "close"]
+                let _ = try await sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", headers: getHeaders).serializingData().value
+            } catch {
+                throw OGError(message: "Captcha network request error", detailed: error.localizedDescription)
+            }
+            
+            do {
+                let postHeaders: HTTPHeaders = ["Content-type": "application/json"]
+                let parameters = ["answer": 3]
+                let _ = try await sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default, headers: postHeaders).serializingData().value
+            } catch {
+                throw OGError(message: "Captcha network post error", detailed: error.localizedDescription)
+            }
+            
+            do {
+                attempt += 1
+                try await login(attempt: attempt)
+            } catch {
+                throw OGError(message: "Captcha login retry error", detailed: error.localizedDescription)
+            }
+        }
+        
+        // MARK: - Configure Servers List
+        func configureServers() async throws {
+            do {
+                let response = try await sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").serializingDecodable([Servers].self).value
+                serversList = response
+                try await configureAccounts()
+            } catch {
+                throw OGError(message: "Server list network request error", detailed: error.localizedDescription)
+            }
+        }
+        
+        // MARK: - Configure Accounts
+        func configureAccounts() async throws {
+            do {
+                let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
+                let accounts = try await sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).serializingDecodable([Account].self).value
+                
+                for account in accounts {
+                    for server in serversList! {
+                        if account.server.number == server.number && account.server.language == server.language {
+                            serversOnAccount.append(
+                                MyServers(serverName: server.name,
+                                          accountName: account.name,
+                                          number: server.number,
+                                          language: server.language,
+                                          serverID: account.id))
+                        }
+                    }
                 }
                 
-                let statusCode = response.response!.statusCode
-
-                switch response.result {
-                case .success(_):
-                    self.token = response.value!.token
-                    self.attempt = 0
-                    configureServers()
-
-                case .failure(let error):
-                    if statusCode == 409 && attempt < 10 {
-                        let captchaToken = response.response?.headers["gf-challenge-id"]
-                        let token = captchaToken!.replacingOccurrences(of: ";https://challenge.gameforge.com", with: "")
-                        solveCaptcha(challenge: token)
-                    } else if attempt > 10 {
-                        guard statusCode != 409 else {
-                            completion(.failure(OGError(message: "Captcha error", detailed: "Couldn't resolve captcha, try to solve it in browser and try again. (\(error.localizedDescription)")))
-                            return
-                        }
-                    } else {
-                        guard statusCode == 201 else {
-                            completion(.failure(OGError(message: "Login error", detailed: "Check your login data and try again. (\(error.localizedDescription)")))
-                            // Also called when can't captcha in
-                            return
-                        }
-                    }
+                guard !serversOnAccount.isEmpty else {
+                    throw OGError(message: "No servers error", detailed: "Unable to get any active servers on account, make one and/or try again")
+                    // Add accounts failure check?
                 }
-            }
-        }
-
-        // MARK: - Solve Captcha
-        func solveCaptcha(challenge: String) {
-            let getHeaders: HTTPHeaders = ["Cookie": "", "Connection": "close"]
-
-            sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", headers: getHeaders).response { response in
-                switch response.result {
-                case .success(_):
-                    let postHeaders: HTTPHeaders = ["Content-type": "application/json"]
-                    let parameters = ["answer": 3]
-                    self.sessionAF.request("https://image-drop-challenge.gameforge.com/challenge/\(challenge)/en-GB", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default, headers: postHeaders).response { response in
-                        switch response.result {
-                        case .success(_):
-                            self.attempt += 1
-                            login(attempt: self.attempt)
-
-                        case .failure(let error):
-                            completion(.failure(OGError(message: "Captcha network post error", detailed: (error.localizedDescription))))
-                        }
-                    }
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Captcha network request error", detailed: error.localizedDescription)))
-                }
-            }
-        }
-
-        // MARK: - Configure Servers List
-        func configureServers() {
-            sessionAF.request("https://lobby.ogame.gameforge.com/api/servers").validate().responseDecodable(of: [Servers].self) { response in
-                switch response.result {
-                case .success(let servers):
-                    self.serversList = servers
-                    configureAccounts()
-
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Server list network request error", detailed: error.localizedDescription)))
-                }
-            }
-        }
-
-        // MARK: - Configure Accounts
-        func configureAccounts() {
-            let headers: HTTPHeaders = ["authorization": "Bearer \(token!)"]
-
-            sessionAF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).validate().responseDecodable(of: [Account].self) { response in
-                switch response.result {
-                case .success(let accounts):
-                    for account in accounts {
-                        for server in self.serversList! {
-                            if account.server.number == server.number && account.server.language == server.language {
-                                self.serversOnAccount.append(
-                                    MyServers(serverName: server.name,
-                                              accountName: account.name,
-                                              number: server.number,
-                                              language: server.language,
-                                              serverID: account.id))
-                            }
-                        }
-                    }
-                    guard !self.serversOnAccount.isEmpty else {
-                        completion(.failure(OGError(message: "No servers error", detailed: "Unable to get any active servers on account, make one and/or try again")))
-                        return
-                    }
-                    // TODO: Add accounts failure check?
-                    completion(.success(true))
-
-                case .failure(let error):
-                    completion(.failure(OGError(message: "Configuration error", detailed: error.localizedDescription)))
-                }
+            } catch {
+                throw OGError(message: "Account configuration error", detailed: error.localizedDescription)
             }
         }
     }
+
 
     // MARK: - Login Into Server
     func loginIntoSever(with serverInfo: MyServers) async throws {
@@ -189,13 +178,13 @@ class OGame {
         serverNumber = serverInfo.number
         universe = serverInfo.serverName
 
-        try await configureIndex()
-        try await configureIndex2()
-        try await configureIndex3()
-        try await configurePlayer()
+        try await configureIndexPage()
+        try await configureLandingPage()
+        try await configureIngamePage()
+        try await configurePlayerData()
 
         // MARK: - Configure Index
-        func configureIndex() async throws {
+        func configureIndexPage() async throws {
             indexPHP = "https://s\(serverNumber!)-\(language!).ogame.gameforge.com/game/index.php?"
             let link = "https://lobby.ogame.gameforge.com/api/users/me/loginLink?"
             let parameters: Parameters = [
@@ -214,7 +203,7 @@ class OGame {
             }
         }
 
-        func configureIndex2() async throws {
+        func configureLandingPage() async throws {
             do {
                 let response = try await sessionAF.request(loginLink!).serializingData().value
                 self.landingPage = String(data: response, encoding: .ascii)
@@ -223,7 +212,7 @@ class OGame {
             }
         }
 
-        func configureIndex3() async throws {
+        func configureIngamePage() async throws {
             do {
                 let link = "\(indexPHP!)&page=ingame"
                 let response = try await sessionAF.request(link).serializingData().value
@@ -234,7 +223,7 @@ class OGame {
         }
 
         // MARK: - Configure Player
-        func configurePlayer() async throws {
+        func configurePlayerData() async throws {
             do {
                 doc = try SwiftSoup.parse(self.landingPage!)
                 let planetName = try doc!.select("[name=ogame-planet-name]")

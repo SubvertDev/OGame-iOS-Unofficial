@@ -67,29 +67,28 @@ class LoginVC: UIViewController {
 
         loginButton.isHidden = true
         activityIndicator.startAnimating()
+        
+        Task {
+            do {
+                try await OGame.shared.loginIntoAccount(username: username, password: password)
+                loginButton.isHidden = false
+                activityIndicator.stopAnimating()
 
-        OGame.shared.loginIntoAccount(username: username, password: password) { result in
-            switch result {
-            case .success(_):
-                self.loginButton.isHidden = false
-                self.activityIndicator.stopAnimating()
-
-                if self.saveSwitch.isOn {
-                    self.defaults.set(username, forKey: "username")
-                    self.defaults.set(password, forKey: "password")
+                if saveSwitch.isOn {
+                    defaults.set(username, forKey: "username")
+                    defaults.set(password, forKey: "password")
                 }
 
-                self.performSegue(withIdentifier: "ShowServerListVC", sender: self)
-
-            case .failure(let error):
-                self.loginButton.isEnabled = true
-                let alert = UIAlertController(title: error.message, message: error.detailed, preferredStyle: .alert)
+                performSegue(withIdentifier: "ShowServerListVC", sender: self)
+                
+            } catch {
+                activityIndicator.stopAnimating()
+                loginButton.isHidden = false
+                
+                let alert = UIAlertController(title: (error as! OGError).message, message: (error as! OGError).detailed, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+                present(alert, animated: true)
             }
-
-            self.loginButton.isHidden = false
-            self.activityIndicator.stopAnimating()
         }
     }
 
