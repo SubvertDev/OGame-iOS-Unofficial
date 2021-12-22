@@ -13,7 +13,7 @@ class DefenceVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
-    var defencesCell: DefenceCell?
+    var buildingsDataModel: [BuildingWithAmount]?
 
     
     override func viewDidLoad() {
@@ -67,19 +67,18 @@ class DefenceVC: UIViewController {
         activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
-        OGame.shared.defences() { result in
-            switch result {
-            case .success(let defences):
-                self.defencesCell = DefenceCell(with: defences)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.refreshControl.endRefreshing()
-                    self.tableView.isUserInteractionEnabled = true
-                    self.tableView.alpha = 1
-                    self.activityIndicator.stopAnimating()
-                }
-            case .failure(let error):
-                self.logoutAndShowError(error)
+        Task {
+            do {
+                let defenceBuildings = try await OGame.shared.defences()
+                self.buildingsDataModel = defenceBuildings
+                
+                self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
+                self.tableView.isUserInteractionEnabled = true
+                self.tableView.alpha = 1
+                self.activityIndicator.stopAnimating()
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }
@@ -91,13 +90,12 @@ extension DefenceVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let defencesCell = self.defencesCell else { return UITableViewCell() }
+        guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        let time = OGame.shared.getBuildingTimeOffline(buildingWithAmount: defencesCell.defenceTechnologies[indexPath.row])
-        cell.setDefence(id: indexPath.row, defenceTechnologies: defencesCell.defenceTechnologies, buildingTime: time)
+        cell.setShip(building: buildingsDataModel[indexPath.row])
 
         return cell
     }
@@ -109,7 +107,7 @@ extension DefenceVC: UITableViewDelegate, UITableViewDataSource {
 
 extension DefenceVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
-        let buildingInfo = defencesCell!.defenceTechnologies[sender.tag]
+        let buildingInfo = buildingsDataModel![sender.tag]
 
         let alertAmount = UIAlertController(title: "\(buildingInfo.name)", message: "Enter an amount for construction", preferredStyle: .alert)
         alertAmount.addTextField { textField in

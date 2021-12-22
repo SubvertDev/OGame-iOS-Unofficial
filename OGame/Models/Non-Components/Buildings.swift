@@ -5,7 +5,35 @@
 //  Created by Subvert on 22.05.2021.
 //
 
-import Foundation
+import UIKit
+
+struct BuildingWithLevel {
+    let name: String
+    let metal: Int
+    let crystal: Int
+    let deuterium: Int
+    let image: (available: UIImage?,
+                unavailable: UIImage?,
+                disabled: UIImage?)
+    let buildingsID: Int
+    let level: Int
+    let condition: String
+    let timeToBuild: String
+}
+
+struct BuildingWithAmount {
+    let name: String
+    let metal: Int
+    let crystal: Int
+    let deuterium: Int
+    let image: (available: UIImage?,
+                unavailable: UIImage?,
+                disabled: UIImage?)
+    let buildingsID: Int
+    let amount: Int
+    let condition: String
+    let timeToBuild: String
+}
 
 struct Buildings {
     let metalMine = (1, 1, "supplies")

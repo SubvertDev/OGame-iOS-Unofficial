@@ -13,8 +13,7 @@ class FacilitiesVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
-    var facilityCell: FacilityCell?
-
+    var buildingsDataModel: [BuildingWithLevel]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,7 +67,8 @@ class FacilitiesVC: UIViewController {
         
         Task {
             let facilities = try await OGame.shared.facilities()
-            self.facilityCell = FacilityCell(with: facilities)
+            buildingsDataModel = facilities
+            
             self.tableView.reloadData()
             self.refreshControl.endRefreshing()
             self.tableView.isUserInteractionEnabled = true
@@ -84,13 +84,12 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let facilityCell = self.facilityCell else { return UITableViewCell() }
+        guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        let time = OGame.shared.getBuildingTimeOffline(buildingWithLevel: facilityCell.facilityBuildings[indexPath.row])
-        cell.setFacility(id: indexPath.row, facilityBuildings: facilityCell.facilityBuildings, buildingTime: time)
+        cell.setFacility(building: buildingsDataModel[indexPath.row])
 
         return cell
     }
@@ -102,7 +101,7 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
 
 extension FacilitiesVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
-        let buildingInfo = facilityCell!.facilityBuildings[sender.tag]
+        let buildingInfo = buildingsDataModel![sender.tag]
         
         let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.level + 1)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "No", style: .cancel))

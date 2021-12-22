@@ -257,14 +257,9 @@ class OGame {
                         self.celestials = celestials
                     }
                     group.addTask {
-                        let facilities = try await self.facilities()
-                        self.roboticsFactoryLevel = facilities.roboticsFactory.level
-                        self.naniteFactoryLevel = facilities.naniteFactory.level
-                        self.researchLabLevel = facilities.researchLaboratory.level
-                        self.shipyardLevel = facilities.shipyard.level
+                        let _ = try await self.facilities()
                     }
                 }
-                
             } catch {
                 throw OGError(message: "Player configuration error", detailed: error.localizedDescription)
             }
@@ -661,7 +656,7 @@ class OGame {
             case .success(let data):
                 do {
                     let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-                    // TODO: Countdowns are showing "load..." instead of actual time
+                    // Countdowns are showing "load..." instead of actual time
 
                     let noScript = try page.select("noscript").text()
                     guard noScript != "You need to enable JavaScript to run this app." else {
@@ -714,69 +709,116 @@ class OGame {
 
 
     // MARK: - GET SUPPLY
-    func supply(completion: @escaping (Result<Supplies, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
-
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
-                    var levels = [Int]()
-                    for level in levelsParse {
-                        levels.append(Int(try level.text())!)
-                    }
-
-                    let technologyStatusParse = try page.select("li[class*=technology]")
-                    var technologyStatus = [String]()
-                    for status in technologyStatusParse {
-                        technologyStatus.append(try status.attr("data-status"))
-                    }
-                    //print(levels, technologyStatus)
-
-                    guard !levels.isEmpty, !technologyStatus.isEmpty else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Supply login check failed")))
-                        return
-                    }
-
-                    let suppliesObject = Supplies(levels, technologyStatus)
-                    completion(.success(suppliesObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse supplies data", detailed: error.localizedDescription)))
+    func supply() async throws -> [BuildingWithLevel] {
+        do {
+            let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
+            let value = try await sessionAF.request(link).serializingData().value
+            
+            do {
+                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+                
+                let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
+                var levels = [Int]()
+                for level in levelsParse {
+                    levels.append(Int(try level.text())!)
                 }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Supplies network request failed", detailed: error.localizedDescription)))
+                
+                let technologyStatusParse = try page.select("li[class*=technology]")
+                var technologyStatus = [String]()
+                for status in technologyStatusParse {
+                    technologyStatus.append(try status.attr("data-status"))
+                }
+                //print(levels, technologyStatus)
+                
+                guard !levels.isEmpty, !technologyStatus.isEmpty
+                else { throw OGError(message: "Not logged in", detailed: "Supply login check failed") }
+                
+                let suppliesObject = Supplies(levels, technologyStatus)
+                let suppliesCells = ResourceCell(with: suppliesObject)
+                
+                var buildingDataModel: [BuildingWithLevel] = []
+                for building in suppliesCells.resourceBuildings {
+                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
+                    let newBuilding = BuildingWithLevel(name: building.name,
+                                                   metal: building.metal,
+                                                   crystal: building.crystal,
+                                                   deuterium: building.deuterium,
+                                                   image: (available: building.image.available,
+                                                           unavailable: building.image.unavailable,
+                                                           disabled: building.image.disabled),
+                                                   buildingsID: building.buildingsID,
+                                                   level: building.level,
+                                                   condition: building.condition,
+                                                   timeToBuild: buildingTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
+                
+            } catch {
+                throw OGError(message: "Failed to parse supplies data", detailed: error.localizedDescription)
             }
+        } catch {
+            throw OGError(message: "Supplies network request failed", detailed: error.localizedDescription)
         }
     }
 
 
     // MARK: - GET FACILITIES
-    func facilities() async throws -> Facilities {
-        let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
-        let data = try await sessionAF.request(link).serializingData().value
-        let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
-
-        let levelsParse = try page.select("span[class=level]").select("[data-value]")
-        var levels = [Int]()
-        for level in levelsParse {
-            levels.append(Int(try level.text())!)
+    func facilities() async throws -> [BuildingWithLevel] {
+        do {
+            let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
+            let data = try await sessionAF.request(link).serializingData().value
+            
+            do {
+                let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
+                
+                let levelsParse = try page.select("span[class=level]").select("[data-value]")
+                var levels = [Int]()
+                for level in levelsParse {
+                    levels.append(Int(try level.text())!)
+                }
+                
+                let technologyStatusParse = try page.select("li[class*=technology]")
+                var technologyStatus = [String]()
+                for status in technologyStatusParse {
+                    technologyStatus.append(try status.attr("data-status"))
+                }
+                
+                guard !noScriptCheck(with: page)
+                else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
+                
+                let facilitiesObject = Facilities(levels, technologyStatus)
+                let facilitiesCells = FacilityCell(with: facilitiesObject)
+                
+                roboticsFactoryLevel = facilitiesObject.roboticsFactory.level
+                naniteFactoryLevel = facilitiesObject.naniteFactory.level
+                researchLabLevel = facilitiesObject.researchLaboratory.level
+                shipyardLevel = facilitiesObject.shipyard.level
+                
+                var buildingDataModel: [BuildingWithLevel] = []
+                for building in facilitiesCells.facilityBuildings {
+                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
+                    let newBuilding = BuildingWithLevel(name: building.name,
+                                                   metal: building.metal,
+                                                   crystal: building.crystal,
+                                                   deuterium: building.deuterium,
+                                                   image: (available: building.image.available,
+                                                           unavailable: building.image.unavailable,
+                                                           disabled: building.image.disabled),
+                                                   buildingsID: building.buildingsID,
+                                                   level: building.level,
+                                                   condition: building.condition,
+                                                   timeToBuild: buildingTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
+                
+            } catch {
+                throw OGError(message: "Failed to parse facilities data", detailed: error.localizedDescription)
+            }
+        } catch {
+            throw OGError(message: "Facilities network request failed", detailed: error.localizedDescription)
         }
-
-        let technologyStatusParse = try page.select("li[class*=technology]")
-        var technologyStatus = [String]()
-        for status in technologyStatusParse {
-            technologyStatus.append(try status.attr("data-status"))
-        }
-
-        guard !noScriptCheck(with: page)
-        else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
-
-        let facilitiesObject = Facilities(levels, technologyStatus)
-        return facilitiesObject
     }
 
 
@@ -785,121 +827,165 @@ class OGame {
 
 
     // MARK: - GET RESEARCH
-    func research(completion: @escaping (Result<Researches, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=research&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
+    func research() async throws -> [BuildingWithLevel] {
+        do {
+            let link = "\(self.indexPHP!)page=ingame&component=research&cp=\(planetID!)"
+            let value = try await sessionAF.request(link).serializingData().value
+            
+            do {
+                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
 
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let levelsParse = try page.select("span[class=level]").select("[data-value]")
-                    var levels = [Int]()
-                    for level in levelsParse {
-                        levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
-                    }
-
-                    let technologyStatusParse = try page.select("li[class*=technology]")
-                    var technologyStatus = [String]()
-                    for status in technologyStatusParse {
-                        technologyStatus.append(try status.attr("data-status"))
-                    }
-
-                    guard !levels.isEmpty && !technologyStatus.isEmpty else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Research login check failed")))
-                        return
-                    }
-
-                    let researchesObject = Researches(levels, technologyStatus)
-                    completion(.success(researchesObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse research data", detailed: error.localizedDescription)))
+                let levelsParse = try page.select("span[class=level]").select("[data-value]")
+                var levels = [Int]()
+                for level in levelsParse {
+                    levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
                 }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Research network request failed", detailed: error.localizedDescription)))
+
+                let technologyStatusParse = try page.select("li[class*=technology]")
+                var technologyStatus = [String]()
+                for status in technologyStatusParse {
+                    technologyStatus.append(try status.attr("data-status"))
+                }
+
+                guard !levels.isEmpty && !technologyStatus.isEmpty
+                else { throw OGError(message: "Not logged in", detailed: "Research login check failed") }
+
+                let researchesObject = Researches(levels, technologyStatus)
+                let researchesCells = ResearchCell(with: researchesObject)
+                
+                var buildingDataModel: [BuildingWithLevel] = []
+                for building in researchesCells.researchTechnologies {
+                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
+                    let newBuilding = BuildingWithLevel(name: building.name,
+                                                   metal: building.metal,
+                                                   crystal: building.crystal,
+                                                   deuterium: building.deuterium,
+                                                   image: (available: building.image.available,
+                                                           unavailable: building.image.unavailable,
+                                                           disabled: building.image.disabled),
+                                                   buildingsID: building.buildingsID,
+                                                   level: building.level,
+                                                   condition: building.condition,
+                                                   timeToBuild: buildingTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
+                
+            } catch {
+                throw OGError(message: "Failed to parse research data", detailed: error.localizedDescription)
             }
+        } catch {
+            throw OGError(message: "Research network request failed", detailed: error.localizedDescription)
         }
     }
 
 
     // MARK: - GET SHIPS
-    func ships(completion: @escaping (Result<Ships, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
+    func ships() async throws -> [BuildingWithAmount] {
+        do {
+            let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
+            let value = try await sessionAF.request(link).serializingData().value
+                
+            do {
+                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
 
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
-                    var ships = [Int]()
-                    for ship in shipsParse {
-                        ships.append(Int(try ship.text())!)
-                    }
-
-                    let technologyStatusParse = try page.select("li[class*=technology]")
-                    var technologyStatus = [String]()
-                    for status in technologyStatusParse {
-                        technologyStatus.append(try status.attr("data-status"))
-                    }
-
-                    guard !ships.isEmpty else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Ships login check failed")))
-                        return
-                    }
-
-                    let shipsObject = Ships(ships, technologyStatus)
-                    completion(.success(shipsObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse ships data", detailed: error.localizedDescription)))
+                let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+                var ships = [Int]()
+                for ship in shipsParse {
+                    ships.append(Int(try ship.text())!)
                 }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Ships network request failed", detailed: error.localizedDescription)))
+
+                let technologyStatusParse = try page.select("li[class*=technology]")
+                var technologyStatus = [String]()
+                for status in technologyStatusParse {
+                    technologyStatus.append(try status.attr("data-status"))
+                }
+
+                guard !ships.isEmpty else {
+                    throw OGError(message: "Not logged in", detailed: "Ships login check failed")
+                }
+
+                let shipsObject = Ships(ships, technologyStatus)
+                let shipsCells = ShipsCell(with: shipsObject)
+                
+                var buildingDataModel: [BuildingWithAmount] = []
+                for building in shipsCells.shipsTechnologies {
+                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithAmount: building)
+                    let newBuilding = BuildingWithAmount(name: building.name,
+                                                   metal: building.metal,
+                                                   crystal: building.crystal,
+                                                   deuterium: building.deuterium,
+                                                   image: (available: building.image.available,
+                                                           unavailable: building.image.unavailable,
+                                                           disabled: building.image.disabled),
+                                                   buildingsID: building.buildingsID,
+                                                   amount: building.amount,
+                                                   condition: building.condition,
+                                                   timeToBuild: buildingTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
+                
+            } catch {
+                throw OGError(message: "Failed to parse ships data", detailed: error.localizedDescription)
             }
+        } catch {
+            throw OGError(message: "Ships network request failed", detailed: error.localizedDescription)
         }
     }
 
 
     // MARK: - GET DEFENCES
-    func defences(completion: @escaping (Result<Defences, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
-        sessionAF.request(link).validate().response  { response in
+    func defences() async throws -> [BuildingWithAmount] {
+        do {
+            let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
+            let value = try await sessionAF.request(link).serializingData().value
+                
+            do {
+                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
 
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let defencesParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
-                    var defences = [Int]()
-                    for defence in defencesParse {
-                        defences.append(Int(try defence.text())!)
-                    }
-
-                    let technologyStatusParse = try page.select("li[class*=technology]")
-                    var technologyStatus = [String]()
-                    for status in technologyStatusParse {
-                        technologyStatus.append(try status.attr("data-status"))
-                    }
-
-                    guard !defences.isEmpty else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Defences login check failed")))
-                        return
-                    }
-
-                    let defencesObject = Defences(defences, technologyStatus)
-                    completion(.success(defencesObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse defences data", detailed: error.localizedDescription)))
+                let defencesParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+                var defences = [Int]()
+                for defence in defencesParse {
+                    defences.append(Int(try defence.text())!)
                 }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Defences network request failed", detailed: error.localizedDescription)))
+
+                let technologyStatusParse = try page.select("li[class*=technology]")
+                var technologyStatus = [String]()
+                for status in technologyStatusParse {
+                    technologyStatus.append(try status.attr("data-status"))
+                }
+
+                guard !defences.isEmpty else {
+                    throw OGError(message: "Not logged in", detailed: "Defences login check failed")
+                }
+
+                let defencesObject = Defences(defences, technologyStatus)
+                let defencesCells = DefenceCell(with: defencesObject)
+                
+                var buildingDataModel: [BuildingWithAmount] = []
+                for building in defencesCells.defenceTechnologies {
+                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithAmount: building)
+                    let newBuilding = BuildingWithAmount(name: building.name,
+                                                   metal: building.metal,
+                                                   crystal: building.crystal,
+                                                   deuterium: building.deuterium,
+                                                   image: (available: building.image.available,
+                                                           unavailable: building.image.unavailable,
+                                                           disabled: building.image.disabled),
+                                                   buildingsID: building.buildingsID,
+                                                   amount: building.amount,
+                                                   condition: building.condition,
+                                                   timeToBuild: buildingTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
+                
+            } catch {
+                throw OGError(message: "Failed to parse defences data", detailed: error.localizedDescription)
             }
+        } catch {
+            throw OGError(message: "Defences network request failed", detailed: error.localizedDescription)
         }
     }
 

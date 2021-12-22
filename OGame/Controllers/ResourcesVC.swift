@@ -13,7 +13,7 @@ class ResourcesVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
-    var resourceCell: ResourceCell?
+    var buildingsDataModel: [BuildingWithLevel]?
 
     
     override func viewDidLoad() {
@@ -65,20 +65,19 @@ class ResourcesVC: UIViewController {
         tableView.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-        
-        OGame.shared.supply() { result in
-            switch result {
-            case .success(let supplies):
-                self.resourceCell = ResourceCell(with: supplies)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.refreshControl.endRefreshing()
-                    self.tableView.isUserInteractionEnabled = true
-                    self.tableView.alpha = 1
-                    self.activityIndicator.stopAnimating()
-                }
-            case .failure(let error):
-                self.logoutAndShowError(error)
+
+        Task {
+            do {
+                let supplyBuildings = try await OGame.shared.supply()
+                self.buildingsDataModel = supplyBuildings
+                
+                self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
+                self.tableView.isUserInteractionEnabled = true
+                self.tableView.alpha = 1
+                self.activityIndicator.stopAnimating()
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }
@@ -90,13 +89,12 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let resourceCell = self.resourceCell else { return UITableViewCell() }
+        guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        let time = OGame.shared.getBuildingTimeOffline(buildingWithLevel: resourceCell.resourceBuildings[indexPath.row])
-        cell.setSupply(id: indexPath.row, resourceBuildings: resourceCell.resourceBuildings, buildingTime: time)
+        cell.setSupply(building: buildingsDataModel[indexPath.row])
 
         return cell
     }
@@ -108,7 +106,7 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
 
 extension ResourcesVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
-        let buildingInfo = resourceCell!.resourceBuildings[sender.tag]
+        let buildingInfo = buildingsDataModel![sender.tag]
         
         let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.level + 1)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "No", style: .default))

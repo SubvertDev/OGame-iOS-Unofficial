@@ -215,7 +215,7 @@
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EwQ-6j-jGb">
                                                                 <rect key="frame" x="40" y="0.0" width="34.333333333333343" height="133"/>
                                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                                <state key="normal" image="arrow.backward.square.fill" catalog="system">
+                                                                <state key="normal" image="arrow.left.square.fill" catalog="system">
                                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="30"/>
                                                                 </state>
                                                                 <connections>
@@ -253,7 +253,7 @@
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <state key="normal">
-                                                                    <imageReference key="image" image="arrow.forward.square.fill" catalog="system" symbolScale="default"/>
+                                                                    <imageReference key="image" image="arrow.right.square.fill" catalog="system" symbolScale="default"/>
                                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="31"/>
                                                                 </state>
                                                                 <connections>
@@ -712,10 +712,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="arrow.backward.square.fill" catalog="system" width="128" height="114"/>
-        <image name="arrow.forward.square.fill" catalog="system" width="128" height="114"/>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
+        <image name="arrow.left.square.fill" catalog="system" width="128" height="114"/>
         <image name="arrow.right" catalog="system" width="128" height="98"/>
+        <image name="arrow.right.square.fill" catalog="system" width="128" height="114"/>
         <image name="login_backrgound" width="1080" height="1920"/>
         <image name="ogame_background" width="1344" height="956"/>
         <image name="ogame_logo" width="150" height="50"/>

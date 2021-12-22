@@ -13,7 +13,7 @@ class ShipyardVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
-    var shipsCell: ShipsCell?
+    var buildingsDataModel: [BuildingWithAmount]?
 
     
     override func viewDidLoad() {
@@ -67,19 +67,18 @@ class ShipyardVC: UIViewController {
         activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
-        OGame.shared.ships() { result in
-            switch result {
-            case .success(let ships):
-                self.shipsCell = ShipsCell(with: ships)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.refreshControl.endRefreshing()
-                    self.tableView.isUserInteractionEnabled = true
-                    self.tableView.alpha = 1
-                    self.activityIndicator.stopAnimating()
-                }
-            case .failure(let error):
-                self.logoutAndShowError(error)
+        Task {
+            do {
+                let shipsBuildings = try await OGame.shared.ships()
+                self.buildingsDataModel = shipsBuildings
+                
+                self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
+                self.tableView.isUserInteractionEnabled = true
+                self.tableView.alpha = 1
+                self.activityIndicator.stopAnimating()
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }
@@ -91,14 +90,13 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let shipsCell = self.shipsCell else { return UITableViewCell() }
+        guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        let time = OGame.shared.getBuildingTimeOffline(buildingWithAmount: shipsCell.shipsTechnologies[indexPath.row])
-        cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies, buildingTime: time)
-
+        cell.setShip(building: buildingsDataModel[indexPath.row])
+        
         return cell
     }
 
@@ -109,7 +107,7 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource {
 
 extension ShipyardVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
-        let buildingInfo = shipsCell!.shipsTechnologies[sender.tag]
+        let buildingInfo = buildingsDataModel![sender.tag]
 
         let alertAmount = UIAlertController(title: "\(buildingInfo.name)", message: "Enter an amount for construction", preferredStyle: .alert)
         alertAmount.addTextField { textField in

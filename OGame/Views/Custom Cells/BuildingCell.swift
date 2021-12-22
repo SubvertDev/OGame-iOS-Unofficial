@@ -40,113 +40,103 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET SUPPLY
-    func setSupply(id: Int, resourceBuildings: BuildingsData, buildingTime: String) {
-        let supply = resourceBuildings[id]
-
-        typeOfBuilding = (supply.buildingsID, 1, "supplies")
+    func setSupply(building: BuildingWithLevel) {
+        typeOfBuilding = (building.buildingsID, 1, "supplies")
         buildButton.isEnabled = false
-        buildingNameLabel.text = supply.name
-        metalRequiredLabel.text = "Metal: \(supply.metal)"
-        crystalRequiredLabel.text = "Crystal: \(supply.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(supply.deuterium)"
-        levelLabel.text = "\(supply.level)"
-        timeToBuildLabel.text = "\(buildingTime)"
-        // TODO: Hide 0 resources labels
+        buildingNameLabel.text = building.name
+        metalRequiredLabel.text = "Metal: \(building.metal)"
+        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+        levelLabel.text = "\(building.level)"
+        timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch supply.condition {
+        switch building.condition {
         case "on":
-            buildingImage.image = supply.image.available
+            buildingImage.image = building.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
-            levelLabel.text = "\(supply.level) -> \(supply.level + 1)"
+            levelLabel.text = "\(building.level) -> \(building.level + 1)"
             buildButton.isEnabled = OGame.shared.commander!
         case "disabled":
-            buildingImage.image = supply.image.unavailable
+            buildingImage.image = building.image.unavailable
         case "off":
-            buildingImage.image = supply.image.disabled
+            buildingImage.image = building.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
 
     // MARK: - SET FACILITY
-    func setFacility(id: Int, facilityBuildings: BuildingsData, buildingTime: String) {
-        let facility = facilityBuildings[id]
-
-        typeOfBuilding = (facility.buildingsID, 1, "supplies")
+    func setFacility(building: BuildingWithLevel) {
+        typeOfBuilding = (building.buildingsID, 1, "facilities")
         buildButton.isEnabled = false
-        buildingNameLabel.text = facility.name
-        metalRequiredLabel.text = "Metal: \(facility.metal)"
-        crystalRequiredLabel.text = "Crystal: \(facility.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(facility.deuterium)"
-        levelLabel.text = "\(facility.level)"
-        timeToBuildLabel.text = "\(buildingTime)"
-        // TODO: Hide 0 resources labels
+        buildingNameLabel.text = building.name
+        metalRequiredLabel.text = "Metal: \(building.metal)"
+        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+        levelLabel.text = "\(building.level)"
+        timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch facility.condition {
+        switch building.condition {
         case "on":
-            buildingImage.image = facility.image.available
+            buildingImage.image = building.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
-            levelLabel.text = "\(facility.level) -> \(facility.level + 1)"
+            levelLabel.text = "\(building.level) -> \(building.level + 1)"
             buildButton.isEnabled = OGame.shared.commander!
         case "disabled":
-            buildingImage.image = facility.image.unavailable
+            buildingImage.image = building.image.unavailable
         case "off":
-            buildingImage.image = facility.image.disabled
+            buildingImage.image = building.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
 
     // MARK: - SET RESEARCH
-    func setResearch(id: Int, researchTechnologies: BuildingsWithLevelsData, buildingTime: String) {
-        let research = researchTechnologies[id]
-
-        typeOfBuilding = (research.buildingsID, 1, "research")
+    func setResearch(building: BuildingWithLevel) {
+        typeOfBuilding = (building.buildingsID, 1, "research")
         buildButton.isEnabled = false
-        buildingNameLabel.text = research.name
-        metalRequiredLabel.text = "Metal: \(research.metal)"
-        crystalRequiredLabel.text = "Crystal: \(research.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(research.deuterium)"
-        levelLabel.text = "\(research.level)"
-        timeToBuildLabel.text = "\(buildingTime)"
+        buildingNameLabel.text = building.name
+        metalRequiredLabel.text = "Metal: \(building.metal)"
+        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+        levelLabel.text = "\(building.level)"
+        timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch research.condition {
+        switch building.condition {
         case "on":
-            buildingImage.image = research.image.available
+            buildingImage.image = building.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
-            levelLabel.text = "\(research.level) -> \(research.level + 1)"
+            levelLabel.text = "\(building.level) -> \(building.level + 1)"
             buildButton.isEnabled = OGame.shared.commander!
         case "disabled":
-            buildingImage.image = research.image.unavailable
+            buildingImage.image = building.image.unavailable
         case "off":
-            buildingImage.image = research.image.disabled
+            buildingImage.image = building.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
 
     // MARK: - SET SHIP
-    func setShip(id: Int, shipsTechnologies: BuildingsWithAmountsData, buildingTime: String) {
-        let ship = shipsTechnologies[id]
-
-        typeOfBuilding = (ship.buildingsID, 1, "shipyard")
+    func setShip(building: BuildingWithAmount) {
+        typeOfBuilding = (building.buildingsID, 1, "shipyard")
         buildButton.isEnabled = false
-        buildingNameLabel.text = ship.name
-        metalRequiredLabel.text = "Metal: \(ship.metal)"
-        crystalRequiredLabel.text = "Crystal: \(ship.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(ship.deuterium)"
-        levelLabel.text = "\(ship.amount)"
-        timeToBuildLabel.text = "\(buildingTime)"
+        buildingNameLabel.text = building.name
+        metalRequiredLabel.text = "Metal: \(building.metal)"
+        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+        levelLabel.text = "\(building.amount)"
+        timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch ship.condition {
+        switch building.condition {
         case "on":
-            buildingImage.image = ship.image.available
+            buildingImage.image = building.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
@@ -154,31 +144,29 @@ class BuildingCell: UITableViewCell {
             // TODO: Add info about from what amount to what amount building is going
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
-            buildingImage.image = ship.image.unavailable
+            buildingImage.image = building.image.unavailable
             buildButton.isEnabled = OGame.shared.commander!
         case "off":
-            buildingImage.image = ship.image.disabled
+            buildingImage.image = building.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
     }
 
     // MARK: - SET DEFENCE
-    func setDefence(id: Int, defenceTechnologies: BuildingsWithAmountsData, buildingTime: String) {
-        let defence = defenceTechnologies[id]
-
-        typeOfBuilding = (defence.buildingsID, 1, "defenses")
+    func setDefence(building: BuildingWithAmount) {
+        typeOfBuilding = (building.buildingsID, 1, "defenses")
         buildButton.isEnabled = false
-        buildingNameLabel.text = defence.name
-        metalRequiredLabel.text = "Metal: \(defence.metal)"
-        crystalRequiredLabel.text = "Crystal: \(defence.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(defence.deuterium)"
-        levelLabel.text = "\(defence.amount)"
-        timeToBuildLabel.text = "\(buildingTime)"
+        buildingNameLabel.text = building.name
+        metalRequiredLabel.text = "Metal: \(building.metal)"
+        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+        levelLabel.text = "\(building.amount)"
+        timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch defence.condition {
+        switch building.condition {
         case "on":
-            buildingImage.image = defence.image.available
+            buildingImage.image = building.image.available
             buildButton.isEnabled = true
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
@@ -186,10 +174,10 @@ class BuildingCell: UITableViewCell {
             // TODO: Add info about from what amount to what amount building is going
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
-            buildingImage.image = defence.image.unavailable
+            buildingImage.image = building.image.unavailable
             buildButton.isEnabled = OGame.shared.commander!
         case "off":
-            buildingImage.image = defence.image.disabled
+            buildingImage.image = building.image.disabled
         default:
             buildingImage.image = UIImage(systemName: "xmark")
         }
