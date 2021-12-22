@@ -101,7 +101,8 @@ extension DefenceVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setDefence(id: indexPath.row, defenceTechnologies: defencesCell.defenceTechnologies)
+        let time = OGame.shared.getBuildingTimeOffline(buildingWithAmount: defencesCell.defenceTechnologies[indexPath.row])
+        cell.setDefence(id: indexPath.row, defenceTechnologies: defencesCell.defenceTechnologies, buildingTime: time)
 
         return cell
     }

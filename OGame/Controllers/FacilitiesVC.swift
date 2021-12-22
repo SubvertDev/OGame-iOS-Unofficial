@@ -94,7 +94,8 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setFacility(id: indexPath.row, facilityBuildings: facilityCell.facilityBuildings)
+        let time = OGame.shared.getBuildingTimeOffline(buildingWithLevel: facilityCell.facilityBuildings[indexPath.row])
+        cell.setFacility(id: indexPath.row, facilityBuildings: facilityCell.facilityBuildings, buildingTime: time)
 
         return cell
     }

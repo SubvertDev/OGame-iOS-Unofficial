@@ -101,7 +101,8 @@ extension ShipyardVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies)
+        let time = OGame.shared.getBuildingTimeOffline(buildingWithAmount: shipsCell.shipsTechnologies[indexPath.row])
+        cell.setShip(id: indexPath.row, shipsTechnologies: shipsCell.shipsTechnologies, buildingTime: time)
 
         return cell
     }

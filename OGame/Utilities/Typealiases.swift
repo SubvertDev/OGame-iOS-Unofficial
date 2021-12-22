@@ -18,17 +18,6 @@ typealias BuildingsData = [(name: String,
                             level: Int,
                             condition: String)]
 
-typealias BuildingData = (name: String,
-                          metal: Int,
-                          crystal: Int,
-                          deuterium: Int,
-                          image: (available: UIImage?,
-                                  unavailable: UIImage?,
-                                  disabled: UIImage?),
-                          buildingsID: Int,
-                          level: Int,
-                          condition: String)
-
 typealias ResearchesData = [(name: String,
                              metal: Int,
                              crystal: Int,
@@ -39,6 +28,29 @@ typealias ResearchesData = [(name: String,
                              buildingsID: Int,
                              level: Int,
                              condition: String)]
+//
+typealias BuildingWithLevelsData = (name: String,
+                          metal: Int,
+                          crystal: Int,
+                          deuterium: Int,
+                          image: (available: UIImage?,
+                                  unavailable: UIImage?,
+                                  disabled: UIImage?),
+                          buildingsID: Int,
+                          level: Int,
+                          condition: String)
+
+typealias BuildingsWithLevelsData = [(name: String,
+                          metal: Int,
+                          crystal: Int,
+                          deuterium: Int,
+                          image: (available: UIImage?,
+                                  unavailable: UIImage?,
+                                  disabled: UIImage?),
+                          buildingsID: Int,
+                          level: Int,
+                          condition: String)]
+//
 
 typealias ShipsData = [(name: String,
                         metal: Int,
@@ -61,3 +73,27 @@ typealias DefencesData = [(name: String,
                            buildingsID: Int,
                            amount: Int,
                            condition: String)]
+
+//
+typealias BuildingWithAmountsData = (name: String,
+                           metal: Int,
+                           crystal: Int,
+                           deuterium: Int,
+                           image: (available: UIImage?,
+                                   unavailable: UIImage?,
+                                   disabled: UIImage?),
+                           buildingsID: Int,
+                           amount: Int,
+                           condition: String)
+
+typealias BuildingsWithAmountsData = [(name: String,
+                           metal: Int,
+                           crystal: Int,
+                           deuterium: Int,
+                           image: (available: UIImage?,
+                                   unavailable: UIImage?,
+                                   disabled: UIImage?),
+                           buildingsID: Int,
+                           amount: Int,
+                           condition: String)]
+//

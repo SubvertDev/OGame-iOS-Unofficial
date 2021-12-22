@@ -100,7 +100,8 @@ extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setResearch(id: indexPath.row, researchTechnologies: researchCell.researchTechnologies)
+        let time = OGame.shared.getBuildingTimeOffline(buildingWithLevel: researchCell.researchTechnologies[indexPath.row])
+        cell.setResearch(id: indexPath.row, researchTechnologies: researchCell.researchTechnologies, buildingTime: time)
 
         return cell
     }

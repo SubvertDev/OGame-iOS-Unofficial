@@ -30,9 +30,9 @@ class OGame {
     var serversOnAccount: [MyServers] = []
     private var indexPHP: String?
     private var loginLink: String?
+    private var landingPage: String?
 
-    // These gonna change on planet change
-    private var landingPage: String? // Is it?
+    // Changes on planet switch
     private var doc: Document?
     var planet: String?
     private var planetID: Int?
@@ -47,9 +47,11 @@ class OGame {
     var rank: Int?
     var commander: Bool?
     
-    // Necessary for build time check
-    var roboticsFactoryLevel: Int?
-    var naniteFactoryLevel: Int?
+    // Build time check
+    private var roboticsFactoryLevel: Int?
+    private var naniteFactoryLevel: Int?
+    private var researchLabLevel: Int?
+    private var shipyardLevel: Int?
 
     private init() {}
     
@@ -162,7 +164,6 @@ class OGame {
                 
                 guard !serversOnAccount.isEmpty else {
                     throw OGError(message: "No servers error", detailed: "Unable to get any active servers on account, make one and/or try again")
-                    // Add accounts failure check?
                 }
             } catch {
                 throw OGError(message: "Account configuration error", detailed: error.localizedDescription)
@@ -225,7 +226,7 @@ class OGame {
         // MARK: - Configure Player
         func configurePlayerData() async throws {
             do {
-                doc = try SwiftSoup.parse(self.landingPage!)
+                doc = try SwiftSoup.parse(landingPage!)
                 let planetName = try doc!.select("[name=ogame-planet-name]")
                 let planetID = try doc!.select("[name=ogame-planet-id]")
 
@@ -259,6 +260,8 @@ class OGame {
                         let facilities = try await self.facilities()
                         self.roboticsFactoryLevel = facilities.roboticsFactory.level
                         self.naniteFactoryLevel = facilities.naniteFactory.level
+                        self.researchLabLevel = facilities.researchLaboratory.level
+                        self.shipyardLevel = facilities.shipyard.level
                     }
                 }
                 
@@ -461,7 +464,7 @@ class OGame {
     
     
     func getAllCelestialsAwait() async throws -> [Celestial] {
-        let link = "\(self.indexPHP!)page=ingame&component=overview" // FIXME: Fatal error while Logout on server list loading
+        let link = "\(self.indexPHP!)page=ingame&component=overview" // TODO: Fatal error while Logout on server list loading?
         
         let response = try await sessionAF.request(link).serializingData().value
         var celestials: [Celestial] = []
@@ -1208,46 +1211,56 @@ class OGame {
     }
     
     
-//    func getBuildingTimeOnline(type: Int, completion: @escaping (Result<DateComponents, OGError>) -> Void) {
-//        let link = "\(self.indexPHP!)page=ingame&component=technologydetails&ajax=1"
-//        let parameters: Parameters = ["action": "getDetails", "technology": type]
-//        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-//
-//        sessionAF.request(link, method: .get, parameters: parameters, headers: headers).response { response in
-//            switch response.result {
-//            case .success(let data):
-//                let text = String(data: data!, encoding: .ascii)!
-//                let page = try! SwiftSoup.parse(text)
-//
-//                guard !self.noScriptCheck(with: page) else {
-//                    completion(.failure(OGError(message: "Resource check failed", detailed: "Not logged in")))
-//                    return
-//                }
-//
-//                let item = try! page.select("[datetime]").attr("datetime")
-//                var isoTime = item.components(separatedBy: "\"")[1]
-//                isoTime.removeLast()
-//
-//                let timeComponents = DateComponents.durationFrom8601String(isoTime)
-//                completion(.success(timeComponents!))
-//
-//            case .failure(let error):
-//                completion(.failure(OGError(message: "Building time parse error", detailed: "\(error)")))
-//            }
-//        }
-//    }
+    // for test purposes only
+    func getBuildingTimeOnline(type: Int, completion: @escaping (Result<String, OGError>) -> Void) {
+        let link = "\(self.indexPHP!)page=ingame&component=technologydetails&ajax=1"
+        let parameters: Parameters = ["action": "getDetails", "technology": type]
+        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
+
+        sessionAF.request(link, method: .get, parameters: parameters, headers: headers).response { response in
+            switch response.result {
+            case .success(let data):
+                let text = String(data: data!, encoding: .ascii)!
+                let page = try! SwiftSoup.parse(text)
+
+                guard !self.noScriptCheck(with: page) else {
+                    completion(.failure(OGError(message: "Resource check failed", detailed: "Not logged in")))
+                    return
+                }
+
+                let item = try! page.select("[datetime]").attr("datetime")
+                var isoTime = item.components(separatedBy: "\"")[1]
+                isoTime.removeLast()
+
+                let timeComponents = DateComponents.durationFrom8601String(isoTime)
+                
+                let dateFormatter = DateComponentsFormatter()
+                dateFormatter.unitsStyle = .abbreviated
+                dateFormatter.allowedUnits = [.day, .hour, .minute, .second]
+                let result = dateFormatter.string(from: timeComponents!)
+                completion(.success(result ?? "0s"))
+
+            case .failure(let error):
+                completion(.failure(OGError(message: "Building time parse error", detailed: "\(error)")))
+            }
+        }
+    }
     
-    func getBuildingTimeOffline(building: BuildingData) -> String {
-        let resources = building.metal + building.crystal
+    
+    func getBuildingTimeOffline(buildingWithLevel: BuildingWithLevelsData) -> String {
+        let resources = buildingWithLevel.metal + buildingWithLevel.crystal
         let robotics = 1 + self.roboticsFactoryLevel!
+        let research = 1 + self.researchLabLevel!
         let nanites = NSDecimalNumber(decimal: pow(2, self.naniteFactoryLevel!))
-        let speed = self.getServerInfo().speed.universe
+        let speed = getServerInfo().speed.universe
         
         var time = 0
-        if building.level < 5 {
-            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * Double(2) / Double(7 - building.level) * 3600)
+        if buildingWithLevel.level < 5 && !(106...199).contains(buildingWithLevel.buildingsID) {
+            time = Int(round((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * Double(2) / Double(7 - buildingWithLevel.level) * 3600))
+        } else if (106...199).contains(buildingWithLevel.buildingsID) {
+            time = Int(round((Double(resources) / Double((1000 * research * speed))) * 3600))
         } else {
-            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * 3600)
+            time = Int(round((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * 3600))
         }
         
         let formatter = DateComponentsFormatter()
@@ -1256,20 +1269,14 @@ class OGame {
         return formatter.string(from: TimeInterval(time)) ?? "nil"
     }
     
-    
-    func getBuildingTimeOfflineAwait(building: BuildingData) -> String {
-        let resources = building.metal + building.crystal
-        let robotics = 1 + self.roboticsFactoryLevel!
+    func getBuildingTimeOffline(buildingWithAmount: BuildingWithAmountsData) -> String {
+        let resources = buildingWithAmount.metal + buildingWithAmount.crystal
+        let shipyard = 1 + self.shipyardLevel!
         let nanites = NSDecimalNumber(decimal: pow(2, self.naniteFactoryLevel!))
-        let speed = self.getServerInfo().speed.universe
+        let speed = getServerInfo().speed.universe
         
-        var time = 0
-        if building.level < 5 {
-            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * Double(2) / Double(7 - building.level) * 3600)
-        } else {
-            time = Int((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * 3600)
-        }
-
+        let time = Int((Double(resources) / Double((2500 * shipyard * Int(truncating: nanites) * speed))) * 3600)
+        
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .abbreviated
         formatter.allowedUnits = [.day, .hour, .minute, .second]
@@ -1466,6 +1473,30 @@ class OGame {
 
 
     // LOGOUT
+    
+    
+    // GET CELESTIAL QUEUE
+    
+    
+    // GET RESOURCES SETTINGS
+    
+    
+    // GET DEBRIS
+    
+    
+    // OFFICERS
+    
+    
+    // DECONSTRUCT
+    
+    
+    // CANCEL BUILDING / RESEARCH
+    
+    
+    // RENAME PLANET
+    
+    
+    // ABANDON PLANET
 
 
     // MARK: - Reset

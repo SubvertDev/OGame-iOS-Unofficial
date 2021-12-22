@@ -96,7 +96,7 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        let time = OGame.shared.getBuildingTimeOffline(building: resourceCell.resourceBuildings[indexPath.row])
+        let time = OGame.shared.getBuildingTimeOffline(buildingWithLevel: resourceCell.resourceBuildings[indexPath.row])
         cell.setSupply(id: indexPath.row, resourceBuildings: resourceCell.resourceBuildings, buildingTime: time)
 
         return cell

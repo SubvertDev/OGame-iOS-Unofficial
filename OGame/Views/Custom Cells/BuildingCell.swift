@@ -71,7 +71,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET FACILITY
-    func setFacility(id: Int, facilityBuildings: BuildingsData) {
+    func setFacility(id: Int, facilityBuildings: BuildingsData, buildingTime: String) {
         let facility = facilityBuildings[id]
 
         typeOfBuilding = (facility.buildingsID, 1, "supplies")
@@ -81,7 +81,7 @@ class BuildingCell: UITableViewCell {
         crystalRequiredLabel.text = "Crystal: \(facility.crystal)"
         deuteriumRequiredLabel.text = "Deuterium: \(facility.deuterium)"
         levelLabel.text = "\(facility.level)"
-        timeToBuildLabel.text = ""
+        timeToBuildLabel.text = "\(buildingTime)"
         // TODO: Hide 0 resources labels
 
         switch facility.condition {
@@ -102,7 +102,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET RESEARCH
-    func setResearch(id: Int, researchTechnologies: ResearchesData) {
+    func setResearch(id: Int, researchTechnologies: BuildingsWithLevelsData, buildingTime: String) {
         let research = researchTechnologies[id]
 
         typeOfBuilding = (research.buildingsID, 1, "research")
@@ -112,7 +112,7 @@ class BuildingCell: UITableViewCell {
         crystalRequiredLabel.text = "Crystal: \(research.crystal)"
         deuteriumRequiredLabel.text = "Deuterium: \(research.deuterium)"
         levelLabel.text = "\(research.level)"
-        timeToBuildLabel.text = ""
+        timeToBuildLabel.text = "\(buildingTime)"
 
         switch research.condition {
         case "on":
@@ -132,7 +132,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET SHIP
-    func setShip(id: Int, shipsTechnologies: ShipsData) {
+    func setShip(id: Int, shipsTechnologies: BuildingsWithAmountsData, buildingTime: String) {
         let ship = shipsTechnologies[id]
 
         typeOfBuilding = (ship.buildingsID, 1, "shipyard")
@@ -142,7 +142,7 @@ class BuildingCell: UITableViewCell {
         crystalRequiredLabel.text = "Crystal: \(ship.crystal)"
         deuteriumRequiredLabel.text = "Deuterium: \(ship.deuterium)"
         levelLabel.text = "\(ship.amount)"
-        timeToBuildLabel.text = ""
+        timeToBuildLabel.text = "\(buildingTime)"
 
         switch ship.condition {
         case "on":
@@ -164,7 +164,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET DEFENCE
-    func setDefence(id: Int, defenceTechnologies: DefencesData) {
+    func setDefence(id: Int, defenceTechnologies: BuildingsWithAmountsData, buildingTime: String) {
         let defence = defenceTechnologies[id]
 
         typeOfBuilding = (defence.buildingsID, 1, "defenses")
@@ -174,7 +174,7 @@ class BuildingCell: UITableViewCell {
         crystalRequiredLabel.text = "Crystal: \(defence.crystal)"
         deuteriumRequiredLabel.text = "Deuterium: \(defence.deuterium)"
         levelLabel.text = "\(defence.amount)"
-        timeToBuildLabel.text = ""
+        timeToBuildLabel.text = "\(buildingTime)"
 
         switch defence.condition {
         case "on":
