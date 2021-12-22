@@ -48,9 +48,11 @@ class LoginVC: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
-    @IBAction func loginButtonPressed(_ sender: UIButton) {
+    @IBAction func loginButtonTouchDown(_ sender: UIButton) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-
+    }
+    
+    @IBAction func loginButtonPressed(_ sender: UIButton) {
         emailTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
 
