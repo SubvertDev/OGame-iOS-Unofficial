@@ -41,7 +41,7 @@ class MenuVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.hidesBackButton = true
+        navigationItem.hidesBackButton = false
         
         if OGame.shared.celestials!.count == 1 {
             leftButton.isEnabled = false
@@ -110,7 +110,7 @@ class MenuVC: UIViewController {
         
         Task {
             do {
-                let resources = try await OGame.shared.getResourcesAwait()
+                let resources = try await OGame.shared.getResources()
                 self.resources = resources
                 refreshResourcesView(with: resources)
             } catch {

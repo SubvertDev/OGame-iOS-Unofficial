@@ -51,9 +51,10 @@ class GenericVC: UIViewController {
             isFirstLoad = false
         }
         
-        OGame.shared.getResources() { result in
-            switch result {
-            case .success(let resources):
+        Task {
+            do {
+                let resources = try await OGame.shared.getResources()
+                
                 self.resourcesOverview.alpha = 1
                 self.activityIndicator.stopAnimating()
                 
@@ -78,8 +79,8 @@ class GenericVC: UIViewController {
                 }
                 RunLoop.main.add(self.timer!, forMode: .common)
                 
-            case .failure(let error):
-                self.logoutAndShowError(error)
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }

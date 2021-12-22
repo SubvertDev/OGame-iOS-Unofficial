@@ -45,7 +45,7 @@ class DefenceVC: UIViewController {
         tableView.keyboardDismissMode = .onDrag
 
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
 
     func configureActivityIndicator() {
@@ -58,14 +58,13 @@ class DefenceVC: UIViewController {
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
-
-        activityIndicator.startAnimating()
     }
 
     // MARK: - REFRESH DATA ON SHIPYARD VC
-    func refresh() {
+    @objc func refresh() {
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
+        activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         OGame.shared.defences() { result in
@@ -83,10 +82,6 @@ class DefenceVC: UIViewController {
                 self.logoutAndShowError(error)
             }
         }
-    }
-
-    @objc func refreshTableView() {
-        refresh()
     }
 }
 
@@ -137,7 +132,6 @@ extension DefenceVC: BuildingCellDelegate {
                     switch result {
                     case .success(_):
                         self.refresh()
-                        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
 
                     case .failure(let error):
                         self.logoutAndShowError(error)

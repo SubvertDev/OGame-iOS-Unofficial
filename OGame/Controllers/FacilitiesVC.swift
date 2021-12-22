@@ -44,7 +44,7 @@ class FacilitiesVC: UIViewController {
         tableView.rowHeight = 88
 
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
 
     func configureActivityIndicator() {
@@ -57,14 +57,13 @@ class FacilitiesVC: UIViewController {
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
-
-        activityIndicator.startAnimating()
     }
 
     // MARK: - REFRESH DATA ON FACILITIES VC
-    func refresh() {
+    @objc func refresh() {
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
+        activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         Task {
@@ -76,10 +75,6 @@ class FacilitiesVC: UIViewController {
             self.tableView.alpha = 1
             self.activityIndicator.stopAnimating()
         }
-    }
-
-    @objc func refreshTableView() {
-        refresh()
     }
 }
 
@@ -110,9 +105,7 @@ extension FacilitiesVC: BuildingCellDelegate {
         let buildingInfo = facilityCell!.facilityBuildings[sender.tag]
         
         let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.level + 1)", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "No", style: .cancel) { _ in
-            self.refresh()
-        })
+        alert.addAction(UIAlertAction(title: "No", style: .cancel))
         alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
             self.tableView.isUserInteractionEnabled = false
             self.tableView.alpha = 0.5
@@ -122,7 +115,6 @@ extension FacilitiesVC: BuildingCellDelegate {
                 switch result {
                 case .success(_):
                     self.refresh()
-                    NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
 
                 case .failure(let error):
                     self.logoutAndShowError(error)

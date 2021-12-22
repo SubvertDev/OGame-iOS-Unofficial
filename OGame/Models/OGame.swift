@@ -629,44 +629,26 @@ class OGame {
 
     
     // MARK: - GET RESOURCES
-    func getResources(completion: @escaping (Result<Resources, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
-
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let noScript = try page.select("noscript").text()
-                    guard noScript != "You need to enable JavaScript to run this app." else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Resources login check failed")))
-                        return
-                    }
-
-                    let resourceObject = Resources(from: page)
-                    completion(.success(resourceObject))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Resources network request failed", detailed: error.localizedDescription)))
+    func getResources() async throws -> Resources {
+        do {
+            let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
+            let value = try await sessionAF.request(link).serializingData().value
+            
+            do {
+                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+                
+                guard !noScriptCheck(with: page)
+                else { throw OGError(message: "Not logged in", detailed: "Resources view login check failed") }
+                
+                let resourceObject = Resources(from: page)
+                return resourceObject
+                
+            } catch {
+                throw OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)
             }
+        } catch {
+            throw OGError(message: "Resources network request failed", detailed: error.localizedDescription)
         }
-    }
-    
-    func getResourcesAwait() async throws -> Resources {
-        let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
-        let value = try await sessionAF.request(link).serializingData().value
-        
-        let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
-
-        guard !noScriptCheck(with: page)
-        else { throw OGError(message: "Not logged in", detailed: "Resources view login check failed") }
-        
-        let resourceObject = Resources(from: page)
-        return resourceObject
     }
 
 

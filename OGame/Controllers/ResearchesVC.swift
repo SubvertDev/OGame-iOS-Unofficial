@@ -44,7 +44,7 @@ class ResearchVC: UIViewController {
         tableView.rowHeight = 88
 
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
 
     func configureActivityIndicator() {
@@ -57,14 +57,13 @@ class ResearchVC: UIViewController {
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
-
-        activityIndicator.startAnimating()
     }
 
     // MARK: - REFRESH DATA ON RESEARCHES VC
-    func refresh() {
+    @objc func refresh() {
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
+        activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         OGame.shared.research() { result in
@@ -82,10 +81,6 @@ class ResearchVC: UIViewController {
                 self.logoutAndShowError(error)
             }
         }
-    }
-
-    @objc func refreshTableView() {
-        refresh()
     }
 }
 
@@ -116,9 +111,7 @@ extension ResearchVC: BuildingCellDelegate {
         let buildingInfo = researchCell!.researchTechnologies[sender.tag]
 
         let alert = UIAlertController(title: "Research \(buildingInfo.name)?", message: "It will be researched to level \(buildingInfo.level + 1)", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "No", style: .cancel) { _ in
-            self.refresh()
-        })
+        alert.addAction(UIAlertAction(title: "No", style: .cancel))
         alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
             self.tableView.isUserInteractionEnabled = false
             self.tableView.alpha = 0.5
@@ -128,7 +121,6 @@ extension ResearchVC: BuildingCellDelegate {
                 switch result {
                 case .success(_):
                     self.refresh()
-                    NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
 
                 case .failure(let error):
                     self.logoutAndShowError(error)
