@@ -247,12 +247,12 @@ class OGame {
                 
                 await withThrowingTaskGroup(of: Void.self) { group in
                     group.addTask {
-                        let images = try await self.getAllPlanetImagesAwait()
+                        let images = try await self.getAllPlanetImages()
                         self.planetImage = images[0]
                         self.planetImages = images
                     }
                     group.addTask {
-                        let celestials = try await self.getAllCelestialsAwait()
+                        let celestials = try await self.getAllCelestials()
                         self.celestial = celestials[0]
                         self.celestials = celestials
                     }
@@ -288,6 +288,7 @@ class OGame {
             let rank = matches[0]
 
             return Int(rank) ?? -1
+            
         } catch {
             return -1
         }
@@ -305,6 +306,7 @@ class OGame {
                 ids.append(planetID)
             }
             return ids
+            
         } catch {
             return [-1]
         }
@@ -320,6 +322,7 @@ class OGame {
                 planetNames.append(try planet.text())
             }
             return planetNames
+            
         } catch {
             return ["Error"]
         }
@@ -356,6 +359,7 @@ class OGame {
             let donut = Donut(galaxy: galaxy, system: system)
 
             return Server(version: version, speed: speed, donut: donut)
+            
         } catch {
             return Server(version: "-1", speed: Speed(universe: -1, fleet: -1), donut: Donut(galaxy: false, system: false))
         }
@@ -364,9 +368,8 @@ class OGame {
 
     // MARK: - GET CHARACTER CLASS -> String
     func getCharacterClass() -> String {
-        // TODO: test on no class
         if let character = try? doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
-            return character
+            return character // none for no character
         } else {
             return "error"
         }
@@ -388,83 +391,14 @@ class OGame {
     // TODO: Get a moon
     
 
-    // MARK: - GET ALL CELESTIALS (NEW)
-    func getAllCelestials(completion: @escaping (Result<[Celestial], OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=overview" // FIXME: Fatal error while Logout on server list loading
-        
-        sessionAF.request(link).validate().response { response in
-            var celestials: [Celestial] = []
-
-            switch response.result {
-            case .success(let data):
-                do {
-                    let text = String(data: data!, encoding: .ascii)!
-                    let page = try SwiftSoup.parse(text)
-
-                    let noScript = try page.select("noscript").text()
-                    guard noScript != "You need to enable JavaScript to run this app." else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Celestials login check failed")))
-                        return
-                    }
-
-                    let planets = try page.select("[id=planetList]").get(0)
-                    let planetsInfo = try planets.select("[id*=planet-]")
-                    for planet in planetsInfo {
-                        let title = try planet.select("a").get(0).attr("title")
-                        let textArray = title.components(separatedBy: "><")
-
-                        // FIXME: Not tested for moons
-                        var coordinatesString = textArray[0].components(separatedBy: " ")[1].replacingOccurrences(of: "</b", with: "")
-                        coordinatesString.removeFirst()
-                        coordinatesString.removeLast()
-                        var coordinates = coordinatesString.components(separatedBy: ":").compactMap { Int($0) }
-                        coordinates.append(1)
-
-                        var planetSizeString = textArray[1].components(separatedBy: " ")[0]
-                        planetSizeString.removeFirst(4)
-                        planetSizeString.removeLast(2)
-                        let planetSize = Int(planetSizeString.replacingOccurrences(of: ".", with: ""))!
-
-                        var planetFieldsString = textArray[1].components(separatedBy: " ")[1]
-                        planetFieldsString = planetFieldsString.components(separatedBy: ")")[0]
-                        planetFieldsString.removeFirst()
-                        let planetFieldUsed = Int(planetFieldsString.components(separatedBy: "/")[0])!
-                        let planetFieldTotal = Int(planetFieldsString.components(separatedBy: "/")[1])!
-
-                        var planetMinTemperatureString = textArray[1].components(separatedBy: " ")[1]
-                        planetMinTemperatureString = planetMinTemperatureString.components(separatedBy: "<br>")[1]
-                        let planetMinTemperature = Int(planetMinTemperatureString.components(separatedBy: "Â")[0])!
-                        let planetMaxTemperatureString = textArray[1].components(separatedBy: " ")[3]
-                        let planetMaxTemperature = Int(planetMaxTemperatureString.components(separatedBy: "Â")[0])!
-
-                        let celestial = Celestial(planetSize: planetSize,
-                                                  usedFields: planetFieldUsed,
-                                                  totalFields: planetFieldTotal,
-                                                  tempMin: planetMinTemperature,
-                                                  tempMax: planetMaxTemperature,
-                                                  coordinates: coordinates)
-                        celestials.append(celestial)
-                    }
-                } catch {
-                    completion(.failure(OGError(message: "Celestialse parse error", detailed: error.localizedDescription)))
-                }
-
-            case .failure(let error):
-                completion(.failure(OGError(message: "Celestials request network error", detailed: error.localizedDescription)))
-            }
-            self.celestial = celestials[0]
-            completion(.success(celestials))
-        }
-    }
-    
-    
-    func getAllCelestialsAwait() async throws -> [Celestial] {
-        let link = "\(self.indexPHP!)page=ingame&component=overview" // TODO: Fatal error while Logout on server list loading?
-        
-        let response = try await sessionAF.request(link).serializingData().value
-        var celestials: [Celestial] = []
-        
+    // MARK: - GET ALL CELESTIALS
+    func getAllCelestials() async throws -> [Celestial] {
         do {
+            var celestials: [Celestial] = []
+            
+            let link = "\(self.indexPHP!)page=ingame&component=overview" // TODO: Fatal error while Logout on server list loading?
+            let response = try await sessionAF.request(link).serializingData().value
+        
             let text = String(data: response, encoding: .ascii)!
             let page = try SwiftSoup.parse(text)
             
@@ -509,12 +443,12 @@ class OGame {
                                           coordinates: coordinates)
                 celestials.append(celestial)
             }
+            self.celestial = celestials[0]
+            return celestials
+            
         } catch {
-            throw OGError(message: "Celestialse parse error", detailed: error.localizedDescription)
+            throw OGError(message: "Celestials parse error", detailed: error.localizedDescription)
         }
-        
-        self.celestial = celestials[0]
-        return celestials
     }
     
     
@@ -538,6 +472,25 @@ class OGame {
             completion(OGError(message: "Error setting next planet", detailed: ""))
         }
     }
+    
+    // test when i'll have more planets
+//    func setNextPlanet() async throws {
+//        if let index = planetNames!.firstIndex(of: planet!) {
+//            if index + 1 == planetNames!.count {
+//                planet = planetNames![0]
+//                planetID = planetIDs![0]
+//                celestial = celestials![0]
+//                planetImage = planetImages[0]
+//            } else {
+//                planet = planetNames![index + 1]
+//                planetID = planetIDs![index + 1]
+//                celestial = celestials![index + 1]
+//                planetImage = planetImages[index + 1]
+//            }
+//        } else {
+//            throw OGError(message: "Error setting next planet", detailed: "")
+//        }
+//    }
 
 
     // MARK: - Set Previous Planet
@@ -561,64 +514,71 @@ class OGame {
         }
     }
     
+    // test when i'll have more planets
+//    func setPreviousPlanet() async throws {
+//        if let index = planetNames!.firstIndex(of: planet!) {
+//            if index - 1 == -1 {
+//                planet = planetNames!.last
+//                planetID = planetIDs!.last
+//                celestial = celestials!.last
+//                planetImage = planetImages.last
+//            } else {
+//                planet = planetNames![index - 1]
+//                planetID = planetIDs![index - 1]
+//                celestial = celestials![index - 1]
+//                planetImage = planetImages[index - 1]
+//            }
+//        } else {
+//            throw OGError(message: "Error setting previous planet", detailed: "")
+//        }
+//    }
     
-    // MARK: - GET PLANET IMAGES (NEW)
-    func getAllPlanetImages(completion: @escaping ([UIImage]) -> Void) {
-        var images: [UIImage] = []
-        let dispatchGroup = DispatchGroup()
-        
-        let planets = try! doc!.select("[class*=smallplanet]")
-        for planet in planets {
-            dispatchGroup.enter()
-            let imageAttribute = try! planet.select("[width=48]").first()!.attr("src")
-            sessionAF.request("\(imageAttribute)").response { response in
-                let image = UIImage(data: response.data!)
-                images.append(image!)
-                dispatchGroup.leave()
-            }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            completion(images)
-        }
-    }
     
-    func getAllPlanetImagesAwait() async throws -> [UIImage] {
-        var images: [UIImage] = []
-        let planets = try! doc!.select("[class*=smallplanet]")
-
-        try await withThrowingTaskGroup(of: UIImage.self) { group in
-            for planet in planets {
-                group.addTask {
-                    let imageAttribute = try! planet.select("[width=48]").first()!.attr("src")
-                    let response = try await self.sessionAF.request("\(imageAttribute)").serializingData().value
-                    let image = UIImage(data: response)
-                    return image!
+    // MARK: - GET PLANET IMAGES
+    func getAllPlanetImages() async throws -> [UIImage] {
+        do {
+            var images: [UIImage] = []
+            let planets = try doc!.select("[class*=smallplanet]")
+            
+            try await withThrowingTaskGroup(of: UIImage.self) { group in
+                for planet in planets {
+                    group.addTask {
+                        let imageAttribute = try! planet.select("[width=48]").first()!.attr("src")
+                        let response = try await self.sessionAF.request("\(imageAttribute)").serializingData().value
+                        let image = UIImage(data: response)
+                        return image!
+                    }
+                }
+                for try await image in group {
+                    images.append(image)
                 }
             }
-            for try await image in group {
-                images.append(image)
-            }
+            return images
+            
+        } catch {
+            throw OGError(message: "Error getting all planet images", detailed: error.localizedDescription)
         }
-        
-        return images
     }
     
-    func getImagesFromUrl(_ urls: [String], completion: @escaping ([UIImage]) -> Void) {
-        var images: [UIImage] = []
-        let dispatchGroup = DispatchGroup()
-
-        for url in urls {
-            dispatchGroup.enter()
-            sessionAF.request(url).response { response in
-                let image = UIImage(data: response.data!)
-                images.append(image!)
-                dispatchGroup.leave()
+    func getImagesFromUrl(_ urls: [String]) async throws -> [UIImage] {
+        do {
+            var images: [UIImage] = []
+            try await withThrowingTaskGroup(of: UIImage.self) { group in
+                for url in urls {
+                    group.addTask {
+                        let value = try await self.sessionAF.request(url).serializingData().value
+                        let image = UIImage(data: value)
+                        return image! // TODO: better way?
+                    }
+                }
+                for try await imageResult in group {
+                    images.append(imageResult)
+                }
             }
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            completion(images)
+            return images
+            
+        } catch {
+            throw OGError(message: "Error getting planet images from url", detailed: error.localizedDescription)
         }
     }
 
@@ -629,81 +589,64 @@ class OGame {
             let link = "\(self.indexPHP!)page=resourceSettings&cp=\(planetID!)"
             let value = try await sessionAF.request(link).serializingData().value
             
-            do {
-                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
-                
-                guard !noScriptCheck(with: page)
-                else { throw OGError(message: "Not logged in", detailed: "Resources view login check failed") }
-                
-                let resourceObject = Resources(from: page)
-                return resourceObject
-                
-            } catch {
-                throw OGError(message: "Failed to parse resources data", detailed: error.localizedDescription)
-            }
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            guard !noScriptCheck(with: page)
+            else { throw OGError(message: "Not logged in", detailed: "Resources view login check failed") }
+            
+            let resourceObject = Resources(from: page)
+            return resourceObject
+            
         } catch {
-            throw OGError(message: "Resources network request failed", detailed: error.localizedDescription)
+            throw OGError(message: "Resources network error", detailed: error.localizedDescription)
         }
     }
 
 
     // MARK: - GET OVERVIEW
-    func getOverview(completion: @escaping (Result<[Overview?], OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=overview"
-        sessionAF.request(link).validate().response { response in
-
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-                    // Countdowns are showing "load..." instead of actual time
-
-                    let noScript = try page.select("noscript").text()
-                    guard noScript != "You need to enable JavaScript to run this app." else {
-                        completion(.failure(OGError(message: "Not logged in", detailed: "Overview login check failed")))
-                        return
-                    }
-
-                    var overviewInfo: [Overview?] = [nil, nil, nil]
-
-                    let buildingsParseCheck = try page.select("[id=productionboxbuildingcomponent]").get(0).select("tr").count
-                    if buildingsParseCheck != 1 {
-                        let buildingsParse = try page.select("[id=productionboxbuildingcomponent]").get(0)
-                        let buildingName = try buildingsParse.select("tr").get(0).select("th").get(0).text()
-                        let buildingLevel = try buildingsParse.select("tr").get(1).select("td").get(1).select("span").text()
-                        //let buildingCountdown = try buildingsParse.select("tr").get(3).select("td").get(0).select("span").text()
-
-                        overviewInfo[0] = Overview(buildingName: buildingName, upgradeLevel: buildingLevel)
-                    }
-
-                    let researchParseCheck = try page.select("[id=productionboxresearchcomponent]").get(0).select("tr").count
-                    if researchParseCheck != 1 {
-                        let researchParse = try page.select("[id=productionboxresearchcomponent]").get(0)
-                        let researchName = try researchParse.select("tr").get(0).select("th").get(0).text()
-                        let researchLevel = try researchParse.select("tr").get(1).select("td").get(1).select("span").text()
-                        //let researchCountdown = try researchParse.select("tr").get(3).select("td").get(0).select("span").text()
-
-                        overviewInfo[1] = Overview(buildingName: researchName, upgradeLevel: researchLevel)
-                    }
-
-                    let shipyardParseCheck = try page.select("[id=productionboxshipyardcomponent]").get(0).select("tr").count
-                    if shipyardParseCheck != 1 {
-                        let shipyardParse = try page.select("[id=productionboxshipyardcomponent]").get(0)
-                        let shipyardName = try shipyardParse.select("tr").get(0).select("th").get(0).text()
-                        let shipyardCount = try shipyardParse.select("tr").get(1).select("td").get(0).select("div").get(1).text()
-                        //let shipyardCountdownNext = try shipyardParse.select("tr").get(3).select("td").get(0).select("span").text()
-                        //let shipyardCountdownTotal = try shipyardParse.select("tr").get(5).select("td").get(0).select("span").text()
-
-                        overviewInfo[2] = Overview(buildingName: shipyardName, upgradeLevel: shipyardCount)
-                    }
-
-                    completion(.success(overviewInfo))
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse overview data", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Overview network request failed", detailed: error.localizedDescription)))
+    func getOverview() async throws -> [Overview?] {
+        do {
+            let link = "\(self.indexPHP!)page=ingame&component=overview"
+            let value = try await sessionAF.request(link).serializingData().value
+            
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let noScript = try page.select("noscript").text()
+            guard noScript != "You need to enable JavaScript to run this app."
+            else { throw OGError(message: "Not logged in", detailed: "Overview login check failed") }
+            
+            var overviewInfo: [Overview?] = [nil, nil, nil]
+            
+            let buildingsParseCheck = try page.select("[id=productionboxbuildingcomponent]").get(0).select("tr").count
+            if buildingsParseCheck != 1 {
+                let buildingsParse = try page.select("[id=productionboxbuildingcomponent]").get(0)
+                let buildingName = try buildingsParse.select("tr").get(0).select("th").get(0).text()
+                let buildingLevel = try buildingsParse.select("tr").get(1).select("td").get(1).select("span").text()
+                
+                overviewInfo[0] = Overview(buildingName: buildingName, upgradeLevel: buildingLevel)
             }
+            
+            let researchParseCheck = try page.select("[id=productionboxresearchcomponent]").get(0).select("tr").count
+            if researchParseCheck != 1 {
+                let researchParse = try page.select("[id=productionboxresearchcomponent]").get(0)
+                let researchName = try researchParse.select("tr").get(0).select("th").get(0).text()
+                let researchLevel = try researchParse.select("tr").get(1).select("td").get(1).select("span").text()
+                
+                overviewInfo[1] = Overview(buildingName: researchName, upgradeLevel: researchLevel)
+            }
+            
+            let shipyardParseCheck = try page.select("[id=productionboxshipyardcomponent]").get(0).select("tr").count
+            if shipyardParseCheck != 1 {
+                let shipyardParse = try page.select("[id=productionboxshipyardcomponent]").get(0)
+                let shipyardName = try shipyardParse.select("tr").get(0).select("th").get(0).text()
+                let shipyardCount = try shipyardParse.select("tr").get(1).select("td").get(0).select("div").get(1).text()
+                
+                overviewInfo[2] = Overview(buildingName: shipyardName, upgradeLevel: shipyardCount)
+            }
+            return overviewInfo
+            
+        } catch {
+            throw OGError(message: "Overview network request failed", detailed: error.localizedDescription)
         }
     }
 
@@ -714,49 +657,45 @@ class OGame {
             let link = "\(self.indexPHP!)page=ingame&component=supplies&cp=\(planetID!)"
             let value = try await sessionAF.request(link).serializingData().value
             
-            do {
-                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
-                
-                let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
-                var levels = [Int]()
-                for level in levelsParse {
-                    levels.append(Int(try level.text())!)
-                }
-                
-                let technologyStatusParse = try page.select("li[class*=technology]")
-                var technologyStatus = [String]()
-                for status in technologyStatusParse {
-                    technologyStatus.append(try status.attr("data-status"))
-                }
-                //print(levels, technologyStatus)
-                
-                guard !levels.isEmpty, !technologyStatus.isEmpty
-                else { throw OGError(message: "Not logged in", detailed: "Supply login check failed") }
-                
-                let suppliesObject = Supplies(levels, technologyStatus)
-                let suppliesCells = ResourceCell(with: suppliesObject)
-                
-                var buildingDataModel: [BuildingWithLevel] = []
-                for building in suppliesCells.resourceBuildings {
-                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
-                    let newBuilding = BuildingWithLevel(name: building.name,
-                                                   metal: building.metal,
-                                                   crystal: building.crystal,
-                                                   deuterium: building.deuterium,
-                                                   image: (available: building.image.available,
-                                                           unavailable: building.image.unavailable,
-                                                           disabled: building.image.disabled),
-                                                   buildingsID: building.buildingsID,
-                                                   level: building.level,
-                                                   condition: building.condition,
-                                                   timeToBuild: buildingTime)
-                    buildingDataModel.append(newBuilding)
-                }
-                return buildingDataModel
-                
-            } catch {
-                throw OGError(message: "Failed to parse supplies data", detailed: error.localizedDescription)
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
+            var levels = [Int]()
+            for level in levelsParse {
+                levels.append(Int(try level.text())!)
             }
+            
+            let technologyStatusParse = try page.select("li[class*=technology]")
+            var technologyStatus = [String]()
+            for status in technologyStatusParse {
+                technologyStatus.append(try status.attr("data-status"))
+            }
+            //print(levels, technologyStatus)
+            
+            guard !levels.isEmpty, !technologyStatus.isEmpty
+            else { throw OGError(message: "Not logged in", detailed: "Supply login check failed") }
+            
+            let suppliesObject = Supplies(levels, technologyStatus)
+            let suppliesCells = ResourceCell(with: suppliesObject)
+            
+            var buildingDataModel: [BuildingWithLevel] = []
+            for building in suppliesCells.resourceBuildings {
+                let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
+                let newBuilding = BuildingWithLevel(name: building.name,
+                                                    metal: building.metal,
+                                                    crystal: building.crystal,
+                                                    deuterium: building.deuterium,
+                                                    image: (available: building.image.available,
+                                                            unavailable: building.image.unavailable,
+                                                            disabled: building.image.disabled),
+                                                    buildingsID: building.buildingsID,
+                                                    level: building.level,
+                                                    condition: building.condition,
+                                                    timeToBuild: buildingTime)
+                buildingDataModel.append(newBuilding)
+            }
+            return buildingDataModel
+            
         } catch {
             throw OGError(message: "Supplies network request failed", detailed: error.localizedDescription)
         }
@@ -769,53 +708,49 @@ class OGame {
             let link = "\(self.indexPHP!)page=ingame&component=facilities&cp=\(planetID!)"
             let data = try await sessionAF.request(link).serializingData().value
             
-            do {
-                let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
-                
-                let levelsParse = try page.select("span[class=level]").select("[data-value]")
-                var levels = [Int]()
-                for level in levelsParse {
-                    levels.append(Int(try level.text())!)
-                }
-                
-                let technologyStatusParse = try page.select("li[class*=technology]")
-                var technologyStatus = [String]()
-                for status in technologyStatusParse {
-                    technologyStatus.append(try status.attr("data-status"))
-                }
-                
-                guard !noScriptCheck(with: page)
-                else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
-                
-                let facilitiesObject = Facilities(levels, technologyStatus)
-                let facilitiesCells = FacilityCell(with: facilitiesObject)
-                
-                roboticsFactoryLevel = facilitiesObject.roboticsFactory.level
-                naniteFactoryLevel = facilitiesObject.naniteFactory.level
-                researchLabLevel = facilitiesObject.researchLaboratory.level
-                shipyardLevel = facilitiesObject.shipyard.level
-                
-                var buildingDataModel: [BuildingWithLevel] = []
-                for building in facilitiesCells.facilityBuildings {
-                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
-                    let newBuilding = BuildingWithLevel(name: building.name,
-                                                   metal: building.metal,
-                                                   crystal: building.crystal,
-                                                   deuterium: building.deuterium,
-                                                   image: (available: building.image.available,
-                                                           unavailable: building.image.unavailable,
-                                                           disabled: building.image.disabled),
-                                                   buildingsID: building.buildingsID,
-                                                   level: building.level,
-                                                   condition: building.condition,
-                                                   timeToBuild: buildingTime)
-                    buildingDataModel.append(newBuilding)
-                }
-                return buildingDataModel
-                
-            } catch {
-                throw OGError(message: "Failed to parse facilities data", detailed: error.localizedDescription)
+            let page = try SwiftSoup.parse(String(data: data, encoding: .ascii)!)
+            
+            let levelsParse = try page.select("span[class=level]").select("[data-value]")
+            var levels = [Int]()
+            for level in levelsParse {
+                levels.append(Int(try level.text())!)
             }
+            
+            let technologyStatusParse = try page.select("li[class*=technology]")
+            var technologyStatus = [String]()
+            for status in technologyStatusParse {
+                technologyStatus.append(try status.attr("data-status"))
+            }
+            
+            guard !noScriptCheck(with: page)
+            else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
+            
+            let facilitiesObject = Facilities(levels, technologyStatus)
+            let facilitiesCells = FacilityCell(with: facilitiesObject)
+            
+            roboticsFactoryLevel = facilitiesObject.roboticsFactory.level
+            naniteFactoryLevel = facilitiesObject.naniteFactory.level
+            researchLabLevel = facilitiesObject.researchLaboratory.level
+            shipyardLevel = facilitiesObject.shipyard.level
+            
+            var buildingDataModel: [BuildingWithLevel] = []
+            for building in facilitiesCells.facilityBuildings {
+                let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
+                let newBuilding = BuildingWithLevel(name: building.name,
+                                                    metal: building.metal,
+                                                    crystal: building.crystal,
+                                                    deuterium: building.deuterium,
+                                                    image: (available: building.image.available,
+                                                            unavailable: building.image.unavailable,
+                                                            disabled: building.image.disabled),
+                                                    buildingsID: building.buildingsID,
+                                                    level: building.level,
+                                                    condition: building.condition,
+                                                    timeToBuild: buildingTime)
+                buildingDataModel.append(newBuilding)
+            }
+            return buildingDataModel
+            
         } catch {
             throw OGError(message: "Facilities network request failed", detailed: error.localizedDescription)
         }
@@ -832,50 +767,46 @@ class OGame {
             let link = "\(self.indexPHP!)page=ingame&component=research&cp=\(planetID!)"
             let value = try await sessionAF.request(link).serializingData().value
             
-            do {
-                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
-
-                let levelsParse = try page.select("span[class=level]").select("[data-value]")
-                var levels = [Int]()
-                for level in levelsParse {
-                    levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
-                }
-
-                let technologyStatusParse = try page.select("li[class*=technology]")
-                var technologyStatus = [String]()
-                for status in technologyStatusParse {
-                    technologyStatus.append(try status.attr("data-status"))
-                }
-
-                guard !levels.isEmpty && !technologyStatus.isEmpty
-                else { throw OGError(message: "Not logged in", detailed: "Research login check failed") }
-
-                let researchesObject = Researches(levels, technologyStatus)
-                let researchesCells = ResearchCell(with: researchesObject)
-                
-                var buildingDataModel: [BuildingWithLevel] = []
-                for building in researchesCells.researchTechnologies {
-                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
-                    let newBuilding = BuildingWithLevel(name: building.name,
-                                                   metal: building.metal,
-                                                   crystal: building.crystal,
-                                                   deuterium: building.deuterium,
-                                                   image: (available: building.image.available,
-                                                           unavailable: building.image.unavailable,
-                                                           disabled: building.image.disabled),
-                                                   buildingsID: building.buildingsID,
-                                                   level: building.level,
-                                                   condition: building.condition,
-                                                   timeToBuild: buildingTime)
-                    buildingDataModel.append(newBuilding)
-                }
-                return buildingDataModel
-                
-            } catch {
-                throw OGError(message: "Failed to parse research data", detailed: error.localizedDescription)
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let levelsParse = try page.select("span[class=level]").select("[data-value]")
+            var levels = [Int]()
+            for level in levelsParse {
+                levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
             }
+            
+            let technologyStatusParse = try page.select("li[class*=technology]")
+            var technologyStatus = [String]()
+            for status in technologyStatusParse {
+                technologyStatus.append(try status.attr("data-status"))
+            }
+            
+            guard !levels.isEmpty && !technologyStatus.isEmpty
+            else { throw OGError(message: "Not logged in", detailed: "Research login check failed") }
+            
+            let researchesObject = Researches(levels, technologyStatus)
+            let researchesCells = ResearchCell(with: researchesObject)
+            
+            var buildingDataModel: [BuildingWithLevel] = []
+            for building in researchesCells.researchTechnologies {
+                let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithLevel: building)
+                let newBuilding = BuildingWithLevel(name: building.name,
+                                                    metal: building.metal,
+                                                    crystal: building.crystal,
+                                                    deuterium: building.deuterium,
+                                                    image: (available: building.image.available,
+                                                            unavailable: building.image.unavailable,
+                                                            disabled: building.image.disabled),
+                                                    buildingsID: building.buildingsID,
+                                                    level: building.level,
+                                                    condition: building.condition,
+                                                    timeToBuild: buildingTime)
+                buildingDataModel.append(newBuilding)
+            }
+            return buildingDataModel
+            
         } catch {
-            throw OGError(message: "Research network request failed", detailed: error.localizedDescription)
+            throw OGError(message: "Research network error", detailed: error.localizedDescription)
         }
     }
 
@@ -885,52 +816,48 @@ class OGame {
         do {
             let link = "\(self.indexPHP!)page=ingame&component=shipyard&cp=\(planetID!)"
             let value = try await sessionAF.request(link).serializingData().value
-                
-            do {
-                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
-
-                let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
-                var ships = [Int]()
-                for ship in shipsParse {
-                    ships.append(Int(try ship.text())!)
-                }
-
-                let technologyStatusParse = try page.select("li[class*=technology]")
-                var technologyStatus = [String]()
-                for status in technologyStatusParse {
-                    technologyStatus.append(try status.attr("data-status"))
-                }
-
-                guard !ships.isEmpty else {
-                    throw OGError(message: "Not logged in", detailed: "Ships login check failed")
-                }
-
-                let shipsObject = Ships(ships, technologyStatus)
-                let shipsCells = ShipsCell(with: shipsObject)
-                
-                var buildingDataModel: [BuildingWithAmount] = []
-                for building in shipsCells.shipsTechnologies {
-                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithAmount: building)
-                    let newBuilding = BuildingWithAmount(name: building.name,
-                                                   metal: building.metal,
-                                                   crystal: building.crystal,
-                                                   deuterium: building.deuterium,
-                                                   image: (available: building.image.available,
-                                                           unavailable: building.image.unavailable,
-                                                           disabled: building.image.disabled),
-                                                   buildingsID: building.buildingsID,
-                                                   amount: building.amount,
-                                                   condition: building.condition,
-                                                   timeToBuild: buildingTime)
-                    buildingDataModel.append(newBuilding)
-                }
-                return buildingDataModel
-                
-            } catch {
-                throw OGError(message: "Failed to parse ships data", detailed: error.localizedDescription)
+            
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+            var ships = [Int]()
+            for ship in shipsParse {
+                ships.append(Int(try ship.text())!)
             }
+            
+            let technologyStatusParse = try page.select("li[class*=technology]")
+            var technologyStatus = [String]()
+            for status in technologyStatusParse {
+                technologyStatus.append(try status.attr("data-status"))
+            }
+            
+            guard !ships.isEmpty else {
+                throw OGError(message: "Not logged in", detailed: "Ships login check failed")
+            }
+            
+            let shipsObject = Ships(ships, technologyStatus)
+            let shipsCells = ShipsCell(with: shipsObject)
+            
+            var buildingDataModel: [BuildingWithAmount] = []
+            for building in shipsCells.shipsTechnologies {
+                let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithAmount: building)
+                let newBuilding = BuildingWithAmount(name: building.name,
+                                                     metal: building.metal,
+                                                     crystal: building.crystal,
+                                                     deuterium: building.deuterium,
+                                                     image: (available: building.image.available,
+                                                             unavailable: building.image.unavailable,
+                                                             disabled: building.image.disabled),
+                                                     buildingsID: building.buildingsID,
+                                                     amount: building.amount,
+                                                     condition: building.condition,
+                                                     timeToBuild: buildingTime)
+                buildingDataModel.append(newBuilding)
+            }
+            return buildingDataModel
+            
         } catch {
-            throw OGError(message: "Ships network request failed", detailed: error.localizedDescription)
+            throw OGError(message: "Ships network error", detailed: error.localizedDescription)
         }
     }
 
@@ -940,299 +867,230 @@ class OGame {
         do {
             let link = "\(self.indexPHP!)page=ingame&component=defenses&cp=\(planetID!)"
             let value = try await sessionAF.request(link).serializingData().value
-                
-            do {
-                let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
-
-                let defencesParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
-                var defences = [Int]()
-                for defence in defencesParse {
-                    defences.append(Int(try defence.text())!)
-                }
-
-                let technologyStatusParse = try page.select("li[class*=technology]")
-                var technologyStatus = [String]()
-                for status in technologyStatusParse {
-                    technologyStatus.append(try status.attr("data-status"))
-                }
-
-                guard !defences.isEmpty else {
-                    throw OGError(message: "Not logged in", detailed: "Defences login check failed")
-                }
-
-                let defencesObject = Defences(defences, technologyStatus)
-                let defencesCells = DefenceCell(with: defencesObject)
-                
-                var buildingDataModel: [BuildingWithAmount] = []
-                for building in defencesCells.defenceTechnologies {
-                    let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithAmount: building)
-                    let newBuilding = BuildingWithAmount(name: building.name,
-                                                   metal: building.metal,
-                                                   crystal: building.crystal,
-                                                   deuterium: building.deuterium,
-                                                   image: (available: building.image.available,
-                                                           unavailable: building.image.unavailable,
-                                                           disabled: building.image.disabled),
-                                                   buildingsID: building.buildingsID,
-                                                   amount: building.amount,
-                                                   condition: building.condition,
-                                                   timeToBuild: buildingTime)
-                    buildingDataModel.append(newBuilding)
-                }
-                return buildingDataModel
-                
-            } catch {
-                throw OGError(message: "Failed to parse defences data", detailed: error.localizedDescription)
+            
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let defencesParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+            var defences = [Int]()
+            for defence in defencesParse {
+                defences.append(Int(try defence.text())!)
             }
+            
+            let technologyStatusParse = try page.select("li[class*=technology]")
+            var technologyStatus = [String]()
+            for status in technologyStatusParse {
+                technologyStatus.append(try status.attr("data-status"))
+            }
+            
+            guard !defences.isEmpty else {
+                throw OGError(message: "Not logged in", detailed: "Defences login check failed")
+            }
+            
+            let defencesObject = Defences(defences, technologyStatus)
+            let defencesCells = DefenceCell(with: defencesObject)
+            
+            var buildingDataModel: [BuildingWithAmount] = []
+            for building in defencesCells.defenceTechnologies {
+                let buildingTime = OGame.shared.getBuildingTimeOffline(buildingWithAmount: building)
+                let newBuilding = BuildingWithAmount(name: building.name,
+                                                     metal: building.metal,
+                                                     crystal: building.crystal,
+                                                     deuterium: building.deuterium,
+                                                     image: (available: building.image.available,
+                                                             unavailable: building.image.unavailable,
+                                                             disabled: building.image.disabled),
+                                                     buildingsID: building.buildingsID,
+                                                     amount: building.amount,
+                                                     condition: building.condition,
+                                                     timeToBuild: buildingTime)
+                buildingDataModel.append(newBuilding)
+            }
+            return buildingDataModel
+            
         } catch {
-            throw OGError(message: "Defences network request failed", detailed: error.localizedDescription)
+            throw OGError(message: "Defences network error", detailed: error.localizedDescription)
         }
     }
-
-
-    // MARK: - GET ALLY
-
-
+    
+    
+    // MARK - GET ALLY
+    
+    
     // MARK: - GET SLOT -> Slot
     func getSlotCelestial() -> Slot {
         do {
             let slots = try doc!.select("[class=textCenter]").get(1).text().components(separatedBy: " ")[0].components(separatedBy: "/").compactMap { Int($0) }
             return Slot.init(with: slots)
+            
         } catch {
             return Slot.init(with: [0, 0])
         }
     }
 
 
-    // MARK: - GET FLEET (NEW)
-    func getFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
-        var fleets = [Fleets]()
-        let dispatchGroup = DispatchGroup()
-        
-        dispatchGroup.enter()
-        getHostileFleet { result in
-            switch result {
-            case .success(let hostileFleet):
-                fleets.append(contentsOf: hostileFleet)
-                
-            case .failure(let error):
-                completion(.failure(OGError(message: "Error getting hostile fleet", detailed: error.localizedDescription)))
+    // MARK: - GET FLEET
+    func getFleet() async throws -> [Fleets] {
+        try await withThrowingTaskGroup(of: [Fleets].self) { group in
+            var fleets = [Fleets]()
+            
+            group.addTask { return try await self.getHostileFleet() }
+            group.addTask { return try await self.getFriendlyFleet() }
+            
+            for try await fleet in group {
+                fleets.append(contentsOf: fleet)
             }
-            dispatchGroup.leave()
-        }
-                
-        dispatchGroup.enter()
-        getFriendlyFleet { result in
-            switch result {
-            case .success(let friendlyFleet):
-                fleets.append(contentsOf: friendlyFleet)
-                
-            case .failure(let error):
-                completion(.failure(OGError(message: "Error getting friendly fleet", detailed: error.localizedDescription)))
-            }
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.notify(queue: .main) {
-            completion(.success(fleets))
+            
+            return fleets
         }
     }
 
 
     // MARK: - GET HOSTILE FLEET
-    func getHostileFleet(completion: @escaping (Result<[Fleets], OGError>) -> Void) {
-        let link = "\(indexPHP!)page=componentOnly&component=eventList"
-        sessionAF.request(link).response { response in
+    func getHostileFleet() async throws -> [Fleets] {
+        do {
+            let link = "\(indexPHP!)page=componentOnly&component=eventList"
+            let value = try await sessionAF.request(link).serializingData().value
             
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let eventFleetParse = try page.select("[class=eventFleet]").select("[class*=hostile]")
-                    let eventFleet = Elements()
-                    for event in eventFleetParse {
-                        if let fleet = event.parent()?.parent() {
-                            eventFleet.add(fleet)
-                        }
-                    }
-
-                    var fleetIDs = [Int]()
-                    var arrivalTimes = [Int]()
-                    var playerNames = [String]()
-                    var playerIDs = [Int]()
-                    var playerPlanet = [String]()
-                    var enemyPlanet = [String]()
-                    
-                    var playerPlanetImageUrl = [String]()
-                    var enemyPlanetImageUrl = [String]()
-                    
-                    var playerPlanetImages = [UIImage]()
-                    var enemyPlanetImages = [UIImage]()
-
-                    for event in eventFleet {
-                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!)
-                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
-                        playerNames.append(try event.select("[class*=sendMail ]").attr("title"))
-                        playerIDs.append(Int(try event.select("[class*=sendMail ]").attr("data-playerid"))!)
-                        playerPlanet.append(try event.select("[class=destFleet]").text())
-                        enemyPlanet.append(try event.select("[class=originFleet]").text())
-                        
-                        playerPlanetImageUrl.append(try event.select("[class=origin fixed]").select("[class*=tooltipHTML]").attr("src"))
-                        enemyPlanetImageUrl.append(try event.select("[class=destination fixed]").select("[class*=tooltipHTML]").attr("src"))
-                    }
-
-                    let destinations = self.getFleetCoordinates(details: eventFleet, type: "destCoords")
-                    let origins = self.getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
-
-                    var fleets: [Fleets] = []
-                    
-                    guard !fleetIDs.isEmpty else {
-                        completion(.success(fleets))
-                        return
-                    }
-                    
-                    let dispatchGroup = DispatchGroup()
-                    dispatchGroup.enter()
-                    self.getImagesFromUrl(playerPlanetImageUrl) { images in
-                        playerPlanetImages.append(contentsOf: images)
-                        dispatchGroup.leave()
-                    }
-                    dispatchGroup.enter()
-                    self.getImagesFromUrl(enemyPlanetImageUrl) { images in
-                        enemyPlanetImages.append(contentsOf: images)
-                        dispatchGroup.leave()
-                    }
-                    
-                    dispatchGroup.notify(queue: .main) {
-                        for i in 0...fleetIDs.count - 1 {
-                            let fleet = Fleets(id: fleetIDs[i],
-                                               mission: "Attacked",
-                                               diplomacy: "hostile",
-                                               playerName: self.playerName!,
-                                               playerID: self.playerID!,
-                                               playerPlanet: playerPlanet[i],
-                                               playerPlanetImage: playerPlanetImages[i],
-                                               enemyName: playerNames[i],
-                                               enemyID: playerIDs[i],
-                                               enemyPlanet: enemyPlanet[i],
-                                               enemyPlanetImage: enemyPlanetImages[i],
-                                               returns: false,
-                                               arrivalTime: arrivalTimes[i],
-                                               endTime: nil,
-                                               origin: origins[i],
-                                               destination: destinations[i])
-                            fleets.append(fleet)
-                        }
-                        completion(.success(fleets))
-                    }
-
-                } catch {
-                    completion(.failure(OGError(message: "Hostile fleet parse error", detailed: error.localizedDescription)))
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let eventFleetParse = try page.select("[class=eventFleet]").select("[class*=hostile]")
+            let eventFleet = Elements()
+            for event in eventFleetParse {
+                if let fleet = event.parent()?.parent() {
+                    eventFleet.add(fleet)
                 }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Get hostile fleet error", detailed: error.localizedDescription)))
             }
+            
+            var fleetIDs = [Int]()
+            var arrivalTimes = [Int]()
+            var playerNames = [String]()
+            var playerIDs = [Int]()
+            var playerPlanet = [String]()
+            var enemyPlanet = [String]()
+            
+            for event in eventFleet {
+                fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "eventRow-", with: ""))!)
+                arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                playerNames.append(try event.select("[class*=sendMail ]").attr("title"))
+                playerIDs.append(Int(try event.select("[class*=sendMail ]").attr("data-playerid"))!)
+                playerPlanet.append(try event.select("[class=destFleet]").text())
+                enemyPlanet.append(try event.select("[class=originFleet]").text())
+            }
+            
+            let destinations = getFleetCoordinates(details: eventFleet, type: "destCoords")
+            let origins = getFleetCoordinates(details: eventFleet, type: "coordsOrigin")
+            
+            var fleets: [Fleets] = []
+            guard !fleetIDs.isEmpty
+            else { return fleets }
+            
+            for i in 0...fleetIDs.count - 1 {
+                let fleet = Fleets(id: fleetIDs[i],
+                                   mission: "Attacked",
+                                   diplomacy: "hostile",
+                                   playerName: self.playerName!,
+                                   playerID: self.playerID!,
+                                   playerPlanet: playerPlanet[i],
+                                   playerPlanetImage: nil,
+                                   enemyName: playerNames[i],
+                                   enemyID: playerIDs[i],
+                                   enemyPlanet: enemyPlanet[i],
+                                   enemyPlanetImage: nil,
+                                   returns: false,
+                                   arrivalTime: arrivalTimes[i],
+                                   endTime: nil,
+                                   origin: origins[i],
+                                   destination: destinations[i])
+                fleets.append(fleet)
+            }
+            return fleets
+            
+        } catch {
+            throw OGError(message: "Get hostile fleet error", detailed: error.localizedDescription)
         }
     }
 
 
     // MARK: - GET FRIENDLY FLEET
-    func getFriendlyFleet(completion: @escaping (Result<[Fleets], Error>) -> Void) {
-        let link = "\(indexPHP!)page=ingame&component=movement"
-        sessionAF.request(link).response { response in
+    func getFriendlyFleet() async throws -> [Fleets] {
+        do {
+            let link = "\(indexPHP!)page=ingame&component=movement"
+            let value = try await sessionAF.request(link).serializingData().value
             
-            switch response.result {
-            case .success(let data):
-                do {
-                    let page = try! SwiftSoup.parse(String(data: data!, encoding: .ascii)!)
-
-                    let fleetDetails = try! page.select("[class*=fleetDetails]")
-
-                    var fleetIDs = [Int]()
-                    var missionTypes = [String]()
-                    var missionDiplomacy = [String]()
-                    var arrivalTimes = [Int]()
-                    var endTimes = [Int]()
-                    var returnFlights = [Bool]()
-                    var playerPlanet = [String]()
-                    var enemyPlanet = [String]()
-                    
-                    var playerPlanetImageUrl = [String]()
-                    var enemyPlanetImageUrl = [String]()
-                    
-                    var playerPlanetImages = [UIImage]()
-                    var enemyPlanetImages = [UIImage]()
-
-                    for event in fleetDetails {
-                        fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
-                        missionDiplomacy.append(try event.select("span[class*=mission]").attr("class").components(separatedBy: " ")[1])
-                        missionTypes.append(try event.select("span[class*=mission]").get(0).text())
-                        arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
-                        endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
-                        playerPlanet.append(try event.select("[class=originPlanet]").text())
-                        enemyPlanet.append(try event.select("[class=destinationData]").text().components(separatedBy: " ")[0])
-
-                        if try event.attr("data-return-flight") == "1" {
-                            returnFlights.append(true)
-                        } else {
-                            returnFlights.append(false)
-                        }
-                        
-                        playerPlanetImageUrl.append(try event.select("[class=origin fixed]").select("[class*=tooltipHTML]").attr("src"))
-                        enemyPlanetImageUrl.append(try event.select("[class=destination fixed]").select("[class*=tooltipHTML]").attr("src"))
-                    }
-
-                    let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
-                    let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
-
-                    var fleets = [Fleets]()
-                    
-                    guard !fleetIDs.isEmpty else {
-                        completion(.success(fleets))
-                        return
-                    }
-                    
-                    let dispatchGroup = DispatchGroup()
-                    dispatchGroup.enter()
-                    self.getImagesFromUrl(playerPlanetImageUrl) { images in
-                        playerPlanetImages.append(contentsOf: images)
-                        dispatchGroup.leave()
-                    }
-                    dispatchGroup.enter()
-                    self.getImagesFromUrl(enemyPlanetImageUrl) { images in
-                        enemyPlanetImages.append(contentsOf: images)
-                        dispatchGroup.leave()
-                    }
-                    
-                    dispatchGroup.notify(queue: .main) {
-                        for i in 0...fleetIDs.count - 1 {
-                            fleets.append(Fleets(id: fleetIDs[i],
-                                                mission: missionTypes[i],
-                                                diplomacy: missionDiplomacy[i],
-                                                playerName: self.playerName!,
-                                                playerID: self.playerID!,
-                                                playerPlanet: playerPlanet[i],
-                                                playerPlanetImage: playerPlanetImages[i],
-                                                enemyName: nil,
-                                                enemyID: nil,
-                                                enemyPlanet: enemyPlanet[i],
-                                                enemyPlanetImage: enemyPlanetImages[i],
-                                                returns: returnFlights[i],
-                                                arrivalTime: arrivalTimes[i],
-                                                endTime: endTimes[i],
-                                                origin: origins[i],
-                                                destination: destinations[i]))
-                        }
-                        completion(.success(fleets))
-                    }
-
-                } catch {
-                    completion(.failure(OGError(message: "Friendly fleet parse error", detailed: error.localizedDescription)))
+            let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
+            
+            let fleetDetails = try page.select("[class*=fleetDetails]")
+            
+            var fleetIDs = [Int]()
+            var missionTypes = [String]()
+            var missionDiplomacy = [String]()
+            var arrivalTimes = [Int]()
+            var endTimes = [Int]()
+            var returnFlights = [Bool]()
+            var playerPlanet = [String]()
+            var enemyPlanet = [String]()
+            
+            var playerPlanetImageUrl = [String]()
+            var enemyPlanetImageUrl = [String]()
+            
+            var playerPlanetImages = [UIImage]()
+            var enemyPlanetImages = [UIImage]()
+            
+            for event in fleetDetails {
+                fleetIDs.append(Int(try event.attr("id").replacingOccurrences(of: "fleet", with: ""))!)
+                missionDiplomacy.append(try event.select("span[class*=mission]").attr("class").components(separatedBy: " ")[1])
+                missionTypes.append(try event.select("span[class*=mission]").get(0).text())
+                arrivalTimes.append(Int(try event.attr("data-arrival-time"))!)
+                endTimes.append(Int(try event.select("[data-end-time]").attr("data-end-time"))!)
+                playerPlanet.append(try event.select("[class=originPlanet]").text())
+                enemyPlanet.append(try event.select("[class=destinationData]").text().components(separatedBy: " ")[0])
+                
+                if try event.attr("data-return-flight") == "1" {
+                    returnFlights.append(true)
+                } else {
+                    returnFlights.append(false)
                 }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Get friendly fleet error", detailed: error.localizedDescription)))
+                
+                playerPlanetImageUrl.append(try event.select("[class=origin fixed]").select("[class*=tooltipHTML]").attr("src"))
+                enemyPlanetImageUrl.append(try event.select("[class=destination fixed]").select("[class*=tooltipHTML]").attr("src"))
             }
+            
+            let destinations = self.getFleetCoordinates(details: fleetDetails, type: "destinationCoords")
+            let origins = self.getFleetCoordinates(details: fleetDetails, type: "originCoords")
+            
+            var fleets = [Fleets]()
+            
+            guard !fleetIDs.isEmpty
+            else { return fleets }
+            
+            let playerImages = try await getImagesFromUrl(playerPlanetImageUrl)
+            playerPlanetImages.append(contentsOf: playerImages)
+            
+            let enemyImages = try await getImagesFromUrl(enemyPlanetImageUrl)
+            enemyPlanetImages.append(contentsOf: enemyImages)
+            
+            for i in 0...fleetIDs.count - 1 {
+                fleets.append(Fleets(id: fleetIDs[i],
+                                     mission: missionTypes[i],
+                                     diplomacy: missionDiplomacy[i],
+                                     playerName: self.playerName!,
+                                     playerID: self.playerID!,
+                                     playerPlanet: playerPlanet[i],
+                                     playerPlanetImage: playerPlanetImages[i],
+                                     enemyName: nil,
+                                     enemyID: nil,
+                                     enemyPlanet: enemyPlanet[i],
+                                     enemyPlanetImage: enemyPlanetImages[i],
+                                     returns: returnFlights[i],
+                                     arrivalTime: arrivalTimes[i],
+                                     endTime: endTimes[i],
+                                     origin: origins[i],
+                                     destination: destinations[i]))
+            }
+            return fleets
+            
+        } catch {
+            throw OGError(message: "Get friendly fleet error", detailed: error.localizedDescription)
         }
     }
 
@@ -1278,43 +1136,7 @@ class OGame {
         return coordinates
     }
     
-    
-    // for test purposes only
-    func getBuildingTimeOnline(type: Int, completion: @escaping (Result<String, OGError>) -> Void) {
-        let link = "\(self.indexPHP!)page=ingame&component=technologydetails&ajax=1"
-        let parameters: Parameters = ["action": "getDetails", "technology": type]
-        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-
-        sessionAF.request(link, method: .get, parameters: parameters, headers: headers).response { response in
-            switch response.result {
-            case .success(let data):
-                let text = String(data: data!, encoding: .ascii)!
-                let page = try! SwiftSoup.parse(text)
-
-                guard !self.noScriptCheck(with: page) else {
-                    completion(.failure(OGError(message: "Resource check failed", detailed: "Not logged in")))
-                    return
-                }
-
-                let item = try! page.select("[datetime]").attr("datetime")
-                var isoTime = item.components(separatedBy: "\"")[1]
-                isoTime.removeLast()
-
-                let timeComponents = DateComponents.durationFrom8601String(isoTime)
-                
-                let dateFormatter = DateComponentsFormatter()
-                dateFormatter.unitsStyle = .abbreviated
-                dateFormatter.allowedUnits = [.day, .hour, .minute, .second]
-                let result = dateFormatter.string(from: timeComponents!)
-                completion(.success(result ?? "0s"))
-
-            case .failure(let error):
-                completion(.failure(OGError(message: "Building time parse error", detailed: "\(error)")))
-            }
-        }
-    }
-    
-    
+    // MARK: - GET BUILDING TIME
     func getBuildingTimeOffline(buildingWithLevel: BuildingWithLevelsData) -> String {
         let resources = buildingWithLevel.metal + buildingWithLevel.crystal
         let robotics = 1 + self.roboticsFactoryLevel!
@@ -1326,7 +1148,7 @@ class OGame {
         if buildingWithLevel.level < 5 && !(106...199).contains(buildingWithLevel.buildingsID) {
             time = Int(round((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * Double(2) / Double(7 - buildingWithLevel.level) * 3600))
         } else if (106...199).contains(buildingWithLevel.buildingsID) {
-            time = Int(round((Double(resources) / Double((1000 * research * speed))) * 3600))
+            time = Int(round((Double(resources) / Double((2000 * research * speed))) * 3600))
         } else {
             time = Int(round((Double(resources) / Double((2500 * robotics * Int(truncating: nanites) * speed))) * 3600))
         }
@@ -1353,7 +1175,126 @@ class OGame {
     
 
     // MARK: - GET GALAXY
-    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
+//    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
+//        let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
+//        let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
+//        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
+//        
+//        struct GalaxyResponse: Codable {
+//            let galaxy: String
+//        }
+//
+//        sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseDecodable(of: GalaxyResponse.self) { response in
+//            switch response.result {
+//            case .success(let data):
+//                do {
+//                    let galaxyInfo = try SwiftSoup.parse(data.galaxy)
+//                    let players = try galaxyInfo.select("[id*=player]")
+//                    let alliances = try galaxyInfo.select("[id*=alliance]")
+//
+//                    let imagesParse = try galaxyInfo.select("li").select("[class*=planetTooltip]")
+//                    var images: [String] = []
+//                    for image in imagesParse {
+//                        images.append(try image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
+//                    }
+//
+//                    var playerNames = [String: String]()
+//                    var playerRanks = [String: Int]()
+//                    var playerAlliances = [String: String]()
+//
+//                    for player in players {
+//                        let nameKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
+//                        let nameValue = try player.select("span").text()
+//                        playerNames[nameKey] = nameValue
+//
+//                        let rankKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
+//                        let rankValue = Int(try player.select("a").get(0).text()) ?? 0
+//                        playerRanks[rankKey] = rankValue
+//                    }
+//
+//                    for alliance in alliances {
+//                        let allianceKey = try alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
+//                        let allianceValue = try alliance.select("h1").get(0).text()
+//                        playerAlliances[allianceKey] = allianceValue
+//                    }
+//
+//                    var planets = [Position?]()
+//
+//                    for row in try galaxyInfo.select("#galaxytable .row") {
+//                        let status = try row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
+//                        var planetStatus = ""
+//                        var playerID = 0
+//
+//                        let staffCheckID = try row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
+//
+//                        if status.contains("empty_filter") {
+//                            planets.append(nil)
+//                            continue
+//                        } else if status.count == 0 {
+//                            if playerRanks[staffCheckID] == -1 {
+//                                planetStatus = "staff"
+//                                playerID = Int(staffCheckID)!
+//                            } else {
+//                                planetStatus = "you"
+//                                playerID = self.playerID!
+//                                playerNames[String(playerID)] = self.playerName
+//                                playerRanks[String(playerID)] = self.rank
+//                            }
+//                        } else {
+//                            planetStatus = "\(status[status.startIndex])"
+//
+//                            let player = try row.select("[rel~=player[0-9]+]").attr("rel")
+//                            if player.isEmpty {
+//                                planets.append(nil)
+//                                continue
+//                            }
+//
+//                            playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
+//                            if playerID == 99999 {
+//                                planets.append(nil)
+//                                continue
+//                            }
+//                        }
+//
+//                        let planetPosition = try row.select("[class*=position]").text()
+//                        let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
+//                        let moonPosition = try row.select("[rel*=moon]").attr("rel")
+//                        let allianceID = try row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
+//                        let planetName = try row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
+//
+//                        var imageString = ""
+//                        let noNilsCount = planets.filter({ $0 != nil}).count
+//                        if noNilsCount == 0 {
+//                            imageString = images[0]
+//                        } else {
+//                            imageString = images[noNilsCount]
+//                        }
+//
+//                        let position = Position(coordinates: planetCoordinates,
+//                                                planetName: planetName,
+//                                                playerName: playerNames[String(playerID)]!,
+//                                                playerID: playerID,
+//                                                rank: playerRanks[String(playerID)]!,
+//                                                status: planetStatus,
+//                                                moon: moonPosition != "",
+//                                                alliance: playerAlliances[allianceID],
+//                                                imageString: imageString)
+//                        planets.append(position)
+//                    }
+//
+//                    completion(.success(planets))
+//
+//                } catch {
+//                    completion(.failure(OGError(message: "Failed to parse galaxy data", detailed: error.localizedDescription)))
+//                }
+//            case .failure(let error):
+//                completion(.failure(OGError(message: "Galaxy network request failed", detailed: error.localizedDescription)))
+//            }
+//        }
+//    }
+    
+    
+    func getGalaxy(coordinates: [Int]) async throws -> [Position?] {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
         let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
         let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
@@ -1361,114 +1302,104 @@ class OGame {
         struct GalaxyResponse: Codable {
             let galaxy: String
         }
-
-        sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseDecodable(of: GalaxyResponse.self) { response in
-            switch response.result {
-            case .success(let data):
-                do {
-                    let galaxyInfo = try SwiftSoup.parse(data.galaxy)
-                    let players = try galaxyInfo.select("[id*=player]")
-                    let alliances = try galaxyInfo.select("[id*=alliance]")
-
-                    let imagesParse = try galaxyInfo.select("li").select("[class*=planetTooltip]")
-                    var images: [String] = []
-                    for image in imagesParse {
-                        images.append(try image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
-                    }
-
-                    var playerNames = [String: String]()
-                    var playerRanks = [String: Int]()
-                    var playerAlliances = [String: String]()
-
-                    for player in players {
-                        let nameKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
-                        let nameValue = try player.select("span").text()
-                        playerNames[nameKey] = nameValue
-
-                        let rankKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
-                        let rankValue = Int(try player.select("a").get(0).text()) ?? 0
-                        playerRanks[rankKey] = rankValue
-                    }
-
-                    for alliance in alliances {
-                        let allianceKey = try alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
-                        let allianceValue = try alliance.select("h1").get(0).text()
-                        playerAlliances[allianceKey] = allianceValue
-                    }
-
-                    var planets = [Position?]()
-
-                    for row in try galaxyInfo.select("#galaxytable .row") {
-                        let status = try row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
-                        var planetStatus = ""
-                        var playerID = 0
-
-                        let staffCheckID = try row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
-
-                        if status.contains("empty_filter") {
-                            planets.append(nil)
-                            continue
-                        } else if status.count == 0 {
-                            if playerRanks[staffCheckID] == -1 {
-                                planetStatus = "staff"
-                                playerID = Int(staffCheckID)!
-                            } else {
-                                planetStatus = "you"
-                                playerID = self.playerID!
-                                playerNames[String(playerID)] = self.playerName
-                                playerRanks[String(playerID)] = self.rank
-                            }
-                        } else {
-                            planetStatus = "\(status[status.startIndex])"
-
-                            let player = try row.select("[rel~=player[0-9]+]").attr("rel")
-                            if player.isEmpty {
-                                planets.append(nil)
-                                continue
-                            }
-
-                            playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
-                            if playerID == 99999 {
-                                planets.append(nil)
-                                continue
-                            }
-                        }
-
-                        let planetPosition = try row.select("[class*=position]").text()
-                        let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
-                        let moonPosition = try row.select("[rel*=moon]").attr("rel")
-                        let allianceID = try row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
-                        let planetName = try row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
-
-                        var imageString = ""
-                        let noNilsCount = planets.filter({ $0 != nil}).count
-                        if noNilsCount == 0 {
-                            imageString = images[0]
-                        } else {
-                            imageString = images[noNilsCount]
-                        }
-
-                        let position = Position(coordinates: planetCoordinates,
-                                                planetName: planetName,
-                                                playerName: playerNames[String(playerID)]!,
-                                                playerID: playerID,
-                                                rank: playerRanks[String(playerID)]!,
-                                                status: planetStatus,
-                                                moon: moonPosition != "",
-                                                alliance: playerAlliances[allianceID],
-                                                imageString: imageString)
-                        planets.append(position)
-                    }
-
-                    completion(.success(planets))
-
-                } catch {
-                    completion(.failure(OGError(message: "Failed to parse galaxy data", detailed: error.localizedDescription)))
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Galaxy network request failed", detailed: error.localizedDescription)))
-            }
+        
+        let value = try await sessionAF.request(link, method: .post, parameters: parameters, headers: headers).serializingDecodable(GalaxyResponse.self).value
+        
+        let galaxyInfo = try SwiftSoup.parse(value.galaxy)
+        let players = try galaxyInfo.select("[id*=player]")
+        let alliances = try galaxyInfo.select("[id*=alliance]")
+        
+        let imagesParse = try galaxyInfo.select("li").select("[class*=planetTooltip]")
+        var images: [String] = []
+        for image in imagesParse {
+            images.append(try image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
         }
+        
+        var playerNames = [String: String]()
+        var playerRanks = [String: Int]()
+        var playerAlliances = [String: String]()
+        
+        for player in players {
+            let nameKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
+            let nameValue = try player.select("span").text()
+            playerNames[nameKey] = nameValue
+            
+            let rankKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
+            let rankValue = Int(try player.select("a").get(0).text()) ?? 0
+            playerRanks[rankKey] = rankValue
+        }
+        
+        for alliance in alliances {
+            let allianceKey = try alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
+            let allianceValue = try alliance.select("h1").get(0).text()
+            playerAlliances[allianceKey] = allianceValue
+        }
+        
+        var planets = [Position?]()
+        
+        for row in try galaxyInfo.select("#galaxytable .row") {
+            let status = try row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
+            var planetStatus = ""
+            var playerID = 0
+            
+            let staffCheckID = try row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
+            
+            if status.contains("empty_filter") {
+                planets.append(nil)
+                continue
+            } else if status.count == 0 {
+                if playerRanks[staffCheckID] == -1 {
+                    planetStatus = "staff"
+                    playerID = Int(staffCheckID)!
+                } else {
+                    planetStatus = "you"
+                    playerID = self.playerID!
+                    playerNames[String(playerID)] = self.playerName
+                    playerRanks[String(playerID)] = self.rank
+                }
+            } else {
+                planetStatus = "\(status[status.startIndex])"
+                
+                let player = try row.select("[rel~=player[0-9]+]").attr("rel")
+                if player.isEmpty {
+                    planets.append(nil)
+                    continue
+                }
+                
+                playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
+                if playerID == 99999 {
+                    planets.append(nil)
+                    continue
+                }
+            }
+            
+            let planetPosition = try row.select("[class*=position]").text()
+            let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
+            let moonPosition = try row.select("[rel*=moon]").attr("rel")
+            let allianceID = try row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
+            let planetName = try row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
+            
+            var imageString = ""
+            let noNilsCount = planets.filter({ $0 != nil}).count
+            if noNilsCount == 0 {
+                imageString = images[0]
+            } else {
+                imageString = images[noNilsCount]
+            }
+            
+            let position = Position(coordinates: planetCoordinates,
+                                    planetName: planetName,
+                                    playerName: playerNames[String(playerID)]!,
+                                    playerID: playerID,
+                                    rank: playerRanks[String(playerID)]!,
+                                    status: planetStatus,
+                                    moon: moonPosition != "",
+                                    alliance: playerAlliances[allianceID],
+                                    imageString: imageString)
+            planets.append(position)
+        }
+        
+        return planets
     }
 
 
@@ -1485,51 +1416,43 @@ class OGame {
 
 
     // MARK: - BUILD BUILDING/SHIPS
-    func build(what: (Int, Int, String), completion: @escaping (Result<Bool, OGError>) -> Void) {
-        let build = (type: what.0, amount: what.1, component: what.2)
-
-        let link = "\(self.indexPHP!)page=ingame&component=\(build.component)&cp=\(planetID!)"
-        sessionAF.request(link).validate().response { response in
-            switch response.result {
-            case .success(let data):
-                let text = String(data: data!, encoding: .ascii)!
-                // Can i just delete that below and change it to .range(of:) ?
-                let pattern = "var urlQueueAdd = (.*)token=(.*)';"
-                let regex = try! NSRegularExpression(pattern: pattern, options: [])
-                let nsString = text as NSString
-                let results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
-                let matches = results.map { nsString.substring(with: $0.range)}
-                guard !matches.isEmpty else {
-                    completion(.failure(OGError(message: "Building error", detailed: "Regex matches are empty")))
-                    return
-                }
-                let match = matches[0]
-
-                let strIndex = match.range(of: "token=")?.upperBound
-                var final = match[strIndex!...]
-                final.removeLast(2)
-                let buildToken = final
-
-                let parameters: Parameters = [
-                    "page": "ingame",
-                    "component": build.component,
-                    "modus": 1,
-                    "token": buildToken,
-                    "type": build.type,
-                    "menge": build.amount
-                ]
-
-                self.sessionAF.request(self.indexPHP!, parameters: parameters).response { response in
-                    switch response.result {
-                    case .success(_):
-                        completion(.success(true))
-                    case .failure(let error):
-                        completion(.failure(OGError(message: "Building network post request error", detailed: error.localizedDescription)))
-                    }
-                }
-            case .failure(let error):
-                completion(.failure(OGError(message: "Building network get request error", detailed: error.localizedDescription)))
-            }
+    func build(what: (Int, Int, String)) async throws {
+        do {
+            let build = (type: what.0, amount: what.1, component: what.2)
+            
+            let link = "\(self.indexPHP!)page=ingame&component=\(build.component)&cp=\(planetID!)"
+            let value = try await sessionAF.request(link).serializingData().value
+            
+            let text = String(data: value, encoding: .ascii)!
+            // Can i just delete that below and change it to .range(of:) ?
+            let pattern = "var urlQueueAdd = (.*)token=(.*)';"
+            let regex = try! NSRegularExpression(pattern: pattern, options: [])
+            let nsString = text as NSString
+            let results = regex.matches(in: text, options: [], range: NSMakeRange(0, nsString.length))
+            let matches = results.map { nsString.substring(with: $0.range)}
+            
+            guard !matches.isEmpty
+            else { throw OGError(message: "Building error", detailed: "Regex matches are empty") }
+            
+            let match = matches[0]
+            
+            let strIndex = match.range(of: "token=")?.upperBound
+            var final = match[strIndex!...]
+            final.removeLast(2)
+            let buildToken = final
+            
+            let parameters: Parameters = [
+                "page": "ingame",
+                "component": build.component,
+                "modus": 1,
+                "token": buildToken,
+                "type": build.type,
+                "menge": build.amount
+            ]
+            
+            let _ = try await sessionAF.request(self.indexPHP!, parameters: parameters).serializingData().value
+        } catch {
+            throw OGError(message: "Building error", detailed: error.localizedDescription)
         }
     }
 
@@ -1602,35 +1525,3 @@ class OGame {
         }
     }
 }
-
-
-// rank() -> String -> 999
-
-// planetIDs() -> [Int] -> [123456, 987654]
-// planetName() -> [String] -> [Homeworld, Colony]
-// idByPlanetName(name) -> Int -> 123456
-
-// getServerInfo() -> Server
-// getServerInfo().version -> String -> "8.1.0"
-// getServerInfo().speed.universe -> Int -> 4
-// getServerInfo().speed.fleet -> Int -> 1
-// getServerInfo().donut.galaxy -> Bool -> true/false
-// getServerInfo().donut.system -> Bool -> true/false
-
-// getCharacterClass() -> String -> "explorer"
-
-// getCelestial(@) -> @Celestial
-// getCelestial(@).diameter -> Int -> 12800
-// getCelestial(@).used -> Int -> 21
-// getCelestial(@).total -> Int -> 180
-// getCelestial(@).free -> Int -> 159
-// getCelestial(@).tempMin -> Int -> 10
-// getCelestial(@).tempMax -> Int -> 50
-// getCelestial(@).coordinates -> [Int] -> [3, 453, 10, 1]
-
-// getCelestialCoordinates() -> [Int] -> [3, 453, 10, 1]
-
-// getSlotCelestial() -> Slot
-// getSlotCelestial().total -> Int -> 180
-// getSlotCelestial().free -> Int -> 21
-// getSlotCelestial().used -> Int -> 159

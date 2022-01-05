@@ -83,19 +83,17 @@ class MovementVC: UIViewController {
         tableView.alpha = 0.5
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
-        OGame.shared.getFleet { result in
-            switch result {
-            case .success(let fleets):
-                self.fleets = fleets
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.tableView.alpha = 1
-                    self.fleetLabel.isHidden = !fleets.isEmpty
-                    self.refreshControl.endRefreshing()
-                    self.activityIndicator.stopAnimating()
-                }
-            case .failure(let error):
-                self.logoutAndShowError(error)
+        Task {
+            do {
+                fleets = try await OGame.shared.getFleet()
+                
+                tableView.reloadData()
+                tableView.alpha = 1
+                fleetLabel.isHidden = !fleets!.isEmpty
+                refreshControl.endRefreshing()
+                activityIndicator.stopAnimating()
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }

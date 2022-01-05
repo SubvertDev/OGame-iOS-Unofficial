@@ -35,8 +35,7 @@ class MenuVC: UIViewController {
                     "Defence",
                     "Fleet (unavailable)",
                     "Movement",
-                    "Galaxy",
-                    "Settings (unavailable)"]
+                    "Galaxy"]
     
     
     override func viewDidLoad() {
@@ -47,7 +46,7 @@ class MenuVC: UIViewController {
             leftButton.isEnabled = false
             rightButton.isEnabled = false
         }
-        
+                
         configureTableView()
         configureLabels()
     }
@@ -110,11 +109,10 @@ class MenuVC: UIViewController {
         
         Task {
             do {
-                let resources = try await OGame.shared.getResources()
-                self.resources = resources
-                refreshResourcesView(with: resources)
+                resources = try await OGame.shared.getResources()
+                refreshResourcesView(with: resources!)
             } catch {
-                self.logoutAndShowError(error as! OGError)
+                logoutAndShowError(error as! OGError)
             }
         }
     }

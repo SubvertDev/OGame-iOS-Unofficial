@@ -66,14 +66,13 @@ class FacilitiesVC: UIViewController {
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         Task {
-            let facilities = try await OGame.shared.facilities()
-            buildingsDataModel = facilities
+            buildingsDataModel = try await OGame.shared.facilities()
             
-            self.tableView.reloadData()
-            self.refreshControl.endRefreshing()
-            self.tableView.isUserInteractionEnabled = true
-            self.tableView.alpha = 1
-            self.activityIndicator.stopAnimating()
+            tableView.reloadData()
+            refreshControl.endRefreshing()
+            tableView.isUserInteractionEnabled = true
+            tableView.alpha = 1
+            activityIndicator.stopAnimating()
         }
     }
 }
@@ -110,13 +109,12 @@ extension FacilitiesVC: BuildingCellDelegate {
             self.tableView.alpha = 0.5
             self.activityIndicator.startAnimating()
 
-            OGame.shared.build(what: type) { result in
-                switch result {
-                case .success(_):
+            Task {
+                do {
+                    try await OGame.shared.build(what: type)
                     self.refresh()
-
-                case .failure(let error):
-                    self.logoutAndShowError(error)
+                } catch {
+                    self.logoutAndShowError(error as! OGError)
                 }
             }
         })

@@ -73,6 +73,7 @@ class LoginVC: UIViewController {
         Task {
             do {
                 try await OGame.shared.loginIntoAccount(username: username, password: password)
+                
                 loginButton.isHidden = false
                 activityIndicator.stopAnimating()
 

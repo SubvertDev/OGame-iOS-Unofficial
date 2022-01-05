@@ -60,6 +60,7 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
         Task {
             do {
                 try await OGame.shared.loginIntoSever(with: OGame.shared.serversOnAccount[indexPath.row])
+                
                 tableView.alpha = 1
                 tableView.isUserInteractionEnabled = true
                 activityIndicator.stopAnimating()

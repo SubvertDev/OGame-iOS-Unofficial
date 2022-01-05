@@ -29,18 +29,42 @@ class FleetCell: UITableViewCell {
     }
 
     func set(with fleet: Fleets) {
-
+        friendlyPlanetImage.image = fleet.playerPlanetImage
+        enemyPlanetImage.image = fleet.enemyPlanetImage
+        
         switch fleet.mission {
         case "Attacked":
-            missionTypeLabel.text = "Attack"
+            missionTypeLabel.text = "Attacked"
 
-            friendlyArrivalTimeLabel.text = " "
-            friendlyPlanetNameLabel.text = fleet.enemyPlanet
+            friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
+            friendlyPlanetNameLabel.text = fleet.playerPlanet
+            friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.destination)
+
+            enemyArrivalTimeLabel.text = " "
+            enemyPlanetNameLabel.text = fleet.enemyPlanet
+            enemyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
+            
+            missionTypeImage.image = UIImage(systemName: "airplane")?.withHorizontallyFlippedOrientation()
+            
+            // TODO: Change it to an actual images?
+            friendlyPlanetImage.image = UIImage(systemName: "shield.fill")
+            enemyPlanetImage.image = UIImage(systemName: "bolt")
+            
+        case "Attack", "Attack (R)":
+            missionTypeLabel.text = "\(fleet.mission)"
+
+            friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
+            friendlyPlanetNameLabel.text = fleet.playerPlanet
             friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
 
-            enemyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
-            enemyPlanetNameLabel.text = fleet.playerPlanet
+            enemyArrivalTimeLabel.text = String(fleet.endTime!).convertDateToString()
+            enemyPlanetNameLabel.text = fleet.enemyPlanet
             enemyPlanetCoordinatesLabel.text = destinationToString(fleet.destination)
+            
+            if fleet.mission == "Attack (R)" {
+                enemyArrivalTimeLabel.text = " "
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
+            }
 
         case "Transport", "Transport (R)":
             missionTypeLabel.text = "\(fleet.mission)"
@@ -116,11 +140,8 @@ class FleetCell: UITableViewCell {
         // TODO: Colonisation, Espionage, ACS Defend, ACS Attack, Moon Destruction
             
         default:
-            break
+            missionTypeLabel.text = "ERROR"
         }
-        
-        friendlyPlanetImage.image = fleet.playerPlanetImage
-        enemyPlanetImage.image = fleet.enemyPlanetImage
     }
 
     func destinationToString(_ destination: [Int]) -> String {

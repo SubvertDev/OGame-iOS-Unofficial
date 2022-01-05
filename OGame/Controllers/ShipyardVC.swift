@@ -69,14 +69,13 @@ class ShipyardVC: UIViewController {
         
         Task {
             do {
-                let shipsBuildings = try await OGame.shared.ships()
-                self.buildingsDataModel = shipsBuildings
+                buildingsDataModel = try await OGame.shared.ships()
                 
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
-                self.tableView.isUserInteractionEnabled = true
-                self.tableView.alpha = 1
-                self.activityIndicator.stopAnimating()
+                tableView.reloadData()
+                refreshControl.endRefreshing()
+                tableView.isUserInteractionEnabled = true
+                tableView.alpha = 1
+                activityIndicator.stopAnimating()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
@@ -126,13 +125,12 @@ extension ShipyardVC: BuildingCellDelegate {
 
                 let typeToBuild = (type.0, ships, type.2)
 
-                OGame.shared.build(what: typeToBuild) { result in
-                    switch result {
-                    case .success(_):
+                Task {
+                    do {
+                        try await OGame.shared.build(what: typeToBuild)
                         self.refresh()
-
-                    case .failure(let error):
-                        self.logoutAndShowError(error)
+                    } catch {
+                        self.logoutAndShowError(error as! OGError)
                     }
                 }
             })

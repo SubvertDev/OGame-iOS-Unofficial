@@ -44,7 +44,7 @@ class GenericVC: UIViewController {
         activityIndicator.startAnimating()
         
         if isFirstLoad && resources != nil {
-            self.resourcesOverview.set(metal: resources!.metal,
+            resourcesOverview.set(metal: resources!.metal,
                                        crystal: resources!.crystal,
                                        deuterium: resources!.deuterium,
                                        energy: resources!.energy)
@@ -55,29 +55,29 @@ class GenericVC: UIViewController {
             do {
                 let resources = try await OGame.shared.getResources()
                 
-                self.resourcesOverview.alpha = 1
-                self.activityIndicator.stopAnimating()
+                resourcesOverview.alpha = 1
+                activityIndicator.stopAnimating()
                 
-                self.resourcesOverview.set(metal: resources.metal,
-                                           crystal: resources.crystal,
-                                           deuterium: resources.deuterium,
-                                           energy: resources.energy)
+                resourcesOverview.set(metal: resources.metal,
+                                    crystal: resources.crystal,
+                                    deuterium: resources.deuterium,
+                                    energy: resources.energy)
                 
                 var production = [Double]()
                 for day in resources.dayProduction {
                     let dayDouble = Double(day)
                     production.append(dayDouble / 3600)
                 }
-                self.prodPerSecond = production
+                prodPerSecond = production
                 
-                self.timer?.invalidate()
-                self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                timer?.invalidate()
+                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                     self.resourcesOverview.update(metal: self.prodPerSecond![0],
                                                   crystal: self.prodPerSecond![1],
                                                   deuterium: self.prodPerSecond![2],
                                                   storage: resources)
                 }
-                RunLoop.main.add(self.timer!, forMode: .common)
+                RunLoop.main.add(timer!, forMode: .common)
                 
             } catch {
                 logoutAndShowError(error as! OGError)

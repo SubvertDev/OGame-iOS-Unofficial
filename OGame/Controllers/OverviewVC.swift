@@ -64,19 +64,17 @@ class OverviewVC: UIViewController {
         tableView.isUserInteractionEnabled = false
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
 
-        OGame.shared.getOverview { result in
-            switch result {
-            case .success(let data):
-                self.overviewInfo = data
-                DispatchQueue.main.async {
-                    self.tableView.alpha = 1
-                    self.tableView.isUserInteractionEnabled = true
-                    self.refreshControl.endRefreshing()
-                    self.activityIndicator.stopAnimating()
-                    self.tableView.reloadData()
-                }
-            case .failure(let error):
-                self.logoutAndShowError(error)
+        Task {
+            do {
+                overviewInfo = try await OGame.shared.getOverview()
+                
+                tableView.alpha = 1
+                tableView.isUserInteractionEnabled = true
+                refreshControl.endRefreshing()
+                activityIndicator.stopAnimating()
+                tableView.reloadData()
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }

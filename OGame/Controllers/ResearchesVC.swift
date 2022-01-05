@@ -68,14 +68,13 @@ class ResearchVC: UIViewController {
         
         Task {
             do {
-                let researchBuildings = try await OGame.shared.research()
-                self.buildingsDataModel = researchBuildings
+                buildingsDataModel = try await OGame.shared.research()
                 
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
-                self.tableView.isUserInteractionEnabled = true
-                self.tableView.alpha = 1
-                self.activityIndicator.stopAnimating()
+                tableView.reloadData()
+                refreshControl.endRefreshing()
+                tableView.isUserInteractionEnabled = true
+                tableView.alpha = 1
+                activityIndicator.stopAnimating()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
@@ -115,13 +114,12 @@ extension ResearchVC: BuildingCellDelegate {
             self.tableView.alpha = 0.5
             self.activityIndicator.startAnimating()
 
-            OGame.shared.build(what: type) { result in
-                switch result {
-                case .success(_):
+            Task {
+                do {
+                    try await OGame.shared.build(what: type)
                     self.refresh()
-
-                case .failure(let error):
-                    self.logoutAndShowError(error)
+                } catch {
+                    self.logoutAndShowError(error as! OGError)
                 }
             }
         })

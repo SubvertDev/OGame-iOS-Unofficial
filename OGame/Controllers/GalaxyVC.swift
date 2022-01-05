@@ -37,29 +37,28 @@ class GalaxyVC: UIViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.register(UINib(nibName: "GalaxyCell", bundle: nil), forCellReuseIdentifier: "GalaxyCell")
 
-        startedUpdating()
-
-        OGame.shared.getGalaxy(coordinates: currentCoordinates) { result in
-            switch result {
-            case .success(let planets):
-                self.systemInfo = planets
+        startUpdating()
+        
+        Task {
+            do {
+                systemInfo = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    self.stoppedUpdating()
+                    self.stopUpdating()
                 }
-            case .failure(let error):
-                self.logoutAndShowError(error)
+            } catch {
+                logoutAndShowError(error as! OGError)
             }
         }
     }
 
-    func startedUpdating() {
+    func startUpdating() {
         activityIndicator.startAnimating()
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
     }
 
-    func stoppedUpdating() {
+    func stopUpdating() {
         activityIndicator.stopAnimating()
         tableView.alpha = 1
         tableView.isUserInteractionEnabled = true
@@ -75,20 +74,21 @@ class GalaxyVC: UIViewController {
 
             currentCoordinates = [Int(sender.text!)!, currentCoordinates[1]]
 
-            startedUpdating()
+            startUpdating()
 
-            OGame.shared.getGalaxy(coordinates: currentCoordinates) { result in
-                switch result {
-                case .success(let planets):
+            Task {
+                do {
+                    let planets = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
                     self.systemInfo = planets
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
-                        self.stoppedUpdating()
+                        self.stopUpdating()
                     }
-                case .failure(let error):
-                    self.logoutAndShowError(error)
+                } catch {
+                    logoutAndShowError(error as! OGError)
                 }
             }
+
         } else {
             sender.text = "\(currentCoordinates[0])"
         }
@@ -104,18 +104,18 @@ class GalaxyVC: UIViewController {
 
             currentCoordinates = [currentCoordinates[0], Int(sender.text!)!]
 
-            startedUpdating()
-
-            OGame.shared.getGalaxy(coordinates: currentCoordinates) { result in
-                switch result {
-                case .success(let planets):
+            startUpdating()
+            
+            Task {
+                do {
+                    let planets = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
                     self.systemInfo = planets
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
-                        self.stoppedUpdating()
+                        self.stopUpdating()
                     }
-                case .failure(let error):
-                    self.logoutAndShowError(error)
+                } catch {
+                    logoutAndShowError(error as! OGError)
                 }
             }
         } else {
