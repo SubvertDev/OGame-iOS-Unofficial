@@ -8,7 +8,6 @@
 import Foundation
 
 struct Supply {
-    // TODO: Can I merge Supply and Supplies?
     let level: Int
     let condition: String
 

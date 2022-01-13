@@ -47,7 +47,7 @@ class OGame {
     var rank: Int?
     var commander: Bool?
     
-    // Build time check
+    // Build time check variables
     private var roboticsFactoryLevel: Int?
     private var naniteFactoryLevel: Int?
     private var researchLabLevel: Int?
@@ -172,7 +172,7 @@ class OGame {
     }
 
 
-    // MARK: - Login Into Server
+    // MARK: - LOGIN INTO SERVER -
     func loginIntoSever(with serverInfo: MyServers) async throws {
         serverID = serverInfo.serverID
         language = serverInfo.language
@@ -270,8 +270,8 @@ class OGame {
     // MARK: - NON LOGIN FUNCTIONS -
     
 
-
-    // MARK: - GET RANK -> Int
+    
+    // MARK: - GET RANK
     func getRank() -> Int {
         do {
             let idBar = try doc!.select("[id=bar]").get(0)
@@ -295,7 +295,7 @@ class OGame {
     }
 
 
-    // MARK: - PLANET IDS -> [Int]
+    // MARK: - PLANET IDS
     func getPlanetIDs() -> [Int] {
         do {
             var ids = [Int]()
@@ -313,7 +313,7 @@ class OGame {
     }
 
 
-    // MARK: - PLANET NAMES -> [String]
+    // MARK: - PLANET NAMES
     func getPlanetNames() -> [String] {
         do {
             var planetNames = [String]()
@@ -329,9 +329,8 @@ class OGame {
     }
 
 
-    // MARK: - ID BY PLANET NAME -> Int
+    // MARK: - ID BY PLANET NAME
     func getIdByPlanetName(_ name: String) -> Int {
-        // TODO: Better way?
         var found: Int?
 
         for (planetName, id) in zip(getPlanetNames(), getPlanetIDs()) {
@@ -343,7 +342,7 @@ class OGame {
     }
 
 
-    // MARK: - GET SERVER INFO -> Server
+    // MARK: - GET SERVER INFO
     func getServerInfo() -> Server {
         do {
             let version = try doc!.select("[name=ogame-version]").get(0).attr("content")
@@ -366,17 +365,17 @@ class OGame {
     }
 
 
-    // MARK: - GET CHARACTER CLASS -> String
+    // MARK: - GET CHARACTER CLASS
     func getCharacterClass() -> String {
         if let character = try? doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
-            return character // none for no character
+            return character
         } else {
             return "error"
         }
     }
 
 
-    // MARK: - GET COMMANDER -> Bool
+    // MARK: - GET COMMANDER
     func getCommander() -> Bool {
         // TODO: test on 3 days commander account
         if let commanders = try? doc!.select("[id=officers]").select("[class*=tooltipHTML  on]").select("[class*=commander]") {
@@ -387,7 +386,7 @@ class OGame {
     }
 
 
-    // MARK: - GET MOON IDS
+    // GET MOON IDS
     // TODO: Get a moon
     
 
@@ -560,6 +559,8 @@ class OGame {
         }
     }
     
+    
+    // MARK: - GET IMAGES FROM URL
     func getImagesFromUrl(_ urls: [String]) async throws -> [UIImage] {
         do {
             var images: [UIImage] = []
@@ -670,7 +671,6 @@ class OGame {
             for status in technologyStatusParse {
                 technologyStatus.append(try status.attr("data-status"))
             }
-            //print(levels, technologyStatus)
             
             guard !levels.isEmpty, !technologyStatus.isEmpty
             else { throw OGError(message: "Not logged in", detailed: "Supply login check failed") }
@@ -757,7 +757,7 @@ class OGame {
     }
 
 
-    // MARK: - GET MOON FACILITIES
+    // GET MOON FACILITIES
     // TODO: Get a moon
 
 
@@ -913,10 +913,10 @@ class OGame {
     }
     
     
-    // MARK - GET ALLY
+    // GET ALLY
     
     
-    // MARK: - GET SLOT -> Slot
+    // MARK: - GET SLOT
     func getSlotCelestial() -> Slot {
         do {
             let slots = try doc!.select("[class=textCenter]").get(1).text().components(separatedBy: " ")[0].components(separatedBy: "/").compactMap { Int($0) }
@@ -1136,6 +1136,7 @@ class OGame {
         return coordinates
     }
     
+    
     // MARK: - GET BUILDING TIME
     func getBuildingTimeOffline(buildingWithLevel: BuildingWithLevelsData) -> String {
         let resources = buildingWithLevel.metal + buildingWithLevel.crystal
@@ -1175,125 +1176,6 @@ class OGame {
     
 
     // MARK: - GET GALAXY
-//    func getGalaxy(coordinates: [Int], completion: @escaping (Result<[Position?], OGError>) -> Void) {
-//        let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
-//        let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
-//        let headers: HTTPHeaders = ["X-Requested-With": "XMLHttpRequest"]
-//        
-//        struct GalaxyResponse: Codable {
-//            let galaxy: String
-//        }
-//
-//        sessionAF.request(link, method: .post, parameters: parameters, headers: headers).validate().responseDecodable(of: GalaxyResponse.self) { response in
-//            switch response.result {
-//            case .success(let data):
-//                do {
-//                    let galaxyInfo = try SwiftSoup.parse(data.galaxy)
-//                    let players = try galaxyInfo.select("[id*=player]")
-//                    let alliances = try galaxyInfo.select("[id*=alliance]")
-//
-//                    let imagesParse = try galaxyInfo.select("li").select("[class*=planetTooltip]")
-//                    var images: [String] = []
-//                    for image in imagesParse {
-//                        images.append(try image.attr("class").replacingOccurrences(of: "planetTooltip ", with: ""))
-//                    }
-//
-//                    var playerNames = [String: String]()
-//                    var playerRanks = [String: Int]()
-//                    var playerAlliances = [String: String]()
-//
-//                    for player in players {
-//                        let nameKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
-//                        let nameValue = try player.select("span").text()
-//                        playerNames[nameKey] = nameValue
-//
-//                        let rankKey = try player.attr("id").replacingOccurrences(of: "player", with: "")
-//                        let rankValue = Int(try player.select("a").get(0).text()) ?? 0
-//                        playerRanks[rankKey] = rankValue
-//                    }
-//
-//                    for alliance in alliances {
-//                        let allianceKey = try alliance.attr("id").replacingOccurrences(of: "alliance", with: "")
-//                        let allianceValue = try alliance.select("h1").get(0).text()
-//                        playerAlliances[allianceKey] = allianceValue
-//                    }
-//
-//                    var planets = [Position?]()
-//
-//                    for row in try galaxyInfo.select("#galaxytable .row") {
-//                        let status = try row.attr("class").replacingOccurrences(of: "row ", with: "").replacingOccurrences(of: "_filter", with: "").trimmingCharacters(in: .whitespaces)
-//                        var planetStatus = ""
-//                        var playerID = 0
-//
-//                        let staffCheckID = try row.select("[rel~=player[0-9]+]").attr("rel").replacingOccurrences(of: "player", with: "")
-//
-//                        if status.contains("empty_filter") {
-//                            planets.append(nil)
-//                            continue
-//                        } else if status.count == 0 {
-//                            if playerRanks[staffCheckID] == -1 {
-//                                planetStatus = "staff"
-//                                playerID = Int(staffCheckID)!
-//                            } else {
-//                                planetStatus = "you"
-//                                playerID = self.playerID!
-//                                playerNames[String(playerID)] = self.playerName
-//                                playerRanks[String(playerID)] = self.rank
-//                            }
-//                        } else {
-//                            planetStatus = "\(status[status.startIndex])"
-//
-//                            let player = try row.select("[rel~=player[0-9]+]").attr("rel")
-//                            if player.isEmpty {
-//                                planets.append(nil)
-//                                continue
-//                            }
-//
-//                            playerID = Int(player.replacingOccurrences(of: "player", with: ""))!
-//                            if playerID == 99999 {
-//                                planets.append(nil)
-//                                continue
-//                            }
-//                        }
-//
-//                        let planetPosition = try row.select("[class*=position]").text()
-//                        let planetCoordinates = [coordinates[0], coordinates[1], Int(planetPosition)!, 1]
-//                        let moonPosition = try row.select("[rel*=moon]").attr("rel")
-//                        let allianceID = try row.select("[rel*=alliance]").attr("rel").replacingOccurrences(of: "alliance", with: "")
-//                        let planetName = try row.select("[id~=planet[0-9]+]").select("h1").text().replacingOccurrences(of: "Planet: ", with: "")
-//
-//                        var imageString = ""
-//                        let noNilsCount = planets.filter({ $0 != nil}).count
-//                        if noNilsCount == 0 {
-//                            imageString = images[0]
-//                        } else {
-//                            imageString = images[noNilsCount]
-//                        }
-//
-//                        let position = Position(coordinates: planetCoordinates,
-//                                                planetName: planetName,
-//                                                playerName: playerNames[String(playerID)]!,
-//                                                playerID: playerID,
-//                                                rank: playerRanks[String(playerID)]!,
-//                                                status: planetStatus,
-//                                                moon: moonPosition != "",
-//                                                alliance: playerAlliances[allianceID],
-//                                                imageString: imageString)
-//                        planets.append(position)
-//                    }
-//
-//                    completion(.success(planets))
-//
-//                } catch {
-//                    completion(.failure(OGError(message: "Failed to parse galaxy data", detailed: error.localizedDescription)))
-//                }
-//            case .failure(let error):
-//                completion(.failure(OGError(message: "Galaxy network request failed", detailed: error.localizedDescription)))
-//            }
-//        }
-//    }
-    
-    
     func getGalaxy(coordinates: [Int]) async throws -> [Position?] {
         let link = "\(self.indexPHP!)page=ingame&component=galaxyContent&ajax=1"
         let parameters: Parameters = ["galaxy": coordinates[0], "system": coordinates[1]]
@@ -1458,12 +1340,6 @@ class OGame {
 
 
     // COLLECT RUBBLE FIELD
-
-
-    // RELOGIN
-
-
-    // LOGOUT
     
     
     // GET CELESTIAL QUEUE
@@ -1488,6 +1364,9 @@ class OGame {
     
     
     // ABANDON PLANET
+    
+    
+    // RELOGIN & LOGOUT ?
 
 
     // MARK: - Reset

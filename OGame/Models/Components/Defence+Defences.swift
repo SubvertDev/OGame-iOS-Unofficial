@@ -8,7 +8,6 @@
 import Foundation
 
 class Defence {
-    // TODO: Merge Defence and Defences?
     let amount: Int
     var condition: String
 

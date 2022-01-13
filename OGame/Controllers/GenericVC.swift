@@ -27,7 +27,7 @@ class GenericVC: UIViewController {
         
         resourcesOverview.bringSubviewToFront(activityIndicator)
         configureChildVC()
-        //refresh() no need because childvc calls refresh by notification
+        // No need in refresh() because childvc calls refresh by notification
     }
     
     func configureChildVC() {

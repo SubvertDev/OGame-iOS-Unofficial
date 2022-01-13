@@ -42,10 +42,8 @@ class GalaxyVC: UIViewController {
         Task {
             do {
                 systemInfo = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.stopUpdating()
-                }
+                tableView.reloadData()
+                stopUpdating()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
@@ -80,10 +78,8 @@ class GalaxyVC: UIViewController {
                 do {
                     let planets = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
                     self.systemInfo = planets
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        self.stopUpdating()
-                    }
+                    tableView.reloadData()
+                    stopUpdating()
                 } catch {
                     logoutAndShowError(error as! OGError)
                 }
@@ -110,10 +106,8 @@ class GalaxyVC: UIViewController {
                 do {
                     let planets = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
                     self.systemInfo = planets
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        self.stopUpdating()
-                    }
+                    tableView.reloadData()
+                    stopUpdating()
                 } catch {
                     logoutAndShowError(error as! OGError)
                 }

@@ -33,7 +33,7 @@ class MenuVC: UIViewController {
                     "Research",
                     "Shipyard",
                     "Defence",
-                    "Fleet (unavailable)",
+                    "Fleet",
                     "Movement",
                     "Galaxy"]
     
@@ -53,6 +53,7 @@ class MenuVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         refresh()
     }
     

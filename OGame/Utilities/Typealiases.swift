@@ -7,6 +7,7 @@
 
 import UIKit
 
+// TODO: Change to structs?
 typealias BuildingsData = [(name: String,
                             metal: Int,
                             crystal: Int,

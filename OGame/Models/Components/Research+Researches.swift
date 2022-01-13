@@ -8,7 +8,6 @@
 import Foundation
 
 struct Research {
-    // TODO: Can I merge research and researches?
     let level: Int
     let condition: String
 

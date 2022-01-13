@@ -8,7 +8,6 @@
 import Foundation
 
 struct Facility {
-    // TODO: Can I merge facility and facilites?
     let level: Int
     let condition: String
     
