@@ -14,6 +14,7 @@ class MovementVC: UIViewController {
     let refreshControl = UIRefreshControl()
     let fleetLabel = UILabel()
 
+    var player: PlayerData?
     var fleets: [Fleets]?
 
 
@@ -28,6 +29,7 @@ class MovementVC: UIViewController {
         refresh()
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -79,13 +81,16 @@ class MovementVC: UIViewController {
         fleetLabel.isHidden = true
     }
 
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+        
         tableView.alpha = 0.5
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         Task {
             do {
-                fleets = try await OGame.shared.getFleet()
+                fleets = try await OGFleet.getFleetWith(playerData: player)
                 
                 tableView.reloadData()
                 tableView.alpha = 1
@@ -99,6 +104,7 @@ class MovementVC: UIViewController {
     }
 }
 
+// MARK: - Delegates & DataSource
 extension MovementVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let fleets = fleets {

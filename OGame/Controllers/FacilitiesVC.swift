@@ -13,8 +13,10 @@ class FacilitiesVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
+    var player: PlayerData?
     var buildingsDataModel: [BuildingWithLevel]?
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Facilities"
@@ -25,6 +27,7 @@ class FacilitiesVC: UIViewController {
         refresh()
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -58,15 +61,20 @@ class FacilitiesVC: UIViewController {
         ])
     }
 
-    // MARK: - REFRESH DATA ON FACILITIES VC
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let playerData = player else {
+            logoutAndShowError(OGError(message: "No player data", detailed: "Error while trying to "))
+            return
+        }
+        
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
         
         Task {
-            buildingsDataModel = try await OGame.shared.facilities()
+            buildingsDataModel = try await OGFacilities.getFacilitiesWith(playerData: playerData)
             
             tableView.reloadData()
             refreshControl.endRefreshing()
@@ -77,6 +85,7 @@ class FacilitiesVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
@@ -84,11 +93,12 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
+        guard let playerData = player else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setFacility(building: buildingsDataModel[indexPath.row])
+        cell.setFacility(building: buildingsDataModel[indexPath.row], playerData: playerData)
 
         return cell
     }
@@ -98,8 +108,11 @@ extension FacilitiesVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: - Building Delegate
 extension FacilitiesVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
+        guard let player = player else { return }
+        
         let buildingInfo = buildingsDataModel![sender.tag]
         
         let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.level + 1)", preferredStyle: .alert)
@@ -111,7 +124,7 @@ extension FacilitiesVC: BuildingCellDelegate {
 
             Task {
                 do {
-                    try await OGame.shared.build(what: type)
+                    try await OGBuild().build(what: type, playerData: player)
                     self.refresh()
                 } catch {
                     self.logoutAndShowError(error as! OGError)

@@ -20,6 +20,8 @@ class GenericVC: UIViewController {
     var prodPerSecond: [Double]?
     var isFirstLoad = true
     
+    var player: PlayerData?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,9 +29,9 @@ class GenericVC: UIViewController {
         
         resourcesOverview.bringSubviewToFront(activityIndicator)
         configureChildVC()
-        // No need in refresh() because childvc calls refresh by notification
     }
     
+    // MARK: - Configure UI
     func configureChildVC() {
         if let childVC = childVC {
             addChild(childVC)
@@ -39,49 +41,59 @@ class GenericVC: UIViewController {
         }
     }
     
+    func removeChildVC() {
+        if let childVC = childVC {
+            childVC.willMove(toParent: nil)
+            childVC.view.removeFromSuperview()
+            childVC.removeFromParent()
+        }
+    }
+    
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+        
         resourcesOverview.alpha = 0.5
         activityIndicator.startAnimating()
-        
+                
         if isFirstLoad && resources != nil {
-            resourcesOverview.set(metal: resources!.metal,
-                                       crystal: resources!.crystal,
-                                       deuterium: resources!.deuterium,
-                                       energy: resources!.energy)
-            isFirstLoad = false
-        }
-        
-        Task {
-            do {
-                let resources = try await OGame.shared.getResources()
-                
-                resourcesOverview.alpha = 1
-                activityIndicator.stopAnimating()
-                
-                resourcesOverview.set(metal: resources.metal,
-                                    crystal: resources.crystal,
-                                    deuterium: resources.deuterium,
-                                    energy: resources.energy)
-                
-                var production = [Double]()
-                for day in resources.dayProduction {
-                    let dayDouble = Double(day)
-                    production.append(dayDouble / 3600)
+            startUpdatingViewWith(resources!)
+        } else {
+            Task {
+                do {
+                    let resources = try await OGResources().getResourcesWith(playerData: player)
+                    startUpdatingViewWith(resources)
+                } catch {
+                    logoutAndShowError(error as! OGError)
                 }
-                prodPerSecond = production
-                
-                timer?.invalidate()
-                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    self.resourcesOverview.update(metal: self.prodPerSecond![0],
-                                                  crystal: self.prodPerSecond![1],
-                                                  deuterium: self.prodPerSecond![2],
-                                                  storage: resources)
-                }
-                RunLoop.main.add(timer!, forMode: .common)
-                
-            } catch {
-                logoutAndShowError(error as! OGError)
             }
         }
+    }
+    
+    func startUpdatingViewWith(_ resources: Resources) {
+        resourcesOverview.set(metal: resources.metal,
+                              crystal: resources.crystal,
+                              deuterium: resources.deuterium,
+                              energy: resources.energy)
+        
+        isFirstLoad = false
+        resourcesOverview.alpha = 1
+        activityIndicator.stopAnimating()
+        
+        var production = [Double]()
+        for day in resources.dayProduction {
+            let dayDouble = Double(day)
+            production.append(dayDouble / 3600)
+        }
+        prodPerSecond = production
+        
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            self.resourcesOverview.update(metal: self.prodPerSecond![0],
+                                          crystal: self.prodPerSecond![1],
+                                          deuterium: self.prodPerSecond![2],
+                                          storage: resources)
+        }
+        RunLoop.main.add(timer!, forMode: .common)
     }
 }

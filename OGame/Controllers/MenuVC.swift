@@ -26,6 +26,7 @@ class MenuVC: UIViewController {
     var timer: Timer?
     var resources: Resources?
     var prodPerSecond: [Double]?
+    var player: PlayerData?
     
     let menuList = ["Overview",
                     "Resources",
@@ -42,7 +43,8 @@ class MenuVC: UIViewController {
         super.viewDidLoad()
         navigationItem.hidesBackButton = false
         
-        if OGame.shared.celestials!.count == 1 {
+        guard let player = player else { return }
+        if player.celestials.count == 1 {
             leftButton.isEnabled = false
             rightButton.isEnabled = false
         }
@@ -57,32 +59,50 @@ class MenuVC: UIViewController {
         refresh()
     }
     
+    // MARK: - IBActions
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
         navigationController?.popToRootViewController(animated: true)
     }
     
     @IBAction func rightButtonPressed(_ sender: UIButton) {
-        OGame.shared.setNextPlanet { error in
-            if let error = error {
-                self.logoutAndShowError(error)
+        guard var player = player else { return }
+        
+        if let index = player.planetNames.firstIndex(of: player.planet) {
+            if index + 1 == player.planetNames.count {
+                player.currentPlanetIndex = 0
+                player.planet = player.planetNames[0]
+                player.planetID = player.planetIDs[0]
             } else {
-                self.configureLabels()
-                self.refresh()
+                player.currentPlanetIndex += 1
+                player.planet = player.planetNames[index + 1]
+                player.planetID = player.planetIDs[index + 1]
             }
         }
+        
+        configureLabels()
+        refresh()
     }
     
     @IBAction func leftButtonPressed(_ sender: UIButton) {
-        OGame.shared.setPreviousPlanet { error in
-            if let error = error {
-                self.logoutAndShowError(error)
+        guard var player = player else { return }
+        
+        if let index = player.planetNames.firstIndex(of: player.planet) {
+            if index - 1 == -1 {
+                player.currentPlanetIndex = player.planetNames.count - 1
+                player.planet = player.planetNames.last!
+                player.planetID = player.planetIDs.last!
             } else {
-                self.configureLabels()
-                self.refresh()
+                player.currentPlanetIndex -= 1
+                player.planet = player.planetNames[index - 1]
+                player.planetID = player.planetIDs[index - 1]
             }
         }
+        
+        configureLabels()
+        refresh()
     }
     
+    // MARK: - Configure UI
     func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -94,15 +114,25 @@ class MenuVC: UIViewController {
     }
     
     func configureLabels() {
-        planetNameLabel.text = OGame.shared.planet
-        serverNameLabel.text = OGame.shared.universe
-        rankLabel.text = "Rank: \(OGame.shared.rank!)"
-        fieldsLabel.text = "\(OGame.shared.celestial!.used)/\(OGame.shared.celestial!.total)"
-        coordinatesLabel.text = "[\(OGame.shared.celestial!.coordinates[0]):\(OGame.shared.celestial!.coordinates[1]):\(OGame.shared.celestial!.coordinates[2])]"
-        planetImage.image = OGame.shared.planetImage
+        guard let player = player else { return }
+        
+        planetNameLabel.text = player.planet
+        serverNameLabel.text = player.universe
+        rankLabel.text = "Rank: \(player.rank)"
+        let used = player.celestials[player.currentPlanetIndex].used
+        let total = player.celestials[player.currentPlanetIndex].total
+        fieldsLabel.text = "\(used)/\(total)"
+        let galaxy = player.celestials[player.currentPlanetIndex].coordinates[0]
+        let system = player.celestials[player.currentPlanetIndex].coordinates[1]
+        let position = player.celestials[player.currentPlanetIndex].coordinates[2]
+        coordinatesLabel.text = "[\(galaxy):\(system):\(position)]"
+        planetImage.image = player.planetImages[player.currentPlanetIndex]
     }
     
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+        
         resourcesOverview.bringSubviewToFront(resourcesActivityIndicator)
         resourcesOverview.alpha = 0.5
         resourcesActivityIndicator.startAnimating()
@@ -110,7 +140,7 @@ class MenuVC: UIViewController {
         
         Task {
             do {
-                resources = try await OGame.shared.getResources()
+                resources = try await OGResources().getResourcesWith(playerData: player)
                 refreshResourcesView(with: resources!)
             } catch {
                 logoutAndShowError(error as! OGError)
@@ -145,6 +175,7 @@ class MenuVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension MenuVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -173,29 +204,45 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             switch page {
             case 0:
                 vc.childVC = OverviewVC()
+                (vc.childVC as! OverviewVC).player = player
+                vc.player = player
             case 1:
                 vc.childVC = ResourcesVC()
+                (vc.childVC as! ResourcesVC).player = player
+                vc.player = player
             case 2:
                 vc.childVC = FacilitiesVC()
+                (vc.childVC as! FacilitiesVC).player = player
+                vc.player = player
             case 3:
                 vc.childVC = ResearchVC()
+                (vc.childVC as! ResearchVC).player = player
+                vc.player = player
             case 4:
                 vc.childVC = ShipyardVC()
+                (vc.childVC as! ShipyardVC).player = player
+                vc.player = player
             case 5:
                 vc.childVC = DefenceVC()
+                (vc.childVC as! DefenceVC).player = player
+                vc.player = player
             case 6:
-                print("fleet vc")
+                vc.childVC = FleetVC()
+                (vc.childVC as! FleetVC).player = player
+                vc.player = player
             case 7:
                 vc.childVC = MovementVC()
-            case 8:
-                vc.childVC = GalaxyVC()
+                (vc.childVC as! MovementVC).player = player
+                vc.player = player
             default:
-                print(sender as! Int)
+                break
             }
             
             vc.title = menuList[page]
             vc.resources = resources
             vc.prodPerSecond = prodPerSecond
+        } else if let vc = segue.destination as? GalaxyVC {
+            vc.player = player
         }
     }
 }

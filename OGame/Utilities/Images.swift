@@ -7,6 +7,10 @@
 
 import UIKit
 
+typealias ImageBundle = (available: UIImage?,
+                         unavailable: UIImage?,
+                         disabled: UIImage?)
+
 struct Images {
     struct Resources {
         struct Large {

@@ -18,6 +18,7 @@ class LoginVC: UIViewController {
     @IBOutlet weak var formView: UIView!
 
     let defaults = UserDefaults.standard
+    var servers: [MyServer]?
 
     
     override func viewDidLoad() {
@@ -47,7 +48,13 @@ class LoginVC: UIViewController {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        formView.layer.borderColor = UIColor.label.cgColor
+    }
 
+    // MARK: - IBActions
     @IBAction func loginButtonTouchDown(_ sender: UIButton) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
@@ -72,7 +79,8 @@ class LoginVC: UIViewController {
         
         Task {
             do {
-                try await OGame.shared.loginIntoAccount(username: username, password: password)
+                let auth = AuthAccount()
+                servers = try await auth.loginIntoAccountWith(username: username, password: password)
                 
                 loginButton.isHidden = false
                 activityIndicator.stopAnimating()
@@ -94,9 +102,12 @@ class LoginVC: UIViewController {
             }
         }
     }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        formView.layer.borderColor = UIColor.label.cgColor
+    
+    // MARK: - Prepare For Segue
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowServerListVC" {
+            let serverListVC = segue.destination as! ServerListVC
+            serverListVC.servers = servers
+        }
     }
 }

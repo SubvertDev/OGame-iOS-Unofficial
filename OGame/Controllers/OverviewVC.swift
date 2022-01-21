@@ -13,6 +13,7 @@ class OverviewVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
+    var player: PlayerData?
     var overviewInfo: [Overview?]?
     let requestGroup = DispatchGroup()
 
@@ -26,6 +27,7 @@ class OverviewVC: UIViewController {
         refresh()
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -59,14 +61,17 @@ class OverviewVC: UIViewController {
         activityIndicator.startAnimating()
     }
 
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+        
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
 
         Task {
             do {
-                overviewInfo = try await OGame.shared.getOverview()
+                overviewInfo = try await OGOverview.getOverviewWith(playerData: player)
                 
                 tableView.alpha = 1
                 tableView.isUserInteractionEnabled = true
@@ -80,6 +85,7 @@ class OverviewVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension OverviewVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1

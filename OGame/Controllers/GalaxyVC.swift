@@ -15,18 +15,20 @@ class GalaxyVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
+    var player: PlayerData?
     var systemInfo: [Position?]?
     var currentCoordinates = [1, 1]
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let player = player else { return }
 
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
 
-        currentCoordinates = OGame.shared.celestial!.coordinates
+        currentCoordinates = player.celestials[player.currentPlanetIndex].coordinates
 
         galaxyTextField.text = "\(currentCoordinates[0])"
         systemTextField.text = "\(currentCoordinates[1])"
@@ -41,7 +43,7 @@ class GalaxyVC: UIViewController {
         
         Task {
             do {
-                systemInfo = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
+                systemInfo = try await OGGalaxy().getGalaxyWith(coordinates: currentCoordinates, playerData: player)
                 tableView.reloadData()
                 stopUpdating()
             } catch {
@@ -50,6 +52,7 @@ class GalaxyVC: UIViewController {
         }
     }
 
+    // MARK: - Update UI
     func startUpdating() {
         activityIndicator.startAnimating()
         tableView.alpha = 0.5
@@ -62,7 +65,10 @@ class GalaxyVC: UIViewController {
         tableView.isUserInteractionEnabled = true
     }
 
+    // MARK: - IBActions
     @IBAction func galaxyTextFieldChanged(_ sender: UITextField) {
+        guard let player = player else { return }
+        
         if sender.text != "" {
             if Int(sender.text!)! > 4 {
                 sender.text = "4"
@@ -76,7 +82,7 @@ class GalaxyVC: UIViewController {
 
             Task {
                 do {
-                    let planets = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
+                    let planets = try await OGGalaxy().getGalaxyWith(coordinates: currentCoordinates, playerData: player)
                     self.systemInfo = planets
                     tableView.reloadData()
                     stopUpdating()
@@ -91,6 +97,8 @@ class GalaxyVC: UIViewController {
     }
 
     @IBAction func systemTextFieldChanged(_ sender: UITextField) {
+        guard let player = player else { return }
+        
         if sender.text != "" {
             if Int(sender.text!)! > 499 {
                 sender.text = "499"
@@ -104,7 +112,7 @@ class GalaxyVC: UIViewController {
             
             Task {
                 do {
-                    let planets = try await OGame.shared.getGalaxy(coordinates: currentCoordinates)
+                    let planets = try await OGGalaxy().getGalaxyWith(coordinates: currentCoordinates, playerData: player)
                     self.systemInfo = planets
                     tableView.reloadData()
                     stopUpdating()
@@ -162,6 +170,7 @@ class GalaxyVC: UIViewController {
     }
 }
 
+// MARK: Delegate & DataSource
 extension GalaxyVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 15

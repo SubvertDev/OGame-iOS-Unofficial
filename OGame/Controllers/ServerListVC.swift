@@ -11,6 +11,9 @@ class ServerListVC: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    var servers: [MyServer]?
+    var playerData: PlayerData?
 
     
     override func viewDidLoad() {
@@ -20,10 +23,12 @@ class ServerListVC: UIViewController {
         configureTableView()
     }
 
+    // MARK: - IBActions
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
         navigationController?.popToRootViewController(animated: true)
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -36,17 +41,20 @@ class ServerListVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return OGame.shared.serversOnAccount.count
+        guard let servers = servers else { return 0 }
+        return servers.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let servers = servers else { return UITableViewCell() }
         let cell = tableView.dequeueReusableCell(withIdentifier: "ServerCell", for: indexPath) as! ServerCell
-        cell.serverName.text = OGame.shared.serversOnAccount[indexPath.row].serverName
-        cell.playerName.text = OGame.shared.serversOnAccount[indexPath.row].accountName
-        cell.language.text = OGame.shared.serversOnAccount[indexPath.row].language.uppercased()
+        cell.serverName.text = servers[indexPath.row].serverName
+        cell.playerName.text = servers[indexPath.row].accountName
+        cell.language.text = servers[indexPath.row].language.uppercased()
 
         return cell
     }
@@ -59,15 +67,26 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
 
         Task {
             do {
-                try await OGame.shared.loginIntoSever(with: OGame.shared.serversOnAccount[indexPath.row])
+                guard let servers = servers else { throw OGError() }
+                
+                let serverData = try await AuthServer().loginIntoServerWith(serverInfo: servers[indexPath.row])
+                playerData = try await ConfigurePlayer().configurePlayerDataWith(serverData: serverData)
                 
                 tableView.alpha = 1
                 tableView.isUserInteractionEnabled = true
                 activityIndicator.stopAnimating()
                 performSegue(withIdentifier: "ShowMenuVC", sender: self)
+                
             } catch {
                 logoutAndShowError(error as! OGError)
             }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowMenuVC" {
+            let menuVC = segue.destination as! MenuVC
+            menuVC.player = playerData!
         }
     }
 

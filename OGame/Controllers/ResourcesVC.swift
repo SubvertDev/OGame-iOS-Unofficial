@@ -13,6 +13,7 @@ class ResourcesVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
+    var player: PlayerData?
     var buildingsDataModel: [BuildingWithLevel]?
 
     
@@ -26,6 +27,7 @@ class ResourcesVC: UIViewController {
         refresh()
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -59,8 +61,10 @@ class ResourcesVC: UIViewController {
         ])
     }
 
-    // MARK: - REFRESH DATA ON RESOURCES VC
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
@@ -68,7 +72,7 @@ class ResourcesVC: UIViewController {
 
         Task {
             do {
-                buildingsDataModel = try await OGame.shared.supply()
+                buildingsDataModel = try await OGSupplies.getSuppliesWith(playerData: player)
                 
                 tableView.reloadData()
                 refreshControl.endRefreshing()
@@ -82,18 +86,20 @@ class ResourcesVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
+        guard let buildingsDataModel = buildingsDataModel else { return UITableViewCell() }
+        guard let player = player else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setSupply(building: buildingsDataModel[indexPath.row])
+        cell.setSupply(building: buildingsDataModel[indexPath.row], playerData: player)
 
         return cell
     }
@@ -103,8 +109,11 @@ extension ResourcesVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: - Building Delegate
 extension ResourcesVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
+        guard let player = player else { return }
+        
         let buildingInfo = buildingsDataModel![sender.tag]
         
         let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.level + 1)", preferredStyle: .alert)
@@ -116,7 +125,7 @@ extension ResourcesVC: BuildingCellDelegate {
 
             Task {
                 do {
-                    try await OGame.shared.build(what: type)
+                    try await OGBuild().build(what: type, playerData: player)
                     self.refresh()
                 } catch {
                     self.logoutAndShowError(error as! OGError)

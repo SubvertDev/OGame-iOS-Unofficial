@@ -13,6 +13,7 @@ class DefenceVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
+    var player: PlayerData?
     var buildingsDataModel: [BuildingWithAmount]?
 
     
@@ -26,6 +27,7 @@ class DefenceVC: UIViewController {
         refresh()
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,8 +62,10 @@ class DefenceVC: UIViewController {
         ])
     }
 
-    // MARK: - REFRESH DATA ON SHIPYARD VC
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+        
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
@@ -69,7 +73,7 @@ class DefenceVC: UIViewController {
         
         Task {
             do {
-                buildingsDataModel = try await OGame.shared.defences()
+                buildingsDataModel = try await OGDefence.getDefencesWith(playerData: player)
                 
                 tableView.reloadData()
                 refreshControl.endRefreshing()
@@ -83,6 +87,7 @@ class DefenceVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension DefenceVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 10
@@ -90,11 +95,12 @@ extension DefenceVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
+        guard let player = player else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setShip(building: buildingsDataModel[indexPath.row])
+        cell.setShip(building: buildingsDataModel[indexPath.row], playerData: player)
 
         return cell
     }
@@ -104,8 +110,11 @@ extension DefenceVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: - Building Delegate
 extension DefenceVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
+        guard let player = player else { return }
+        
         let buildingInfo = buildingsDataModel![sender.tag]
 
         let alertAmount = UIAlertController(title: "\(buildingInfo.name)", message: "Enter an amount for construction", preferredStyle: .alert)
@@ -127,7 +136,7 @@ extension DefenceVC: BuildingCellDelegate {
 
                 Task {
                     do {
-                        try await OGame.shared.build(what: typeToBuild)
+                        try await OGBuild().build(what: typeToBuild, playerData: player)
                         self.refresh()
                     } catch {
                         self.logoutAndShowError(error as! OGError)

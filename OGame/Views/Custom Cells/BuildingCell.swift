@@ -40,7 +40,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET SUPPLY
-    func setSupply(building: BuildingWithLevel) {
+    func setSupply(building: BuildingWithLevel, playerData: PlayerData) {
         typeOfBuilding = (building.buildingsID, 1, "supplies")
         buildButton.isEnabled = false
         buildingNameLabel.text = building.name
@@ -57,7 +57,7 @@ class BuildingCell: UITableViewCell {
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(building.level) -> \(building.level + 1)"
-            buildButton.isEnabled = OGame.shared.commander!
+            buildButton.isEnabled = playerData.commander
         case "disabled":
             buildingImage.image = building.image.unavailable
         case "off":
@@ -68,7 +68,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET FACILITY
-    func setFacility(building: BuildingWithLevel) {
+    func setFacility(building: BuildingWithLevel, playerData: PlayerData) {
         typeOfBuilding = (building.buildingsID, 1, "facilities")
         buildButton.isEnabled = false
         buildingNameLabel.text = building.name
@@ -85,7 +85,7 @@ class BuildingCell: UITableViewCell {
         case "active":
             buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
             levelLabel.text = "\(building.level) -> \(building.level + 1)"
-            buildButton.isEnabled = OGame.shared.commander!
+            buildButton.isEnabled = playerData.commander
         case "disabled":
             buildingImage.image = building.image.unavailable
         case "off":
@@ -96,7 +96,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET RESEARCH
-    func setResearch(building: BuildingWithLevel) {
+    func setResearch(building: BuildingWithLevel, playerData: PlayerData) {
         typeOfBuilding = (building.buildingsID, 1, "research")
         buildButton.isEnabled = false
         buildingNameLabel.text = building.name
@@ -113,7 +113,7 @@ class BuildingCell: UITableViewCell {
         case "active":
             buildingImage.image = UIImage(systemName: "timer")
             levelLabel.text = "\(building.level) -> \(building.level + 1)"
-            buildButton.isEnabled = OGame.shared.commander!
+            buildButton.isEnabled = playerData.commander
         case "disabled":
             buildingImage.image = building.image.unavailable
         case "off":
@@ -124,7 +124,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET SHIP
-    func setShip(building: BuildingWithAmount) {
+    func setShip(building: BuildingWithAmount, playerData: PlayerData) {
         typeOfBuilding = (building.buildingsID, 1, "shipyard")
         buildButton.isEnabled = false
         buildingNameLabel.text = building.name
@@ -145,7 +145,7 @@ class BuildingCell: UITableViewCell {
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
             buildingImage.image = building.image.unavailable
-            buildButton.isEnabled = OGame.shared.commander!
+            buildButton.isEnabled = playerData.commander
         case "off":
             buildingImage.image = building.image.disabled
         default:
@@ -154,7 +154,7 @@ class BuildingCell: UITableViewCell {
     }
 
     // MARK: - SET DEFENCE
-    func setDefence(building: BuildingWithAmount) {
+    func setDefence(building: BuildingWithAmount, playerData: PlayerData) {
         typeOfBuilding = (building.buildingsID, 1, "defenses")
         buildButton.isEnabled = false
         buildingNameLabel.text = building.name
@@ -175,7 +175,7 @@ class BuildingCell: UITableViewCell {
             // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
         case "disabled":
             buildingImage.image = building.image.unavailable
-            buildButton.isEnabled = OGame.shared.commander!
+            buildButton.isEnabled = playerData.commander
         case "off":
             buildingImage.image = building.image.disabled
         default:

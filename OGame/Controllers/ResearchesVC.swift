@@ -13,6 +13,7 @@ class ResearchVC: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
 
+    var player: PlayerData?
     var buildingsDataModel: [BuildingWithLevel]?
 
     
@@ -26,6 +27,7 @@ class ResearchVC: UIViewController {
         refresh()
     }
 
+    // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -59,8 +61,11 @@ class ResearchVC: UIViewController {
         ])
     }
 
-    // MARK: - REFRESH DATA ON RESEARCHES VC
+    // MARK: - Refresh UI
     @objc func refresh() {
+        guard let player = player else { return }
+
+        
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
@@ -68,7 +73,7 @@ class ResearchVC: UIViewController {
         
         Task {
             do {
-                buildingsDataModel = try await OGame.shared.research()
+                buildingsDataModel = try await OGResearch.getResearchesWith(playerData: player)
                 
                 tableView.reloadData()
                 refreshControl.endRefreshing()
@@ -82,6 +87,7 @@ class ResearchVC: UIViewController {
     }
 }
 
+// MARK: - Delegate & DataSource
 extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 16
@@ -89,11 +95,12 @@ extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
+        guard let playerData = player else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.setResearch(building: buildingsDataModel[indexPath.row])
+        cell.setResearch(building: buildingsDataModel[indexPath.row], playerData: playerData)
 
         return cell
     }
@@ -103,8 +110,11 @@ extension ResearchVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: - Building Delegate
 extension ResearchVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
+        guard let player = player else { return }
+        
         let buildingInfo = buildingsDataModel![sender.tag]
 
         let alert = UIAlertController(title: "Research \(buildingInfo.name)?", message: "It will be researched to level \(buildingInfo.level + 1)", preferredStyle: .alert)
@@ -116,7 +126,7 @@ extension ResearchVC: BuildingCellDelegate {
 
             Task {
                 do {
-                    try await OGame.shared.build(what: type)
+                    try await OGBuild().build(what: type, playerData: player)
                     self.refresh()
                 } catch {
                     self.logoutAndShowError(error as! OGError)

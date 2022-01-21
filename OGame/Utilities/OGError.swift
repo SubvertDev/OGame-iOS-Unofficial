@@ -11,7 +11,7 @@ struct OGError: Error {
     let message: String
     let detailed: String
 
-    init(message: String, detailed: String) {
+    init(message: String = "", detailed: String = "") {
         self.message = message
         self.detailed = detailed
     }
