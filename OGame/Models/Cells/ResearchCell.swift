@@ -178,16 +178,16 @@ struct ResearchCell {
                           level: researches.shielding.level,
                           condition: researches.shielding.condition)
 
-        let armor = (name: "Armor Technology",
-                          metal: Price.get(technology: Buildings.armor, level: researches.armor.level)[0],
-                          crystal: Price.get(technology: Buildings.armor, level: researches.armor.level)[1],
-                          deuterium: Price.get(technology: Buildings.armor, level: researches.armor.level)[2],
-                          image: (available: Images.Researches.SmallAvailable.armor,
-                                  unavailable: Images.Researches.SmallUnavailable.armor,
-                                  disabled: Images.Researches.SmallDisabled.armor),
+        let armour = (name: "Armour Technology",
+                          metal: Price.get(technology: Buildings.armour, level: researches.armour.level)[0],
+                          crystal: Price.get(technology: Buildings.armour, level: researches.armour.level)[1],
+                          deuterium: Price.get(technology: Buildings.armour, level: researches.armour.level)[2],
+                          image: (available: Images.Researches.SmallAvailable.armour,
+                                  unavailable: Images.Researches.SmallUnavailable.armour,
+                                  disabled: Images.Researches.SmallDisabled.armour),
                           buildingsID: 111,
-                          level: researches.armor.level,
-                          condition: researches.armor.condition)
+                          level: researches.armour.level,
+                          condition: researches.armour.condition)
 
         researchTechnologies = [energy,
                                 laser,
@@ -204,6 +204,6 @@ struct ResearchCell {
                                 graviton,
                                 weapons,
                                 shielding,
-                                armor]
+                                armour]
     }
 }

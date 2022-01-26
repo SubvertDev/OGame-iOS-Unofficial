@@ -14,6 +14,7 @@ class SendFleetCell: UITableViewCell {
     @IBOutlet weak var shipAvailableLabel: UILabel!
     @IBOutlet weak var shipSelectedTextField: UITextField!
     
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         shipImageView.layer.cornerRadius = 10
@@ -24,7 +25,6 @@ class SendFleetCell: UITableViewCell {
     }
     
     func setShip(with ship: BuildingWithAmount) {
-        //typeOfBuilding = (building.buildingsID, 1, "shipyard")
         shipNameLabel.text = ship.name
         shipAvailableLabel.text = "\(ship.amount)"
         if ship.amount != 0 {

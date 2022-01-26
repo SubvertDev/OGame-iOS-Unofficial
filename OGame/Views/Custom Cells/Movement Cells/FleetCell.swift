@@ -33,6 +33,7 @@ class FleetCell: UITableViewCell {
         enemyPlanetImage.image = fleet.enemyPlanetImage
         
         switch fleet.mission {
+        // MARK: - Attacked
         case "Attacked":
             missionTypeLabel.text = "Attacked"
 
@@ -50,6 +51,7 @@ class FleetCell: UITableViewCell {
             friendlyPlanetImage.image = UIImage(systemName: "shield.fill")
             enemyPlanetImage.image = UIImage(systemName: "bolt")
             
+        // MARK: - Attack
         case "Attack", "Attack (R)":
             missionTypeLabel.text = "\(fleet.mission)"
 
@@ -65,7 +67,8 @@ class FleetCell: UITableViewCell {
                 enemyArrivalTimeLabel.text = " "
                 missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
-
+            
+        // MARK: - Transport
         case "Transport", "Transport (R)":
             missionTypeLabel.text = "\(fleet.mission)"
 
@@ -82,6 +85,7 @@ class FleetCell: UITableViewCell {
                 missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
+        // MARK: - Deployment
         case "Deployment", "Deployment (R)":
             missionTypeLabel.text = "\(fleet.mission)"
 
@@ -101,6 +105,7 @@ class FleetCell: UITableViewCell {
                 missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
+        // MARK: - Harvest (Recycle)
         case "Harvest", "Harvest (R)":
             missionTypeLabel.text = "\(fleet.mission)"
 
@@ -119,6 +124,7 @@ class FleetCell: UITableViewCell {
                 missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
 
+        // MARK: - Expedition
         case "Expedition", "Expedition (R)":
             missionTypeLabel.text = "\(fleet.mission)"
 
@@ -136,8 +142,42 @@ class FleetCell: UITableViewCell {
                 enemyArrivalTimeLabel.text = " "
                 missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
             }
+            
+        // MARK: - Espionage
+        case "Espionage", "Espionage (R)":
+            missionTypeLabel.text = "\(fleet.mission)"
 
-        // TODO: Colonisation, Espionage, ACS Defend, ACS Attack, Moon Destruction
+            friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
+            friendlyPlanetNameLabel.text = fleet.playerPlanet
+            friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
+
+            enemyArrivalTimeLabel.text = String(fleet.endTime!).convertDateToString()
+            enemyPlanetNameLabel.text = fleet.enemyPlanet
+            enemyPlanetCoordinatesLabel.text = destinationToString(fleet.destination)
+
+            if fleet.mission == "Espionage (R)" {
+                enemyArrivalTimeLabel.text = " "
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
+            }
+            
+        // MARK: - Colonisation
+        case "Colonisation", "Colonisation (R)": // TODO: TEST
+            missionTypeLabel.text = "\(fleet.mission)"
+
+            friendlyArrivalTimeLabel.text = String(fleet.arrivalTime).convertDateToString()
+            friendlyPlanetNameLabel.text = fleet.playerPlanet
+            friendlyPlanetCoordinatesLabel.text = destinationToString(fleet.origin)
+
+            enemyArrivalTimeLabel.text = String(fleet.endTime!).convertDateToString()
+            enemyPlanetNameLabel.text = fleet.enemyPlanet
+            enemyPlanetCoordinatesLabel.text = destinationToString(fleet.destination)
+
+            if fleet.mission == "Colonisation (R)" {
+                enemyArrivalTimeLabel.text = " "
+                missionTypeImage.transform = missionTypeImage.transform.rotated(by: .pi)
+            }
+            
+        // MARK: TODO: ACS Defend, ACS Attack, Moon Destruction
             
         default:
             missionTypeLabel.text = "ERROR"

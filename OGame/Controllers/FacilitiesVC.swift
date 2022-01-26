@@ -63,25 +63,31 @@ class FacilitiesVC: UIViewController {
 
     // MARK: - Refresh UI
     @objc func refresh() {
-        guard let playerData = player else {
-            logoutAndShowError(OGError(message: "No player data", detailed: "Error while trying to "))
-            return
+        Task {
+            do {
+                guard let player = player else { return }
+                startUpdatingUI()
+                buildingsDataModel = try await OGFacilities.getFacilitiesWith(playerData: player)
+                stopUpdatingUI()
+            } catch {
+                logoutAndShowError(error as! OGError)
+            }
         }
-        
+    }
+    
+    func startUpdatingUI() {
         tableView.alpha = 0.5
         tableView.isUserInteractionEnabled = false
         activityIndicator.startAnimating()
         NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-        
-        Task {
-            buildingsDataModel = try await OGFacilities.getFacilitiesWith(playerData: playerData)
-            
-            tableView.reloadData()
-            refreshControl.endRefreshing()
-            tableView.isUserInteractionEnabled = true
-            tableView.alpha = 1
-            activityIndicator.stopAnimating()
-        }
+    }
+    
+    func stopUpdatingUI() {
+        tableView.reloadData()
+        refreshControl.endRefreshing()
+        tableView.isUserInteractionEnabled = true
+        tableView.alpha = 1
+        activityIndicator.stopAnimating()
     }
 }
 

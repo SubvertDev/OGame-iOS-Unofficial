@@ -26,7 +26,7 @@ struct BuildingWithAmount {
     let deuterium: Int
     let image: ImageBundle
     let buildingsID: Int
-    let amount: Int
+    var amount: Int
     let condition: String
     let timeToBuild: String
 }
@@ -71,7 +71,7 @@ struct Buildings {
     static let graviton = (199, 1, "research")
     static let weapons = (109, 1, "research")
     static let shielding = (110, 1, "research")
-    static let armor = (111, 1, "research")
+    static let armour = (111, 1, "research")
 
     // Ships
     static func lightFighter(_ amount: Int = 1) -> (Int, Int, String) { return (204, amount, "shipyard") }

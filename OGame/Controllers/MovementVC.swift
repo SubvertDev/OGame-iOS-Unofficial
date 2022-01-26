@@ -8,27 +8,27 @@
 import UIKit
 
 class MovementVC: UIViewController {
-
+    
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView()
     let refreshControl = UIRefreshControl()
     let fleetLabel = UILabel()
-
+    
     var player: PlayerData?
     var fleets: [Fleets]?
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Movement"
-
+        
         configureTableView()
         configureActivityIndicator()
         configureLabel()
-
+        
         refresh()
     }
-
+    
     // MARK: - Configure UI
     func configureTableView() {
         view.addSubview(tableView)
@@ -39,7 +39,7 @@ class MovementVC: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "FleetCell", bundle: nil), forCellReuseIdentifier: "FleetCell")
@@ -47,11 +47,11 @@ class MovementVC: UIViewController {
         tableView.alpha = 0.5
         tableView.rowHeight = 100
         tableView.keyboardDismissMode = .onDrag
-
+        
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
-
+    
     func configureActivityIndicator() {
         view.addSubview(activityIndicator)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +62,7 @@ class MovementVC: UIViewController {
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
-
+        
         activityIndicator.startAnimating()
     }
     
@@ -80,27 +80,32 @@ class MovementVC: UIViewController {
         fleetLabel.textAlignment = .center
         fleetLabel.isHidden = true
     }
-
+    
     // MARK: - Refresh UI
     @objc func refresh() {
-        guard let player = player else { return }
-        
-        tableView.alpha = 0.5
-        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-        
         Task {
             do {
-                fleets = try await OGFleet.getFleetWith(playerData: player)
-                
-                tableView.reloadData()
-                tableView.alpha = 1
-                fleetLabel.isHidden = !fleets!.isEmpty
-                refreshControl.endRefreshing()
-                activityIndicator.stopAnimating()
+                guard let player = player else { return }
+                startUpdatingUI()
+                fleets = try await OGCheckFleet.getFleetWith(playerData: player)
+                stopUpdatingUI()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
         }
+    }
+    
+    func startUpdatingUI() {
+        tableView.alpha = 0.5
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+    }
+    
+    func stopUpdatingUI() {
+        tableView.reloadData()
+        tableView.alpha = 1
+        fleetLabel.isHidden = !fleets!.isEmpty
+        refreshControl.endRefreshing()
+        activityIndicator.stopAnimating()
     }
 }
 
@@ -113,7 +118,7 @@ extension MovementVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
             return 0
         }
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let fleets = fleets else { return UITableViewCell() }
         
@@ -122,7 +127,7 @@ extension MovementVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDel
         
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }

@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGDefence {
     
+    // MARK: - Get Defences
     static func getDefencesWith(playerData: PlayerData) async throws -> [BuildingWithAmount] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=defenses&cp=\(playerData.planetID)"

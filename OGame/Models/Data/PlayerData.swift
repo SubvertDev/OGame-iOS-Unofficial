@@ -25,7 +25,7 @@ struct PlayerData {
     
     var currentPlanetIndex = 0
     let planetImages: [UIImage]
-    let celestials: [Celestial]
+    var celestials: [Celestial]
     
     let roboticsFactoryLevel: Int
     let naniteFactoryLevel: Int

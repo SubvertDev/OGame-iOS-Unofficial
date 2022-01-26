@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGOverview {
     
+    // MARK: - Get Overview
     static func getOverviewWith(playerData: PlayerData) async throws -> [Overview?] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=overview"

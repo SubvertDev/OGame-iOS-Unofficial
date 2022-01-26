@@ -127,7 +127,7 @@ struct Images {
             static let graviton = UIImage(named: "gravitonTechnology")
             static let weapons = UIImage(named: "weaponsTechnology")
             static let shielding = UIImage(named: "shieldingTechnology")
-            static let armor = UIImage(named: "armorTechnology")
+            static let armour = UIImage(named: "armourTechnology")
         }
         struct SmallAvailable {
             static let energy = UIImage(named: "energyAvailable")
@@ -145,7 +145,7 @@ struct Images {
             static let graviton = UIImage(named: "gravitonAvailable")
             static let weapons = UIImage(named: "weaponsAvailable")
             static let shielding = UIImage(named: "shieldingAvailable")
-            static let armor = UIImage(named: "armorAvailable")
+            static let armour = UIImage(named: "armourAvailable")
         }
         struct SmallUnavailable {
             static let energy = UIImage(named: "energyUnavailable")
@@ -163,7 +163,7 @@ struct Images {
             static let graviton = UIImage(named: "gravitonUnavailable")
             static let weapons = UIImage(named: "weaponsUnavailable")
             static let shielding = UIImage(named: "shieldingUnavailable")
-            static let armor = UIImage(named: "armorUnavailable")
+            static let armour = UIImage(named: "armourUnavailable")
         }
         struct SmallDisabled {
             static let energy = UIImage(named: "energyDisabled")
@@ -181,7 +181,7 @@ struct Images {
             static let graviton = UIImage(named: "gravitonDisabled")
             static let weapons = UIImage(named: "weaponsDisabled")
             static let shielding = UIImage(named: "shieldingDisabled")
-            static let armor = UIImage(named: "armorDisabled")
+            static let armour = UIImage(named: "armourDisabled")
         }
     }
 
@@ -312,6 +312,109 @@ struct Images {
             static let largeShieldDome = UIImage(named: "largeShieldDomeDisabled")
             static let antiBallisticMissiles = UIImage(named: "antiBallisticMissilesDisabled")
             static let interplanetaryMissiles = UIImage(named: "interplanetaryMissilesDisabled")
+        }
+    }
+    
+    struct MissionTypes {
+        struct Available {
+            static let expedition = UIImage(named: "expeditionAvailable")
+            static let colonisation = UIImage(named: "colonisationAvailable")
+            static let recycle = UIImage(named: "recycleAvailable")
+            static let transport = UIImage(named: "transportAvailable")
+            static let deployment = UIImage(named: "deploymentAvailable")
+            static let espionage = UIImage(named: "espionageAvailableM")
+            static let acsDefend = UIImage(named: "acsDefendAvailable")
+            static let attack = UIImage(named: "attackAvailable")
+            static let acsAttack = UIImage(named: "acsAttackAvailable")
+            static let moonDestruction = UIImage(named: "moonDestructionAvailable")
+            static let jumpGate = UIImage(named: "jumpGateAvailableM")
+            
+            static let allImages = [expedition,
+                                    colonisation,
+                                    recycle,
+                                    transport,
+                                    deployment,
+                                    espionage,
+                                    acsDefend,
+                                    attack,
+                                    acsAttack,
+                                    moonDestruction,
+                                    jumpGate]
+        }
+        struct AvailableSelected {
+            static let expedition = UIImage(named: "expeditionAvailableSelected")
+            static let colonisation = UIImage(named: "colonisationAvailableSelected")
+            static let recycle = UIImage(named: "recycleAvailableSelected")
+            static let transport = UIImage(named: "transportAvailableSelected")
+            static let deployment = UIImage(named: "deploymentAvailableSelected")
+            static let espionage = UIImage(named: "espionageAvailableSelected")
+            static let acsDefend = UIImage(named: "acsDefendAvailableSelected")
+            static let attack = UIImage(named: "attackAvailableSelected")
+            static let acsAttack = UIImage(named: "acsAttackAvailableSelected")
+            static let moonDestruction = UIImage(named: "moonDestructionAvailableSelected")
+            static let jumpGate = UIImage(named: "jumpGateAvailableSelected")
+            
+            static let allImages = [expedition,
+                                    colonisation,
+                                    recycle,
+                                    transport,
+                                    deployment,
+                                    espionage,
+                                    acsDefend,
+                                    attack,
+                                    acsAttack,
+                                    moonDestruction,
+                                    jumpGate]
+        }
+        struct Unavailable {
+            static let expedition = UIImage(named: "expeditionUnavailable")
+            static let colonisation = UIImage(named: "colonisationUnavailable")
+            static let recycle = UIImage(named: "recycleUnavailable")
+            static let transport = UIImage(named: "transportUnavailable")
+            static let deployment = UIImage(named: "deploymentUnavailable")
+            static let espionage = UIImage(named: "espionageUnavailableM")
+            static let acsDefend = UIImage(named: "acsDefendUnavailable")
+            static let attack = UIImage(named: "attackUnavailable")
+            static let acsAttack = UIImage(named: "acsAttackUnavailable")
+            static let moonDestruction = UIImage(named: "moonDestructionUnavailable")
+            static let jumpGate = UIImage(named: "jumpGateUnavailableM")
+            
+            static let allImages = [expedition,
+                                    colonisation,
+                                    recycle,
+                                    transport,
+                                    deployment,
+                                    espionage,
+                                    acsDefend,
+                                    attack,
+                                    acsAttack,
+                                    moonDestruction,
+                                    jumpGate]
+        }
+        struct UnavailableSelected {
+            static let expedition = UIImage(named: "expeditionUnavailableSelected")
+            static let colonisation = UIImage(named: "colonisationUnavailableSelected")
+            static let recycle = UIImage(named: "recycleUnavailableSelected")
+            static let transport = UIImage(named: "transportUnavailableSelected")
+            static let deployment = UIImage(named: "deploymentUnavailableSelected")
+            static let espionage = UIImage(named: "espionageUnavailableSelected")
+            static let acsDefend = UIImage(named: "acsDefendUnavailableSelected")
+            static let attack = UIImage(named: "attackUnavailableSelected")
+            static let acsAttack = UIImage(named: "acsAttackUnavailableSelected")
+            static let moonDestruction = UIImage(named: "moonDestructionUnavailableSelected")
+            static let jumpGate = UIImage(named: "jumpGateUnavailableSelected")
+            
+            static let allImages = [expedition,
+                                    colonisation,
+                                    recycle,
+                                    transport,
+                                    deployment,
+                                    espionage,
+                                    acsDefend,
+                                    attack,
+                                    acsAttack,
+                                    moonDestruction,
+                                    jumpGate]
         }
     }
 }

@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGFacilities {
         
+    // MARK: - Get Facilities
     static func getFacilitiesWith(playerData: PlayerData) async throws -> [BuildingWithLevel] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=facilities&cp=\(playerData.planetID)"
@@ -60,6 +61,7 @@ class OGFacilities {
         }
     }
     
+    // MARK: - Get Main Facilities Levels
     func getMainFacilitiesLevels(indexPHP: String, planetID: Int) async throws -> [Int] {
         do {
             let link = "\(indexPHP)page=ingame&component=facilities&cp=\(planetID)"

@@ -52,19 +52,6 @@ class GalaxyVC: UIViewController {
         }
     }
 
-    // MARK: - Update UI
-    func startUpdating() {
-        activityIndicator.startAnimating()
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-    }
-
-    func stopUpdating() {
-        activityIndicator.stopAnimating()
-        tableView.alpha = 1
-        tableView.isUserInteractionEnabled = true
-    }
-
     // MARK: - IBActions
     @IBAction func galaxyTextFieldChanged(_ sender: UITextField) {
         guard let player = player else { return }
@@ -168,9 +155,22 @@ class GalaxyVC: UIViewController {
         systemTextField.text = "\(currentCoordinates[1])"
         systemTextFieldChanged(systemTextField)
     }
+    
+    // MARK: - Support Functions
+    func startUpdating() {
+        activityIndicator.startAnimating()
+        tableView.alpha = 0.5
+        tableView.isUserInteractionEnabled = false
+    }
+
+    func stopUpdating() {
+        activityIndicator.stopAnimating()
+        tableView.alpha = 1
+        tableView.isUserInteractionEnabled = true
+    }
 }
 
-// MARK: Delegate & DataSource
+// MARK: - Delegate & DataSource
 extension GalaxyVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 15

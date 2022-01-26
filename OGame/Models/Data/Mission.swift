@@ -7,15 +7,16 @@
 
 import Foundation
 
-struct Mission {
-    static let attack = 1
-    static let transport = 3
-    static let park = 4
-    static let parkAlly = 5
-    static let spy = 6
-    static let colonize = 7
-    static let recycle = 8
-    static let destroy = 9
-    static let expedition = 15
-    static let trade = 16
+enum Mission: Int {
+    case attack = 1
+    case acsAttack = 2
+    case transport = 3
+    case deployment = 4
+    case acsDefend = 5
+    case espionage = 6
+    case colonisation = 7
+    case recycle = 8
+    case moonDestruction = 9
+    case expedition = 15
+    // case trade = 16 // ???
 }

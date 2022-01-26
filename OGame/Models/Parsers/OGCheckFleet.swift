@@ -9,9 +9,9 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGFleet {
+class OGCheckFleet {
     
-    // MARK: - Get All Fleet
+    // MARK: - Get Fleet
     static func getFleetWith(playerData: PlayerData) async throws -> [Fleets] {
         try await withThrowingTaskGroup(of: [Fleets].self) { group in
             var fleets = [Fleets]()

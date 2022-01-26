@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DefenceCell {
+struct DefenceCell {
 
     var defenceTechnologies: [BuildingWithAmountData]
 

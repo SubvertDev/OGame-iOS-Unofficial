@@ -8,8 +8,8 @@
 import Foundation
 
 struct Coordinates {
-    let galaxy: Int
-    let system: Int
-    let position: Int = 0
-    let destination: Int = Destination().planet
+    var galaxy: Int
+    var system: Int
+    var position: Int
+    var destination: Destination = .planet
 }

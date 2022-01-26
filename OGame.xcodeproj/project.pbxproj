@@ -19,7 +19,7 @@
 		B846CD662794746400DEFDE2 /* OGResearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD652794746400DEFDE2 /* OGResearch.swift */; };
 		B846CD6827947B4700DEFDE2 /* OGShipyard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6727947B4700DEFDE2 /* OGShipyard.swift */; };
 		B846CD6A27947D8100DEFDE2 /* OGDefence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6927947D8100DEFDE2 /* OGDefence.swift */; };
-		B846CD6C2794870800DEFDE2 /* OGFleet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6B2794870800DEFDE2 /* OGFleet.swift */; };
+		B846CD6C2794870800DEFDE2 /* OGCheckFleet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6B2794870800DEFDE2 /* OGCheckFleet.swift */; };
 		B846CD6E27948A7A00DEFDE2 /* OGGalaxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6D27948A7A00DEFDE2 /* OGGalaxy.swift */; };
 		B846CD7027958AA200DEFDE2 /* OGOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6F27958AA200DEFDE2 /* OGOverview.swift */; };
 		B846CD7227958C9E00DEFDE2 /* OGSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD7127958C9E00DEFDE2 /* OGSupport.swift */; };
@@ -27,6 +27,16 @@
 		B85AF0CE26A5A81D0087C5A7 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85AF0CD26A5A81D0087C5A7 /* Server.swift */; };
 		B85D7F89265FDDCC00186021 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D7F88265FDDCC00186021 /* Images.swift */; };
 		B860786C2799A58200F22AD1 /* OGSendFleet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860786B2799A58200F22AD1 /* OGSendFleet.swift */; };
+		B8607870279AE2E800F22AD1 /* SetCoordinatesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */; };
+		B8607871279AE2E800F22AD1 /* SetCoordinatesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */; };
+		B8607874279AF2E300F22AD1 /* MissionTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */; };
+		B8607875279AF2E300F22AD1 /* MissionTypeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */; };
+		B8607878279AF7E900F22AD1 /* CVMissionTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */; };
+		B8607879279AF7E900F22AD1 /* CVMissionTypeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */; };
+		B860787B279C11B400F22AD1 /* CheckTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860787A279C11B400F22AD1 /* CheckTarget.swift */; };
+		B8607880279C82DB00F22AD1 /* MissionBriefingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */; };
+		B8607881279C82DB00F22AD1 /* MissionBriefingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */; };
+		B8607883279CABCB00F22AD1 /* MissionTypeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8607882279CABCB00F22AD1 /* MissionTypeModel.swift */; };
 		B8623A9626B18748003F79C3 /* GenericVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8623A9526B18748003F79C3 /* GenericVC.swift */; };
 		B867077E26F6857D00F7372E /* Fleets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867077D26F6857D00F7372E /* Fleets.swift */; };
 		B867614C2659130D0096BE39 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614B2659130D0096BE39 /* UIView+Ext.swift */; };
@@ -66,7 +76,6 @@
 		B8BED02627908F0400AE2ED8 /* SendFleetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02427908F0400AE2ED8 /* SendFleetCell.swift */; };
 		B8BED02727908F0400AE2ED8 /* SendFleetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */; };
 		B8BED029279176DF00AE2ED8 /* SendFleetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */; };
-		B8BED02B2791817C00AE2ED8 /* MissionTypeCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02A2791817C00AE2ED8 /* MissionTypeCollectionCell.swift */; };
 		B8BED02D2794284700AE2ED8 /* AuthAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02C2794284700AE2ED8 /* AuthAccount.swift */; };
 		B8BED02F27942CA600AE2ED8 /* AuthServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02E27942CA600AE2ED8 /* AuthServer.swift */; };
 		B8BED0312794335100AE2ED8 /* ConfigurePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED0302794335100AE2ED8 /* ConfigurePlayer.swift */; };
@@ -76,6 +85,9 @@
 		B8BED0392794538F00AE2ED8 /* OGResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED0382794538F00AE2ED8 /* OGResources.swift */; };
 		B8BED03B279453C800AE2ED8 /* ServerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED03A279453C800AE2ED8 /* ServerData.swift */; };
 		B8C3E817265ECD1A00BBF5A3 /* ResearchesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */; };
+		B8C8268827A018D3005BE032 /* SendTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C8268727A018D3005BE032 /* SendTarget.swift */; };
+		B8CCF5FC279DB95800F3C3B5 /* FleetSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */; };
+		B8CCF5FD279DB95800F3C3B5 /* FleetSettingsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */; };
 		B8D1AEFB26B464F50064DE34 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D1AEFA26B464F50064DE34 /* Position.swift */; };
 		B8E5D993265A8F0E004CF69B /* FacilitiesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */; };
 		B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F144E426B8872200B2C31B /* GalaxyCell.swift */; };
@@ -108,7 +120,7 @@
 		B846CD652794746400DEFDE2 /* OGResearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGResearch.swift; sourceTree = "<group>"; };
 		B846CD6727947B4700DEFDE2 /* OGShipyard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGShipyard.swift; sourceTree = "<group>"; };
 		B846CD6927947D8100DEFDE2 /* OGDefence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGDefence.swift; sourceTree = "<group>"; };
-		B846CD6B2794870800DEFDE2 /* OGFleet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGFleet.swift; sourceTree = "<group>"; };
+		B846CD6B2794870800DEFDE2 /* OGCheckFleet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGCheckFleet.swift; sourceTree = "<group>"; };
 		B846CD6D27948A7A00DEFDE2 /* OGGalaxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGGalaxy.swift; sourceTree = "<group>"; };
 		B846CD6F27958AA200DEFDE2 /* OGOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGOverview.swift; sourceTree = "<group>"; };
 		B846CD7127958C9E00DEFDE2 /* OGSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGSupport.swift; sourceTree = "<group>"; };
@@ -116,6 +128,16 @@
 		B85AF0CD26A5A81D0087C5A7 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		B85D7F88265FDDCC00186021 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		B860786B2799A58200F22AD1 /* OGSendFleet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGSendFleet.swift; sourceTree = "<group>"; };
+		B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCoordinatesCell.swift; sourceTree = "<group>"; };
+		B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SetCoordinatesCell.xib; sourceTree = "<group>"; };
+		B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionTypeCell.swift; sourceTree = "<group>"; };
+		B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MissionTypeCell.xib; sourceTree = "<group>"; };
+		B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVMissionTypeCell.swift; sourceTree = "<group>"; };
+		B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CVMissionTypeCell.xib; sourceTree = "<group>"; };
+		B860787A279C11B400F22AD1 /* CheckTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckTarget.swift; sourceTree = "<group>"; };
+		B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionBriefingCell.swift; sourceTree = "<group>"; };
+		B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MissionBriefingCell.xib; sourceTree = "<group>"; };
+		B8607882279CABCB00F22AD1 /* MissionTypeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionTypeModel.swift; sourceTree = "<group>"; };
 		B8623A9526B18748003F79C3 /* GenericVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericVC.swift; sourceTree = "<group>"; };
 		B867077D26F6857D00F7372E /* Fleets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fleets.swift; sourceTree = "<group>"; };
 		B867614B2659130D0096BE39 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -157,7 +179,6 @@
 		B8BED02427908F0400AE2ED8 /* SendFleetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendFleetCell.swift; sourceTree = "<group>"; };
 		B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendFleetCell.xib; sourceTree = "<group>"; };
 		B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendFleetVC.swift; sourceTree = "<group>"; };
-		B8BED02A2791817C00AE2ED8 /* MissionTypeCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionTypeCollectionCell.swift; sourceTree = "<group>"; };
 		B8BED02C2794284700AE2ED8 /* AuthAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthAccount.swift; sourceTree = "<group>"; };
 		B8BED02E27942CA600AE2ED8 /* AuthServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServer.swift; sourceTree = "<group>"; };
 		B8BED0302794335100AE2ED8 /* ConfigurePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurePlayer.swift; sourceTree = "<group>"; };
@@ -167,6 +188,9 @@
 		B8BED0382794538F00AE2ED8 /* OGResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGResources.swift; sourceTree = "<group>"; };
 		B8BED03A279453C800AE2ED8 /* ServerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerData.swift; sourceTree = "<group>"; };
 		B8C3E816265ECD1A00BBF5A3 /* ResearchesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResearchesVC.swift; sourceTree = "<group>"; };
+		B8C8268727A018D3005BE032 /* SendTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTarget.swift; sourceTree = "<group>"; };
+		B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetSettingsCell.swift; sourceTree = "<group>"; };
+		B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FleetSettingsCell.xib; sourceTree = "<group>"; };
 		B8D1AEFA26B464F50064DE34 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 		B8E5D992265A8F0E004CF69B /* FacilitiesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilitiesVC.swift; sourceTree = "<group>"; };
 		B8F144E426B8872200B2C31B /* GalaxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyCell.swift; sourceTree = "<group>"; };
@@ -240,7 +264,7 @@
 				B846CD652794746400DEFDE2 /* OGResearch.swift */,
 				B846CD6727947B4700DEFDE2 /* OGShipyard.swift */,
 				B846CD6927947D8100DEFDE2 /* OGDefence.swift */,
-				B846CD6B2794870800DEFDE2 /* OGFleet.swift */,
+				B846CD6B2794870800DEFDE2 /* OGCheckFleet.swift */,
 				B860786B2799A58200F22AD1 /* OGSendFleet.swift */,
 				B846CD6D27948A7A00DEFDE2 /* OGGalaxy.swift */,
 				B846CD5C27946CAA00DEFDE2 /* OGBuild.swift */,
@@ -271,6 +295,8 @@
 				B8676154265982DD0096BE39 /* Researches.swift */,
 				B8ABC2FF26640EF00032ADBB /* Ships.swift */,
 				B8FF0466269E1F11007743B8 /* Defences.swift */,
+				B860787A279C11B400F22AD1 /* CheckTarget.swift */,
+				B8C8268727A018D3005BE032 /* SendTarget.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -381,21 +407,78 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
-		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
+		B8C8268927A1A034005BE032 /* Auth Cells */ = {
 			isa = PBXGroup;
 			children = (
 				B883A01726AF047B0080AFE5 /* ServerCell.swift */,
+			);
+			path = "Auth Cells";
+			sourceTree = "<group>";
+		};
+		B8C8268A27A1A042005BE032 /* Overview Cells */ = {
+			isa = PBXGroup;
+			children = (
 				B8FA6DE02708B90300924D3D /* OverviewCell.swift */,
 				B8FA6DE12708B90300924D3D /* OverviewCell.xib */,
-				B867614D265945A30096BE39 /* BuildingCell.swift */,
-				B867614E265945A30096BE39 /* BuildingCell.xib */,
-				B8F144E426B8872200B2C31B /* GalaxyCell.swift */,
-				B8F144E526B8872200B2C31B /* GalaxyCell.xib */,
+			);
+			path = "Overview Cells";
+			sourceTree = "<group>";
+		};
+		B8C8268C27A1A055005BE032 /* Movement Cells */ = {
+			isa = PBXGroup;
+			children = (
 				B8879462270A6E3B00CDDF16 /* FleetCell.swift */,
 				B8879463270A6E3B00CDDF16 /* FleetCell.xib */,
+			);
+			path = "Movement Cells";
+			sourceTree = "<group>";
+		};
+		B8C8268D27A1A06C005BE032 /* Send Fleet Cells */ = {
+			isa = PBXGroup;
+			children = (
 				B8BED02427908F0400AE2ED8 /* SendFleetCell.swift */,
 				B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */,
-				B8BED02A2791817C00AE2ED8 /* MissionTypeCollectionCell.swift */,
+				B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */,
+				B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */,
+				B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */,
+				B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */,
+				B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */,
+				B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */,
+				B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */,
+				B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */,
+				B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */,
+				B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */,
+			);
+			path = "Send Fleet Cells";
+			sourceTree = "<group>";
+		};
+		B8C8268E27A1A09F005BE032 /* Galaxy Cells */ = {
+			isa = PBXGroup;
+			children = (
+				B8F144E426B8872200B2C31B /* GalaxyCell.swift */,
+				B8F144E526B8872200B2C31B /* GalaxyCell.xib */,
+			);
+			path = "Galaxy Cells";
+			sourceTree = "<group>";
+		};
+		B8C8268F27A1A0B3005BE032 /* Building Cells */ = {
+			isa = PBXGroup;
+			children = (
+				B867614D265945A30096BE39 /* BuildingCell.swift */,
+				B867614E265945A30096BE39 /* BuildingCell.xib */,
+			);
+			path = "Building Cells";
+			sourceTree = "<group>";
+		};
+		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
+			isa = PBXGroup;
+			children = (
+				B8C8268927A1A034005BE032 /* Auth Cells */,
+				B8C8268A27A1A042005BE032 /* Overview Cells */,
+				B8C8268F27A1A0B3005BE032 /* Building Cells */,
+				B8C8268C27A1A055005BE032 /* Movement Cells */,
+				B8C8268E27A1A09F005BE032 /* Galaxy Cells */,
+				B8C8268D27A1A06C005BE032 /* Send Fleet Cells */,
 			);
 			path = "Custom Cells";
 			sourceTree = "<group>";
@@ -417,6 +500,7 @@
 				B8FF0454269DD053007743B8 /* ResearchCell.swift */,
 				B8FF0456269DD05F007743B8 /* ShipsCell.swift */,
 				B8FF0464269E1D4E007743B8 /* DefenceCell.swift */,
+				B8607882279CABCB00F22AD1 /* MissionTypeModel.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -484,11 +568,16 @@
 				B83B640626585FE500A75A00 /* ResourcesOverview.xib in Resources */,
 				B8BED02727908F0400AE2ED8 /* SendFleetCell.xib in Resources */,
 				B8676150265945A30096BE39 /* BuildingCell.xib in Resources */,
+				B8607871279AE2E800F22AD1 /* SetCoordinatesCell.xib in Resources */,
 				B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */,
+				B8607875279AF2E300F22AD1 /* MissionTypeCell.xib in Resources */,
+				B8607879279AF7E900F22AD1 /* CVMissionTypeCell.xib in Resources */,
 				B8FA6DE32708B90300924D3D /* OverviewCell.xib in Resources */,
+				B8607881279C82DB00F22AD1 /* MissionBriefingCell.xib in Resources */,
 				B8B7BC1526504F8F00988758 /* Assets.xcassets in Resources */,
 				B8879465270A6E3B00CDDF16 /* FleetCell.xib in Resources */,
 				B8B7BC1326504F8A00988758 /* Main.storyboard in Resources */,
+				B8CCF5FD279DB95800F3C3B5 /* FleetSettingsCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,8 +638,10 @@
 				B8B7BC1026504F8A00988758 /* LoginVC.swift in Sources */,
 				B8676153265982B00096BE39 /* Facilities.swift in Sources */,
 				B8A9A34726B2D2360099E8CD /* MovementVC.swift in Sources */,
+				B8607878279AF7E900F22AD1 /* CVMissionTypeCell.swift in Sources */,
 				B8BED02627908F0400AE2ED8 /* SendFleetCell.swift in Sources */,
 				B8BED0232790605100AE2ED8 /* Destination.swift in Sources */,
+				B8CCF5FC279DB95800F3C3B5 /* FleetSettingsCell.swift in Sources */,
 				B8D1AEFB26B464F50064DE34 /* Position.swift in Sources */,
 				B8BED033279445F500AE2ED8 /* OGFacilities.swift in Sources */,
 				B8BED03B279453C800AE2ED8 /* ServerData.swift in Sources */,
@@ -559,18 +650,22 @@
 				B83B64082658672500A75A00 /* ResourcesOverview.swift in Sources */,
 				B846CD6A27947D8100DEFDE2 /* OGDefence.swift in Sources */,
 				B867077E26F6857D00F7372E /* Fleets.swift in Sources */,
+				B8607870279AE2E800F22AD1 /* SetCoordinatesCell.swift in Sources */,
 				B846CD6E27948A7A00DEFDE2 /* OGGalaxy.swift in Sources */,
+				B8C8268827A018D3005BE032 /* SendTarget.swift in Sources */,
 				B8BED0312794335100AE2ED8 /* ConfigurePlayer.swift in Sources */,
 				B873317526542CB400524FD8 /* OverviewVC.swift in Sources */,
 				B872AAD82708EE7000BAC4C9 /* UIViewController+Ext.swift in Sources */,
 				B8B7BC0C26504F8A00988758 /* AppDelegate.swift in Sources */,
 				B846CD7027958AA200DEFDE2 /* OGOverview.swift in Sources */,
+				B8607880279C82DB00F22AD1 /* MissionBriefingCell.swift in Sources */,
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
 				B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */,
 				B8FF0457269DD05F007743B8 /* ShipsCell.swift in Sources */,
+				B8607874279AF2E300F22AD1 /* MissionTypeCell.swift in Sources */,
 				B872AAD42708CB6B00BAC4C9 /* String+Ext.swift in Sources */,
 				B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */,
-				B846CD6C2794870800DEFDE2 /* OGFleet.swift in Sources */,
+				B846CD6C2794870800DEFDE2 /* OGCheckFleet.swift in Sources */,
 				B8BED029279176DF00AE2ED8 /* SendFleetVC.swift in Sources */,
 				B814BA6826AB1B0200FF346A /* MyServer.swift in Sources */,
 				B846CD5B2794668B00DEFDE2 /* OGBuildTime.swift in Sources */,
@@ -591,7 +686,6 @@
 				B8E5D993265A8F0E004CF69B /* FacilitiesVC.swift in Sources */,
 				B814BA6626AB0F1B00FF346A /* ServerListVC.swift in Sources */,
 				B846CD6827947B4700DEFDE2 /* OGShipyard.swift in Sources */,
-				B8BED02B2791817C00AE2ED8 /* MissionTypeCollectionCell.swift in Sources */,
 				B86761592659834B0096BE39 /* Buildings.swift in Sources */,
 				B8BED0392794538F00AE2ED8 /* OGResources.swift in Sources */,
 				B846CD7227958C9E00DEFDE2 /* OGSupport.swift in Sources */,
@@ -599,6 +693,7 @@
 				B8BED02D2794284700AE2ED8 /* AuthAccount.swift in Sources */,
 				B8623A9626B18748003F79C3 /* GenericVC.swift in Sources */,
 				B846CD592794643900DEFDE2 /* OGSupplies.swift in Sources */,
+				B860787B279C11B400F22AD1 /* CheckTarget.swift in Sources */,
 				B8A9A34926B2D2430099E8CD /* GalaxyVC.swift in Sources */,
 				B8B2972826550E6F00C59CD4 /* ResourcesVC.swift in Sources */,
 				B8FA6DE22708B90300924D3D /* OverviewCell.swift in Sources */,
@@ -607,6 +702,7 @@
 				B8BED03727944B4D00AE2ED8 /* OGCelestials.swift in Sources */,
 				B8BED02F27942CA600AE2ED8 /* AuthServer.swift in Sources */,
 				B8B7BC262650579100988758 /* Servers.swift in Sources */,
+				B8607883279CABCB00F22AD1 /* MissionTypeModel.swift in Sources */,
 				B8BED03527944B1000AE2ED8 /* PlayerData.swift in Sources */,
 				B867614F265945A30096BE39 /* BuildingCell.swift in Sources */,
 				B8676155265982DD0096BE39 /* Researches.swift in Sources */,

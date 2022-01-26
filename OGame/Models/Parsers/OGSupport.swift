@@ -10,6 +10,7 @@ import SwiftSoup
 
 class OGSupport {
     
+    // MARK: - Get Character Class
     func getCharacterClassWith(playerData: PlayerData) -> String {
         if let character = try? playerData.doc.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last! {
             return character
@@ -18,6 +19,7 @@ class OGSupport {
         }
     }
     
+    // MARK: - Get ID by planet name
     func getIdByPlanetNameWith(_ name: String, playerData: PlayerData) -> Int {
         var found: Int?
 
@@ -30,6 +32,7 @@ class OGSupport {
         return found!
     }
     
+    // MARK: - Get Planet IDs
     func getPlanetIDsWith(playerData: PlayerData) -> [Int] {
         do {
             var ids = [Int]()
@@ -46,7 +49,7 @@ class OGSupport {
         }
     }
 
-
+    // MARK: - Get Planet Names
     func getPlanetNamesWith(playerData: PlayerData) -> [String] {
         do {
             var planetNames = [String]()
@@ -62,11 +65,8 @@ class OGSupport {
     }
 }
 
+// MARK: - NoScriptCheck
 func noScriptCheck(with page: Document) -> Bool {
     let noScript = try? page.select("noscript").text()
-    if noScript == "You need to enable JavaScript to run this app." {
-        return true
-    } else {
-        return false
-    }
+    return noScript == "You need to enable JavaScript to run this app." ? true : false
 }

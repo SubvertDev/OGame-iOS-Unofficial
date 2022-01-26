@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGSupplies {
         
+    // MARK: - Get Supplies
     static func getSuppliesWith(playerData: PlayerData) async throws -> [BuildingWithLevel] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=supplies&cp=\(playerData.planetID)"

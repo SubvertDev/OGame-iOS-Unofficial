@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Destination {
-    let outer_space = 0
-    let planet = 1
-    let debris = 2
-    let moon = 3
+enum Destination: Int {
+    case outerSpace = 0
+    case planet = 1
+    case debris = 2
+    case moon = 3
 }

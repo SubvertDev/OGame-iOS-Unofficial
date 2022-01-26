@@ -9,6 +9,7 @@ import Foundation
 
 class OGBuildTime {
     
+    // MARK: - Get Building Time (level)
     static func getBuildingTimeOfflineWith(playerData: PlayerData, buildingWithLevel: BuildingWithLevelData) -> String {
         let resources = buildingWithLevel.metal + buildingWithLevel.crystal
         let robotics = 1 + playerData.roboticsFactoryLevel
@@ -31,6 +32,7 @@ class OGBuildTime {
         return formatter.string(from: TimeInterval(time)) ?? "nil"
     }
     
+    // MARK: - Get Building Time (amount)
     static func getBuildingTimeOfflineWith(playerData: PlayerData, buildingWithAmount: BuildingWithAmountData) -> String {
         let resources = buildingWithAmount.metal + buildingWithAmount.crystal
         let shipyard = 1 + playerData.shipyardLevel
@@ -45,6 +47,7 @@ class OGBuildTime {
         return formatter.string(from: TimeInterval(time)) ?? "nil"
     }
     
+    // MARK: - Get Server Info
     static private func getServerInfo(_ playerData: PlayerData) -> Server {
         do {
             let version = try playerData.doc.select("[name=ogame-version]").get(0).attr("content")

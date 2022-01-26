@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGResearch {
     
+    // MARK: - Get Researches
     static func getResearchesWith(playerData: PlayerData) async throws -> [BuildingWithLevel] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=research&cp=\(playerData.planetID)"

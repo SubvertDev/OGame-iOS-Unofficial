@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGBuild {
         
+    // MARK: - Build
     func build(what: (Int, Int, String), playerData: PlayerData) async throws {
         do {
             let build = (type: what.0, amount: what.1, component: what.2)

@@ -10,7 +10,8 @@ import Alamofire
 import SwiftSoup
 
 class OGCelestials {
-        
+    
+    // MARK: - Get All Celestials
     func getAllCelestialsWith(serverData: ServerData) async throws -> [Celestial] {
         do {
             var celestials: [Celestial] = []

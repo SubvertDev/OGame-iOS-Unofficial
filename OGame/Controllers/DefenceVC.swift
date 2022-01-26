@@ -64,26 +64,31 @@ class DefenceVC: UIViewController {
 
     // MARK: - Refresh UI
     @objc func refresh() {
-        guard let player = player else { return }
-        
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
-        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-        
         Task {
             do {
+                guard let player = player else { return }
+                startUpdatingUI()
                 buildingsDataModel = try await OGDefence.getDefencesWith(playerData: player)
-                
-                tableView.reloadData()
-                refreshControl.endRefreshing()
-                tableView.isUserInteractionEnabled = true
-                tableView.alpha = 1
-                activityIndicator.stopAnimating()
+                stopUpdatingUI()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
         }
+    }
+    
+    func startUpdatingUI() {
+        tableView.alpha = 0.5
+        tableView.isUserInteractionEnabled = false
+        activityIndicator.startAnimating()
+        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
+    }
+    
+    func stopUpdatingUI() {
+        tableView.reloadData()
+        refreshControl.endRefreshing()
+        tableView.isUserInteractionEnabled = true
+        tableView.alpha = 1
+        activityIndicator.stopAnimating()
     }
 }
 

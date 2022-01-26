@@ -34,7 +34,7 @@ struct Researches {
     let graviton: Research
     let weapons: Research
     let shielding: Research
-    let armor: Research
+    let armour: Research
 
     let allResearches: [Research]
 
@@ -54,7 +54,7 @@ struct Researches {
         self.graviton = Research(levels[12], status[12], 199)
         self.weapons = Research(levels[13], status[13], 109)
         self.shielding = Research(levels[14], status[14], 110)
-        self.armor = Research(levels[15], status[15], 111)
+        self.armour = Research(levels[15], status[15], 111)
 
         self.allResearches = [
             self.energy,
@@ -72,7 +72,7 @@ struct Researches {
             self.graviton,
             self.weapons,
             self.shielding,
-            self.armor
+            self.armour
         ]
     }
 }

@@ -11,6 +11,7 @@ import SwiftSoup
 
 class OGGalaxy {
     
+    // MARK: - Get Galaxy
     func getGalaxyWith(coordinates: [Int], playerData: PlayerData) async throws -> [Position?] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=galaxyContent&ajax=1"
