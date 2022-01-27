@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - TODO: Refactor this VC -
+
 class SendFleetVC: UIViewController {
     
     let tableView = UITableView()
@@ -390,6 +392,10 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                 }
             }
         case 3, 4, 5, 6:
+            if textField.text == "" {
+                textField.text = "0"
+            }
+            
             switch textField.tag {
             case 3:
                 resourcesToSend[0] = Int(textField.text!) ?? 0
@@ -402,6 +408,9 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
             default:
                 break
             }
+            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 3)) as! FleetSettingsCell
+            let resourcesTotal = resourcesToSend[0] + resourcesToSend[1] + resourcesToSend[2]
+            cell.cargoLabel.text = "\(resourcesTotal)/?" // TODO: Add full cargo number
             stopUpdatingUI()
             
         default:

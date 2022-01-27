@@ -20,6 +20,12 @@ class MissionBriefingCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        durationLabel.isHidden = true
+        arrivalLabel.isHidden = true
+        returnLabel.isHidden = true
+        deuteriumLabel.isHidden = true
+        cargobaysLabel.isHidden = true
+        speedLabel.isHidden = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
