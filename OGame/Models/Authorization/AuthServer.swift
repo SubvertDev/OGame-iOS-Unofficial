@@ -10,18 +10,18 @@ import Alamofire
 import SwiftSoup
 
 class AuthServer {
-    private var serverID: Int = 0
-    private var language: String = ""
-    private var serverNumber: Int = 0
-    private var universe: String = ""
-    private var token: String = ""
-    private var indexPHP: String = ""
-    private var loginLink: String = ""
-    private var landingPage: String = ""
+    static private var serverID: Int = 0
+    static private var language: String = ""
+    static private var serverNumber: Int = 0
+    static private var universe: String = ""
+    static private var token: String = ""
+    static private var indexPHP: String = ""
+    static private var loginLink: String = ""
+    static private var landingPage: String = ""
     
     
     // MARK: - LOGIN INTO SERVER -
-    func loginIntoServerWith(serverInfo: MyServer) async throws -> ServerData  {
+    static func loginIntoServerWith(serverInfo: MyServer) async throws -> ServerData  {
         self.serverID = serverInfo.serverID
         self.language = serverInfo.language
         self.serverNumber = serverInfo.number

@@ -11,28 +11,28 @@ import SwiftSoup
 
 class ConfigurePlayer {
             
-    private var doc: Document?
+    static private var doc: Document?
     
-    private var planet: String?
-    private var planetID: Int?
-    private var playerName: String?
-    private var playerID: Int?
+    static private var planet: String?
+    static private var planetID: Int?
+    static private var playerName: String?
+    static private var playerID: Int?
     
-    private var rank: Int?
-    private var planetNames: [String]?
-    private var planetIDs: [Int]?
-    private var commander: Bool?
+    static private var rank: Int?
+    static private var planetNames: [String]?
+    static private var planetIDs: [Int]?
+    static private var commander: Bool?
     
-    private var planetImages: [UIImage]?
-    private var celestials: [Celestial]?
+    static private var planetImages: [UIImage]?
+    static private var celestials: [Celestial]?
     
-    private var roboticsFactoryLevel: Int?
-    private var naniteFactoryLevel: Int?
-    private var researchLabLevel: Int?
-    private var shipyardLevel: Int?
+    static private var roboticsFactoryLevel: Int?
+    static private var naniteFactoryLevel: Int?
+    static private var researchLabLevel: Int?
+    static private var shipyardLevel: Int?
     
     // MARK: - Configure Player
-    func configurePlayerDataWith(serverData: ServerData) async throws -> PlayerData {
+    static func configurePlayerDataWith(serverData: ServerData) async throws -> PlayerData {
         do {
             self.doc = try SwiftSoup.parse(serverData.landingPage)
             let planetName = try doc!.select("[name=ogame-planet-name]")
@@ -103,7 +103,7 @@ class ConfigurePlayer {
     
     
     // MARK: - Get Rank
-    func getRank() -> Int {
+    static func getRank() -> Int {
         do {
             let idBar = try doc!.select("[id=bar]").get(0)
             let li = try idBar.select("li").get(1)
@@ -126,7 +126,7 @@ class ConfigurePlayer {
     }
     
     // MARK: - Get Planet Names
-    func getPlanetNames() -> [String] {
+    static func getPlanetNames() -> [String] {
         do {
             var planetNames = [String]()
             let planets = try doc!.select("[class=planet-name]")
@@ -141,7 +141,7 @@ class ConfigurePlayer {
     }
     
     // MARK: - Get Planet IDs
-    func getPlanetIDs() -> [Int] {
+    static func getPlanetIDs() -> [Int] {
         do {
             var ids = [Int]()
             let planets = try doc!.select("[class*=smallplanet]")
@@ -158,7 +158,7 @@ class ConfigurePlayer {
     }
     
     // MARK: - Get Commander
-    func getCommander() -> Bool {
+    static func getCommander() -> Bool {
         // TODO: test on 3 days commander account
         if let commanders = try? doc!.select("[id=officers]").select("[class*=tooltipHTML  on]").select("[class*=commander]") {
             return !commanders.isEmpty() ? true : false
@@ -168,7 +168,7 @@ class ConfigurePlayer {
     }
     
     // MARK: - Get All Planets Images
-    func getAllPlanetImages() async throws -> [UIImage] {
+    static func getAllPlanetImages() async throws -> [UIImage] {
         do {
             var images: [UIImage] = []
             let planets = try doc!.select("[class*=smallplanet]")

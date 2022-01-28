@@ -10,17 +10,17 @@ import Alamofire
 import SwiftSoup
 
 class AuthAccount {
-    private var username: String = ""
-    private var password: String = ""
-    private let userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1"]
-    private var attempt = 0
-    private var token = ""
-    private var serversList: [Servers] = []
-    private var serversOnAccount: [MyServer] = []
+    static private var username: String = ""
+    static private var password: String = ""
+    static private let userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1"]
+    static private var attempt = 0
+    static private var token = ""
+    static private var serversList: [Servers] = []
+    static private var serversOnAccount: [MyServer] = []
 
     
     // MARK: - LOGIN INTO ACCOUNT
-    func loginIntoAccountWith(username: String, password: String) async throws -> [MyServer] {
+    static func loginIntoAccountWith(username: String, password: String) async throws -> [MyServer] {
         self.username = username
         self.password = password
         
