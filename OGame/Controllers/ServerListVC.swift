@@ -69,8 +69,8 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
             do {
                 guard let servers = servers else { throw OGError() }
                 
-                let serverData = try await AuthServer().loginIntoServerWith(serverInfo: servers[indexPath.row])
-                playerData = try await ConfigurePlayer().configurePlayerDataWith(serverData: serverData)
+                let serverData = try await AuthServer.loginIntoServerWith(serverInfo: servers[indexPath.row])
+                playerData = try await ConfigurePlayer.configurePlayerDataWith(serverData: serverData)
                 
                 tableView.alpha = 1
                 tableView.isUserInteractionEnabled = true

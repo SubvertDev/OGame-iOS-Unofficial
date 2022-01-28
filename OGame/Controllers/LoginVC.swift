@@ -79,8 +79,7 @@ class LoginVC: UIViewController {
         
         Task {
             do {
-                let auth = AuthAccount()
-                servers = try await auth.loginIntoAccountWith(username: username, password: password)
+                servers = try await AuthAccount.loginIntoAccountWith(username: username, password: password)
                 
                 loginButton.isHidden = false
                 activityIndicator.stopAnimating()
