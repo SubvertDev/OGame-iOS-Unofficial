@@ -9,114 +9,68 @@ import UIKit
 
 class MovementVC: UIViewController {
     
-    let tableView = UITableView()
-    let activityIndicator = UIActivityIndicatorView()
-    let refreshControl = UIRefreshControl()
-    let fleetLabel = UILabel()
+    let resourcesTopBarView = ResourcesTopBarView()
+    let genericTableView = GenericTableView()
     
-    var player: PlayerData?
+    var player: PlayerData
     var fleets: [Fleets]?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Movement"
+        view.backgroundColor = .systemBackground
         
-        configureTableView()
-        configureActivityIndicator()
-        configureLabel()
-        
+        configureResourcesTopBarView()
+        configureGenericTableView()
         refresh()
     }
     
+    init(player: PlayerData) {
+        self.player = player
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Configure UI
-    func configureTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "FleetCell", bundle: nil), forCellReuseIdentifier: "FleetCell")
-        tableView.removeExtraCellLines()
-        tableView.alpha = 0.5
-        tableView.rowHeight = 100
-        tableView.keyboardDismissMode = .onDrag
-        
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+    func configureResourcesTopBarView() {
+        resourcesTopBarView.pinToTopEdges(inView: view, aspectRatio: 0.2, topIsSafeArea: true)
+        resourcesTopBarView.configureWith(resources: nil, player: player)
     }
     
-    func configureActivityIndicator() {
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.style = .large
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            activityIndicator.widthAnchor.constraint(equalToConstant: 100),
-            activityIndicator.heightAnchor.constraint(equalToConstant: 100)
-        ])
-        
-        activityIndicator.startAnimating()
-    }
-    
-    func configureLabel() {
-        view.addSubview(fleetLabel)
-        fleetLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            fleetLabel.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
-            fleetLabel.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
-            fleetLabel.topAnchor.constraint(equalTo: tableView.topAnchor),
-            fleetLabel.bottomAnchor.constraint(equalTo: tableView.bottomAnchor)
-        ])
-        
-        fleetLabel.text = "No fleet movement at the moment"
-        fleetLabel.textAlignment = .center
-        fleetLabel.isHidden = true
+    func configureGenericTableView() {
+        genericTableView.pinToTopView(inView: view, toTopView: resourcesTopBarView)
+        genericTableView.configureView(cellIdentifier: "FleetCell")
+        genericTableView.tableView.delegate = self
+        genericTableView.tableView.dataSource = self
+        genericTableView.refreshCompletion = { [weak self] in
+            self?.resourcesTopBarView.refresh(self?.player)
+            self?.refresh()
+        }
     }
     
     // MARK: - Refresh UI
     @objc func refresh() {
         Task {
             do {
-                guard let player = player else { return }
-                startUpdatingUI()
+                genericTableView.startUpdatingUI()
                 fleets = try await OGCheckFleet.getFleetWith(playerData: player)
-                stopUpdatingUI()
+                genericTableView.stopUpdatingUI()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
         }
-    }
-    
-    func startUpdatingUI() {
-        tableView.alpha = 0.5
-        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-    }
-    
-    func stopUpdatingUI() {
-        tableView.reloadData()
-        tableView.alpha = 1
-        fleetLabel.isHidden = !fleets!.isEmpty
-        refreshControl.endRefreshing()
-        activityIndicator.stopAnimating()
     }
 }
 
 // MARK: - Delegates & DataSource
 extension MovementVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let fleets = fleets {
-            return fleets.count
-        } else {
-            return 0
-        }
+        guard let fleets = fleets else { return 0 }
+        return fleets.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

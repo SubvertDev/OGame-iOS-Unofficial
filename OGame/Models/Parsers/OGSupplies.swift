@@ -12,7 +12,7 @@ import SwiftSoup
 class OGSupplies {
         
     // MARK: - Get Supplies
-    static func getSuppliesWith(playerData: PlayerData) async throws -> [BuildingWithLevel] {
+    static func getSuppliesWith(playerData: PlayerData) async throws -> [Building] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=supplies&cp=\(playerData.planetID)"
             let value = try await AF.request(link).serializingData().value
@@ -37,21 +37,21 @@ class OGSupplies {
             let supplies = Supplies(levels, technologyStatus)
             let supplyCells = ResourceCell(with: supplies)
             
-            var buildingDataModel: [BuildingWithLevel] = []
+            var buildingDataModel: [Building] = []
             
             for building in supplyCells.resourceBuildings {
                 let buildTime = OGBuildTime.getBuildingTimeOfflineWith(playerData: playerData, buildingWithLevel: building)
-                let newBuilding = BuildingWithLevel(name: building.name,
-                                                    metal: building.metal,
-                                                    crystal: building.crystal,
-                                                    deuterium: building.deuterium,
-                                                    image: (available: building.image.available,
-                                                            unavailable: building.image.unavailable,
-                                                            disabled: building.image.disabled),
-                                                    buildingsID: building.buildingsID,
-                                                    level: building.level,
-                                                    condition: building.condition,
-                                                    timeToBuild: buildTime)
+                let newBuilding = Building(name: building.name,
+                                           metal: building.metal,
+                                           crystal: building.crystal,
+                                           deuterium: building.deuterium,
+                                           image: (available: building.image.available,
+                                                   unavailable: building.image.unavailable,
+                                                   disabled: building.image.disabled),
+                                           buildingsID: building.buildingsID,
+                                           levelOrAmount: building.level,
+                                           condition: building.condition,
+                                           timeToBuild: buildTime)
                 buildingDataModel.append(newBuilding)
             }
             return buildingDataModel

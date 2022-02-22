@@ -7,26 +7,38 @@
 
 import UIKit
 
-struct BuildingWithLevel {
-    let name: String
-    let metal: Int
-    let crystal: Int
-    let deuterium: Int
-    let image: ImageBundle
-    let buildingsID: Int
-    let level: Int
-    let condition: String
-    let timeToBuild: String
-}
+//struct BuildingWithLevel {
+//    let name: String
+//    let metal: Int
+//    let crystal: Int
+//    let deuterium: Int
+//    let image: ImageBundle
+//    let buildingsID: Int
+//    let level: Int
+//    let condition: String
+//    let timeToBuild: String
+//}
+//
+//struct BuildingWithAmount {
+//    let name: String
+//    let metal: Int
+//    let crystal: Int
+//    let deuterium: Int
+//    let image: ImageBundle
+//    let buildingsID: Int
+//    var amount: Int
+//    let condition: String
+//    let timeToBuild: String
+//}
 
-struct BuildingWithAmount {
+struct Building {
     let name: String
     let metal: Int
     let crystal: Int
     let deuterium: Int
     let image: ImageBundle
     let buildingsID: Int
-    var amount: Int
+    var levelOrAmount: Int
     let condition: String
     let timeToBuild: String
 }

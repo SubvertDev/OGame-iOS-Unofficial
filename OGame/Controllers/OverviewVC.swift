@@ -9,75 +9,40 @@ import UIKit
 
 class OverviewVC: UIViewController {
     
-    let tableView = UITableView()
-    let activityIndicator = UIActivityIndicatorView()
-    let refreshControl = UIRefreshControl()
+    let overviewTotalView = OverviewTotalView()
 
+    var resources: Resources?
     var player: PlayerData?
     var overviewInfo: [Overview?]?
-    let requestGroup = DispatchGroup()
-
+    
+    override func loadView() {
+        view = overviewTotalView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        overviewTotalView.resourcesTopBarView.configureWith(resources: resources, player: player)
 
-        configureTableView()
-        configureActivityIndicator()
-
+        overviewTotalView.overviewInfoView.tableView.delegate = self
+        overviewTotalView.overviewInfoView.tableView.dataSource = self
+        overviewTotalView.overviewInfoView.refreshCompletion = { [weak self] in
+            self?.overviewTotalView.resourcesTopBarView.refresh(self?.player)
+            self?.refresh()
+        }
+        
         refresh()
     }
 
-    // MARK: - Configure UI
-    func configureTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "OverviewCell", bundle: nil), forCellReuseIdentifier: "OverviewCell")
-        tableView.removeExtraCellLines()
-        tableView.rowHeight = 88
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-    }
-
-    func configureActivityIndicator() {
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.style = .large
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            activityIndicator.widthAnchor.constraint(equalToConstant: 100),
-            activityIndicator.heightAnchor.constraint(equalToConstant: 100)
-        ])
-
-        activityIndicator.startAnimating()
-    }
 
     // MARK: - Refresh UI
-    @objc func refresh() {
+    func refresh() {
         guard let player = player else { return }
-        
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-
         Task {
             do {
+                overviewTotalView.overviewInfoView.startUpdatingUI()
                 overviewInfo = try await OGOverview.getOverviewWith(playerData: player)
-                
-                tableView.alpha = 1
-                tableView.isUserInteractionEnabled = true
-                refreshControl.endRefreshing()
-                activityIndicator.stopAnimating()
-                tableView.reloadData()
+                overviewTotalView.overviewInfoView.stopUpdatingUI()
             } catch {
                 logoutAndShowError(error as! OGError)
             }

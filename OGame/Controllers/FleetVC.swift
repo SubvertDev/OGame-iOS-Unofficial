@@ -9,14 +9,12 @@ import UIKit
 
 class FleetVC: UIViewController {
     
-    let tableView = UITableView()
-    let nextButton = UIButton()
-    let separator = UIView()
-    let activityIndicator = UIActivityIndicatorView()
-    let refreshControl = UIRefreshControl()
+    let resourcesTopBarView = ResourcesTopBarView()
+    let fleetPageButtonsView = FleetPageButtonsView()
+    let genericTableView = GenericTableView()
     
     var player: PlayerData?
-    var buildingsDataModel: [BuildingWithAmount]?
+    var ships: [Building]?
     var textFieldValues = Array(repeating: 0, count: 15)
     var targetData: CheckTarget?
     var briefingData: [String]?
@@ -26,11 +24,83 @@ class FleetVC: UIViewController {
         super.viewDidLoad()
         title = "Fleet"
         
-        configureNextButton()
-        configureSeparator()
-        configureTableView()
-        configureActivityIndicator()
+        view.backgroundColor = .systemBackground
         
+        configureResourcesTopBarView()
+        configureButtonsView()
+        configureGenericTableView()
+        getTargetData()
+        
+        refresh()
+    }
+    
+    // MARK: - Configure UI
+    func configureResourcesTopBarView() {
+        resourcesTopBarView.pinToTopEdges(inView: view, aspectRatio: 0.2, topIsSafeArea: true)
+        resourcesTopBarView.configureWith(resources: nil, player: player)
+    }
+    
+    func configureButtonsView() {
+        fleetPageButtonsView.pinToTopView(inView: view, toTopView: resourcesTopBarView, isBottomAnchor: false)
+        fleetPageButtonsView.nextButtonPressed = { [weak self] in
+            self?.nextButtonPressed()
+        }
+        fleetPageButtonsView.resetButtonPressed = { [weak self] in
+            self?.resetButtonPressed()
+        }
+    }
+    
+    func configureGenericTableView() {
+        genericTableView.pinToTopView(inView: view, toTopView: fleetPageButtonsView)
+        genericTableView.tableView.delegate = self
+        genericTableView.tableView.dataSource = self
+        genericTableView.configureView(cellIdentifier: "SendFleetCell")
+        genericTableView.refreshCompletion = { [weak self] in
+            self?.resourcesTopBarView.refresh(self?.player)
+            self?.refresh()
+        }
+    }
+    
+    // MARK: - Buttons Actions
+    func nextButtonPressed() {
+        var shipsToSend = ships
+        for (index, _) in ships!.enumerated() {
+            shipsToSend![index].levelOrAmount = textFieldValues[index]
+        }
+        
+        for item in textFieldValues where item != 0 {
+            let vc = SendFleetVC()
+            vc.player = player
+            vc.ships = shipsToSend
+            vc.targetData = targetData
+            navigationController?.pushViewController(vc, animated: true)
+            break
+        }
+    }
+    
+    func resetButtonPressed() {
+        fleetPageButtonsView.nextButton.isEnabled = false
+        textFieldValues = Array(repeating: 0, count: 15)
+        genericTableView.tableView.reloadData()
+    }
+    
+    // MARK: - Refresh UI
+    @objc func refresh() {
+        Task {
+            do {
+                guard let player = player else { return }
+                genericTableView.startUpdatingUI()
+                ships = try await OGShipyard.getShipsWith(playerData: player)
+                ships?.removeLast(2)
+                genericTableView.stopUpdatingUI()
+            } catch {
+                logoutAndShowError(error as! OGError)
+            }
+        }
+    }
+    
+    // MARK: - Get TargetData
+    func getTargetData() {
         Task {
             do {
                 let coordinates = player!.celestials[player!.currentPlanetIndex].coordinates
@@ -43,122 +113,6 @@ class FleetVC: UIViewController {
                 logoutAndShowError(error as! OGError)
             }
         }
-        
-        refresh()
-    }
-    
-    // MARK: - Configure UI
-    func configureNextButton() {
-        view.addSubview(nextButton)
-        nextButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            nextButton.topAnchor.constraint(equalTo: view.topAnchor)
-        ])
-        
-        nextButton.setTitle("NEXT", for: .normal)
-        nextButton.setTitleColor(.systemBlue, for: .normal)
-        nextButton.setTitleColor(.systemGray, for: .disabled)
-        nextButton.addTarget(self, action: #selector(nextButtonPressed), for: .touchUpInside)
-        nextButton.isEnabled = false
-    }
-    
-    func configureSeparator() {
-        view.addSubview(separator)
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            separator.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            separator.topAnchor.constraint(equalTo: nextButton.bottomAnchor),
-            separator.heightAnchor.constraint(equalToConstant: 0.5)
-        ])
-        
-        separator.backgroundColor = .opaqueSeparator
-    }
-    
-    func configureTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: separator.bottomAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "SendFleetCell", bundle: nil), forCellReuseIdentifier: "SendFleetCell")
-        tableView.removeExtraCellLines()
-        tableView.alpha = 0.5
-        tableView.rowHeight = 88
-        tableView.keyboardDismissMode = .onDrag
-        
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-    }
-    
-    func configureActivityIndicator() {
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.style = .large
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            activityIndicator.widthAnchor.constraint(equalToConstant: 100),
-            activityIndicator.heightAnchor.constraint(equalToConstant: 100)
-        ])
-    }
-    
-    // MARK: - Button Pressed
-    @objc func nextButtonPressed() {
-        for (index, _) in buildingsDataModel!.enumerated() {
-            buildingsDataModel![index].amount = textFieldValues[index]
-        }
-        
-        for item in textFieldValues where item != 0 {
-            if let parent = self.parent as? GenericVC {
-                parent.removeChildVC()
-                let sendFleetVC = SendFleetVC()
-                sendFleetVC.player = player
-                sendFleetVC.ships = buildingsDataModel
-                sendFleetVC.targetData = targetData
-                parent.childVC = sendFleetVC
-                parent.configureChildVC()
-                break
-            }
-        }
-    }
-    
-    // MARK: - Refresh UI
-    @objc func refresh() {
-        Task {
-            do {
-                guard let player = player else { return }
-                startUpdatingUI()
-                buildingsDataModel = try await OGShipyard.getShipsWith(playerData: player)
-                buildingsDataModel?.removeLast(2)
-                stopUpdatingUI()
-            } catch {
-                logoutAndShowError(error as! OGError)
-            }
-        }
-    }
-    
-    func startUpdatingUI() {
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
-        NotificationCenter.default.post(name: Notification.Name("Build"), object: nil)
-    }
-    
-    func stopUpdatingUI() {
-        tableView.reloadData()
-        refreshControl.endRefreshing()
-        tableView.isUserInteractionEnabled = true
-        tableView.alpha = 1
-        activityIndicator.stopAnimating()
     }
 }
 
@@ -169,13 +123,13 @@ extension FleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelega
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let buildingsDataModel = self.buildingsDataModel else { return UITableViewCell() }
+        guard let ships = self.ships else { return UITableViewCell() }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "SendFleetCell", for: indexPath) as! SendFleetCell
         cell.shipSelectedTextField.tag = indexPath.row
         cell.shipSelectedTextField.delegate = self
         cell.shipSelectedTextField.text = String(textFieldValues[indexPath.row])
-        cell.setShip(with: buildingsDataModel[indexPath.row])
+        cell.setShip(with: ships[indexPath.row])
         
         return cell
     }
@@ -192,10 +146,10 @@ extension FleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelega
         textFieldValues.insert(Int(textField.text!)!, at: textField.tag)
         for item in textFieldValues {
             if item != 0 {
-                nextButton.isEnabled = true
+                fleetPageButtonsView.nextButton.isEnabled = true
                 break
             } else {
-                nextButton.isEnabled = false
+                fleetPageButtonsView.nextButton.isEnabled = false
             }
         }
     }

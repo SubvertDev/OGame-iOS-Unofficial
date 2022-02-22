@@ -11,6 +11,14 @@ protocol BuildingCellDelegate: AnyObject {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton)
 }
 
+enum BuildingType: CaseIterable {
+    case supply
+    case facility
+    case research
+    case shipyard
+    case defence
+}
+
 class BuildingCell: UITableViewCell {
 
     @IBOutlet weak var buildingImage: UIImageView!
@@ -38,148 +46,147 @@ class BuildingCell: UITableViewCell {
     @IBAction func buildPressed(_ sender: UIButton) {
         delegate?.didTapButton(self, typeOfBuilding!, sender)
     }
+    
+    func set(type: BuildingType, building: Building, playerData: PlayerData) {
+        switch type {
+            // MARK: - Supply
+        case .supply:
+            typeOfBuilding = (building.buildingsID, 1, "supplies")
+            buildButton.isEnabled = false
+            buildingNameLabel.text = building.name
+            metalRequiredLabel.text = "Metal: \(building.metal)"
+            crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+            deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+            levelLabel.text = "\(building.levelOrAmount)"
+            timeToBuildLabel.text = "\(building.timeToBuild)"
 
-    // MARK: - SET SUPPLY
-    func setSupply(building: BuildingWithLevel, playerData: PlayerData) {
-        typeOfBuilding = (building.buildingsID, 1, "supplies")
-        buildButton.isEnabled = false
-        buildingNameLabel.text = building.name
-        metalRequiredLabel.text = "Metal: \(building.metal)"
-        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
-        levelLabel.text = "\(building.level)"
-        timeToBuildLabel.text = "\(building.timeToBuild)"
+            switch building.condition {
+            case "on":
+                buildingImage.image = building.image.available
+                buildButton.isEnabled = true
+            case "active":
+                buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+                levelLabel.text = "\(building.levelOrAmount) -> \(building.levelOrAmount + 1)"
+                buildButton.isEnabled = playerData.commander
+            case "disabled":
+                buildingImage.image = building.image.unavailable
+            case "off":
+                buildingImage.image = building.image.disabled
+            default:
+                buildingImage.image = UIImage(systemName: "xmark")
+            }
+            
+            // MARK: - Facility
+        case .facility:
+            typeOfBuilding = (building.buildingsID, 1, "facilities")
+            buildButton.isEnabled = false
+            buildingNameLabel.text = building.name
+            metalRequiredLabel.text = "Metal: \(building.metal)"
+            crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+            deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+            levelLabel.text = "\(building.levelOrAmount)"
+            timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch building.condition {
-        case "on":
-            buildingImage.image = building.image.available
-            buildButton.isEnabled = true
-        case "active":
-            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
-            levelLabel.text = "\(building.level) -> \(building.level + 1)"
-            buildButton.isEnabled = playerData.commander
-        case "disabled":
-            buildingImage.image = building.image.unavailable
-        case "off":
-            buildingImage.image = building.image.disabled
-        default:
-            buildingImage.image = UIImage(systemName: "xmark")
-        }
-    }
+            switch building.condition {
+            case "on":
+                buildingImage.image = building.image.available
+                buildButton.isEnabled = true
+            case "active":
+                buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+                levelLabel.text = "\(building.levelOrAmount) -> \(building.levelOrAmount + 1)"
+                buildButton.isEnabled = playerData.commander
+            case "disabled":
+                buildingImage.image = building.image.unavailable
+            case "off":
+                buildingImage.image = building.image.disabled
+            default:
+                buildingImage.image = UIImage(systemName: "xmark")
+            }
+            
+            // MARK: - Research
+        case .research:
+            typeOfBuilding = (building.buildingsID, 1, "research")
+            buildButton.isEnabled = false
+            buildingNameLabel.text = building.name
+            metalRequiredLabel.text = "Metal: \(building.metal)"
+            crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+            deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+            levelLabel.text = "\(building.levelOrAmount)"
+            timeToBuildLabel.text = "\(building.timeToBuild)"
 
-    // MARK: - SET FACILITY
-    func setFacility(building: BuildingWithLevel, playerData: PlayerData) {
-        typeOfBuilding = (building.buildingsID, 1, "facilities")
-        buildButton.isEnabled = false
-        buildingNameLabel.text = building.name
-        metalRequiredLabel.text = "Metal: \(building.metal)"
-        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
-        levelLabel.text = "\(building.level)"
-        timeToBuildLabel.text = "\(building.timeToBuild)"
+            switch building.condition {
+            case "on":
+                buildingImage.image = building.image.available
+                buildButton.isEnabled = true
+            case "active":
+                buildingImage.image = UIImage(systemName: "timer")
+                levelLabel.text = "\(building.levelOrAmount) -> \(building.levelOrAmount + 1)"
+                buildButton.isEnabled = playerData.commander
+            case "disabled":
+                buildingImage.image = building.image.unavailable
+            case "off":
+                buildingImage.image = building.image.disabled
+            default:
+                buildingImage.image = UIImage(systemName: "xmark")
+            }
+            
+            // MARK: - Shipyard
+        case .shipyard:
+            typeOfBuilding = (building.buildingsID, 1, "shipyard")
+            buildButton.isEnabled = false
+            buildingNameLabel.text = building.name
+            metalRequiredLabel.text = "Metal: \(building.metal)"
+            crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+            deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+            levelLabel.text = "\(building.levelOrAmount)"
+            timeToBuildLabel.text = "\(building.timeToBuild)"
 
-        switch building.condition {
-        case "on":
-            buildingImage.image = building.image.available
-            buildButton.isEnabled = true
-        case "active":
-            buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
-            levelLabel.text = "\(building.level) -> \(building.level + 1)"
-            buildButton.isEnabled = playerData.commander
-        case "disabled":
-            buildingImage.image = building.image.unavailable
-        case "off":
-            buildingImage.image = building.image.disabled
-        default:
-            buildingImage.image = UIImage(systemName: "xmark")
-        }
-    }
+            switch building.condition {
+            case "on":
+                buildingImage.image = building.image.available
+                buildButton.isEnabled = true
+            case "active":
+                buildingImage.image = UIImage(systemName: "timer")
+                buildButton.isEnabled = true
+                // TODO: Add info about from what amount to what amount building is going
+                // levelLabel.text = "\(ships.allShips[id].levelOrAmount) -> \(ships.allShips[id].levelOrAmount + 1)"
+            case "disabled":
+                buildingImage.image = building.image.unavailable
+                buildButton.isEnabled = playerData.commander
+            case "off":
+                buildingImage.image = building.image.disabled
+            default:
+                buildingImage.image = UIImage(systemName: "xmark")
+            }
+            
+            // MARK: - Defence
+        case .defence:
+            typeOfBuilding = (building.buildingsID, 1, "defenses")
+            buildButton.isEnabled = false
+            buildingNameLabel.text = building.name
+            metalRequiredLabel.text = "Metal: \(building.metal)"
+            crystalRequiredLabel.text = "Crystal: \(building.crystal)"
+            deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
+            levelLabel.text = "\(building.levelOrAmount)"
+            timeToBuildLabel.text = "\(building.timeToBuild)"
 
-    // MARK: - SET RESEARCH
-    func setResearch(building: BuildingWithLevel, playerData: PlayerData) {
-        typeOfBuilding = (building.buildingsID, 1, "research")
-        buildButton.isEnabled = false
-        buildingNameLabel.text = building.name
-        metalRequiredLabel.text = "Metal: \(building.metal)"
-        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
-        levelLabel.text = "\(building.level)"
-        timeToBuildLabel.text = "\(building.timeToBuild)"
-
-        switch building.condition {
-        case "on":
-            buildingImage.image = building.image.available
-            buildButton.isEnabled = true
-        case "active":
-            buildingImage.image = UIImage(systemName: "timer")
-            levelLabel.text = "\(building.level) -> \(building.level + 1)"
-            buildButton.isEnabled = playerData.commander
-        case "disabled":
-            buildingImage.image = building.image.unavailable
-        case "off":
-            buildingImage.image = building.image.disabled
-        default:
-            buildingImage.image = UIImage(systemName: "xmark")
-        }
-    }
-
-    // MARK: - SET SHIP
-    func setShip(building: BuildingWithAmount, playerData: PlayerData) {
-        typeOfBuilding = (building.buildingsID, 1, "shipyard")
-        buildButton.isEnabled = false
-        buildingNameLabel.text = building.name
-        metalRequiredLabel.text = "Metal: \(building.metal)"
-        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
-        levelLabel.text = "\(building.amount)"
-        timeToBuildLabel.text = "\(building.timeToBuild)"
-
-        switch building.condition {
-        case "on":
-            buildingImage.image = building.image.available
-            buildButton.isEnabled = true
-        case "active":
-            buildingImage.image = UIImage(systemName: "timer")
-            buildButton.isEnabled = true
-            // TODO: Add info about from what amount to what amount building is going
-            // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
-        case "disabled":
-            buildingImage.image = building.image.unavailable
-            buildButton.isEnabled = playerData.commander
-        case "off":
-            buildingImage.image = building.image.disabled
-        default:
-            buildingImage.image = UIImage(systemName: "xmark")
-        }
-    }
-
-    // MARK: - SET DEFENCE
-    func setDefence(building: BuildingWithAmount, playerData: PlayerData) {
-        typeOfBuilding = (building.buildingsID, 1, "defenses")
-        buildButton.isEnabled = false
-        buildingNameLabel.text = building.name
-        metalRequiredLabel.text = "Metal: \(building.metal)"
-        crystalRequiredLabel.text = "Crystal: \(building.crystal)"
-        deuteriumRequiredLabel.text = "Deuterium: \(building.deuterium)"
-        levelLabel.text = "\(building.amount)"
-        timeToBuildLabel.text = "\(building.timeToBuild)"
-
-        switch building.condition {
-        case "on":
-            buildingImage.image = building.image.available
-            buildButton.isEnabled = true
-        case "active":
-            buildingImage.image = UIImage(systemName: "timer")
-            buildButton.isEnabled = true
-            // TODO: Add info about from what amount to what amount building is going
-            // levelLabel.text = "\(ships.allShips[id].amount) -> \(ships.allShips[id].amount + 1)"
-        case "disabled":
-            buildingImage.image = building.image.unavailable
-            buildButton.isEnabled = playerData.commander
-        case "off":
-            buildingImage.image = building.image.disabled
-        default:
-            buildingImage.image = UIImage(systemName: "xmark")
+            switch building.condition {
+            case "on":
+                buildingImage.image = building.image.available
+                buildButton.isEnabled = true
+            case "active":
+                buildingImage.image = UIImage(systemName: "timer")
+                buildButton.isEnabled = true
+                // TODO: Add info about from what amount to what amount building is going
+                // levelLabel.text = "\(ships.allShips[id].levelOrAmount) -> \(ships.allShips[id].levelOrAmount + 1)"
+            case "disabled":
+                buildingImage.image = building.image.unavailable
+                buildButton.isEnabled = playerData.commander
+            case "off":
+                buildingImage.image = building.image.disabled
+            default:
+                buildingImage.image = UIImage(systemName: "xmark")
+            }
         }
     }
 }

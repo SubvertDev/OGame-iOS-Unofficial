@@ -24,10 +24,10 @@ class SendFleetCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func setShip(with ship: BuildingWithAmount) {
+    func setShip(with ship: Building) {
         shipNameLabel.text = ship.name
-        shipAvailableLabel.text = "\(ship.amount)"
-        if ship.amount != 0 {
+        shipAvailableLabel.text = "\(ship.levelOrAmount)"
+        if ship.levelOrAmount != 0 {
             shipImageView.image = ship.image.available
             shipSelectedTextField.isEnabled = true
         } else {

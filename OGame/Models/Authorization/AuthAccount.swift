@@ -15,7 +15,7 @@ class AuthAccount {
     static private let userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1"]
     static private var attempt = 0
     static private var token = ""
-    static private var serversList: [Servers] = []
+    static private var serversListResponse: [Servers] = []
     static private var serversOnAccount: [MyServer] = []
 
     
@@ -23,6 +23,8 @@ class AuthAccount {
     static func loginIntoAccountWith(username: String, password: String) async throws -> [MyServer] {
         self.username = username
         self.password = password
+        serversListResponse = []
+        serversOnAccount = []
         
         try await login(attempt: attempt)
         
@@ -99,7 +101,7 @@ class AuthAccount {
         func configureServers() async throws {
             do {
                 let response = try await AF.request("https://lobby.ogame.gameforge.com/api/servers").serializingDecodable([Servers].self).value
-                serversList = response
+                serversListResponse = response
                 try await configureAccounts()
                 
             } catch {
@@ -114,7 +116,7 @@ class AuthAccount {
                 let accounts = try await AF.request("https://lobby.ogame.gameforge.com/api/users/me/accounts", method: .get, headers: headers).serializingDecodable([Account].self).value
                 
                 for account in accounts {
-                    for server in serversList {
+                    for server in serversListResponse {
                         if account.server.number == server.number && account.server.language == server.language {
                             serversOnAccount.append(
                                 MyServer(serverName: server.name,

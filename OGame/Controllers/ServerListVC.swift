@@ -14,12 +14,13 @@ class ServerListVC: UIViewController {
     
     var servers: [MyServer]?
     var playerData: PlayerData?
-
+    var resources: Resources?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-
+        
         configureTableView()
     }
 
@@ -71,10 +72,12 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
                 
                 let serverData = try await AuthServer.loginIntoServerWith(serverInfo: servers[indexPath.row])
                 playerData = try await ConfigurePlayer.configurePlayerDataWith(serverData: serverData)
+                resources = try await OGResources.getResourcesWith(playerData: playerData!)
                 
                 tableView.alpha = 1
                 tableView.isUserInteractionEnabled = true
                 activityIndicator.stopAnimating()
+                
                 performSegue(withIdentifier: "ShowMenuVC", sender: self)
                 
             } catch {
@@ -87,6 +90,7 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
         if segue.identifier == "ShowMenuVC" {
             let menuVC = segue.destination as! MenuVC
             menuVC.player = playerData!
+            menuVC.resources = resources!
         }
     }
 

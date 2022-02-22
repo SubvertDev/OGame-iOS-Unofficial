@@ -18,7 +18,7 @@ class OGSendFleet {
     static func sendFleet(player: PlayerData,
                           mission: Mission,
                           whereTo: Coordinates,
-                          ships: [BuildingWithAmount],
+                          ships: [Building],
                           resources: [Int] = [0, 0, 0],
                           speed: Int = 10, // * 10 = %
                           holdingTime: Int = 0) async throws -> SendTarget {
@@ -28,8 +28,8 @@ class OGSendFleet {
             try await getToken(from: value)
             
             var shipParameters: Parameters = [:]
-            for ship in ships where ship.amount != 0 {
-                shipParameters["am\(ship.buildingsID)"] = ship.amount
+            for ship in ships where ship.levelOrAmount != 0 {
+                shipParameters["am\(ship.buildingsID)"] = ship.levelOrAmount
             }
                         
             var parameters: Parameters = ["token": currentToken!,
@@ -66,7 +66,7 @@ class OGSendFleet {
     // MARK: - Check Target
     static func checkTarget(player: PlayerData,
                             whereTo: Coordinates,
-                            ships: [BuildingWithAmount]? = nil) async throws -> CheckTarget {
+                            ships: [Building]? = nil) async throws -> CheckTarget {
         do {
             let link = "\(player.indexPHP)page=ingame&component=fleetdispatch&cp=\(player.planetID)"
             let value = try await AF.request(link).serializingData().value
@@ -82,8 +82,8 @@ class OGSendFleet {
                                                 "union": 0]
             if let ships = ships {
                 var shipsParameters: Parameters = [:]
-                for ship in ships where ship.amount != 0 {
-                    shipsParameters["am\(ship.buildingsID)"] = ship.amount
+                for ship in ships where ship.levelOrAmount != 0 {
+                    shipsParameters["am\(ship.buildingsID)"] = ship.levelOrAmount
                 }
                 shipsParameters.forEach { targetParameters[$0] = $1 }
             }

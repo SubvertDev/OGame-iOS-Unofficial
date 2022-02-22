@@ -11,11 +11,12 @@ import UIKit
 
 class SendFleetVC: UIViewController {
     
+    let resourcesTopBarView = ResourcesTopBarView()
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView()
 
     var player: PlayerData?
-    var ships: [BuildingWithAmount]?
+    var ships: [Building]?
     var targetCoordinates: Coordinates?
     var targetMission: Mission?
     var targetData: CheckTarget?
@@ -27,13 +28,15 @@ class SendFleetVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        parent!.title = "Send Fleet"
+        title = "Send Fleet"
+        view.backgroundColor = .systemBackground
         guard let player = player, let targetData = targetData else { return }
         
         targetCoordinates = Coordinates(galaxy: targetData.targetPlanet!.galaxy,
                                         system: targetData.targetPlanet!.system,
                                         position: targetData.targetPlanet!.position,
                                         destination: .planet)
+        configureResourcesTopBarView()
         configureTableView()
         configureActivityIndicator()
         startUpdatingUI()
@@ -70,13 +73,25 @@ class SendFleetVC: UIViewController {
     
     
     // MARK: - Configure UI
+    func configureResourcesTopBarView() {
+        view.addSubview(resourcesTopBarView)
+        resourcesTopBarView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            resourcesTopBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            resourcesTopBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            resourcesTopBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            resourcesTopBarView.heightAnchor.constraint(equalTo: resourcesTopBarView.widthAnchor, multiplier: 0.2)
+        ])
+        resourcesTopBarView.configureWith(resources: nil, player: player)
+    }
+    
     func configureTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.topAnchor.constraint(equalTo: resourcesTopBarView.bottomAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
@@ -435,6 +450,12 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
         let newString: NSString =
             currentString.replacingCharacters(in: range, with: string) as NSString
         return newString.length <= maxLength
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let startPosition = textField.beginningOfDocument
+        let endPosition = textField.endOfDocument
+        textField.selectedTextRange = textField.textRange(from: startPosition, to: endPosition)
     }
 }
 

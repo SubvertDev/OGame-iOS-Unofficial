@@ -23,7 +23,7 @@ class LoginVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         formView.layer.borderWidth = 2
         formView.layer.borderColor = UIColor.label.cgColor
         formView.layer.cornerRadius = 10
