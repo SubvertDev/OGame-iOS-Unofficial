@@ -7,7 +7,7 @@
 
 import UIKit
 
-// MARK: - TODO: Calculate distance -
+// TODO: Calculate distance
 
 protocol SetCoordinatesCellDelegate: AnyObject {
     func didPressButton(_ sender: UIButton)

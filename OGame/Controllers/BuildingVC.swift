@@ -40,6 +40,7 @@ class BuildingVC: UIViewController {
         buildingTableView.tableView.dataSource = self
         buildingTableView.refreshCompletion = { [weak self] in
             self?.resourcesTopBarView.refresh(self?.player)
+            self?.refresh()
         }
         buildingTableView.startUpdatingUI()
         refresh()
@@ -110,7 +111,7 @@ extension BuildingVC: BuildingCellDelegate {
                     do {
                         self.buildingTableView.startUpdatingUI()
                         try await OGBuild.build(what: type, playerData: player)
-                        self.resourcesTopBarView.refresh()
+                        self.resourcesTopBarView.refresh(self.player)
                         self.refresh()
                     } catch {
                         self.logoutAndShowError(error as! OGError)
@@ -148,7 +149,7 @@ extension BuildingVC: BuildingCellDelegate {
                         do {
                             self.buildingTableView.startUpdatingUI()
                             try await OGBuild.build(what: typeToBuild, playerData: player)
-                            self.resourcesTopBarView.refresh()
+                            self.resourcesTopBarView.refresh(self.player)
                             self.refresh()
                         } catch {
                             self.logoutAndShowError(error as! OGError)

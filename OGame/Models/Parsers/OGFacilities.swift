@@ -40,7 +40,7 @@ class OGFacilities {
             var buildingDataModel: [Building] = []
             
             for building in facilitiesCells.facilityBuildings {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(playerData: playerData, buildingWithLevel: building)
+                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,
@@ -62,7 +62,7 @@ class OGFacilities {
     }
     
     // MARK: - Get Main Facilities Levels
-    func getMainFacilitiesLevels(indexPHP: String, planetID: Int) async throws -> [Int] {
+    static func getMainFacilitiesLevels(indexPHP: String, planetID: Int) async throws -> [Int] {
         do {
             let link = "\(indexPHP)page=ingame&component=facilities&cp=\(planetID)"
             let data = try await AF.request(link).serializingData().value

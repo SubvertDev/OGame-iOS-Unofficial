@@ -40,7 +40,7 @@ class OGSupplies {
             var buildingDataModel: [Building] = []
             
             for building in supplyCells.resourceBuildings {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(playerData: playerData, buildingWithLevel: building)
+                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,

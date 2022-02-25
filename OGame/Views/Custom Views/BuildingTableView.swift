@@ -41,8 +41,6 @@ class BuildingTableView: UIView {
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
 
-        //tableView.delegate = self
-        //tableView.dataSource = self
         tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
         tableView.removeExtraCellLines()
         tableView.alpha = 0.5

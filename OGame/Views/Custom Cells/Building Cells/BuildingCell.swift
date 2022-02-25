@@ -65,7 +65,7 @@ class BuildingCell: UITableViewCell {
                 buildingImage.image = building.image.available
                 buildButton.isEnabled = true
             case "active":
-                buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+                buildingImage.image = UIImage(systemName: "timer")
                 levelLabel.text = "\(building.levelOrAmount) -> \(building.levelOrAmount + 1)"
                 buildButton.isEnabled = playerData.commander
             case "disabled":
@@ -92,7 +92,7 @@ class BuildingCell: UITableViewCell {
                 buildingImage.image = building.image.available
                 buildButton.isEnabled = true
             case "active":
-                buildingImage.image = UIImage(systemName: "timer") // TODO: Change it
+                buildingImage.image = UIImage(systemName: "timer")
                 levelLabel.text = "\(building.levelOrAmount) -> \(building.levelOrAmount + 1)"
                 buildButton.isEnabled = playerData.commander
             case "disabled":

@@ -423,9 +423,9 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
             default:
                 break
             }
-            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 3)) as! FleetSettingsCell
+            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 3)) as? FleetSettingsCell
             let resourcesTotal = resourcesToSend[0] + resourcesToSend[1] + resourcesToSend[2]
-            cell.cargoLabel.text = "\(resourcesTotal)/?" // TODO: Add full cargo number
+            cell?.cargoLabel.text = "\(resourcesTotal)/?" // TODO: Add full cargo number
             stopUpdatingUI()
             
         default:

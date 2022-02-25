@@ -288,6 +288,14 @@
 			path = Parsers;
 			sourceTree = "<group>";
 		};
+		B8627D4C27C66A6800BBBAE2 /* Menu Cells */ = {
+			isa = PBXGroup;
+			children = (
+				B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */,
+			);
+			path = "Menu Cells";
+			sourceTree = "<group>";
+		};
 		B86761572659831A0096BE39 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -480,13 +488,13 @@
 		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
 			isa = PBXGroup;
 			children = (
-				B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */,
 				B8C8268927A1A034005BE032 /* Auth Cells */,
+				B8627D4C27C66A6800BBBAE2 /* Menu Cells */,
 				B8C8268A27A1A042005BE032 /* Overview Cells */,
 				B8C8268F27A1A0B3005BE032 /* Building Cells */,
+				B8C8268D27A1A06C005BE032 /* Send Fleet Cells */,
 				B8C8268C27A1A055005BE032 /* Movement Cells */,
 				B8C8268E27A1A09F005BE032 /* Galaxy Cells */,
-				B8C8268D27A1A06C005BE032 /* Send Fleet Cells */,
 			);
 			path = "Custom Cells";
 			sourceTree = "<group>";

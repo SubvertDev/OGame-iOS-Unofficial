@@ -10,9 +10,8 @@ import Alamofire
 import SwiftSoup
 
 class OGSendFleet {
-    // TODO: In progress
-    static var currentToken: String?
     
+    static var currentToken: String?
     
     // MARK: - Send Fleet
     static func sendFleet(player: PlayerData,

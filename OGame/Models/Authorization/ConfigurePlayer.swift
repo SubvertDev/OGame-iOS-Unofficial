@@ -65,8 +65,7 @@ class ConfigurePlayer {
                     self.celestials = allCelestials
                 }
                 group.addTask {
-                    let facilities = OGFacilities()
-                    let mainFacilitiesLevels = try await facilities.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: Int(planetIDContent)!)
+                    let mainFacilitiesLevels = try await OGFacilities.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: Int(planetIDContent)!)
                     self.roboticsFactoryLevel = mainFacilitiesLevels[0]
                     self.naniteFactoryLevel = mainFacilitiesLevels[1]
                     self.researchLabLevel = mainFacilitiesLevels[2]
@@ -87,10 +86,10 @@ class ConfigurePlayer {
                                         commander: commander!,
                                         planetImages: planetImages!,
                                         celestials: celestials!,
-                                        roboticsFactoryLevel: roboticsFactoryLevel!,
-                                        naniteFactoryLevel: naniteFactoryLevel!,
-                                        researchLabLevel: researchLabLevel!,
-                                        shipyardLevel: shipyardLevel!)
+                                        roboticsFactoryLevel: [roboticsFactoryLevel!],
+                                        naniteFactoryLevel: [naniteFactoryLevel!],
+                                        researchLabLevel: [researchLabLevel!],
+                                        shipyardLevel: [shipyardLevel!])
             return playerData
             
         } catch {

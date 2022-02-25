@@ -39,7 +39,9 @@ class MenuVC: UIViewController {
     
     // MARK: - Configure UI
     func configurePlanetControlView() {
-        planetControlView.planetWasChanged = { [weak self] player in
+        planetControlView.planetIsChanged = { [weak self] player in
+            self?.tableViewWithRefresh.tableView.isUserInteractionEnabled = false
+            self?.planetControlView.disableButtons()
             self?.player = player
             self?.resourcesTopBarView.refresh(player)
         }
@@ -48,8 +50,8 @@ class MenuVC: UIViewController {
     
     func configureResourcesTopBarView() {
         resourcesTopBarView.refreshFinished = { [weak self] in
-            self?.planetControlView.leftButton.isEnabled = true
-            self?.planetControlView.rightButton.isEnabled = true
+            self?.tableViewWithRefresh.tableView.isUserInteractionEnabled = true
+            self?.planetControlView.enableButtons()
             self?.tableViewWithRefresh.refreshControl.endRefreshing()
         }
         resourcesTopBarView.didGetError = { [weak self] error in

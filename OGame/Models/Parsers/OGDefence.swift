@@ -41,7 +41,7 @@ class OGDefence {
             var buildingDataModel: [Building] = []
             
             for building in defencesCells.defenceTechnologies {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(playerData: playerData, buildingWithAmount: building)
+                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithAmount: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,
