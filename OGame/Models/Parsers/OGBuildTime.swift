@@ -11,10 +11,11 @@ class OGBuildTime {
     
     // MARK: - Get Building Time (level)
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithLevel: BuildingWithLevelData) -> String {
+        // TODO: Change "0" to player.currentPlanetIndex
         let resources = buildingWithLevel.metal + buildingWithLevel.crystal
-        let robotics = 1 + player.roboticsFactoryLevel[player.currentPlanetIndex]
-        let research = 1 + player.researchLabLevel[player.currentPlanetIndex]
-        let nanites = NSDecimalNumber(decimal: pow(2, player.naniteFactoryLevel[player.currentPlanetIndex]))
+        let robotics = 1 + player.roboticsFactoryLevel[0]
+        let research = 1 + player.researchLabLevel[0]
+        let nanites = NSDecimalNumber(decimal: pow(2, player.naniteFactoryLevel[0]))
         let speed = getServerInfo(player).speed.universe
         
         var time = 0
@@ -34,9 +35,10 @@ class OGBuildTime {
     
     // MARK: - Get Building Time (amount)
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithAmount: BuildingWithAmountData) -> String {
+        // TODO: Change "0" to player.currentPlanetIndex
         let resources = buildingWithAmount.metal + buildingWithAmount.crystal
-        let shipyard = 1 + player.shipyardLevel[player.currentPlanetIndex]
-        let nanites = NSDecimalNumber(decimal: pow(2, player.naniteFactoryLevel[player.currentPlanetIndex]))
+        let shipyard = 1 + player.shipyardLevel[0]
+        let nanites = NSDecimalNumber(decimal: pow(2, player.naniteFactoryLevel[0]))
         let speed = getServerInfo(player).speed.universe
         
         let time = Int((Double(resources) / Double((2500 * shipyard * Int(truncating: nanites) * speed))) * 3600)
