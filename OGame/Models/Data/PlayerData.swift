@@ -21,10 +21,13 @@ struct PlayerData {
     let rank: Int
     let planetNames: [String]
     let planetIDs: [Int]
+    let moonNames: [String]
+    let moonIDs: [Int]
     let commander: Bool
     
     var currentPlanetIndex = 0
     let planetImages: [UIImage]
+    let moonImages: [UIImage?]
     var celestials: [Celestial]
     
     let roboticsFactoryLevel: [Int]

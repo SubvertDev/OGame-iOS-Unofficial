@@ -14,7 +14,8 @@ import UIKit
     @IBOutlet weak var fieldsLabel: UILabel!
     @IBOutlet weak var planetNameLabel: UILabel!
     @IBOutlet weak var coordinatesLabel: UILabel!
-    @IBOutlet weak var planetImageView: UIImageView!
+    @IBOutlet weak var planetButton: UIButton!
+    @IBOutlet weak var moonButton: UIButton!
     @IBOutlet weak var leftButton: UIButton!
     @IBOutlet weak var rightButton: UIButton!
     
@@ -45,13 +46,30 @@ import UIKit
         
         self.player = player
 
-        let currentPlanet = player.celestials[player.currentPlanetIndex]
         serverNameLabel.text = player.universe
         rankLabel.text = "Rank: \(String(player.rank))"
         planetNameLabel.text = player.planet
-        coordinatesLabel.text = "[\(currentPlanet.coordinates[0]):\(currentPlanet.coordinates[1]):\(currentPlanet.coordinates[2])]"
-        fieldsLabel.text = "\(currentPlanet.used)/\(currentPlanet.total)"
-        planetImageView.image = player.planetImages[player.currentPlanetIndex]
+        
+        if player.planetIDs.contains(player.planetID) {
+            let currentPlanet = player.celestials[player.currentPlanetIndex]
+            if currentPlanet.moon == nil {
+                moonButton.isHidden = true
+            } else {
+                moonButton.isHidden = false
+            }
+            coordinatesLabel.text = "[\(currentPlanet.coordinates[0]):\(currentPlanet.coordinates[1]):\(currentPlanet.coordinates[2])]"
+            fieldsLabel.text = "\(currentPlanet.used)/\(currentPlanet.total)"
+            planetButton.setImage(player.planetImages[player.currentPlanetIndex], for: .normal)
+            moonButton.setImage(player.moonImages[player.currentPlanetIndex], for: .normal)
+        } else if player.moonIDs.contains(player.planetID) {
+            guard let currentPlanet = player.celestials[player.currentPlanetIndex].moon else { return }
+            planetNameLabel.text = "\(player.planet) (moon)"
+            coordinatesLabel.text = "[\(currentPlanet.coordinates[0]):\(currentPlanet.coordinates[1]):\(currentPlanet.coordinates[2])]"
+            fieldsLabel.text = "\(currentPlanet.used)/\(currentPlanet.total)"
+            planetButton.setImage(player.planetImages[player.currentPlanetIndex], for: .normal)
+            moonButton.setImage(player.moonImages[player.currentPlanetIndex], for: .normal)
+            moonButton.isHidden = false
+        }
         
         switch player.celestials.count {
         case 1:
@@ -127,16 +145,23 @@ import UIKit
     @IBAction func rightButtonPressed(_ sender: UIButton) {
         guard var player = player else { return }
         
-        if let index = player.planetIDs.firstIndex(of: player.planetID) {
-            if index + 1 == player.planetNames.count {
-                player.currentPlanetIndex = 0
-                player.planet = player.planetNames[0]
-                player.planetID = player.planetIDs[0]
-            } else {
-                player.currentPlanetIndex += 1
-                player.planet = player.planetNames[index + 1]
-                player.planetID = player.planetIDs[index + 1]
-            }
+        var index = 0
+        if let planetIndex = player.planetIDs.firstIndex(of: player.planetID) {
+            index = planetIndex
+        } else if let moonIndex = player.moonIDs.firstIndex(of: player.planetID) {
+            index = moonIndex
+        } else {
+            return
+        }
+        
+        if index + 1 == player.planetNames.count {
+            player.currentPlanetIndex = 0
+            player.planet = player.planetNames[0]
+            player.planetID = player.planetIDs[0]
+        } else {
+            player.currentPlanetIndex += 1
+            player.planet = player.planetNames[index + 1]
+            player.planetID = player.planetIDs[index + 1]
         }
         
         disableButtons()
@@ -147,21 +172,54 @@ import UIKit
     @IBAction func leftButtonPressed(_ sender: UIButton) {
         guard var player = player else { return }
         
-        if let index = player.planetIDs.firstIndex(of: player.planetID) {
-            if index - 1 == -1 {
-                player.currentPlanetIndex = player.planetNames.count - 1
-                player.planet = player.planetNames.last!
-                player.planetID = player.planetIDs.last!
-            } else {
-                player.currentPlanetIndex -= 1
-                player.planet = player.planetNames[index - 1]
-                player.planetID = player.planetIDs[index - 1]
-            }
+        var index = 0
+        if let planetIndex = player.planetIDs.firstIndex(of: player.planetID) {
+            index = planetIndex
+        } else if let moonIndex = player.moonIDs.firstIndex(of: player.planetID) {
+            index = moonIndex
+        } else {
+            return
+        }
+        
+        if index - 1 == -1 {
+            player.currentPlanetIndex = player.planetNames.count - 1
+            player.planet = player.planetNames.last!
+            player.planetID = player.planetIDs.last!
+        } else {
+            player.currentPlanetIndex -= 1
+            player.planet = player.planetNames[index - 1]
+            player.planetID = player.planetIDs[index - 1]
         }
         
         disableButtons()
         configureLabels(with: player)
         planetIsChanged?(player)
+    }
+    
+    @IBAction func planetButtonPressed(_ sender: UIButton) {
+        guard var player = player else { return }
+
+        if player.moonIDs.contains(player.planetID) {
+            player.planet = player.planetNames[player.currentPlanetIndex]
+            player.planetID = player.planetIDs[player.currentPlanetIndex]
+            
+            disableButtons()
+            configureLabels(with: player)
+            planetIsChanged?(player)
+        }
+    }
+    
+    @IBAction func moonButtonPressed(_ sender: UIButton) {
+        guard var player = player else { return }
+
+        if player.planetIDs.contains(player.planetID) {
+            player.planet = player.moonNames[player.currentPlanetIndex]
+            player.planetID = player.moonIDs[player.currentPlanetIndex]
+            
+            disableButtons()
+            configureLabels(with: player)
+            planetIsChanged?(player)
+        }
     }
     
     // MARK: - Support Functions

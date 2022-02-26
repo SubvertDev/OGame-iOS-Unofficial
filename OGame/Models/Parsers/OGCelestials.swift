@@ -12,7 +12,7 @@ import SwiftSoup
 class OGCelestials {
     
     // MARK: - Get All Celestials
-    func getAllCelestialsWith(serverData: ServerData) async throws -> [Celestial] {
+    static func getAllCelestialsWith(serverData: ServerData) async throws -> [Celestial] {
         do {
             var celestials: [Celestial] = []
             
@@ -28,10 +28,10 @@ class OGCelestials {
             let planets = try page.select("[id=planetList]").get(0)
             let planetsInfo = try planets.select("[id*=planet-]")
             for planet in planetsInfo {
-                let title = try planet.select("a").get(0).attr("title")
+                let celestialTitles = try planet.select("a")
+                let title = try celestialTitles.get(0).attr("title")
                 let textArray = title.components(separatedBy: "><")
                 
-                // TODO: Not tested for moons
                 var coordinatesString = textArray[0].components(separatedBy: " ")[1].replacingOccurrences(of: "</b", with: "")
                 coordinatesString.removeFirst()
                 coordinatesString.removeLast()
@@ -55,12 +55,40 @@ class OGCelestials {
                 let planetMaxTemperatureString = textArray[1].components(separatedBy: " ")[3]
                 let planetMaxTemperature = Int(planetMaxTemperatureString.components(separatedBy: "Â")[0])!
                 
+                // MARK: - Moon
+                var moonCelestial: Moon?
+                if celestialTitles.count == 2 {
+                    let moonTitle = try celestialTitles.get(1).attr("title")
+                    let moonTextArray = moonTitle.components(separatedBy: "><")
+                    
+                    var moonCoordinates = coordinates
+                    moonCoordinates.removeLast()
+                    moonCoordinates.append(3)
+                    
+                    var moonSizeString = moonTextArray[1].components(separatedBy: " ")[0]
+                    moonSizeString.removeFirst(4)
+                    moonSizeString.removeLast(2)
+                    let moonSize = Int(moonSizeString.replacingOccurrences(of: ".", with: ""))!
+                    
+                    var moonFieldsString = moonTextArray[1].components(separatedBy: " ")[1]
+                    moonFieldsString = moonFieldsString.components(separatedBy: ")")[0]
+                    moonFieldsString.removeFirst()
+                    let moonFieldUsed = Int(moonFieldsString.components(separatedBy: "/")[0])!
+                    let moonFieldTotal = Int(moonFieldsString.components(separatedBy: "/")[1])!
+                    
+                    moonCelestial = Moon(moonSize: moonSize,
+                                         usedFields: moonFieldUsed,
+                                         totalFields: moonFieldTotal,
+                                         coordinates: moonCoordinates)
+                }
+                
                 let celestial = Celestial(planetSize: planetSize,
                                           usedFields: planetFieldUsed,
                                           totalFields: planetFieldTotal,
                                           tempMin: planetMinTemperature,
                                           tempMax: planetMaxTemperature,
-                                          coordinates: coordinates)
+                                          coordinates: coordinates,
+                                          moon: moonCelestial)
                 celestials.append(celestial)
             }
             return celestials

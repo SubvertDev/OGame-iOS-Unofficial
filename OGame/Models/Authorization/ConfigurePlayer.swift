@@ -21,9 +21,12 @@ class ConfigurePlayer {
     static private var rank: Int?
     static private var planetNames: [String]?
     static private var planetIDs: [Int]?
+    static private var moonNames: [String]?
+    static private var moonIDs: [Int]?
     static private var commander: Bool?
     
     static private var planetImages: [UIImage]?
+    static private var moonImages: [UIImage?]?
     static private var celestials: [Celestial]?
     
     static private var roboticsFactoryLevel: Int?
@@ -52,6 +55,8 @@ class ConfigurePlayer {
             self.rank = getRank()
             self.planetNames = getPlanetNames()
             self.planetIDs = getPlanetIDs()
+            self.moonNames = getMoonNames()
+            self.moonIDs = getMoonIDs()
             self.commander = getCommander()
             
             await withThrowingTaskGroup(of: Void.self) { group in
@@ -60,9 +65,8 @@ class ConfigurePlayer {
                     self.planetImages = images
                 }
                 group.addTask {
-                    let celestials = OGCelestials()
-                    let allCelestials = try await celestials.getAllCelestialsWith(serverData: serverData)
-                    self.celestials = allCelestials
+                    let сelestials = try await OGCelestials.getAllCelestialsWith(serverData: serverData)
+                    self.celestials = сelestials
                 }
                 group.addTask {
                     let mainFacilitiesLevels = try await OGFacilities.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: Int(planetIDContent)!)
@@ -70,6 +74,9 @@ class ConfigurePlayer {
                     self.naniteFactoryLevel = mainFacilitiesLevels[1]
                     self.researchLabLevel = mainFacilitiesLevels[2]
                     self.shipyardLevel = mainFacilitiesLevels[3]
+                }
+                group.addTask {
+                    self.moonImages = try await getAllMoonsImages()
                 }
             }
             
@@ -83,8 +90,11 @@ class ConfigurePlayer {
                                         rank: rank!,
                                         planetNames: planetNames!,
                                         planetIDs: planetIDs!,
+                                        moonNames: moonNames!,
+                                        moonIDs: moonIDs!,
                                         commander: commander!,
                                         planetImages: planetImages!,
+                                        moonImages: moonImages!,
                                         celestials: celestials!,
                                         roboticsFactoryLevel: [roboticsFactoryLevel!],
                                         naniteFactoryLevel: [naniteFactoryLevel!],
@@ -156,6 +166,49 @@ class ConfigurePlayer {
         }
     }
     
+    // MARK: - Get Moon Names
+    static func getMoonNames() -> [String] {
+        do {
+            var moonNames = [String]()
+            let moons = try doc!.select("[class*=smallplanet")
+            for moon in moons {
+                let moonlink = try moon.select("[class*=moonlink]")
+                if moonlink.count != 0 {
+                    let moonName = try moonlink.get(0).select("[class=icon-moon]").get(0).attr("alt")
+                    moonNames.append(moonName)
+                } else {
+                    moonNames.append("")
+                }
+            }
+            return moonNames
+            
+        } catch {
+            return ["Error"]
+        }
+    }
+    
+    // MARK: - Get Moon IDs
+    static func getMoonIDs() -> [Int] {
+        do {
+            var ids = [Int]()
+            let moons = try doc!.select("[class*=smallplanet")
+            for moon in moons {
+                let moonlink = try moon.select("[class*=moonlink]")
+                if moonlink.count != 0 {
+                    let idAttribute = try moonlink.get(0).attr("href")
+                    let moonID = Int(idAttribute.components(separatedBy: "&cp=")[1])
+                    ids.append(moonID!)
+                } else {
+                    ids.append(0)
+                }
+            }
+            return ids
+
+        } catch {
+            return [-1]
+        }
+    }
+    
     // MARK: - Get Commander
     static func getCommander() -> Bool {
         // TODO: test on 3 days commander account
@@ -183,6 +236,37 @@ class ConfigurePlayer {
                 }
                 for try await image in group {
                     images.append(image)
+                }
+            }
+            return images
+            
+        } catch {
+            throw OGError(message: "Error getting all planet images", detailed: error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Get All Moons Images
+    static func getAllMoonsImages() async throws -> [UIImage?] {
+        do {
+            var images: [UIImage?] = Array(repeating: nil, count: planetIDs!.count)
+            let moons = try doc!.select("[class*=smallplanet]")
+            
+            try await withThrowingTaskGroup(of: (Int, UIImage?).self) { group in
+                for (index, moon) in moons.enumerated() {
+                    group.addTask {
+                        let moonlink = try moon.select("[class*=moonlink]")
+                        if moonlink.count != 0 {
+                            let imageAttribute = try moonlink.get(0).select("[width=16]").first()!.attr("src")
+                            let value = try await AF.request("\(imageAttribute)").serializingData().value
+                            let image = UIImage(data: value)
+                            return (index, image!)
+                        } else {
+                            return (index, nil)
+                        }
+                    }
+                }
+                for try await result in group {
+                    images[result.0] = result.1
                 }
             }
             return images

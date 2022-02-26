@@ -12,6 +12,8 @@ typealias ImageBundle = (available: UIImage?,
                          disabled: UIImage?)
 
 struct Images {
+    
+    // MARK: - Resources
     struct Resources {
         struct Large {
             static let metalMine = UIImage(named: "metalMine")
@@ -55,6 +57,7 @@ struct Images {
         }
     }
 
+    // MARK: - Facilities
     struct Facilities {
         struct Large {
             static let roboticsFactory = UIImage(named: "roboticsFactory")
@@ -110,6 +113,7 @@ struct Images {
         }
     }
 
+    // MARK: - Researches
     struct Researches {
         struct Large {
             static let energy = UIImage(named: "energyTechnology")
@@ -185,6 +189,7 @@ struct Images {
         }
     }
 
+    // MARK: - Ships
     struct Ships {
         struct Large {
             static let lightFighter = UIImage(named: "lightFighter")
@@ -264,6 +269,7 @@ struct Images {
         }
     }
 
+    // MARK: - Defences
     struct Defences {
         struct Large {
             static let rocketLauncher = UIImage(named: "rocketLauncher")
@@ -315,6 +321,7 @@ struct Images {
         }
     }
     
+    // MARK: - Mission Types
     struct MissionTypes {
         struct Available {
             static let expedition = UIImage(named: "expeditionAvailable")

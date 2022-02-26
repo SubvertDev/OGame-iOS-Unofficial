@@ -15,8 +15,8 @@ protocol SetCoordinatesCellDelegate: AnyObject {
 
 class SetCoordinatesCell: UITableViewCell {
     @IBOutlet weak var planetNameLabel: UILabel!
-    @IBOutlet weak var myPlanetButton: UIButton!
-    @IBOutlet weak var myMoonButton: UIButton!
+    @IBOutlet weak var planetImage: UIImageView!
+    @IBOutlet weak var moonImage: UIImageView!
     
     @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var targetPlanetButton: UIButton!
@@ -27,8 +27,6 @@ class SetCoordinatesCell: UITableViewCell {
     @IBOutlet weak var systemCoordinateTextField: UITextField!
     @IBOutlet weak var destinationCoordinateTextField: UITextField!
     
-    var myPlanetActive = true
-    var myMoonActive = false
     var targetPlanetActive = true
     var targetMoonActive = false
     var targetDebrisActive = false
@@ -44,26 +42,6 @@ class SetCoordinatesCell: UITableViewCell {
     }
     
     // MARK: - IBActions
-    @IBAction func myPlanetButtonPressed(_ sender: UIButton) {
-        if !myPlanetActive {
-            myPlanetButton.setImage(UIImage(named: "planetAvailable"), for: .normal)
-            myMoonButton.setImage(UIImage(named: "moonUnavailable"), for: .normal)
-            myPlanetActive = true
-            myMoonActive = false
-            delegate?.didPressButton(sender)
-        }
-    }
-    
-    @IBAction func myMoonButtonPressed(_ sender: UIButton) {
-        if !myMoonActive {
-            myMoonButton.setImage(UIImage(named: "moonAvailable"), for: .normal)
-            myPlanetButton.setImage(UIImage(named: "planetUnavailable"), for: .normal)
-            myMoonActive = true
-            myPlanetActive = false
-            delegate?.didPressButton(sender)
-        }
-    }
-    
     @IBAction func targetPlanetButtonPressed(_ sender: UIButton) {
         if targetPlanetButton.currentImage?.pngData() == UIImage(named: "planetUnavailable")?.pngData() {
             targetPlanetButton.setImage(UIImage(named: "planetAvailable"), for: .normal)

@@ -32,7 +32,11 @@ struct Supplies {
 
     init(_ levels: [Int], _ status: [String]) {
         var fixedStatus = status
-        fixedStatus.removeSubrange(5...6)
+        if status.count != 9 { // Planet 10
+            fixedStatus.removeSubrange(5...6)
+        } else { // Moon 9
+            fixedStatus.remove(at: 5)
+        }
 
         self.metalMine = Supply(levels[0], fixedStatus[0], 1)
         self.crystalMine = Supply(levels[1], fixedStatus[1], 2)

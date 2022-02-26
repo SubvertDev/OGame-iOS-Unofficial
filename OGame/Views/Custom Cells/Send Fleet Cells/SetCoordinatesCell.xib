@@ -29,22 +29,12 @@
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="7gz-AG-qGu">
                                 <rect key="frame" x="119" y="28" width="96" height="35.5"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iql-p4-oue">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="planetAvailable" translatesAutoresizingMaskIntoConstraints="NO" id="FrZ-SI-W9E">
                                         <rect key="frame" x="0.0" y="0.0" width="44" height="35.5"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" image="planetAvailable"/>
-                                        <connections>
-                                            <action selector="myPlanetButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="cnE-cB-kcY"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lcd-Mw-0Nm">
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="moonUnavailable" translatesAutoresizingMaskIntoConstraints="NO" id="5pS-0n-0un">
                                         <rect key="frame" x="52" y="0.0" width="44" height="35.5"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" image="moonUnavailable"/>
-                                        <connections>
-                                            <action selector="myMoonButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="nEF-2Z-koI"/>
-                                        </connections>
-                                    </button>
+                                    </imageView>
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Distance: ?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iWt-kw-mVM">
@@ -56,7 +46,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="X7F-ha-66B">
                                 <rect key="frame" x="93" y="99.5" width="148" height="35.5"/>
                                 <subviews>
-                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HBs-nm-bzr">
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HBs-nm-bzr">
                                         <rect key="frame" x="0.0" y="0.0" width="44" height="35.5"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="planetAvailable"/>
@@ -64,7 +54,7 @@
                                             <action selector="targetPlanetButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="J6L-51-54w"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OCn-p1-s5t">
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OCn-p1-s5t">
                                         <rect key="frame" x="52" y="0.0" width="44" height="35.5"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="moonUnavailable"/>
@@ -72,7 +62,7 @@
                                             <action selector="targetMoonButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="czJ-Nz-xBf"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Gu-o6-y1z">
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Gu-o6-y1z">
                                         <rect key="frame" x="104" y="0.0" width="44" height="35.5"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="debrisUnavailable"/>
@@ -123,8 +113,8 @@
                 <outlet property="destinationCoordinateTextField" destination="nUq-5L-dNb" id="KGa-2W-DKB"/>
                 <outlet property="distanceLabel" destination="iWt-kw-mVM" id="8iP-f8-lKA"/>
                 <outlet property="galaxyCoordinateTextField" destination="TEk-6j-oQE" id="8NE-WL-X50"/>
-                <outlet property="myMoonButton" destination="lcd-Mw-0Nm" id="Rgu-Ue-daf"/>
-                <outlet property="myPlanetButton" destination="iql-p4-oue" id="I9d-cJ-bxi"/>
+                <outlet property="moonImage" destination="5pS-0n-0un" id="meZ-yg-uqs"/>
+                <outlet property="planetImage" destination="FrZ-SI-W9E" id="Kl5-yF-mC9"/>
                 <outlet property="planetNameLabel" destination="hZd-KR-WaP" id="3qB-gG-p79"/>
                 <outlet property="systemCoordinateTextField" destination="58u-sR-WVw" id="RLe-gh-twa"/>
                 <outlet property="targetDebrisButton" destination="0Gu-o6-y1z" id="3SN-dN-SIm"/>

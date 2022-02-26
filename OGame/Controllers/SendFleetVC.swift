@@ -143,22 +143,11 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
         Task {
             do {
                 switch sender.tag {
-                case 0:
-                    //player!.celestials[player!.currentPlanetIndex].coordinates[3] = 1
-                    stopUpdatingUI()
-                    return
                 case 1:
-                    //player!.celestials[player!.currentPlanetIndex].coordinates[3] = 3
-                    stopUpdatingUI()
-                    let alert = UIAlertController(title: "Error", message: "Sending fleet from moon is not yet supported", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                    present(alert, animated: true)
-                    return
-                case 2:
                     targetCoordinates!.destination = .planet
-                case 3:
+                case 2:
                     targetCoordinates!.destination = .moon
-                case 4:
+                case 3:
                     targetCoordinates!.destination = .debris
                 default:
                     return
@@ -294,6 +283,11 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SetCoordinatesCell", for: indexPath) as! SetCoordinatesCell
             cell.planetNameLabel.text = player.planet
+            
+            if player.moonIDs.contains(player.planetID) {
+                cell.planetImage.image = UIImage(named: "planetUnavailable")
+                cell.moonImage.image = UIImage(named: "moonAvailable")
+            }
             
             cell.galaxyCoordinateTextField.delegate = self
             cell.systemCoordinateTextField.delegate = self

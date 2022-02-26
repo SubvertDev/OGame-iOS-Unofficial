@@ -33,28 +33,53 @@ class OGFacilities {
             
             guard !noScriptCheck(with: page)
             else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
-            
-            let facilities = Facilities(levels, technologyStatus)
-            let facilitiesCells = FacilityCell(with: facilities)
-            
-            var buildingDataModel: [Building] = []
-            
-            for building in facilitiesCells.facilityBuildings {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
-                let newBuilding = Building(name: building.name,
-                                           metal: building.metal,
-                                           crystal: building.crystal,
-                                           deuterium: building.deuterium,
-                                           image: (available: building.image.available,
-                                                   unavailable: building.image.unavailable,
-                                                   disabled: building.image.disabled),
-                                           buildingsID: building.buildingsID,
-                                           levelOrAmount: building.level,
-                                           condition: building.condition,
-                                           timeToBuild: buildTime)
-                buildingDataModel.append(newBuilding)
+                        
+            if levels.count != 5 { // Planet
+                let facilities = Facilities(levels, technologyStatus)
+                let facilitiesCells = FacilityCell(with: facilities)
+                
+                var buildingDataModel: [Building] = []
+                
+                for building in facilitiesCells.facilityBuildings {
+                    let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
+                    let newBuilding = Building(name: building.name,
+                                               metal: building.metal,
+                                               crystal: building.crystal,
+                                               deuterium: building.deuterium,
+                                               image: (available: building.image.available,
+                                                       unavailable: building.image.unavailable,
+                                                       disabled: building.image.disabled),
+                                               buildingsID: building.buildingsID,
+                                               levelOrAmount: building.level,
+                                               condition: building.condition,
+                                               timeToBuild: buildTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
+                
+            } else { // Moon
+                let moonFacilities = MoonFacilities(levels, technologyStatus)
+                let moonFacilitiesCells = MoonFacilityCell(with: moonFacilities)
+                
+                var buildingDataModel: [Building] = []
+                
+                for building in moonFacilitiesCells.moonFacilityBuildings {
+                    let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
+                    let newBuilding = Building(name: building.name,
+                                               metal: building.metal,
+                                               crystal: building.crystal,
+                                               deuterium: building.deuterium,
+                                               image: (available: building.image.available,
+                                                       unavailable: building.image.unavailable,
+                                                       disabled: building.image.disabled),
+                                               buildingsID: building.buildingsID,
+                                               levelOrAmount: building.level,
+                                               condition: building.condition,
+                                               timeToBuild: buildTime)
+                    buildingDataModel.append(newBuilding)
+                }
+                return buildingDataModel
             }
-            return buildingDataModel
             
         } catch {
             throw OGError(message: "Facilities network request failed", detailed: error.localizedDescription)

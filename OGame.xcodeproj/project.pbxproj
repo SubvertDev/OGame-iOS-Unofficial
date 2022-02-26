@@ -99,6 +99,9 @@
 		B8D6881827A9D6840013E209 /* OverviewTotalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6881727A9D6840013E209 /* OverviewTotalView.swift */; };
 		B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F144E426B8872200B2C31B /* GalaxyCell.swift */; };
 		B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8F144E526B8872200B2C31B /* GalaxyCell.xib */; };
+		B8F30D1827CA414C00A3E582 /* MoonFacilityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F30D1727CA414C00A3E582 /* MoonFacilityCell.swift */; };
+		B8F30D1A27CA423100A3E582 /* MoonFacilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F30D1927CA423100A3E582 /* MoonFacilities.swift */; };
+		B8F30D1C27CA557200A3E582 /* Moon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F30D1B27CA557200A3E582 /* Moon.swift */; };
 		B8FA6DE22708B90300924D3D /* OverviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FA6DE02708B90300924D3D /* OverviewCell.swift */; };
 		B8FA6DE32708B90300924D3D /* OverviewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8FA6DE12708B90300924D3D /* OverviewCell.xib */; };
 		B8FA6DE52708BD4100924D3D /* Overview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FA6DE42708BD4100924D3D /* Overview.swift */; };
@@ -208,6 +211,9 @@
 		B8D6881727A9D6840013E209 /* OverviewTotalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewTotalView.swift; sourceTree = "<group>"; };
 		B8F144E426B8872200B2C31B /* GalaxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyCell.swift; sourceTree = "<group>"; };
 		B8F144E526B8872200B2C31B /* GalaxyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalaxyCell.xib; sourceTree = "<group>"; };
+		B8F30D1727CA414C00A3E582 /* MoonFacilityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonFacilityCell.swift; sourceTree = "<group>"; };
+		B8F30D1927CA423100A3E582 /* MoonFacilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonFacilities.swift; sourceTree = "<group>"; };
+		B8F30D1B27CA557200A3E582 /* Moon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Moon.swift; sourceTree = "<group>"; };
 		B8FA6DE02708B90300924D3D /* OverviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCell.swift; sourceTree = "<group>"; };
 		B8FA6DE12708B90300924D3D /* OverviewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OverviewCell.xib; sourceTree = "<group>"; };
 		B8FA6DE42708BD4100924D3D /* Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overview.swift; sourceTree = "<group>"; };
@@ -301,6 +307,7 @@
 			children = (
 				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
 				B84F09C6269F57B800B1D82D /* Celestial.swift */,
+				B8F30D1B27CA557200A3E582 /* Moon.swift */,
 				B8FA6DE42708BD4100924D3D /* Overview.swift */,
 				B8B2972F265703FE00C59CD4 /* Resources.swift */,
 				B86761582659834A0096BE39 /* Buildings.swift */,
@@ -312,6 +319,7 @@
 				B8BED0222790605100AE2ED8 /* Destination.swift */,
 				B83B64032658455C00A75A00 /* Supplies.swift */,
 				B8676152265982B00096BE39 /* Facilities.swift */,
+				B8F30D1927CA423100A3E582 /* MoonFacilities.swift */,
 				B8676154265982DD0096BE39 /* Researches.swift */,
 				B8ABC2FF26640EF00032ADBB /* Ships.swift */,
 				B8FF0466269E1F11007743B8 /* Defences.swift */,
@@ -523,6 +531,7 @@
 			children = (
 				B8FF044F269DD01E007743B8 /* ResourceCell.swift */,
 				B8FF0452269DD049007743B8 /* FacilityCell.swift */,
+				B8F30D1727CA414C00A3E582 /* MoonFacilityCell.swift */,
 				B8FF0454269DD053007743B8 /* ResearchCell.swift */,
 				B8FF0456269DD05F007743B8 /* ShipsCell.swift */,
 				B8FF0464269E1D4E007743B8 /* DefenceCell.swift */,
@@ -682,6 +691,7 @@
 				B8607870279AE2E800F22AD1 /* SetCoordinatesCell.swift in Sources */,
 				B846CD6E27948A7A00DEFDE2 /* OGGalaxy.swift in Sources */,
 				B8C8268827A018D3005BE032 /* SendTarget.swift in Sources */,
+				B8F30D1827CA414C00A3E582 /* MoonFacilityCell.swift in Sources */,
 				B8BED0312794335100AE2ED8 /* ConfigurePlayer.swift in Sources */,
 				B85D76E127A44CD2004D838E /* BuildingTableView.swift in Sources */,
 				B873317526542CB400524FD8 /* OverviewVC.swift in Sources */,
@@ -696,6 +706,7 @@
 				B8607874279AF2E300F22AD1 /* MissionTypeCell.swift in Sources */,
 				B872AAD42708CB6B00BAC4C9 /* String+Ext.swift in Sources */,
 				B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */,
+				B8F30D1C27CA557200A3E582 /* Moon.swift in Sources */,
 				B846CD6C2794870800DEFDE2 /* OGCheckFleet.swift in Sources */,
 				B8BED029279176DF00AE2ED8 /* SendFleetVC.swift in Sources */,
 				B814BA6826AB1B0200FF346A /* MyServer.swift in Sources */,
@@ -742,6 +753,7 @@
 				B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */,
 				B846CD5D27946CAA00DEFDE2 /* OGBuild.swift in Sources */,
 				B846CD662794746400DEFDE2 /* OGResearch.swift in Sources */,
+				B8F30D1A27CA423100A3E582 /* MoonFacilities.swift in Sources */,
 				B84400C426519884001CE771 /* Account.swift in Sources */,
 				B8B29730265703FE00C59CD4 /* Resources.swift in Sources */,
 			);

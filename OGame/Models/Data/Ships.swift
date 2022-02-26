@@ -37,7 +37,7 @@ struct Ships {
     let solarSatellite: Ship
     let crawler: Ship
 
-    let allShips: [Ship]
+    var allShips: [Ship]
 
     init(_ ships: [Int], _ status: [String]) {
         self.lightFighter = Ship(ships[0], status[0], 204)
@@ -56,7 +56,6 @@ struct Ships {
         self.recycler = Ship(ships[13], status[13], 209)
         self.espionageProbe = Ship(ships[14], status[14], 210)
         self.solarSatellite = Ship(ships[15], status[15], 212)
-        self.crawler = Ship(ships[16], status[16], 217)
 
         self.allShips = [
             self.lightFighter,
@@ -74,8 +73,14 @@ struct Ships {
             self.colonyShip,
             self.recycler,
             self.espionageProbe,
-            self.solarSatellite,
-            self.crawler
+            self.solarSatellite
         ]
+        
+        if status.count == 17 { // Planet
+            self.crawler = Ship(ships[16], status[16], 217)
+            allShips.append(crawler)
+        } else { // Moon 16
+            self.crawler = Ship(0, "off", 217)
+        }
     }
 }
