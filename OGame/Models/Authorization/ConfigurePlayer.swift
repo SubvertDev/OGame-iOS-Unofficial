@@ -222,20 +222,20 @@ class ConfigurePlayer {
     // MARK: - Get All Planets Images
     static func getAllPlanetImages() async throws -> [UIImage] {
         do {
-            var images: [UIImage] = []
+            var images: [UIImage] = Array(repeating: UIImage(), count: planetIDs!.count)
             let planets = try doc!.select("[class*=smallplanet]")
             
-            try await withThrowingTaskGroup(of: UIImage.self) { group in
-                for planet in planets {
+            try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
+                for (index, planet) in planets.enumerated() {
                     group.addTask {
                         let imageAttribute = try planet.select("[width=48]").first()!.attr("src")
                         let value = try await AF.request("\(imageAttribute)").serializingData().value
                         let image = UIImage(data: value)
-                        return image!
+                        return (index, image!)
                     }
                 }
-                for try await image in group {
-                    images.append(image)
+                for try await result in group {
+                    images[result.0] = result.1
                 }
             }
             return images
