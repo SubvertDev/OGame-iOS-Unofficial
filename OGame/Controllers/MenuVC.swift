@@ -37,6 +37,11 @@ class MenuVC: UIViewController {
         configureTableViewWithRefresh()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        resourcesTopBarView.configureWith(resources: nil, player: player)
+    }
+    
     // MARK: - Configure UI
     func configurePlanetControlView() {
         planetControlView.planetIsChanged = { [weak self] player in
@@ -94,16 +99,13 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            let vc = OverviewVC()
-            vc.player = player
+            let vc = OverviewVC(player: player)
             navigationController?.pushViewController(vc, animated: true)
         case 6:
-            let vc = FleetVC()
-            vc.player = player
+            let vc = FleetVC(player: player)
             navigationController?.pushViewController(vc, animated: true)
         case 7:
             let vc = MovementVC(player: player)
-            //vc.player = player
             navigationController?.pushViewController(vc, animated: true)
         case 8:
             performSegue(withIdentifier: "ShowGalaxyVC", sender: self)

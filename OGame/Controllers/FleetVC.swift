@@ -13,7 +13,7 @@ class FleetVC: UIViewController {
     let fleetPageButtonsView = FleetPageButtonsView()
     let genericTableView = GenericTableView()
     
-    var player: PlayerData?
+    var player: PlayerData
     var ships: [Building]?
     var textFieldValues = Array(repeating: 0, count: 15)
     var targetData: CheckTarget?
@@ -32,6 +32,15 @@ class FleetVC: UIViewController {
         getTargetData()
         
         refresh()
+    }
+    
+    init(player: PlayerData) {
+        self.player = player
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Configure UI
@@ -88,7 +97,6 @@ class FleetVC: UIViewController {
     @objc func refresh() {
         Task {
             do {
-                guard let player = player else { return }
                 genericTableView.startUpdatingUI()
                 ships = try await OGShipyard.getShipsWith(playerData: player)
                 ships?.removeLast(2)
@@ -103,11 +111,11 @@ class FleetVC: UIViewController {
     func getTargetData() {
         Task {
             do {
-                let coordinates = player!.celestials[player!.currentPlanetIndex].coordinates
+                let coordinates = player.celestials[player.currentPlanetIndex].coordinates
                 let targetCoordinates = Coordinates(galaxy: coordinates[0],
                                                     system: coordinates[1],
                                                     position: coordinates[2])
-                self.targetData = try await OGSendFleet.checkTarget(player: player!, whereTo: targetCoordinates)
+                self.targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates)
                 
             } catch {
                 logoutAndShowError(error as! OGError)

@@ -11,9 +11,10 @@ class OverviewVC: UIViewController {
     
     let overviewTotalView = OverviewTotalView()
 
+    var player: PlayerData
     var resources: Resources?
-    var player: PlayerData?
     var overviewInfo: [Overview?]?
+    
     
     override func loadView() {
         view = overviewTotalView
@@ -33,11 +34,19 @@ class OverviewVC: UIViewController {
         
         refresh()
     }
-
+    
+    init(player: PlayerData) {
+        self.player = player
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 
     // MARK: - Refresh UI
     func refresh() {
-        guard let player = player else { return }
         Task {
             do {
                 overviewTotalView.overviewInfoView.startUpdatingUI()

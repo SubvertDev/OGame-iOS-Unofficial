@@ -68,10 +68,6 @@ class SendFleetVC: UIViewController {
         }
     }
     
-    // MARK: - IBActions
-    
-    
-    
     // MARK: - Configure UI
     func configureResourcesTopBarView() {
         view.addSubview(resourcesTopBarView)

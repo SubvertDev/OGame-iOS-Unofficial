@@ -57,7 +57,7 @@ class OGCelestials {
                 
                 // MARK: - Moon
                 var moonCelestial: Moon?
-                if celestialTitles.count == 2 {
+                if celestialTitles.count == 2 || celestialTitles.count == 3 { // 2 doesn't work when something is constructed on planet
                     let moonTitle = try celestialTitles.get(1).attr("title")
                     let moonTextArray = moonTitle.components(separatedBy: "><")
                     
