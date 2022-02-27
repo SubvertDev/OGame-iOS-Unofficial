@@ -57,29 +57,32 @@ class OGCelestials {
                 
                 // MARK: - Moon
                 var moonCelestial: Moon?
-                if celestialTitles.count == 2 || celestialTitles.count == 3 { // 2 doesn't work when something is constructed on planet
-                    let moonTitle = try celestialTitles.get(1).attr("title")
-                    let moonTextArray = moonTitle.components(separatedBy: "><")
-                    
-                    var moonCoordinates = coordinates
-                    moonCoordinates.removeLast()
-                    moonCoordinates.append(3)
-                    
-                    var moonSizeString = moonTextArray[1].components(separatedBy: " ")[0]
-                    moonSizeString.removeFirst(4)
-                    moonSizeString.removeLast(2)
-                    let moonSize = Int(moonSizeString.replacingOccurrences(of: ".", with: ""))!
-                    
-                    var moonFieldsString = moonTextArray[1].components(separatedBy: " ")[1]
-                    moonFieldsString = moonFieldsString.components(separatedBy: ")")[0]
-                    moonFieldsString.removeFirst()
-                    let moonFieldUsed = Int(moonFieldsString.components(separatedBy: "/")[0])!
-                    let moonFieldTotal = Int(moonFieldsString.components(separatedBy: "/")[1])!
-                    
-                    moonCelestial = Moon(moonSize: moonSize,
-                                         usedFields: moonFieldUsed,
-                                         totalFields: moonFieldTotal,
-                                         coordinates: moonCoordinates)
+                if celestialTitles.count >= 2 { // 2 for moon/construction, 3 for moon+construction
+                    let checkForConstruction = try celestialTitles.get(1).select("[class*=constructionIcon")
+                    if checkForConstruction.count == 0 {
+                        let moonTitle = try celestialTitles.get(1).attr("title")
+                        let moonTextArray = moonTitle.components(separatedBy: "><")
+                        
+                        var moonCoordinates = coordinates
+                        moonCoordinates.removeLast()
+                        moonCoordinates.append(3)
+                        
+                        var moonSizeString = moonTextArray[1].components(separatedBy: " ")[0]
+                        moonSizeString.removeFirst(4)
+                        moonSizeString.removeLast(2)
+                        let moonSize = Int(moonSizeString.replacingOccurrences(of: ".", with: ""))!
+                        
+                        var moonFieldsString = moonTextArray[1].components(separatedBy: " ")[1]
+                        moonFieldsString = moonFieldsString.components(separatedBy: ")")[0]
+                        moonFieldsString.removeFirst()
+                        let moonFieldUsed = Int(moonFieldsString.components(separatedBy: "/")[0])!
+                        let moonFieldTotal = Int(moonFieldsString.components(separatedBy: "/")[1])!
+                        
+                        moonCelestial = Moon(moonSize: moonSize,
+                                             usedFields: moonFieldUsed,
+                                             totalFields: moonFieldTotal,
+                                             coordinates: moonCoordinates)
+                    }
                 }
                 
                 let celestial = Celestial(planetSize: planetSize,
