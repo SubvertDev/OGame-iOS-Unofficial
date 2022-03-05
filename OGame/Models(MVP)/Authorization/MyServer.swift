@@ -1,5 +1,5 @@
 //
-//  MyServers.swift
+//  MyServer.swift
 //  OGame
 //
 //  Created by Subvert on 23.07.2021.

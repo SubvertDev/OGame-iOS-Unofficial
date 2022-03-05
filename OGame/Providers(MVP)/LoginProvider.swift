@@ -1,5 +1,5 @@
 //
-//  Auth.swift
+//  LoginProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,18 +9,18 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class AuthAccount {
-    static private var username: String = ""
-    static private var password: String = ""
-    static private let userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1"]
-    static private var attempt = 0
-    static private var token = ""
-    static private var serversListResponse: [Servers] = []
-    static private var serversOnAccount: [MyServer] = []
+final class LoginProvider {
+    private var username: String = ""
+    private var password: String = ""
+    private let userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1"]
+    private var attempt = 0
+    private var token = ""
+    private var serversListResponse: [Servers] = []
+    private var serversOnAccount: [MyServer] = []
 
     
     // MARK: - LOGIN INTO ACCOUNT
-    static func loginIntoAccountWith(username: String, password: String) async throws -> [MyServer] {
+    func loginIntoAccountWith(username: String, password: String) async throws -> [MyServer] {
         self.username = username
         self.password = password
         serversListResponse = []
@@ -38,7 +38,7 @@ class AuthAccount {
                                        gameEnvironmentId: "0a31d605-ffaf-43e7-aa02-d06df7116fc8",
                                        autoGameAccountCreation: false)
 
-            let response = await AF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).serializingDecodable(Login.self).response
+            let response = await AF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).serializingDecodable(LoginResponse.self).response
             
             guard response.response != nil
             else { throw OGError(message: "Network response error", detailed: "Try again later") }
