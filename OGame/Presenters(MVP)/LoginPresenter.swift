@@ -9,7 +9,7 @@ import Foundation
 
 protocol LoginPresenterDelegate {
     init(view: LoginViewDelegate)
-    func login(username: String, password: String)
+    @MainActor func login(username: String, password: String)
 }
 
 final class LoginPresenter: LoginPresenterDelegate {
@@ -19,22 +19,17 @@ final class LoginPresenter: LoginPresenterDelegate {
     required init(view: LoginViewDelegate) {
         self.view = view
     }
-    
+
     func login(username: String, password: String) {
         view.showLoading(true)
         Task {
             do {
                 let servers = try await loginProvider.loginIntoAccountWith(username: username, password: password)
-                await MainActor.run {
-                    self.view.showLoading(false)
-                    self.view.showLogin(servers: servers)
-                }
+                view.performLogin(servers: servers)
             } catch {
-                await MainActor.run {
-                    self.view.showLoading(false)
-                    self.view.showAlert(error: error)
-                }
+                view.showAlert(error: error)
             }
+            view.showLoading(false)
         }
     }
 }

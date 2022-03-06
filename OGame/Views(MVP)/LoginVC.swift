@@ -10,7 +10,7 @@ import Alamofire
 
 protocol LoginViewDelegate: AnyObject {
     func showLoading(_ state: Bool)
-    func showLogin(servers: [MyServer])
+    func performLogin(servers: [MyServer])
     func showAlert(error: Error)
 }
 
@@ -25,7 +25,6 @@ final class LoginVC: UIViewController {
     @IBOutlet weak var formView: UIView!
     
     private var loginPresenter: LoginPresenter?
-    
     private let defaults = UserDefaults.standard
     private var servers: [MyServer]?
     private var username = ""
@@ -127,7 +126,7 @@ extension LoginVC: LoginViewDelegate {
         }
     }
     
-    func showLogin(servers: [MyServer]) {
+    func performLogin(servers: [MyServer]) {
         self.servers = servers
         if saveSwitch.isOn {
             defaults.set(username, forKey: "username")

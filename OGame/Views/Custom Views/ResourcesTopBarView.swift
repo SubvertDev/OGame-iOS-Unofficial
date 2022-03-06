@@ -65,7 +65,7 @@ import UIKit
         
         Task {
             do {
-                resources = try await OGResources.getResourcesWith(playerData: player)
+                resources = try await ResourcesProvider().getResourcesWith(playerData: player)
                 startUpdatingViewWith(resources!)
                 refreshFinished?()
             } catch {

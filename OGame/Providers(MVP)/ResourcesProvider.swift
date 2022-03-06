@@ -9,10 +9,8 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGResources {
-    
-    // MARK: - Get Resources
-    static func getResourcesWith(playerData: PlayerData) async throws -> Resources {
+class ResourcesProvider {
+    func getResourcesWith(playerData: PlayerData) async throws -> Resources {
         do {
             let link = "\(playerData.indexPHP)page=resourceSettings&cp=\(playerData.planetID)"
             let value = try await AF.request(link).serializingData().value

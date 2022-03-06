@@ -1,5 +1,5 @@
 //
-//  AuthServer.swift
+//  ServerListProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,19 +9,21 @@ import UIKit
 import Alamofire
 import SwiftSoup
 
-class AuthServer {
-    static private var serverID: Int = 0
-    static private var language: String = ""
-    static private var serverNumber: Int = 0
-    static private var universe: String = ""
-    static private var token: String = ""
-    static private var indexPHP: String = ""
-    static private var loginLink: String = ""
-    static private var landingPage: String = ""
+final class ServerListProvider {
+    
+    // MARK: - Properties
+    private var serverID: Int = 0
+    private var language: String = ""
+    private var serverNumber: Int = 0
+    private var universe: String = ""
+    private var token: String = ""
+    private var indexPHP: String = ""
+    private var loginLink: String = ""
+    private var landingPage: String = ""
     
     
-    // MARK: - LOGIN INTO SERVER -
-    static func loginIntoServerWith(serverInfo: MyServer) async throws -> ServerData  {
+    // MARK: - LOGIN INTO SERVER
+    func loginIntoServerWith(serverInfo: MyServer) async throws -> ServerData  {
         self.serverID = serverInfo.serverID
         self.language = serverInfo.language
         self.serverNumber = serverInfo.number

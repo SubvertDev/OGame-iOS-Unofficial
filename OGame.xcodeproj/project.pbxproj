@@ -51,6 +51,7 @@
 		B872AAD62708E62300BAC4C9 /* OGError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872AAD52708E62300BAC4C9 /* OGError.swift */; };
 		B872AAD82708EE7000BAC4C9 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872AAD72708EE7000BAC4C9 /* UIViewController+Ext.swift */; };
 		B872E4B127D425A6009E4CF1 /* LoginData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872E4B027D425A6009E4CF1 /* LoginData.swift */; };
+		B872E4B327D42855009E4CF1 /* ServerListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */; };
 		B873317526542CB400524FD8 /* OverviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873317426542CB400524FD8 /* OverviewVC.swift */; };
 		B87331772654366700524FD8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87331762654366700524FD8 /* Price.swift */; };
 		B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */; };
@@ -84,12 +85,12 @@
 		B8BED02727908F0400AE2ED8 /* SendFleetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */; };
 		B8BED029279176DF00AE2ED8 /* SendFleetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */; };
 		B8BED02D2794284700AE2ED8 /* LoginProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02C2794284700AE2ED8 /* LoginProvider.swift */; };
-		B8BED02F27942CA600AE2ED8 /* AuthServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02E27942CA600AE2ED8 /* AuthServer.swift */; };
-		B8BED0312794335100AE2ED8 /* ConfigurePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED0302794335100AE2ED8 /* ConfigurePlayer.swift */; };
+		B8BED02F27942CA600AE2ED8 /* ServerListProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED02E27942CA600AE2ED8 /* ServerListProvider.swift */; };
+		B8BED0312794335100AE2ED8 /* ConfigurePlayerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED0302794335100AE2ED8 /* ConfigurePlayerProvider.swift */; };
 		B8BED033279445F500AE2ED8 /* OGFacilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED032279445F500AE2ED8 /* OGFacilities.swift */; };
 		B8BED03527944B1000AE2ED8 /* PlayerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED03427944B1000AE2ED8 /* PlayerData.swift */; };
 		B8BED03727944B4D00AE2ED8 /* OGCelestials.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED03627944B4D00AE2ED8 /* OGCelestials.swift */; };
-		B8BED0392794538F00AE2ED8 /* OGResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED0382794538F00AE2ED8 /* OGResources.swift */; };
+		B8BED0392794538F00AE2ED8 /* ResourcesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED0382794538F00AE2ED8 /* ResourcesProvider.swift */; };
 		B8BED03B279453C800AE2ED8 /* ServerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED03A279453C800AE2ED8 /* ServerData.swift */; };
 		B8C8268827A018D3005BE032 /* SendTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C8268727A018D3005BE032 /* SendTarget.swift */; };
 		B8CCF5FC279DB95800F3C3B5 /* FleetSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */; };
@@ -163,6 +164,7 @@
 		B872AAD52708E62300BAC4C9 /* OGError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGError.swift; sourceTree = "<group>"; };
 		B872AAD72708EE7000BAC4C9 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		B872E4B027D425A6009E4CF1 /* LoginData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginData.swift; sourceTree = "<group>"; };
+		B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListPresenter.swift; sourceTree = "<group>"; };
 		B873317426542CB400524FD8 /* OverviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewVC.swift; sourceTree = "<group>"; };
 		B87331762654366700524FD8 /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 		B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
@@ -198,12 +200,12 @@
 		B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendFleetCell.xib; sourceTree = "<group>"; };
 		B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendFleetVC.swift; sourceTree = "<group>"; };
 		B8BED02C2794284700AE2ED8 /* LoginProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginProvider.swift; sourceTree = "<group>"; };
-		B8BED02E27942CA600AE2ED8 /* AuthServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServer.swift; sourceTree = "<group>"; };
-		B8BED0302794335100AE2ED8 /* ConfigurePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurePlayer.swift; sourceTree = "<group>"; };
+		B8BED02E27942CA600AE2ED8 /* ServerListProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListProvider.swift; sourceTree = "<group>"; };
+		B8BED0302794335100AE2ED8 /* ConfigurePlayerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurePlayerProvider.swift; sourceTree = "<group>"; };
 		B8BED032279445F500AE2ED8 /* OGFacilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGFacilities.swift; sourceTree = "<group>"; };
 		B8BED03427944B1000AE2ED8 /* PlayerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerData.swift; sourceTree = "<group>"; };
 		B8BED03627944B4D00AE2ED8 /* OGCelestials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGCelestials.swift; sourceTree = "<group>"; };
-		B8BED0382794538F00AE2ED8 /* OGResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGResources.swift; sourceTree = "<group>"; };
+		B8BED0382794538F00AE2ED8 /* ResourcesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesProvider.swift; sourceTree = "<group>"; };
 		B8BED03A279453C800AE2ED8 /* ServerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerData.swift; sourceTree = "<group>"; };
 		B8C8268727A018D3005BE032 /* SendTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTarget.swift; sourceTree = "<group>"; };
 		B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetSettingsCell.swift; sourceTree = "<group>"; };
@@ -264,8 +266,6 @@
 		B846CD5E27946F9000DEFDE2 /* Authorization */ = {
 			isa = PBXGroup;
 			children = (
-				B8BED02E27942CA600AE2ED8 /* AuthServer.swift */,
-				B8BED0302794335100AE2ED8 /* ConfigurePlayer.swift */,
 				B84400C326519884001CE771 /* Account.swift */,
 				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
 				B8B7BC252650579100988758 /* Servers.swift */,
@@ -287,7 +287,6 @@
 				B846CD6D27948A7A00DEFDE2 /* OGGalaxy.swift */,
 				B846CD5C27946CAA00DEFDE2 /* OGBuild.swift */,
 				B846CD5A2794668B00DEFDE2 /* OGBuildTime.swift */,
-				B8BED0382794538F00AE2ED8 /* OGResources.swift */,
 				B8BED03627944B4D00AE2ED8 /* OGCelestials.swift */,
 				B846CD7127958C9E00DEFDE2 /* OGSupport.swift */,
 			);
@@ -344,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
+				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 			);
 			path = "Views(MVP)";
 			sourceTree = "<group>";
@@ -352,6 +352,7 @@
 			isa = PBXGroup;
 			children = (
 				B88B3F3A27D4105D00B5BFD5 /* LoginPresenter.swift */,
+				B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */,
 			);
 			path = "Presenters(MVP)";
 			sourceTree = "<group>";
@@ -368,6 +369,9 @@
 			isa = PBXGroup;
 			children = (
 				B8BED02C2794284700AE2ED8 /* LoginProvider.swift */,
+				B8BED02E27942CA600AE2ED8 /* ServerListProvider.swift */,
+				B8BED0302794335100AE2ED8 /* ConfigurePlayerProvider.swift */,
+				B8BED0382794538F00AE2ED8 /* ResourcesProvider.swift */,
 			);
 			path = "Providers(MVP)";
 			sourceTree = "<group>";
@@ -432,7 +436,6 @@
 		B8B7BC232650576700988758 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
 				B873317426542CB400524FD8 /* OverviewVC.swift */,
 				B85D76E227A56824004D838E /* BuildingVC.swift */,
@@ -738,7 +741,7 @@
 				B846CD6E27948A7A00DEFDE2 /* OGGalaxy.swift in Sources */,
 				B8C8268827A018D3005BE032 /* SendTarget.swift in Sources */,
 				B8F30D1827CA414C00A3E582 /* MoonFacilityCell.swift in Sources */,
-				B8BED0312794335100AE2ED8 /* ConfigurePlayer.swift in Sources */,
+				B8BED0312794335100AE2ED8 /* ConfigurePlayerProvider.swift in Sources */,
 				B85D76E127A44CD2004D838E /* BuildingTableView.swift in Sources */,
 				B873317526542CB400524FD8 /* OverviewVC.swift in Sources */,
 				B8D6880C27A95E4D0013E209 /* MenuTableView.swift in Sources */,
@@ -778,7 +781,7 @@
 				B86761592659834B0096BE39 /* Buildings.swift in Sources */,
 				B85D76E327A56824004D838E /* BuildingVC.swift in Sources */,
 				B8D6881827A9D6840013E209 /* OverviewTotalView.swift in Sources */,
-				B8BED0392794538F00AE2ED8 /* OGResources.swift in Sources */,
+				B8BED0392794538F00AE2ED8 /* ResourcesProvider.swift in Sources */,
 				B846CD7227958C9E00DEFDE2 /* OGSupport.swift in Sources */,
 				B8FF0450269DD01E007743B8 /* ResourceCell.swift in Sources */,
 				B8BED02D2794284700AE2ED8 /* LoginProvider.swift in Sources */,
@@ -790,12 +793,13 @@
 				B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */,
 				B8ABC30026640EF00032ADBB /* Ships.swift in Sources */,
 				B8BED03727944B4D00AE2ED8 /* OGCelestials.swift in Sources */,
-				B8BED02F27942CA600AE2ED8 /* AuthServer.swift in Sources */,
+				B8BED02F27942CA600AE2ED8 /* ServerListProvider.swift in Sources */,
 				B8B7BC262650579100988758 /* Servers.swift in Sources */,
 				B8607883279CABCB00F22AD1 /* MissionTypeModel.swift in Sources */,
 				B8BED03527944B1000AE2ED8 /* PlayerData.swift in Sources */,
 				B867614F265945A30096BE39 /* BuildingCell.swift in Sources */,
 				B8676155265982DD0096BE39 /* Researches.swift in Sources */,
+				B872E4B327D42855009E4CF1 /* ServerListPresenter.swift in Sources */,
 				B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */,
 				B88B3F3B27D4105D00B5BFD5 /* LoginPresenter.swift in Sources */,
 				B846CD5D27946CAA00DEFDE2 /* OGBuild.swift in Sources */,
