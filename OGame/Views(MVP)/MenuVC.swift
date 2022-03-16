@@ -7,31 +7,32 @@
 
 import UIKit
 
-class MenuVC: UIViewController {
+protocol MenuViewDelegate: AnyObject {
+    func showLoading(_ state: Bool)
+    func showAlert(error: Error)
+}
+
+final class MenuVC: UIViewController {
         
     @IBOutlet weak var planetControlView: PlanetControlView!
     @IBOutlet weak var resourcesTopBarView: ResourcesTopBarView!
     @IBOutlet weak var tableViewWithRefresh: MenuTableView!
-        
+    
+    private var menuPresenter: MenuPresenter!
+    
     var timer: Timer?
     var resources: Resources?
     var prodPerSecond: [Double]?
     var player: PlayerData?
     
-    let menuList = ["Overview",
-                    "Resources",
-                    "Facilities",
-                    "Research",
-                    "Shipyard",
-                    "Defence",
-                    "Fleet",
-                    "Movement",
-                    "Galaxy"]
+    let menuList = ["Overview", "Resources", "Facilities",
+                    "Research", "Shipyard", "Defence",
+                    "Fleet", "Movement", "Galaxy"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = false
-        
+        menuPresenter = MenuPresenter(view: self)
         configurePlanetControlView()
         configureResourcesTopBarView()
         configureTableViewWithRefresh()
@@ -77,6 +78,25 @@ class MenuVC: UIViewController {
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
         navigationController?.popToRootViewController(animated: true)
     }
+    
+    // MARK: - Prepare For Segue
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? BuildingVC {
+            vc.resources = resources
+            vc.player = player
+            
+            let page = sender as! Int
+            switch page {
+            case 1...5:
+                vc.buildType = BuildingType.allCases[page - 1]
+                vc.title = menuList[page]
+            case 6...7:
+                break // fleet & movement
+            default:
+                logoutAndShowError(OGError(message: "Error", detailed: "Unknown segue in menu"))
+            }
+        }
+    }
 }
 
 // MARK: - Delegate & DataSource
@@ -97,40 +117,30 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         guard let player = player else { return }
         
+        var vc = UIViewController()
         switch indexPath.row {
         case 0:
-            let vc = OverviewVC(player: player)
-            navigationController?.pushViewController(vc, animated: true)
+            vc = OverviewVC(player: player)
         case 6:
-            let vc = FleetVC(player: player)
-            navigationController?.pushViewController(vc, animated: true)
+            vc = FleetVC(player: player)
         case 7:
-            let vc = MovementVC(player: player)
-            navigationController?.pushViewController(vc, animated: true)
+            vc = MovementVC(player: player)
         case 8:
-            performSegue(withIdentifier: "ShowGalaxyVC", sender: self)
+            vc = GalaxyVC(player: player)
         default:
             performSegue(withIdentifier: "ShowBuildingVC", sender: indexPath.row)
+            return
         }
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension MenuVC: MenuViewDelegate {
+    func showLoading(_ state: Bool) {
+        
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? BuildingVC {
-            vc.resources = resources
-            vc.player = player
-            
-            let page = sender as! Int
-            switch page {
-            case 1...5:
-                vc.buildType = BuildingType.allCases[page - 1]
-                vc.title = menuList[page]
-            case 6...7:
-                break // fleet & movement
-            default:
-                logoutAndShowError(OGError(message: "Error", detailed: "Unknown segue in menu"))
-            }
-        } else if let vc = segue.destination as? GalaxyVC {
-            vc.player = player
-        }
+    func showAlert(error: Error) {
+        
     }
 }

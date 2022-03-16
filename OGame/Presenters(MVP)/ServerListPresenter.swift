@@ -9,7 +9,7 @@ import Foundation
 
 protocol ServerListPresenterDelegate {
     init(view: ServerListViewDelegate)
-    @MainActor func enterServer(_ server: MyServer)
+    func enterServer(_ server: MyServer)
 }
 
 final class ServerListPresenter: ServerListPresenterDelegate {
@@ -29,11 +29,11 @@ final class ServerListPresenter: ServerListPresenterDelegate {
                 let serverData = try await serverListProvider.loginIntoServerWith(serverInfo: server)
                 let playerData = try await configurePlayerProvider.configurePlayerDataWith(serverData: serverData)
                 let resourcesData = try await resourcesProvider.getResourcesWith(playerData: playerData)
-                view.performLogin(player: playerData, resources: resourcesData)
+                await MainActor.run { view.performLogin(player: playerData, resources: resourcesData) }
             } catch {
-                view.showAlert(error: error)
+                await MainActor.run { view.showAlert(error: error) }
             }
-            view.showLoading(false)
+            await MainActor.run { view.showLoading(false) }
         }
     }
 }

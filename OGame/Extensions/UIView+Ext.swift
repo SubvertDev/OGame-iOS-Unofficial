@@ -23,6 +23,15 @@ extension UIView {
         self.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: constant).isActive = true
     }
     
+    func pinToEdgesSafe(constant: CGFloat = 0, inView superview: UIView) {
+        superview.addSubview(self)
+        self.translatesAutoresizingMaskIntoConstraints = false
+        self.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor, constant: constant).isActive = true
+        self.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: constant).isActive = true
+        self.leadingAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.leadingAnchor, constant: constant).isActive = true
+        self.trailingAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.trailingAnchor, constant: constant).isActive = true
+    }
+    
     func pinToTopEdges(constant: CGFloat = 0, inView superview: UIView, aspectRatio: CGFloat = 1, topIsSafeArea: Bool = false) {
         superview.addSubview(self)
         self.translatesAutoresizingMaskIntoConstraints = false

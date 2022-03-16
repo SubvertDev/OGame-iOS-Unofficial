@@ -9,7 +9,7 @@ import Foundation
 
 protocol LoginPresenterDelegate {
     init(view: LoginViewDelegate)
-    @MainActor func login(username: String, password: String)
+    func login(username: String, password: String)
 }
 
 final class LoginPresenter: LoginPresenterDelegate {
@@ -19,17 +19,34 @@ final class LoginPresenter: LoginPresenterDelegate {
     required init(view: LoginViewDelegate) {
         self.view = view
     }
-
+    
     func login(username: String, password: String) {
+        guard isInputValid(username, password) else { return }
         view.showLoading(true)
         Task {
             do {
                 let servers = try await loginProvider.loginIntoAccountWith(username: username, password: password)
-                view.performLogin(servers: servers)
+                await MainActor.run { view.performLogin(servers: servers) }
             } catch {
-                view.showAlert(error: error)
+                await MainActor.run { view.showAlert(error: error) }
             }
-            view.showLoading(false)
+            await MainActor.run { view.showLoading(false) }
         }
+    }
+    
+    private func isInputValid(_ username: String, _ password: String) -> Bool {
+        let emailPattern = #"^\S+@\S+\.\S+$"#
+        let emailCheck = username
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .range(of: emailPattern, options: .regularExpression)
+        
+        if emailCheck == nil {
+            view.showAlert(error: OGError(message: "Error", detailed: "Please enter valid email"))
+            return false
+        } else if password.isEmpty {
+            view.showAlert(error: OGError(message: "Error", detailed: "Please enter valid password"))
+            return false
+        }
+        return true
     }
 }

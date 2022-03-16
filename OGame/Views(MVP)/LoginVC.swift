@@ -24,7 +24,7 @@ final class LoginVC: UIViewController {
     @IBOutlet weak var saveSwitch: UISwitch!
     @IBOutlet weak var formView: UIView!
     
-    private var loginPresenter: LoginPresenter?
+    private var loginPresenter: LoginPresenter!
     private let defaults = UserDefaults.standard
     private var servers: [MyServer]?
     private var username = ""
@@ -34,7 +34,6 @@ final class LoginVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loginPresenter = LoginPresenter(view: self)
-
         configureFormView()
         configureGestureRecognizer()
         configureInputViews()
@@ -88,21 +87,7 @@ final class LoginVC: UIViewController {
         username = emailTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
         password = passwordTextField.text!
         
-        let emailPattern = #"^\S+@\S+\.\S+$"#
-        let emailCheck = username
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .range(of: emailPattern, options: .regularExpression)
-        
-        guard emailCheck != nil else {
-            showAlert(error: OGError(message: "Error", detailed: "Please enter valid email"))
-            return
-        }
-        guard !password.isEmpty else {
-            showAlert(error: OGError(message: "Error", detailed: "Please enter valid password"))
-            return
-        }
-        
-        loginPresenter?.login(username: username, password: password)
+        loginPresenter.login(username: username, password: password)
     }
     
     // MARK: - Prepare For Segue

@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGGalaxy {
+final class GalaxyProvider {
     
     // MARK: - Get Galaxy
     func getGalaxyWith(coordinates: [Int], playerData: PlayerData) async throws -> [Position?] {

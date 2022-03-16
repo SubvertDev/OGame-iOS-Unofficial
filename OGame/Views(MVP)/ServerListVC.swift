@@ -19,7 +19,7 @@ final class ServerListVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    private var serverListPresenter: ServerListPresenter?
+    private var serverListPresenter: ServerListPresenter!
     private var player: PlayerData?
     private var resources: Resources?
     var servers: [MyServer]?
@@ -29,7 +29,6 @@ final class ServerListVC: UIViewController {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
         serverListPresenter = ServerListPresenter(view: self)
-        
         configureTableView()
     }
     
@@ -86,12 +85,8 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-
-        if let servers = servers {
-            serverListPresenter?.enterServer(servers[indexPath.row])
-        } else {
-            logoutAndShowError(OGError(message: "Error", detailed: "Nil value on server list screen"))
-        }
+        guard let servers = servers else { return }
+        serverListPresenter.enterServer(servers[indexPath.row])
     }
 }
 
