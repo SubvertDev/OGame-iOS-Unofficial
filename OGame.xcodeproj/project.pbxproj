@@ -298,6 +298,30 @@
 			path = Parsers;
 			sourceTree = "<group>";
 		};
+		B8521D2227E3A68A00A6BBDC /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
+				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
+				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
+				B869F06727E2441E009AE6BE /* GalaxyVC.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		B8521D2327E3B7A400A6BBDC /* Menu Views */ = {
+			isa = PBXGroup;
+			children = (
+				B8A2D5CB27A6EBBA00ABA399 /* PlanetControlView.swift */,
+				B8A2D5CF27A6EC4500ABA399 /* PlanetControlView.xib */,
+				B83B64072658672500A75A00 /* ResourcesTopBarView.swift */,
+				B83B640526585FE500A75A00 /* ResourcesTopBarView.xib */,
+				B8D6880B27A95E4D0013E209 /* MenuTableView.swift */,
+				B8D6880D27A95E5D0013E209 /* MenuTableView.xib */,
+			);
+			path = "Menu Views";
+			sourceTree = "<group>";
+		};
 		B8627D4C27C66A6800BBBAE2 /* Menu Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -309,7 +333,6 @@
 		B86761572659831A0096BE39 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
 				B84F09C6269F57B800B1D82D /* Celestial.swift */,
 				B8F30D1B27CA557200A3E582 /* Moon.swift */,
 				B8FA6DE42708BD4100924D3D /* Overview.swift */,
@@ -333,12 +356,13 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
-		B869F06427E242D9009AE6BE /* Custom Views */ = {
+		B869F06427E242D9009AE6BE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B8521D2327E3B7A400A6BBDC /* Menu Views */,
 				B869F06527E24302009AE6BE /* GalaxyView.swift */,
 			);
-			path = "Custom Views";
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B872E4AF27D424BD009E4CF1 /* Authorization */ = {
@@ -348,6 +372,7 @@
 				B8B7BC2D2650AD5700988758 /* LoginResponse.swift */,
 				B814BA6726AB1B0200FF346A /* MyServer.swift */,
 				B8BED03A279453C800AE2ED8 /* ServerData.swift */,
+				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
 			);
 			path = Authorization;
 			sourceTree = "<group>";
@@ -355,11 +380,8 @@
 		B88B3F3627D40CC100B5BFD5 /* Views(MVP) */ = {
 			isa = PBXGroup;
 			children = (
-				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
-				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
-				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
-				B869F06727E2441E009AE6BE /* GalaxyVC.swift */,
-				B869F06427E242D9009AE6BE /* Custom Views */,
+				B8521D2227E3A68A00A6BBDC /* View Controllers */,
+				B869F06427E242D9009AE6BE /* Views */,
 			);
 			path = "Views(MVP)";
 			sourceTree = "<group>";
@@ -576,12 +598,6 @@
 		B8E5D990265A5457004CF69B /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
-				B8A2D5CB27A6EBBA00ABA399 /* PlanetControlView.swift */,
-				B8A2D5CF27A6EC4500ABA399 /* PlanetControlView.xib */,
-				B83B64072658672500A75A00 /* ResourcesTopBarView.swift */,
-				B83B640526585FE500A75A00 /* ResourcesTopBarView.xib */,
-				B8D6880B27A95E4D0013E209 /* MenuTableView.swift */,
-				B8D6880D27A95E5D0013E209 /* MenuTableView.xib */,
 				B85D76E027A44CD2004D838E /* BuildingTableView.swift */,
 				B8D6881527A9A47C0013E209 /* OverviewInfoView.swift */,
 				B8D6881727A9D6840013E209 /* OverviewTotalView.swift */,

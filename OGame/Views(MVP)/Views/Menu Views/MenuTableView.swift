@@ -12,8 +12,6 @@ class MenuTableView: UIView {
     @IBOutlet weak var tableView: UITableView!
     let refreshControl = UIRefreshControl()
     
-    var refreshCallback: (() -> Void)?
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -40,12 +38,6 @@ class MenuTableView: UIView {
     
     func configureRefreshControl() {
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        //refreshControl.backgroundColor = .clear
-        //refreshControl.tintColor = .clear
-    }
-    
-    @objc func refresh() {
-        refreshCallback?()
+        refreshControl.addTarget(nil, action: #selector(MenuVC.tableViewRefreshCalled), for: .valueChanged)
     }
 }

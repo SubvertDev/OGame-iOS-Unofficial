@@ -29,7 +29,6 @@ import UIKit
     var refreshFinished: (() -> Void)?
     var didGetError: ((OGError) -> Void)?
     
-    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         configureView()
