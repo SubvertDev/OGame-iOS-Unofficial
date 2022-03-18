@@ -30,6 +30,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         self.view = view
     }
     
+    // MARK: - View Did Load
     func viewDidLoad(coords: [Int], player: PlayerData) {
         view.showLoading(true)
         Task {
@@ -43,6 +44,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         }
     }
     
+    // MARK: - Galaxy Changed
     func galaxyChanged(coords: [Int], direction: Direction, player: PlayerData) {
         var targetCoords = coords
         switch direction {
@@ -63,6 +65,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         updateSystemInfo(for: targetCoords, player: player)
     }
     
+    // MARK: - System Changed
     func systemChanged(coords: [Int], direction: Direction, player: PlayerData) {
         var targetCoords = coords
         switch direction {
@@ -83,6 +86,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         updateSystemInfo(for: targetCoords, player: player)
     }
     
+    // MARK: - Galaxy Text Field Changed
     func galaxyTextFieldChanged(coords: [Int], player: PlayerData, sender: UITextField) {
         if sender.text != "" {
             if Int(sender.text!)! > 4 {
@@ -98,6 +102,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         }
     }
     
+    // MARK: - System Text Field Changed
     func systemTextFieldChanged(coords: [Int], player: PlayerData, sender: UITextField) {
         if sender.text != "" {
             if Int(sender.text!)! > 499 {
@@ -113,6 +118,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         }
     }
     
+    // MARK: - Update System Info
     private func updateSystemInfo(for coords: [Int], player: PlayerData) {
         view.showLoading(true)
         Task {

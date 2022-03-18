@@ -20,7 +20,8 @@ enum TextFieldType {
 
 final class GalaxyVC: UIViewController {
     
-    var presenter: GalaxyPresenterDelegate!
+    // MARK: - Properties
+    var galaxyPresenter: GalaxyPresenterDelegate!
     var player: PlayerData
     var systemInfo: [Position?]?
     var currentCoordinates = [1, 1]
@@ -36,8 +37,8 @@ final class GalaxyVC: UIViewController {
         title = "Galaxy"
         configureView()
         
-        presenter = GalaxyPresenter(view: self)
-        presenter.viewDidLoad(coords: currentCoordinates, player: player)
+        galaxyPresenter = GalaxyPresenter(view: self)
+        galaxyPresenter.viewDidLoad(coords: currentCoordinates, player: player)
     }
 
     init(player: PlayerData) {
@@ -49,7 +50,7 @@ final class GalaxyVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Configuration
+    // MARK: - Configure View
     func configureView() {
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         tap.cancelsTouchesInView = false
@@ -65,27 +66,27 @@ final class GalaxyVC: UIViewController {
     
     // MARK: - Actions
     @objc func galaxyLeftButtonPressed() {
-        presenter.galaxyChanged(coords: currentCoordinates, direction: .left, player: player)
+        galaxyPresenter.galaxyChanged(coords: currentCoordinates, direction: .left, player: player)
     }
     
     @objc func galaxyRightButtonPressed() {
-        presenter.galaxyChanged(coords: currentCoordinates, direction: .right, player: player)
+        galaxyPresenter.galaxyChanged(coords: currentCoordinates, direction: .right, player: player)
     }
     
     @objc func systemLeftButtonPressed() {
-        presenter.systemChanged(coords: currentCoordinates, direction: .left, player: player)
+        galaxyPresenter.systemChanged(coords: currentCoordinates, direction: .left, player: player)
     }
     
     @objc func systemRightButtonPressed() {
-        presenter.systemChanged(coords: currentCoordinates, direction: .right, player: player)
+        galaxyPresenter.systemChanged(coords: currentCoordinates, direction: .right, player: player)
     }
     
     @objc func galaxyTextFieldChanged() {
-        presenter.galaxyTextFieldChanged(coords: currentCoordinates, player: player, sender: myView.galaxyTextField)
+        galaxyPresenter.galaxyTextFieldChanged(coords: currentCoordinates, player: player, sender: myView.galaxyTextField)
     }
     
     @objc func systemTextFieldChanged() {
-        presenter.systemTextFieldChanged(coords: currentCoordinates, player: player, sender: myView.systemTextField)
+        galaxyPresenter.systemTextFieldChanged(coords: currentCoordinates, player: player, sender: myView.systemTextField)
     }
 }
 

@@ -13,11 +13,13 @@ protocol MenuPresenterDelegate {
     func setPreviousPlanet(for: PlayerData?)
     func planetButtonPressed(for: PlayerData?)
     func moonButtonPressed(for: PlayerData?)
+    func getResources(for: PlayerData?)
 }
 
 final class MenuPresenter: MenuPresenterDelegate {
+    
     unowned let view: MenuViewDelegate
-    let resourcesProvider = ResourcesProvider()
+    private let resourcesProvider = ResourcesProvider()
     
     init(view: MenuViewDelegate) {
         self.view = view
@@ -26,8 +28,6 @@ final class MenuPresenter: MenuPresenterDelegate {
     // MARK: - Set Previous Planet
     func setPreviousPlanet(for player: PlayerData?) {
         guard var player = player else { return }
-        
-        view.showLoading(true)
         
         var index = 0
         if let planetIndex = player.planetIDs.firstIndex(of: player.planetID) {
@@ -47,15 +47,13 @@ final class MenuPresenter: MenuPresenterDelegate {
             player.planet = player.planetNames[index - 1]
             player.planetID = player.planetIDs[index - 1]
         }
-        
+        view.showPlanetLoading(true)
         view.planetIsChanged(for: player)
-        view.showLoading(false)
     }
     
     // MARK: - Set Next Planet
     func setNextPlanet(for player: PlayerData?) {
         guard var player = player else { return }
-        view.showLoading(true)
         
         var index = 0
         if let planetIndex = player.planetIDs.firstIndex(of: player.planetID) {
@@ -75,36 +73,54 @@ final class MenuPresenter: MenuPresenterDelegate {
             player.planet = player.planetNames[index + 1]
             player.planetID = player.planetIDs[index + 1]
         }
-        
+        view.showPlanetLoading(true)
         view.planetIsChanged(for: player)
-        view.showLoading(false)
     }
     
     // MARK: - Planet Button Pressed
     func planetButtonPressed(for player: PlayerData?) {
         guard var player = player else { return }
-        view.showLoading(true)
-        
         if player.moonIDs.contains(player.planetID) {
             player.planet = player.planetNames[player.currentPlanetIndex]
             player.planetID = player.planetIDs[player.currentPlanetIndex]
             
+            view.showPlanetLoading(true)
             view.planetIsChanged(for: player)
         }
-        view.showLoading(false)
     }
     
     // MARK: - Moon Button Pressed
     func moonButtonPressed(for player: PlayerData?) {
         guard var player = player else { return }
-        view.showLoading(true)
-        
         if player.planetIDs.contains(player.planetID) {
             player.planet = player.moonNames[player.currentPlanetIndex]
             player.planetID = player.moonIDs[player.currentPlanetIndex]
             
+            view.showPlanetLoading(true)
             view.planetIsChanged(for: player)
         }
-        view.showLoading(false)
+    }
+    
+    // MARK: - Get Resources
+    func getResources(for player: PlayerData?) {
+        guard let player = player else { return }
+        
+        view.showResourcesLoading(true)
+        Task {
+            do {
+                let resources = try await resourcesProvider.getResourcesWith(playerData: player)
+                await MainActor.run {
+                    view.updateResources(with: resources)
+                    view.showResourcesLoading(false)
+                    view.showPlanetLoading(false)
+                }
+            } catch {
+                await MainActor.run {
+                    view.showResourcesLoading(false)
+                    view.showPlanetLoading(false)
+                    view.showAlert(error: error as! OGError)
+                }
+            }
+        }
     }
 }

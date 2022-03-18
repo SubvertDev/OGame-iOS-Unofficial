@@ -7,8 +7,9 @@
 
 import UIKit
 
-@IBDesignable class ResourcesTopBarView: UIView {
+@IBDesignable final class ResourcesTopBarView: UIView {
     
+    // MARK: - Properties
     @IBOutlet private weak var metalLabel: UILabel!
     @IBOutlet private weak var crystalLabel: UILabel!
     @IBOutlet private weak var deuteriumLabel: UILabel!
@@ -45,18 +46,26 @@ import UIKit
         addSubview(view)
         view.bringSubviewToFront(activityIndicator)
         
-        refresh()
+        alpha = 0.5
+        activityIndicator.startAnimating()
     }
     
+    // MARK: - LEGACY, DELETE AND USE -> configureNew() (rename it after delete)
     func configureWith(resources: Resources?, player: PlayerData?) {
         guard let player = player else { return }
-        
+
         self.resources = resources
         self.player = player
-                
+
         refresh(player)
     }
     
+    func configureNew(with resources: Resources) {
+        self.resources = resources
+        startUpdatingViewWith(resources)
+    }
+    
+    // MARK: - LEGACY, DELETE AFTER DELETING configureWith()
     func refresh(_ player: PlayerData? = nil) {
         guard let player = player else { return }
         alpha = 0.5
@@ -73,6 +82,7 @@ import UIKit
         }
     }
     
+    // MARK: - Start Updating
     func startUpdatingViewWith(_ resources: Resources) {
         set(metal: resources.metal,
             crystal: resources.crystal,
@@ -99,6 +109,7 @@ import UIKit
         RunLoop.main.add(timer!, forMode: .common)
     }
     
+    // MARK: - Set
     func set(metal: Int, crystal: Int, deuterium: Int, energy: Int) {
         self.metalLabel.text = String(metal)
         self.crystalLabel.text = String(crystal)
@@ -110,6 +121,7 @@ import UIKit
         self.deuterium = Double(deuterium)
     }
     
+    // MARK: - Update
     func update(metal: Double, crystal: Double, deuterium: Double, storage: Resources) {
         if Int(self.metal!) < storage.storage[0] {
             self.metal! += metal

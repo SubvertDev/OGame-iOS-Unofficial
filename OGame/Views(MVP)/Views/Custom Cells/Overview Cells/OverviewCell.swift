@@ -7,7 +7,7 @@
 
 import UIKit
 
-class OverviewCell: UITableViewCell {
+final class OverviewCell: UITableViewCell {
 
     @IBOutlet weak var buildingImage: UIImageView!
     @IBOutlet weak var buildingName: UILabel!

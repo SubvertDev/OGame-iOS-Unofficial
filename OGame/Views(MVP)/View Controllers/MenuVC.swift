@@ -8,14 +8,17 @@
 import UIKit
 
 protocol MenuViewDelegate: AnyObject {
-    func showLoading(_ state: Bool)
+    func showPlanetLoading(_ state: Bool)
+    func showResourcesLoading(_ state: Bool)
     func showAlert(error: Error)
     func refreshResourcesTopBarView(with: PlayerData?)
     func planetIsChanged(for: PlayerData)
+    func updateResources(with: Resources)
 }
 
 final class MenuVC: UIViewController {
-        
+    
+    // MARK: - Properties
     @IBOutlet weak var planetControlView: PlanetControlView!
     @IBOutlet weak var resourcesTopBarView: ResourcesTopBarView!
     @IBOutlet weak var tableViewWithRefresh: MenuTableView!
@@ -40,15 +43,15 @@ final class MenuVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        resourcesTopBarView.configureWith(resources: nil, player: player)
+        menuPresenter.getResources(for: player)
     }
     
     // MARK: - Configure Views
     func configureViews() {
         configurePlanetControlView(with: player)
-        resourcesTopBarView.configureWith(resources: resources, player: player)
         tableViewWithRefresh.tableView.delegate = self
         tableViewWithRefresh.tableView.dataSource = self
+        menuPresenter.getResources(for: player)
     }
     
     // MARK: - IBActions
@@ -74,11 +77,11 @@ final class MenuVC: UIViewController {
     }
     
     @objc func tableViewRefreshCalled() {
-        refreshResourcesTopBarView(with: nil)
+        menuPresenter.getResources(for: player)
     }
     
     // MARK: - Configure Planet Control
-    // TODO: Refactor this one to presenter?
+    // TODO: Refactor this to presenter?
     func configurePlanetControlView(with player: PlayerData?) {
         guard let player = player else { return }
         
@@ -158,7 +161,8 @@ final class MenuVC: UIViewController {
                 coordinates = player.celestials[player.currentPlanetIndex + 1].coordinates
                 editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
             }
-            planetControlView.rightButton.isEnabled = true
+            // REMOVE TO HAVE FAST PLANET SWITCHING (MESSING UP RESOURCES LOADING)
+            //planetControlView.rightButton.isEnabled = true
             planetControlView.rightButton.setTitle("\(planetName)\n\(editedCoordinates)", for: .normal)
             planetControlView.rightButton.setTitleColor(.white, for: .normal)
             planetControlView.rightButton.titleLabel?.textAlignment = .center
@@ -172,7 +176,8 @@ final class MenuVC: UIViewController {
                 coordinates = player.celestials[player.currentPlanetIndex - 1].coordinates
                 editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
             }
-            planetControlView.leftButton.isEnabled = true
+            // REMOVE TO HAVE FAST PLANET SWITCHING (MESSING UP RESOURCES LOADING)
+            //planetControlView.leftButton.isEnabled = true
             planetControlView.leftButton.setTitle("\(planetName)\n\(editedCoordinates)", for: .normal)
             planetControlView.leftButton.setTitleColor(.white, for: .normal)
             planetControlView.leftButton.titleLabel?.textAlignment = .center
@@ -240,23 +245,33 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
 
 // MARK: - MenuViewDelegate
 extension MenuVC: MenuViewDelegate {
-    func showLoading(_ state: Bool) {
+    func showPlanetLoading(_ state: Bool) {
         if state {
-            tableViewWithRefresh.tableView.isUserInteractionEnabled = false
             planetControlView.leftButton.isEnabled = false
             planetControlView.rightButton.isEnabled = false
+            tableViewWithRefresh.tableView.isUserInteractionEnabled = false
         } else {
-            tableViewWithRefresh.tableView.isUserInteractionEnabled = true
             planetControlView.leftButton.isEnabled = true
             planetControlView.rightButton.isEnabled = true
+            tableViewWithRefresh.tableView.isUserInteractionEnabled = true
             tableViewWithRefresh.refreshControl.endRefreshing()
+        }
+    }
+    
+    func showResourcesLoading(_ state: Bool) {
+        if state {
+            resourcesTopBarView.alpha = 0.5
+            resourcesTopBarView.activityIndicator.startAnimating()
+        } else {
+            resourcesTopBarView.alpha = 1
+            resourcesTopBarView.activityIndicator.stopAnimating()
         }
     }
     
     func planetIsChanged(for player: PlayerData) {
         self.player = player
         configurePlanetControlView(with: player)
-        refreshResourcesTopBarView(with: player)
+        menuPresenter.getResources(for: player)
     }
     
     func refreshResourcesTopBarView(with player: PlayerData?) {
@@ -265,6 +280,10 @@ extension MenuVC: MenuViewDelegate {
         } else {
             resourcesTopBarView.refresh(self.player)
         }
+    }
+    
+    func updateResources(with resources: Resources) {
+        resourcesTopBarView.configureNew(with: resources)
     }
     
     func showAlert(error: Error) {

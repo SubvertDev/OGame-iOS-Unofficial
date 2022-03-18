@@ -13,6 +13,7 @@ protocol LoginPresenterDelegate {
 }
 
 final class LoginPresenter: LoginPresenterDelegate {
+    
     unowned let view: LoginViewDelegate
     private let loginProvider = LoginProvider()
     
@@ -20,6 +21,7 @@ final class LoginPresenter: LoginPresenterDelegate {
         self.view = view
     }
     
+    // MARK: - Login
     func login(username: String, password: String) {
         guard isInputValid(username, password) else { return }
         view.showLoading(true)
@@ -34,6 +36,7 @@ final class LoginPresenter: LoginPresenterDelegate {
         }
     }
     
+    // MARK: - Is Input Valid
     private func isInputValid(_ username: String, _ password: String) -> Bool {
         let emailPattern = #"^\S+@\S+\.\S+$"#
         let emailCheck = username

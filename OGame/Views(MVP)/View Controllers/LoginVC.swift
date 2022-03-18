@@ -30,7 +30,6 @@ final class LoginVC: UIViewController {
     private var username = ""
     private var password = ""
     
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         loginPresenter = LoginPresenter(view: self)

@@ -1,5 +1,5 @@
 //
-//  OverviewTotalView.swift
+//  OverviewView.swift
 //  OGame
 //
 //  Created by Subvert on 01.02.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class OverviewTotalView: UIView {
+final class OverviewView: UIView {
 
     let resourcesTopBarView = ResourcesTopBarView()
     let overviewInfoView = OverviewInfoView()

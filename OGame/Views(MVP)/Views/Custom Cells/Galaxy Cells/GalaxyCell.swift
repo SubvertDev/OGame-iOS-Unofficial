@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GalaxyCell: UITableViewCell {
+final class GalaxyCell: UITableViewCell {
 
     @IBOutlet weak var planetPositionLabel: UILabel!
     @IBOutlet weak var planetImage: UIImageView!

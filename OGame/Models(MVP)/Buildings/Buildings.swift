@@ -7,30 +7,6 @@
 
 import UIKit
 
-//struct BuildingWithLevel {
-//    let name: String
-//    let metal: Int
-//    let crystal: Int
-//    let deuterium: Int
-//    let image: ImageBundle
-//    let buildingsID: Int
-//    let level: Int
-//    let condition: String
-//    let timeToBuild: String
-//}
-//
-//struct BuildingWithAmount {
-//    let name: String
-//    let metal: Int
-//    let crystal: Int
-//    let deuterium: Int
-//    let image: ImageBundle
-//    let buildingsID: Int
-//    var amount: Int
-//    let condition: String
-//    let timeToBuild: String
-//}
-
 struct Building {
     let name: String
     let metal: Int
@@ -44,7 +20,7 @@ struct Building {
 }
 
 struct Buildings {
-    // Supplies
+    // MARK: - Supplies
     static let metalMine = (1, 1, "supplies")
     static let crystalMine = (2, 1, "supplies")
     static let deuteriumMine = (3, 1, "supplies")
@@ -54,7 +30,7 @@ struct Buildings {
     static let crystalStorage = (23, 1, "supplies")
     static let deuteriumStorage = (24, 1, "supplies")
 
-    // Facilities
+    // MARK: - Facilities
     static let roboticsFactory = (14, 1, "facilities")
     static let shipyard = (21, 1, "facilities")
     static let researchLaboratory = (31, 1, "facilities")
@@ -67,7 +43,7 @@ struct Buildings {
     static let sensorPhalanx = (42, 1, "facilities")
     static let jumpGate = (43, 1, "facilities")
     
-    // Researches
+    // MARK: - Researches
     static let energy = (113, 1, "research")
     static let laser = (120, 1, "research")
     static let ion = (121, 1, "research")
@@ -85,7 +61,7 @@ struct Buildings {
     static let shielding = (110, 1, "research")
     static let armour = (111, 1, "research")
 
-    // Ships
+    // MARK: - Ships
     static func lightFighter(_ amount: Int = 1) -> (Int, Int, String) { return (204, amount, "shipyard") }
     static func heavyFighter(_ amount: Int = 1) -> (Int, Int, String) { return (205, amount, "shipyard") }
     static func cruiser(_ amount: Int = 1) -> (Int, Int, String) { return (206, amount, "shipyard") }
@@ -104,7 +80,7 @@ struct Buildings {
     static func solarSatellite(_ amount: Int = 1) -> (Int, Int, String) { return (212, amount, "shipyard") }
     static func crawler(_ amount: Int = 1) -> (Int, Int, String) { return (217, amount, "shipyard") }
     
-    // Defences
+    // MARK: - Defences
     static func rocketLauncher(amount: Int = 1) -> (Int, Int, String) { return (401, amount, "defenses") }
     static func lightLaser(amount: Int = 1) -> (Int, Int, String) { return (402, amount, "defenses") }
     static func heavyLaser(amount: Int = 1) -> (Int, Int, String) { return (403, amount, "defenses") }

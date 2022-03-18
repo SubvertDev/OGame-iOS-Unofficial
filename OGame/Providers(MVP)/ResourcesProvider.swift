@@ -9,7 +9,9 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class ResourcesProvider {
+final class ResourcesProvider {
+    
+    // MARK: - Get Resources
     func getResourcesWith(playerData: PlayerData) async throws -> Resources {
         do {
             let link = "\(playerData.indexPHP)page=resourceSettings&cp=\(playerData.planetID)"

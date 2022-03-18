@@ -1,5 +1,5 @@
 //
-//  Target.swift
+//  CheckTarget.swift
 //  OGame
 //
 //  Created by Subvert on 22.01.2022.

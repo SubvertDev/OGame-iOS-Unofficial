@@ -1,5 +1,5 @@
 //
-//  Facility+Facilities.swift
+//  Facilities.swift
 //  OGame
 //
 //  Created by Subvert on 22.05.2021.

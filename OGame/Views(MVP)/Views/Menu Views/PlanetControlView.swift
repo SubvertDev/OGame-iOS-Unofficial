@@ -7,7 +7,7 @@
 
 import UIKit
 
-@IBDesignable class PlanetControlView: UIView {
+@IBDesignable final class PlanetControlView: UIView {
     
     @IBOutlet weak var serverNameLabel: UILabel!
     @IBOutlet weak var rankLabel: UILabel!
@@ -33,7 +33,7 @@ import UIKit
         guard let view = self.loadViewFrobNib(nibName: "PlanetControlView") else { return }
         addSubview(view)
         view.frame = self.bounds
-                
+        
         leftButton.addTarget(nil, action: #selector(MenuVC.setPreviousPlanet), for: .touchUpInside)
         rightButton.addTarget(nil, action: #selector(MenuVC.setNextPlanet), for: .touchUpInside)
         planetButton.addTarget(nil, action: #selector(MenuVC.planetButtonPressed), for: .touchUpInside)

@@ -9,8 +9,9 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class ConfigurePlayerProvider {
-            
+final class ConfigurePlayerProvider {
+          
+    // MARK: - Properties
     private var doc: Document?
     
     private var planet: String?

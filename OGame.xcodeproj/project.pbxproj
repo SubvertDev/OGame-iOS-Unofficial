@@ -21,13 +21,13 @@
 		B846CD6A27947D8100DEFDE2 /* OGDefence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6927947D8100DEFDE2 /* OGDefence.swift */; };
 		B846CD6C2794870800DEFDE2 /* OGCheckFleet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6B2794870800DEFDE2 /* OGCheckFleet.swift */; };
 		B846CD6E27948A7A00DEFDE2 /* GalaxyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6D27948A7A00DEFDE2 /* GalaxyProvider.swift */; };
-		B846CD7027958AA200DEFDE2 /* OGOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6F27958AA200DEFDE2 /* OGOverview.swift */; };
+		B846CD7027958AA200DEFDE2 /* OverviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD6F27958AA200DEFDE2 /* OverviewProvider.swift */; };
 		B846CD7227958C9E00DEFDE2 /* OGSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD7127958C9E00DEFDE2 /* OGSupport.swift */; };
 		B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84F09C6269F57B800B1D82D /* Celestial.swift */; };
+		B8521D2727E3BA4D00A6BBDC /* OverviewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8521D2627E3BA4D00A6BBDC /* OverviewPresenter.swift */; };
 		B85AF0CE26A5A81D0087C5A7 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85AF0CD26A5A81D0087C5A7 /* Server.swift */; };
 		B85D76E127A44CD2004D838E /* BuildingTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D76E027A44CD2004D838E /* BuildingTableView.swift */; };
 		B85D76E327A56824004D838E /* BuildingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D76E227A56824004D838E /* BuildingVC.swift */; };
-		B85D76EB27A59A8F004D838E /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D76EA27A59A8F004D838E /* MenuView.swift */; };
 		B85D7F89265FDDCC00186021 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85D7F88265FDDCC00186021 /* Images.swift */; };
 		B860786C2799A58200F22AD1 /* OGSendFleet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860786B2799A58200F22AD1 /* OGSendFleet.swift */; };
 		B8607870279AE2E800F22AD1 /* SetCoordinatesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */; };
@@ -102,7 +102,7 @@
 		B8D6880C27A95E4D0013E209 /* MenuTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6880B27A95E4D0013E209 /* MenuTableView.swift */; };
 		B8D6880E27A95E5D0013E209 /* MenuTableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8D6880D27A95E5D0013E209 /* MenuTableView.xib */; };
 		B8D6881627A9A47C0013E209 /* OverviewInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6881527A9A47C0013E209 /* OverviewInfoView.swift */; };
-		B8D6881827A9D6840013E209 /* OverviewTotalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6881727A9D6840013E209 /* OverviewTotalView.swift */; };
+		B8D6881827A9D6840013E209 /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D6881727A9D6840013E209 /* OverviewView.swift */; };
 		B8F144E626B8872200B2C31B /* GalaxyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F144E426B8872200B2C31B /* GalaxyCell.swift */; };
 		B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8F144E526B8872200B2C31B /* GalaxyCell.xib */; };
 		B8F30D1827CA414C00A3E582 /* MoonFacilityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F30D1727CA414C00A3E582 /* MoonFacilityCell.swift */; };
@@ -137,13 +137,13 @@
 		B846CD6927947D8100DEFDE2 /* OGDefence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGDefence.swift; sourceTree = "<group>"; };
 		B846CD6B2794870800DEFDE2 /* OGCheckFleet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGCheckFleet.swift; sourceTree = "<group>"; };
 		B846CD6D27948A7A00DEFDE2 /* GalaxyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyProvider.swift; sourceTree = "<group>"; };
-		B846CD6F27958AA200DEFDE2 /* OGOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGOverview.swift; sourceTree = "<group>"; };
+		B846CD6F27958AA200DEFDE2 /* OverviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewProvider.swift; sourceTree = "<group>"; };
 		B846CD7127958C9E00DEFDE2 /* OGSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGSupport.swift; sourceTree = "<group>"; };
 		B84F09C6269F57B800B1D82D /* Celestial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Celestial.swift; sourceTree = "<group>"; };
+		B8521D2627E3BA4D00A6BBDC /* OverviewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewPresenter.swift; sourceTree = "<group>"; };
 		B85AF0CD26A5A81D0087C5A7 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		B85D76E027A44CD2004D838E /* BuildingTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingTableView.swift; sourceTree = "<group>"; };
 		B85D76E227A56824004D838E /* BuildingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingVC.swift; sourceTree = "<group>"; };
-		B85D76EA27A59A8F004D838E /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		B85D7F88265FDDCC00186021 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		B860786B2799A58200F22AD1 /* OGSendFleet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGSendFleet.swift; sourceTree = "<group>"; };
 		B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCoordinatesCell.swift; sourceTree = "<group>"; };
@@ -220,7 +220,7 @@
 		B8D6880B27A95E4D0013E209 /* MenuTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTableView.swift; sourceTree = "<group>"; };
 		B8D6880D27A95E5D0013E209 /* MenuTableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MenuTableView.xib; sourceTree = "<group>"; };
 		B8D6881527A9A47C0013E209 /* OverviewInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewInfoView.swift; sourceTree = "<group>"; };
-		B8D6881727A9D6840013E209 /* OverviewTotalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewTotalView.swift; sourceTree = "<group>"; };
+		B8D6881727A9D6840013E209 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
 		B8F144E426B8872200B2C31B /* GalaxyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyCell.swift; sourceTree = "<group>"; };
 		B8F144E526B8872200B2C31B /* GalaxyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalaxyCell.xib; sourceTree = "<group>"; };
 		B8F30D1727CA414C00A3E582 /* MoonFacilityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonFacilityCell.swift; sourceTree = "<group>"; };
@@ -269,20 +269,74 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		B846CD5E27946F9000DEFDE2 /* Authorization */ = {
+		B82D8BA627E5131D001B5E34 /* Custom Cells */ = {
 			isa = PBXGroup;
 			children = (
-				B84400C326519884001CE771 /* Account.swift */,
-				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
-				B8B7BC252650579100988758 /* Servers.swift */,
+				B8C8268927A1A034005BE032 /* Auth Cells */,
+				B8627D4C27C66A6800BBBAE2 /* Menu Cells */,
+				B8C8268A27A1A042005BE032 /* Overview Cells */,
+				B8C8268E27A1A09F005BE032 /* Galaxy Cells */,
 			);
-			path = Authorization;
+			path = "Custom Cells";
+			sourceTree = "<group>";
+		};
+		B82D8BA727E513C9001B5E34 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
+				B84F09C6269F57B800B1D82D /* Celestial.swift */,
+				B8F30D1B27CA557200A3E582 /* Moon.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		B82D8BA827E51CAA001B5E34 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B8B2972F265703FE00C59CD4 /* Resources.swift */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B82D8BA927E51CCB001B5E34 /* Galaxy */ = {
+			isa = PBXGroup;
+			children = (
+				B8D1AEFA26B464F50064DE34 /* Position.swift */,
+				B8BED0202790600900AE2ED8 /* Coordinates.swift */,
+				B8BED01E27905FAE00AE2ED8 /* Mission.swift */,
+				B8BED0222790605100AE2ED8 /* Destination.swift */,
+			);
+			path = Galaxy;
+			sourceTree = "<group>";
+		};
+		B82D8BAA27E51D05001B5E34 /* Buildings */ = {
+			isa = PBXGroup;
+			children = (
+				B86761582659834A0096BE39 /* Buildings.swift */,
+				B83B64032658455C00A75A00 /* Supplies.swift */,
+				B8676152265982B00096BE39 /* Facilities.swift */,
+				B8F30D1927CA423100A3E582 /* MoonFacilities.swift */,
+				B8676154265982DD0096BE39 /* Researches.swift */,
+				B8ABC2FF26640EF00032ADBB /* Ships.swift */,
+				B8FF0466269E1F11007743B8 /* Defences.swift */,
+				B87331762654366700524FD8 /* Price.swift */,
+			);
+			path = Buildings;
+			sourceTree = "<group>";
+		};
+		B82D8BAB27E51D10001B5E34 /* Fleet */ = {
+			isa = PBXGroup;
+			children = (
+				B867077D26F6857D00F7372E /* Fleets.swift */,
+				B860787A279C11B400F22AD1 /* CheckTarget.swift */,
+				B8C8268727A018D3005BE032 /* SendTarget.swift */,
+			);
+			path = Fleet;
 			sourceTree = "<group>";
 		};
 		B846CD6027946FB100DEFDE2 /* Parsers */ = {
 			isa = PBXGroup;
 			children = (
-				B846CD6F27958AA200DEFDE2 /* OGOverview.swift */,
 				B846CD582794643900DEFDE2 /* OGSupplies.swift */,
 				B8BED032279445F500AE2ED8 /* OGFacilities.swift */,
 				B846CD652794746400DEFDE2 /* OGResearch.swift */,
@@ -304,6 +358,7 @@
 				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
 				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
 				B8B2972B26552FD500C59CD4 /* MenuVC.swift */,
+				B873317426542CB400524FD8 /* OverviewVC.swift */,
 				B869F06727E2441E009AE6BE /* GalaxyVC.swift */,
 			);
 			path = "View Controllers";
@@ -322,6 +377,31 @@
 			path = "Menu Views";
 			sourceTree = "<group>";
 		};
+		B8521D2427E3B8D600A6BBDC /* Overview Views */ = {
+			isa = PBXGroup;
+			children = (
+				B8D6881727A9D6840013E209 /* OverviewView.swift */,
+				B8D6881527A9A47C0013E209 /* OverviewInfoView.swift */,
+			);
+			path = "Overview Views";
+			sourceTree = "<group>";
+		};
+		B8521D2527E3B8E000A6BBDC /* Galaxy Views */ = {
+			isa = PBXGroup;
+			children = (
+				B869F06527E24302009AE6BE /* GalaxyView.swift */,
+			);
+			path = "Galaxy Views";
+			sourceTree = "<group>";
+		};
+		B8521D2827E480E900A6BBDC /* Overview */ = {
+			isa = PBXGroup;
+			children = (
+				B8FA6DE42708BD4100924D3D /* Overview.swift */,
+			);
+			path = Overview;
+			sourceTree = "<group>";
+		};
 		B8627D4C27C66A6800BBBAE2 /* Menu Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -330,37 +410,13 @@
 			path = "Menu Cells";
 			sourceTree = "<group>";
 		};
-		B86761572659831A0096BE39 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				B84F09C6269F57B800B1D82D /* Celestial.swift */,
-				B8F30D1B27CA557200A3E582 /* Moon.swift */,
-				B8FA6DE42708BD4100924D3D /* Overview.swift */,
-				B8B2972F265703FE00C59CD4 /* Resources.swift */,
-				B86761582659834A0096BE39 /* Buildings.swift */,
-				B87331762654366700524FD8 /* Price.swift */,
-				B867077D26F6857D00F7372E /* Fleets.swift */,
-				B8D1AEFA26B464F50064DE34 /* Position.swift */,
-				B8BED0202790600900AE2ED8 /* Coordinates.swift */,
-				B8BED01E27905FAE00AE2ED8 /* Mission.swift */,
-				B8BED0222790605100AE2ED8 /* Destination.swift */,
-				B83B64032658455C00A75A00 /* Supplies.swift */,
-				B8676152265982B00096BE39 /* Facilities.swift */,
-				B8F30D1927CA423100A3E582 /* MoonFacilities.swift */,
-				B8676154265982DD0096BE39 /* Researches.swift */,
-				B8ABC2FF26640EF00032ADBB /* Ships.swift */,
-				B8FF0466269E1F11007743B8 /* Defences.swift */,
-				B860787A279C11B400F22AD1 /* CheckTarget.swift */,
-				B8C8268727A018D3005BE032 /* SendTarget.swift */,
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
 		B869F06427E242D9009AE6BE /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B8521D2327E3B7A400A6BBDC /* Menu Views */,
-				B869F06527E24302009AE6BE /* GalaxyView.swift */,
+				B8521D2427E3B8D600A6BBDC /* Overview Views */,
+				B8521D2527E3B8E000A6BBDC /* Galaxy Views */,
+				B82D8BA627E5131D001B5E34 /* Custom Cells */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -368,11 +424,13 @@
 		B872E4AF27D424BD009E4CF1 /* Authorization */ = {
 			isa = PBXGroup;
 			children = (
+				B84400C326519884001CE771 /* Account.swift */,
+				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
+				B8B7BC252650579100988758 /* Servers.swift */,
 				B872E4B027D425A6009E4CF1 /* LoginData.swift */,
 				B8B7BC2D2650AD5700988758 /* LoginResponse.swift */,
 				B814BA6726AB1B0200FF346A /* MyServer.swift */,
 				B8BED03A279453C800AE2ED8 /* ServerData.swift */,
-				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
 			);
 			path = Authorization;
 			sourceTree = "<group>";
@@ -392,6 +450,7 @@
 				B88B3F3A27D4105D00B5BFD5 /* LoginPresenter.swift */,
 				B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */,
 				B869F06227E22BA8009AE6BE /* MenuPresenter.swift */,
+				B8521D2627E3BA4D00A6BBDC /* OverviewPresenter.swift */,
 				B8833FC227E26CB600549E9D /* GalaxyPresenter.swift */,
 			);
 			path = "Presenters(MVP)";
@@ -401,6 +460,12 @@
 			isa = PBXGroup;
 			children = (
 				B872E4AF27D424BD009E4CF1 /* Authorization */,
+				B82D8BA727E513C9001B5E34 /* Player */,
+				B82D8BA827E51CAA001B5E34 /* Resources */,
+				B8521D2827E480E900A6BBDC /* Overview */,
+				B82D8BAA27E51D05001B5E34 /* Buildings */,
+				B82D8BAB27E51D10001B5E34 /* Fleet */,
+				B82D8BA927E51CCB001B5E34 /* Galaxy */,
 			);
 			path = "Models(MVP)";
 			sourceTree = "<group>";
@@ -412,6 +477,7 @@
 				B8BED02E27942CA600AE2ED8 /* ServerListProvider.swift */,
 				B8BED0302794335100AE2ED8 /* ConfigurePlayerProvider.swift */,
 				B8BED0382794538F00AE2ED8 /* ResourcesProvider.swift */,
+				B846CD6F27958AA200DEFDE2 /* OverviewProvider.swift */,
 				B846CD6D27948A7A00DEFDE2 /* GalaxyProvider.swift */,
 			);
 			path = "Providers(MVP)";
@@ -440,8 +506,8 @@
 			children = (
 				B88B3F3927D4102000B5BFD5 /* Providers(MVP) */,
 				B88B3F3827D40CD900B5BFD5 /* Models(MVP) */,
-				B88B3F3727D40CD000B5BFD5 /* Presenters(MVP) */,
 				B88B3F3627D40CC100B5BFD5 /* Views(MVP) */,
+				B88B3F3727D40CD000B5BFD5 /* Presenters(MVP) */,
 				B8B7BC222650576000988758 /* Views */,
 				B8B7BC232650576700988758 /* Controllers */,
 				B8B7BC212650575B00988758 /* Models */,
@@ -456,9 +522,7 @@
 		B8B7BC212650575B00988758 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B846CD5E27946F9000DEFDE2 /* Authorization */,
 				B846CD6027946FB100DEFDE2 /* Parsers */,
-				B86761572659831A0096BE39 /* Data */,
 				B8FF0451269DD023007743B8 /* Cells */,
 			);
 			path = Models;
@@ -477,7 +541,6 @@
 		B8B7BC232650576700988758 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				B873317426542CB400524FD8 /* OverviewVC.swift */,
 				B85D76E227A56824004D838E /* BuildingVC.swift */,
 				B8BED01C27905C6C00AE2ED8 /* FleetVC.swift */,
 				B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */,
@@ -584,13 +647,9 @@
 		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
 			isa = PBXGroup;
 			children = (
-				B8C8268927A1A034005BE032 /* Auth Cells */,
-				B8627D4C27C66A6800BBBAE2 /* Menu Cells */,
-				B8C8268A27A1A042005BE032 /* Overview Cells */,
 				B8C8268F27A1A0B3005BE032 /* Building Cells */,
 				B8C8268D27A1A06C005BE032 /* Send Fleet Cells */,
 				B8C8268C27A1A055005BE032 /* Movement Cells */,
-				B8C8268E27A1A09F005BE032 /* Galaxy Cells */,
 			);
 			path = "Custom Cells";
 			sourceTree = "<group>";
@@ -599,9 +658,6 @@
 			isa = PBXGroup;
 			children = (
 				B85D76E027A44CD2004D838E /* BuildingTableView.swift */,
-				B8D6881527A9A47C0013E209 /* OverviewInfoView.swift */,
-				B8D6881727A9D6840013E209 /* OverviewTotalView.swift */,
-				B85D76EA27A59A8F004D838E /* MenuView.swift */,
 				B897493C27AA86AC00203FC9 /* GenericTableView.swift */,
 				B897493E27AADCCC00203FC9 /* FleetPageButtonsView.swift */,
 			);
@@ -780,7 +836,7 @@
 				B8D6880C27A95E4D0013E209 /* MenuTableView.swift in Sources */,
 				B872AAD82708EE7000BAC4C9 /* UIViewController+Ext.swift in Sources */,
 				B8B7BC0C26504F8A00988758 /* AppDelegate.swift in Sources */,
-				B846CD7027958AA200DEFDE2 /* OGOverview.swift in Sources */,
+				B846CD7027958AA200DEFDE2 /* OverviewProvider.swift in Sources */,
 				B8607880279C82DB00F22AD1 /* MissionBriefingCell.swift in Sources */,
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
 				B84F09C7269F57B800B1D82D /* Celestial.swift in Sources */,
@@ -797,7 +853,6 @@
 				B872AAD62708E62300BAC4C9 /* OGError.swift in Sources */,
 				B8B7BC2E2650AD5700988758 /* LoginResponse.swift in Sources */,
 				B87331772654366700524FD8 /* Price.swift in Sources */,
-				B85D76EB27A59A8F004D838E /* MenuView.swift in Sources */,
 				B8FF0467269E1F11007743B8 /* Defences.swift in Sources */,
 				B8B2972C26552FD500C59CD4 /* MenuVC.swift in Sources */,
 				B8879464270A6E3B00CDDF16 /* FleetCell.swift in Sources */,
@@ -813,7 +868,8 @@
 				B8A2D5C627A6AE5200ABA399 /* MenuCell.swift in Sources */,
 				B86761592659834B0096BE39 /* Buildings.swift in Sources */,
 				B85D76E327A56824004D838E /* BuildingVC.swift in Sources */,
-				B8D6881827A9D6840013E209 /* OverviewTotalView.swift in Sources */,
+				B8D6881827A9D6840013E209 /* OverviewView.swift in Sources */,
+				B8521D2727E3BA4D00A6BBDC /* OverviewPresenter.swift in Sources */,
 				B8BED0392794538F00AE2ED8 /* ResourcesProvider.swift in Sources */,
 				B846CD7227958C9E00DEFDE2 /* OGSupport.swift in Sources */,
 				B8FF0450269DD01E007743B8 /* ResourceCell.swift in Sources */,

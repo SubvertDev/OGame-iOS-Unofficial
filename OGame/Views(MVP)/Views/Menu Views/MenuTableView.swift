@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MenuTableView: UIView {
+final class MenuTableView: UIView {
     
     @IBOutlet weak var tableView: UITableView!
     let refreshControl = UIRefreshControl()
@@ -27,16 +27,9 @@ class MenuTableView: UIView {
         addSubview(view)
         view.frame = self.bounds
         
-        configureTableView()
-        configureRefreshControl()
-    }
-    
-    func configureTableView() {
         tableView.removeExtraCellLines()
         tableView.register(MenuCell.self, forCellReuseIdentifier: "MenuCell")
-    }
-    
-    func configureRefreshControl() {
+        
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(nil, action: #selector(MenuVC.tableViewRefreshCalled), for: .valueChanged)
     }

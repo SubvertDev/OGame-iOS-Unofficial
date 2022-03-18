@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ServerCell: UITableViewCell {
+final class ServerCell: UITableViewCell {
 
     @IBOutlet weak var serverName: UILabel!
     @IBOutlet weak var playerName: UILabel!

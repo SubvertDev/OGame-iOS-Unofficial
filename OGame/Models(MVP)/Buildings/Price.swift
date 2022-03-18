@@ -1,5 +1,5 @@
 //
-//  Constants.swift
+//  Price.swift
 //  OGame
 //
 //  Created by Subvert on 18.05.2021.
@@ -22,6 +22,7 @@ struct Price {
         }
 
         switch technology.component {
+            // MARK: - Supplies
         case "supplies":
             switch technology.id {
             case 1:
@@ -48,6 +49,7 @@ struct Price {
                 return resources()
             }
 
+            // MARK: - Facilities
         case "facilities":
             switch technology.id {
             case 14:
@@ -76,6 +78,7 @@ struct Price {
                 return resources()
             }
 
+            // MARK: - Research
         case "research":
             switch technology.id {
             case 113:
@@ -112,6 +115,7 @@ struct Price {
                 return resources()
             }
 
+            // MARK: - Shipyard
         case "shipyard":
             switch technology.id {
             case 204:
@@ -152,6 +156,7 @@ struct Price {
                 return resources()
             }
 
+            // MARK: - Defenses
         case "defenses":
             switch technology.id {
             case 401:

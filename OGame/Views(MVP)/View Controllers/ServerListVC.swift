@@ -24,7 +24,6 @@ final class ServerListVC: UIViewController {
     private var resources: Resources?
     var servers: [MyServer]?
     
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true

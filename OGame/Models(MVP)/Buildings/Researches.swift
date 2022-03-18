@@ -1,5 +1,5 @@
 //
-//  Research+Researches.swift
+//  Researches.swift
 //  OGame
 //
 //  Created by Subvert on 22.05.2021.

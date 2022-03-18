@@ -13,6 +13,7 @@ protocol ServerListPresenterDelegate {
 }
 
 final class ServerListPresenter: ServerListPresenterDelegate {
+    
     unowned let view: ServerListViewDelegate
     private let serverListProvider = ServerListProvider()
     private let configurePlayerProvider = ConfigurePlayerProvider()
@@ -22,6 +23,7 @@ final class ServerListPresenter: ServerListPresenterDelegate {
         self.view = view
     }
     
+    // MARK: - Enter Server
     func enterServer(_ server: MyServer) {
         view.showLoading(true)
         Task {
