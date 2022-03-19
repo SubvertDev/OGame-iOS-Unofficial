@@ -12,21 +12,21 @@ This is my pet-project which I'm doing at my free time. I'm still learning iOS d
 - Parsing **HTML** with **SwiftSoup** framework.
 
 ## Screenshots
-#### Authorization and menu
-![screenshot-1](https://gcdnb.pbrd.co/images/Y5crvdf0D4Li.png)
-#### Construct buildings, research technologies
-![screenshot-1](https://gcdnb.pbrd.co/images/ZVAlMyI40xn8.png)
-#### Sending fleet, movement and galaxy
-![screenshot-1](https://gcdnb.pbrd.co/images/XgumtfEEqRI0.png)
+### Authorization and menu
+![screenshot-1](https://i.imgur.com/HLMXwv4.png)
+### Construct buildings, research technologies
+![screenshot-2](https://i.imgur.com/5OUxZYb.png)
+### Sending fleet, movement and galaxy
+![screenshot-3](https://i.imgur.com/AzvEGqP.png)
 
 ## To-Do
+- Move project to MVP architecture ([in progress](https://github.com/SubvertDev/OGame-iOS-Unofficial/tree/switch-to-mvp))
 - Add construction queue
 - Check for maximum builds
 - Show remaining build time online
 - Discarding unnecessary network requests
 - Messaging feature
 - Update UI with game assets
-- Incoming attack notifications
 
 ## Known Issues
 - Planets are not added to menu after colonization
