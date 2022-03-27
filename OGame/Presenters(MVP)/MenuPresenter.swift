@@ -2,33 +2,38 @@
 //  MenuPresenter.swift
 //  OGame
 //
-//  Created by Subvert on 3/16/22.
+//  Created by Subvert on 3/27/22.
 //
 
 import Foundation
-import UIKit
 
-protocol MenuPresenterDelegate {
-    init(view: MenuViewDelegate)
-    func setPreviousPlanet(for: PlayerData?)
-    func planetButtonPressed(for: PlayerData?)
-    func moonButtonPressed(for: PlayerData?)
-    func getResources(for: PlayerData?)
+protocol IMenuPresenter {
+    func viewDidLoad(with: PlayerData)
+    func previousPlanetButtonTapped(for: PlayerData)
+    func nextPlanetButtonTapped(for: PlayerData)
+    func planetButtonTapped(for: PlayerData)
+    func moonButtonTapped(for: PlayerData)
+    func loadResources(for: PlayerData)
 }
 
-final class MenuPresenter: MenuPresenterDelegate {
+final class MenuPresenter: IMenuPresenter {
     
-    unowned let view: MenuViewDelegate
-    private let resourcesProvider = ResourcesProvider()
+    unowned let view: IMenuView
+    let resourcesProvider = ResourcesProvider()
+    var player: PlayerData
     
-    init(view: MenuViewDelegate) {
+    init(view: IMenuView, player: PlayerData) {
         self.view = view
+        self.player = player
     }
     
-    // MARK: - Set Previous Planet
-    func setPreviousPlanet(for player: PlayerData?) {
-        guard var player = player else { return }
-        
+    // MARK: Public
+    func viewDidLoad(with player: PlayerData) {
+        loadResources(for: player)
+    }
+    
+    func previousPlanetButtonTapped(for player: PlayerData) {
+        var player = player
         var index = 0
         if let planetIndex = player.planetIDs.firstIndex(of: player.planetID) {
             index = planetIndex
@@ -47,14 +52,13 @@ final class MenuPresenter: MenuPresenterDelegate {
             player.planet = player.planetNames[index - 1]
             player.planetID = player.planetIDs[index - 1]
         }
+
         view.showPlanetLoading(true)
         view.planetIsChanged(for: player)
     }
     
-    // MARK: - Set Next Planet
-    func setNextPlanet(for player: PlayerData?) {
-        guard var player = player else { return }
-        
+    func nextPlanetButtonTapped(for player: PlayerData) {
+        var player = player
         var index = 0
         if let planetIndex = player.planetIDs.firstIndex(of: player.planetID) {
             index = planetIndex
@@ -73,13 +77,13 @@ final class MenuPresenter: MenuPresenterDelegate {
             player.planet = player.planetNames[index + 1]
             player.planetID = player.planetIDs[index + 1]
         }
+
         view.showPlanetLoading(true)
         view.planetIsChanged(for: player)
     }
     
-    // MARK: - Planet Button Pressed
-    func planetButtonPressed(for player: PlayerData?) {
-        guard var player = player else { return }
+    func planetButtonTapped(for player: PlayerData) {
+        var player = player
         if player.moonIDs.contains(player.planetID) {
             player.planet = player.planetNames[player.currentPlanetIndex]
             player.planetID = player.planetIDs[player.currentPlanetIndex]
@@ -89,9 +93,8 @@ final class MenuPresenter: MenuPresenterDelegate {
         }
     }
     
-    // MARK: - Moon Button Pressed
-    func moonButtonPressed(for player: PlayerData?) {
-        guard var player = player else { return }
+    func moonButtonTapped(for player: PlayerData) {
+        var player = player
         if player.planetIDs.contains(player.planetID) {
             player.planet = player.moonNames[player.currentPlanetIndex]
             player.planetID = player.moonIDs[player.currentPlanetIndex]
@@ -101,10 +104,7 @@ final class MenuPresenter: MenuPresenterDelegate {
         }
     }
     
-    // MARK: - Get Resources
-    func getResources(for player: PlayerData?) {
-        guard let player = player else { return }
-        
+    func loadResources(for player: PlayerData) {
         view.showResourcesLoading(true)
         Task {
             do {
@@ -118,9 +118,11 @@ final class MenuPresenter: MenuPresenterDelegate {
                 await MainActor.run {
                     view.showResourcesLoading(false)
                     view.showPlanetLoading(false)
-                    view.showAlert(error: error as! OGError)
+                    //view.showAlert(error: error as! OGError)
                 }
             }
         }
     }
+    
+    // MARK: Private
 }

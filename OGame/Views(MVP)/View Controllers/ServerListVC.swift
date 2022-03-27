@@ -19,7 +19,7 @@ final class ServerListVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    private var serverListPresenter: ServerListPresenter!
+    private var presenter: ServerListPresenter!
     private var player: PlayerData?
     private var resources: Resources?
     var servers: [MyServer]?
@@ -27,7 +27,7 @@ final class ServerListVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-        serverListPresenter = ServerListPresenter(view: self)
+        presenter = ServerListPresenter(view: self)
         configureTableView()
     }
     
@@ -52,16 +52,6 @@ final class ServerListVC: UIViewController {
     @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
         navigationController?.popToRootViewController(animated: true)
     }
-    
-    // MARK: - Prepare For Segue
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let player = player, let resources = resources else { return }
-        if segue.identifier == "ShowMenuVC" {
-            let menuVC = segue.destination as! MenuVC
-            menuVC.player = player
-            menuVC.resources = resources
-        }
-    }
 }
 
 // MARK: - TableView Delegate & Data
@@ -85,7 +75,7 @@ extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard let servers = servers else { return }
-        serverListPresenter.enterServer(servers[indexPath.row])
+        presenter.enterServer(servers[indexPath.row])
     }
 }
 
@@ -106,7 +96,9 @@ extension ServerListVC: ServerListViewDelegate {
     func performLogin(player: PlayerData, resources: Resources) {
         self.player = player
         self.resources = resources
-        performSegue(withIdentifier: "ShowMenuVC", sender: self)
+        //performSegue(withIdentifier: "ShowMenuVC", sender: self)
+        let vc = MenuVC(player: player, resources: resources)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func showAlert(error: Error) {

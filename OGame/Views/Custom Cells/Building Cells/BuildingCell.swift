@@ -11,12 +11,12 @@ protocol BuildingCellDelegate: AnyObject {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton)
 }
 
-enum BuildingType: CaseIterable {
-    case supply
-    case facility
-    case research
-    case shipyard
-    case defence
+enum BuildingType: Int {
+    case supply = 1
+    case facility = 2
+    case research = 3
+    case shipyard = 4
+    case defence = 5
 }
 
 class BuildingCell: UITableViewCell {

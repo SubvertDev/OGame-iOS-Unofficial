@@ -2,212 +2,168 @@
 //  MenuVC.swift
 //  OGame
 //
-//  Created by Subvert on 19.05.2021.
+//  Created by Subvert on 3/27/22.
 //
 
 import UIKit
 
-protocol MenuViewDelegate: AnyObject {
-    func showPlanetLoading(_ state: Bool)
-    func showResourcesLoading(_ state: Bool)
-    func showAlert(error: Error)
-    func refreshResourcesTopBarView(with: PlayerData?)
+protocol IMenuView: AnyObject {
+    func showPlanetLoading(_: Bool)
+    func showResourcesLoading(_: Bool)
     func planetIsChanged(for: PlayerData)
     func updateResources(with: Resources)
 }
 
 final class MenuVC: UIViewController {
     
-    // MARK: - Properties
-    @IBOutlet weak var planetControlView: PlanetControlView!
-    @IBOutlet weak var resourcesTopBarView: ResourcesTopBarView!
-    @IBOutlet weak var tableViewWithRefresh: MenuTableView!
+    private let planetControlView = PlanetControlView()
+    private let resourcesBarView = ResourcesTopBarView()
+    private let menuTableView = MenuTableView()
     
-    private var menuPresenter: MenuPresenter!
-    private var timer: Timer?
-    private var prodPerSecond: [Double]?
-    var resources: Resources?
-    var player: PlayerData?
+    private var presenter: MenuPresenter!
+    private var player: PlayerData
+    private var resources: Resources
     
-    let menuList = ["Overview", "Resources", "Facilities",
-                    "Research", "Shipyard", "Defence",
-                    "Fleet", "Movement", "Galaxy"]
-    
+    private let menuList = ["Overview", "Resources", "Facilities",
+                            "Research", "Shipyard", "Defence",
+                            "Fleet", "Movement", "Galaxy"]
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.hidesBackButton = false
+        view.backgroundColor = .systemBackground
+        title = "Menu"
         
-        menuPresenter = MenuPresenter(view: self)        
-        configureViews()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        menuPresenter.getResources(for: player)
-    }
-    
-    // MARK: - Configure Views
-    func configureViews() {
-        configurePlanetControlView(with: player)
-        tableViewWithRefresh.tableView.delegate = self
-        tableViewWithRefresh.tableView.dataSource = self
-        menuPresenter.getResources(for: player)
-    }
-    
-    // MARK: - IBActions
-    @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
-        navigationController?.popToRootViewController(animated: true)
-    }
-    
-    // MARK: - Actions
-    @objc func setPreviousPlanet() {
-        menuPresenter.setPreviousPlanet(for: player)
-    }
-    
-    @objc func setNextPlanet() {
-        menuPresenter.setNextPlanet(for: player)
-    }
-    
-    @objc func planetButtonPressed() {
-        menuPresenter.planetButtonPressed(for: player)
-    }
-    
-    @objc func moonButtonPressed() {
-        menuPresenter.moonButtonPressed(for: player)
-    }
-    
-    @objc func tableViewRefreshCalled() {
-        menuPresenter.getResources(for: player)
-    }
-    
-    // MARK: - Configure Planet Control
-    // TODO: Refactor this to presenter?
-    func configurePlanetControlView(with player: PlayerData?) {
-        guard let player = player else { return }
+        addSubviews()
+        makeConstraints()
         
+        planetControlView.delegate = self
+        resourcesBarView.delegate = self
+        menuTableView.delegate = self
+        menuTableView.tableView.delegate = self
+        menuTableView.tableView.dataSource = self
+        
+        planetControlView.updateView(with: player)
+        
+        presenter = MenuPresenter(view: self, player: player)
+        presenter.viewDidLoad(with: player)
+    }
+    
+    init(player: PlayerData, resources: Resources) {
         self.player = player
-
-        planetControlView.serverNameLabel.text = player.universe
-        planetControlView.rankLabel.text = "Rank: \(String(player.rank))"
-        planetControlView.planetNameLabel.text = player.planet
-        
-        if player.planetIDs.contains(player.planetID) {
-            let currentPlanet = player.celestials[player.currentPlanetIndex]
-            let coordinates = currentPlanet.coordinates
-            if currentPlanet.moon == nil {
-                planetControlView.moonButton.isHidden = true
-            } else {
-                planetControlView.moonButton.isHidden = false
-            }
-            planetControlView.coordinatesLabel.text = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-            planetControlView.fieldsLabel.text = "\(currentPlanet.used)/\(currentPlanet.total)"
-            planetControlView.planetButton.setImage(player.planetImages[player.currentPlanetIndex], for: .normal)
-            planetControlView.moonButton.setImage(player.moonImages[player.currentPlanetIndex], for: .normal)
-            
-        } else if player.moonIDs.contains(player.planetID) {
-            guard let currentPlanet = player.celestials[player.currentPlanetIndex].moon else { return }
-            let coordinates = currentPlanet.coordinates
-            planetControlView.planetNameLabel.text = "\(player.planet) (moon)"
-            planetControlView.coordinatesLabel.text = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-            planetControlView.fieldsLabel.text = "\(currentPlanet.used)/\(currentPlanet.total)"
-            planetControlView.planetButton.setImage(player.planetImages[player.currentPlanetIndex], for: .normal)
-            planetControlView.moonButton.setImage(player.moonImages[player.currentPlanetIndex], for: .normal)
-            planetControlView.moonButton.isHidden = false
-        }
-        
-        switch player.celestials.count {
-        case 1:
-            planetControlView.leftButton.isHidden = true
-            planetControlView.rightButton.isHidden = true
-            
-        case 2:
-            if player.currentPlanetIndex == 0 {
-                let planetName = player.planetNames[player.currentPlanetIndex + 1]
-                let coordinates = player.celestials[player.currentPlanetIndex + 1].coordinates
-                let editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-                
-                planetControlView.rightButton.isEnabled = true
-                planetControlView.rightButton.setTitle("\(planetName)\n\(editedCoordinates)", for: .normal)
-                planetControlView.rightButton.setTitleColor(.white, for: .normal)
-                planetControlView.rightButton.titleLabel?.textAlignment = .center
-                
-                planetControlView.leftButton.isEnabled = false
-                planetControlView.leftButton.setTitle("", for: .normal)
-            } else {
-                let planetName = player.planetNames[player.currentPlanetIndex - 1]
-                let coordinates = player.celestials[player.currentPlanetIndex - 1].coordinates
-                let editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-                
-                planetControlView.leftButton.isEnabled = true
-                planetControlView.leftButton.setTitle("\(planetName)\n\(editedCoordinates)", for: .normal)
-                planetControlView.leftButton.setTitleColor(.white, for: .normal)
-                planetControlView.leftButton.titleLabel?.textAlignment = .center
-                
-                planetControlView.rightButton.isEnabled = false
-                planetControlView.rightButton.setTitle("", for: .normal)
-            }
-            
-        case 3...100:
-            var planetName = ""
-            var coordinates = [Int]()
-            var editedCoordinates = ""
-            
-            if player.currentPlanetIndex + 1 == player.planetNames.count {
-                planetName = player.planetNames[0]
-                coordinates = player.celestials[0].coordinates
-                editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-            } else {
-                planetName = player.planetNames[player.currentPlanetIndex + 1]
-                coordinates = player.celestials[player.currentPlanetIndex + 1].coordinates
-                editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-            }
-            // REMOVE TO HAVE FAST PLANET SWITCHING (MESSING UP RESOURCES LOADING)
-            //planetControlView.rightButton.isEnabled = true
-            planetControlView.rightButton.setTitle("\(planetName)\n\(editedCoordinates)", for: .normal)
-            planetControlView.rightButton.setTitleColor(.white, for: .normal)
-            planetControlView.rightButton.titleLabel?.textAlignment = .center
-            
-            if player.currentPlanetIndex == 0 {
-                planetName = player.planetNames.last!
-                coordinates = player.celestials.last!.coordinates
-                editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-            } else {
-                planetName = player.planetNames[player.currentPlanetIndex - 1]
-                coordinates = player.celestials[player.currentPlanetIndex - 1].coordinates
-                editedCoordinates = "[\(coordinates[0]):\(coordinates[1]):\(coordinates[2])]"
-            }
-            // REMOVE TO HAVE FAST PLANET SWITCHING (MESSING UP RESOURCES LOADING)
-            //planetControlView.leftButton.isEnabled = true
-            planetControlView.leftButton.setTitle("\(planetName)\n\(editedCoordinates)", for: .normal)
-            planetControlView.leftButton.setTitleColor(.white, for: .normal)
-            planetControlView.leftButton.titleLabel?.textAlignment = .center
-            
-        default:
-            break
-        }
+        self.resources = resources
+        super.init(nibName: nil, bundle: nil)
     }
     
-    // MARK: - Prepare For Segue
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? BuildingVC {
-            vc.resources = resources
-            vc.player = player
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    // MARK: Private
+    private func addSubviews() {
+        view.addSubview(planetControlView)
+        view.addSubview(resourcesBarView)
+        view.addSubview(menuTableView)
+    }
+
+    private func makeConstraints() {
+        planetControlView.translatesAutoresizingMaskIntoConstraints = false
+        resourcesBarView.translatesAutoresizingMaskIntoConstraints = false
+        menuTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            planetControlView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            planetControlView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            planetControlView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            planetControlView.heightAnchor.constraint(equalTo: planetControlView.widthAnchor, multiplier: 1.0/2.5),
             
-            let page = sender as! Int
-            switch page {
-            case 1...5:
-                vc.buildType = BuildingType.allCases[page - 1]
-                vc.title = menuList[page]
-            case 6...7:
-                break // fleet & movement
-            default:
-                logoutAndShowError(OGError(message: "Error", detailed: "Unknown segue in menu"))
-            }
-        }
+            resourcesBarView.topAnchor.constraint(equalTo: planetControlView.bottomAnchor),
+            resourcesBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            resourcesBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            resourcesBarView.heightAnchor.constraint(equalTo: resourcesBarView.widthAnchor, multiplier: 1.0/5.0),
+            
+            menuTableView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
+            menuTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            menuTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            menuTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 }
 
-// MARK: - Delegate & DataSource
+// MARK: - Menu View Delegate
+extension MenuVC: IMenuView {
+    func showPlanetLoading(_ state: Bool) {
+        if state {
+            planetControlView.leftButton.isEnabled = false
+            planetControlView.rightButton.isEnabled = false
+            menuTableView.tableView.isUserInteractionEnabled = false
+        } else {
+            planetControlView.leftButton.isEnabled = true
+            planetControlView.rightButton.isEnabled = true
+            menuTableView.tableView.isUserInteractionEnabled = true
+            menuTableView.refreshControl.endRefreshing()
+        }
+    }
+    
+    func showResourcesLoading(_ state: Bool) {
+        if state {
+            resourcesBarView.alpha = 0.5
+            resourcesBarView.activityIndicator.startAnimating()
+        } else {
+            resourcesBarView.alpha = 1
+            resourcesBarView.activityIndicator.stopAnimating()
+        }
+    }
+    
+    func planetIsChanged(for player: PlayerData) {
+        self.player = player
+        planetControlView.updateView(with: self.player)
+        presenter.loadResources(for: player)
+    }
+    
+    func updateResources(with resources: Resources) {
+        resourcesBarView.updateNew(with: resources)
+    }
+}
+
+// MARK: - Planet Control View Delegate
+extension MenuVC: IPlanetControlView {
+    func previousPlanetButtonTapped() {
+        presenter.previousPlanetButtonTapped(for: player)
+    }
+    
+    func nextPlanetButtonTapped() {
+        presenter.nextPlanetButtonTapped(for: player)
+    }
+    
+    func planetButtonTapped() {
+        presenter.planetButtonTapped(for: player)
+    }
+    
+    func moonButtonTapped() {
+        presenter.moonButtonTapped(for: player)
+    }
+}
+
+// MARK: - Resources Bar Delegate
+extension MenuVC: IResourcesTopBarView {
+    func refreshFinished() {
+        
+    }
+    
+    func didGetError(error: OGError) {
+        
+    }
+}
+
+// MARK: - Menu Table View Delegate
+extension MenuVC: IMenuTableView {
+    func refreshCalled() {
+        presenter.loadResources(for: player)
+    }
+}
+
+// MARK: TableView Delegate & DataSource
 extension MenuVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -223,12 +179,15 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let player = player else { return }
         
-        var vc = UIViewController()
+        var vc: UIViewController
         switch indexPath.row {
         case 0:
             vc = OverviewVC(player: player)
+        case 1...5:
+            vc = BuildingVC(player: player,
+                            buildType: BuildingType(rawValue: indexPath.row)!,
+                            resources: resources) // todo fix unwraps
         case 6:
             vc = FleetVC(player: player)
         case 7:
@@ -236,57 +195,8 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         case 8:
             vc = GalaxyVC(player: player)
         default:
-            performSegue(withIdentifier: "ShowBuildingVC", sender: indexPath.row)
             return
         }
         navigationController?.pushViewController(vc, animated: true)
-    }
-}
-
-// MARK: - MenuViewDelegate
-extension MenuVC: MenuViewDelegate {
-    func showPlanetLoading(_ state: Bool) {
-        if state {
-            planetControlView.leftButton.isEnabled = false
-            planetControlView.rightButton.isEnabled = false
-            tableViewWithRefresh.tableView.isUserInteractionEnabled = false
-        } else {
-            planetControlView.leftButton.isEnabled = true
-            planetControlView.rightButton.isEnabled = true
-            tableViewWithRefresh.tableView.isUserInteractionEnabled = true
-            tableViewWithRefresh.refreshControl.endRefreshing()
-        }
-    }
-    
-    func showResourcesLoading(_ state: Bool) {
-        if state {
-            resourcesTopBarView.alpha = 0.5
-            resourcesTopBarView.activityIndicator.startAnimating()
-        } else {
-            resourcesTopBarView.alpha = 1
-            resourcesTopBarView.activityIndicator.stopAnimating()
-        }
-    }
-    
-    func planetIsChanged(for player: PlayerData) {
-        self.player = player
-        configurePlanetControlView(with: player)
-        menuPresenter.getResources(for: player)
-    }
-    
-    func refreshResourcesTopBarView(with player: PlayerData?) {
-        if let player = player {
-            resourcesTopBarView.refresh(player)
-        } else {
-            resourcesTopBarView.refresh(self.player)
-        }
-    }
-    
-    func updateResources(with resources: Resources) {
-        resourcesTopBarView.configureNew(with: resources)
-    }
-    
-    func showAlert(error: Error) {
-        logoutAndShowError(error as! OGError)
     }
 }

@@ -7,69 +7,78 @@
 
 import UIKit
 
-class BuildingVC: UIViewController {
+protocol BuildingViewDelegate: AnyObject {
+    func showBuildings(_ buildings: [Building])
+    func showError(_ error: OGError)
+}
+
+final class BuildingVC: UIViewController {
     
-    @IBOutlet weak var resourcesTopBarView: ResourcesTopBarView!
-    @IBOutlet weak var buildingTableView: BuildingTableView!
-        
-    var resources: Resources?
-    var player: PlayerData?
-    var buildType: BuildingType?
-    var buildings: [Building]?
+    private var myView: BuildingView { return view as! BuildingView }
+    
+    private var presenter: BuildingPresenter!
+    private var player: PlayerData
+    private var resources: Resources
+    private var buildType: BuildingType
+    private var buildings: [Building]?
+    
+    override func loadView() {
+        view = BuildingView()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureResourcesTopBarView()
-        configureBuildingTableView()
+        configureViews()
+        presenter = BuildingPresenter(view: self)
+        presenter.loadBuildings(for: player, with: buildType)
     }
     
-    func configureResourcesTopBarView() {
-        resourcesTopBarView.configureWith(resources: resources, player: player)
-        resourcesTopBarView.refreshFinished = { [weak self] in
-            self?.buildingTableView.refreshControl.endRefreshing()
-        }
-        resourcesTopBarView.didGetError = { [weak self] error in
-            self?.logoutAndShowError(error)
-        }
-        
+    init(player: PlayerData, buildType: BuildingType, resources: Resources) {
+        self.player = player
+        self.buildType = buildType
+        self.resources = resources
+        super.init(nibName: nil, bundle: nil)
     }
     
-    func configureBuildingTableView() {
-        buildingTableView.tableView.delegate = self
-        buildingTableView.tableView.dataSource = self
-        buildingTableView.refreshCompletion = { [weak self] in
-            self?.resourcesTopBarView.refresh(self?.player)
-            self?.refresh()
-        }
-        buildingTableView.startUpdatingUI()
-        refresh()
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Refresh TableView
-    func refresh() {
-        Task {
-            do {
-                guard let player = player else { return }
-                switch buildType {
-                case .supply:
-                    buildings = try await OGSupplies.getSuppliesWith(playerData: player)
-                case .facility:
-                    buildings = try await OGFacilities.getFacilitiesWith(playerData: player)
-                case .research:
-                    buildings = try await OGResearch.getResearchesWith(playerData: player)
-                case .shipyard:
-                    buildings = try await OGShipyard.getShipsWith(playerData: player)
-                case .defence:
-                    buildings = try await OGDefence.getDefencesWith(playerData: player)
-                default:
-                    logoutAndShowError(OGError(message: "Build type error", detailed: "Can't load cell data"))
-                }
-                buildingTableView.stopUpdatingUI()
-            } catch {
-                logoutAndShowError(error as! OGError)
-            }
-        }
+    // MARK: Actions
+    @objc func tableViewRefreshCalled() {
+        // todo move logic to presenter
+        //myView.updateResourcesBar(player: player)
+    }
+    
+    // MARK: Private
+    private func configureViews() {
+        myView.configureResourcesBar(resources: resources) // todo fix unwrap
+        myView.setDelegates(self)
+        myView.showLoading()
+    }
+}
+
+// MARK: - Building View Delegate
+extension BuildingVC: BuildingViewDelegate {
+    func showBuildings(_ buildings: [Building]) {
+        self.buildings = buildings
+        myView.showLoaded()
+    }
+    
+    func showError(_ error: OGError) {
+        logoutAndShowError(error)
+    }
+}
+
+// MARK: - Resources Top Bar View Delegate
+extension BuildingVC: IResourcesTopBarView {
+    func refreshFinished() {
+        myView.stopRefreshing()
+    }
+    
+    func didGetError(error: OGError) {
+        logoutAndShowError(error)
     }
 }
 
@@ -80,7 +89,7 @@ extension BuildingVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let buildings = buildings, let player = player, let buildType = buildType else { return UITableViewCell() }
+        guard let buildings = buildings else { return UITableViewCell() }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
@@ -98,7 +107,7 @@ extension BuildingVC: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Building Cell Delegate
 extension BuildingVC: BuildingCellDelegate {
     func didTapButton(_ cell: BuildingCell, _ type: (Int, Int, String), _ sender: UIButton) {
-        guard let player = player, let buildings = buildings else { return }
+        guard let buildings = buildings else { return }
         
         let buildingInfo = buildings[sender.tag]
         
@@ -109,10 +118,11 @@ extension BuildingVC: BuildingCellDelegate {
             alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
                 Task {
                     do {
-                        self.buildingTableView.startUpdatingUI()
-                        try await OGBuild.build(what: type, playerData: player)
-                        self.resourcesTopBarView.refresh(self.player)
-                        self.refresh()
+                        self.myView.showLoading()
+                        try await OGBuild.build(what: type, playerData: self.player)
+                        // todo move logic to presenter
+                        //self.myView.updateResourcesBar(player: self.player)
+                        self.myView.showLoaded()
                     } catch {
                         self.logoutAndShowError(error as! OGError)
                     }
@@ -143,14 +153,15 @@ extension BuildingVC: BuildingCellDelegate {
                 let alert = UIAlertController(title: "Construct \(buildingInfo.name)?", message: "\(amount) \(messageType) will be constructed", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "No", style: .default))
                 alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
-                    self.buildingTableView.startUpdatingUI()
+                    //self.myView.tableView.startUpdatingUI()
                     let typeToBuild = (type.0, amount, type.2)
                     Task {
                         do {
-                            self.buildingTableView.startUpdatingUI()
-                            try await OGBuild.build(what: typeToBuild, playerData: player)
-                            self.resourcesTopBarView.refresh(self.player)
-                            self.refresh()
+                            self.myView.showLoading()
+                            try await OGBuild.build(what: typeToBuild, playerData: self.player)
+                            // todo move logic to presenter
+                            //self.myView.updateResourcesBar(player: self.player)
+                            self.myView.showLoaded()
                         } catch {
                             self.logoutAndShowError(error as! OGError)
                         }
@@ -159,9 +170,6 @@ extension BuildingVC: BuildingCellDelegate {
                 self.present(alert, animated: true)
             })
             present(alertAmount, animated: true)
-            
-        default:
-            logoutAndShowError(OGError(message: "Building error", detailed: "Default case used, check build types"))
         }
     }
 }

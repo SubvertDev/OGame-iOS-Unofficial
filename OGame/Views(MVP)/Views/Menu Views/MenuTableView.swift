@@ -7,30 +7,55 @@
 
 import UIKit
 
+protocol IMenuTableView {
+    func refreshCalled()
+}
+
 final class MenuTableView: UIView {
     
-    @IBOutlet weak var tableView: UITableView!
-    let refreshControl = UIRefreshControl()
+    let tableView: UITableView = {
+       let tableView = UITableView()
+        tableView.removeExtraCellLines()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(MenuCell.self, forCellReuseIdentifier: "MenuCell")
+        return tableView
+    }()
+    
+    let refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.translatesAutoresizingMaskIntoConstraints = false
+        refresh.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)
+        return refresh
+    }()
+    
+    var delegate: IMenuTableView?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
+        addSubviews()
+        makeConstraints()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configureView()
+        fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView() {
-        guard let view = self.loadViewFrobNib(nibName: "MenuTableView") else { return }
-        addSubview(view)
-        view.frame = self.bounds
-        
-        tableView.removeExtraCellLines()
-        tableView.register(MenuCell.self, forCellReuseIdentifier: "MenuCell")
-        
+    // MARK: Private
+    private func addSubviews() {
+        addSubview(tableView)
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(nil, action: #selector(MenuVC.tableViewRefreshCalled), for: .valueChanged)
+    }
+    
+    private func makeConstraints() {
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
+    }
+    
+    @objc private func refreshCalled() {
+        delegate?.refreshCalled()
     }
 }

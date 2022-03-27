@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol IResourcesTopBarView {
+    func refreshFinished()
+    func didGetError(error: OGError)
+}
+
 @IBDesignable final class ResourcesTopBarView: UIView {
     
     // MARK: - Properties
@@ -21,6 +26,8 @@ import UIKit
     private var deuterium: Double?
     private var prodPerSecond: [Double]?
     
+    var delegate: IResourcesTopBarView?
+    
     var player: PlayerData?
     var resources: Resources?
     
@@ -32,6 +39,7 @@ import UIKit
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        print("coder init resources")
         configureView()
     }
     
@@ -39,37 +47,33 @@ import UIKit
         super.init(frame: frame)
         configureView()
     }
-    
+        
     private func configureView() {
         guard let view = self.loadViewFrobNib(nibName: "ResourcesTopBarView") else { return }
         view.frame = self.bounds
         addSubview(view)
         view.bringSubviewToFront(activityIndicator)
-        
-        alpha = 0.5
-        activityIndicator.startAnimating()
     }
     
-    // MARK: - LEGACY, DELETE AND USE -> configureNew() (rename it after delete)
-    func configureWith(resources: Resources?, player: PlayerData?) {
-        guard let player = player else { return }
-
-        self.resources = resources
-        self.player = player
-
-        refresh(player)
-    }
-    
-    func configureNew(with resources: Resources) {
+    func updateNew(with resources: Resources) {
         self.resources = resources
         startUpdatingViewWith(resources)
     }
     
+    
+    // MARK: - LEGACY, DELETE AND USE -> configureNew() (rename it after delete)
+    // must be used in presenter
+    func configureWith(resources: Resources?, player: PlayerData?) {
+        guard let player = player else { return }
+        self.resources = resources
+        self.player = player
+        refresh(player)
+    }
+    
     // MARK: - LEGACY, DELETE AFTER DELETING configureWith()
+    // must be used in presenter
     func refresh(_ player: PlayerData? = nil) {
         guard let player = player else { return }
-        alpha = 0.5
-        activityIndicator.startAnimating()
         
         Task {
             do {
@@ -88,9 +92,6 @@ import UIKit
             crystal: resources.crystal,
             deuterium: resources.deuterium,
             energy: resources.energy)
-        
-        alpha = 1
-        activityIndicator.stopAnimating()
         
         var production = [Double]()
         for day in resources.dayProduction {
