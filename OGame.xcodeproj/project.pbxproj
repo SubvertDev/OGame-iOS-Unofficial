@@ -271,31 +271,22 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		B81A83FC27EDD44D009AC12C /* Building Views */ = {
+		B81A83FC27EDD44D009AC12C /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B81A83FD27EDD609009AC12C /* BuildingView.swift */,
 				B85D76E027A44CD2004D838E /* BuildingTableView.swift */,
+				B867614D265945A30096BE39 /* BuildingCell.swift */,
+				B867614E265945A30096BE39 /* BuildingCell.xib */,
 			);
-			path = "Building Views";
-			sourceTree = "<group>";
-		};
-		B82D8BA627E5131D001B5E34 /* Custom Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B8C8268927A1A034005BE032 /* Auth Cells */,
-				B8627D4C27C66A6800BBBAE2 /* Menu Cells */,
-				B8C8268A27A1A042005BE032 /* Overview Cells */,
-				B8C8268E27A1A09F005BE032 /* Galaxy Cells */,
-			);
-			path = "Custom Cells";
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B82D8BA727E513C9001B5E34 /* Player */ = {
 			isa = PBXGroup;
 			children = (
-				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
 				B84F09C6269F57B800B1D82D /* Celestial.swift */,
+				B8BED03427944B1000AE2ED8 /* PlayerData.swift */,
 				B8F30D1B27CA557200A3E582 /* Moon.swift */,
 			);
 			path = Player;
@@ -345,7 +336,166 @@
 			path = Fleet;
 			sourceTree = "<group>";
 		};
-		B846CD6027946FB100DEFDE2 /* Parsers */ = {
+		B837007E27F0A47C004689BB /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				B8B7BC1126504F8A00988758 /* Main.storyboard */,
+				B837007F27F0A483004689BB /* Login */,
+				B837008027F0A498004689BB /* ServerList */,
+				B837008227F0A4A1004689BB /* Menu */,
+				B837008327F0A4A5004689BB /* Overview */,
+				B837008427F0A4A9004689BB /* Building */,
+				B837008727F0A4B6004689BB /* Fleet */,
+				B837008627F0A4B2004689BB /* Movement */,
+				B837008527F0A4AC004689BB /* Galaxy */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		B837007F27F0A483004689BB /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
+				B88B3F3A27D4105D00B5BFD5 /* LoginPresenter.swift */,
+				B8BED02C2794284700AE2ED8 /* LoginProvider.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		B837008027F0A498004689BB /* ServerList */ = {
+			isa = PBXGroup;
+			children = (
+				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
+				B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */,
+				B8BED02E27942CA600AE2ED8 /* ServerListProvider.swift */,
+				B8BED0302794335100AE2ED8 /* ConfigurePlayerProvider.swift */,
+				B8BED0382794538F00AE2ED8 /* ResourcesProvider.swift */,
+				B837008C27F0A77E004689BB /* Views */,
+			);
+			path = ServerList;
+			sourceTree = "<group>";
+		};
+		B837008227F0A4A1004689BB /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				B837007627F08098004689BB /* MenuVC.swift */,
+				B837007C27F0883E004689BB /* MenuPresenter.swift */,
+				B8521D2327E3B7A400A6BBDC /* Views */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
+		B837008327F0A4A5004689BB /* Overview */ = {
+			isa = PBXGroup;
+			children = (
+				B873317426542CB400524FD8 /* OverviewVC.swift */,
+				B8521D2627E3BA4D00A6BBDC /* OverviewPresenter.swift */,
+				B846CD6F27958AA200DEFDE2 /* OverviewProvider.swift */,
+				B8521D2427E3B8D600A6BBDC /* Views */,
+			);
+			path = Overview;
+			sourceTree = "<group>";
+		};
+		B837008427F0A4A9004689BB /* Building */ = {
+			isa = PBXGroup;
+			children = (
+				B85D76E227A56824004D838E /* BuildingVC.swift */,
+				B81A83FA27EDD2AC009AC12C /* BuildingPresenter.swift */,
+				B81A83FC27EDD44D009AC12C /* Views */,
+			);
+			path = Building;
+			sourceTree = "<group>";
+		};
+		B837008527F0A4AC004689BB /* Galaxy */ = {
+			isa = PBXGroup;
+			children = (
+				B869F06727E2441E009AE6BE /* GalaxyVC.swift */,
+				B8833FC227E26CB600549E9D /* GalaxyPresenter.swift */,
+				B846CD6D27948A7A00DEFDE2 /* GalaxyProvider.swift */,
+				B8521D2527E3B8E000A6BBDC /* Views */,
+			);
+			path = Galaxy;
+			sourceTree = "<group>";
+		};
+		B837008627F0A4B2004689BB /* Movement */ = {
+			isa = PBXGroup;
+			children = (
+				B8A9A34626B2D2360099E8CD /* MovementVC.swift */,
+				B837008E27F0A7EB004689BB /* Views */,
+			);
+			path = Movement;
+			sourceTree = "<group>";
+		};
+		B837008727F0A4B6004689BB /* Fleet */ = {
+			isa = PBXGroup;
+			children = (
+				B8BED01C27905C6C00AE2ED8 /* FleetVC.swift */,
+				B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */,
+				B837008D27F0A7BE004689BB /* Views */,
+			);
+			path = Fleet;
+			sourceTree = "<group>";
+		};
+		B837008A27F0A640004689BB /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				B84400C326519884001CE771 /* Account.swift */,
+				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
+				B8B7BC252650579100988758 /* Servers.swift */,
+				B814BA6726AB1B0200FF346A /* MyServer.swift */,
+				B872E4B027D425A6009E4CF1 /* LoginData.swift */,
+				B8B7BC2D2650AD5700988758 /* LoginResponse.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		B837008B27F0A654004689BB /* ServerList */ = {
+			isa = PBXGroup;
+			children = (
+				B8BED03A279453C800AE2ED8 /* ServerData.swift */,
+			);
+			path = ServerList;
+			sourceTree = "<group>";
+		};
+		B837008C27F0A77E004689BB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B883A01726AF047B0080AFE5 /* ServerCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B837008D27F0A7BE004689BB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B897493C27AA86AC00203FC9 /* GenericTableView.swift */,
+				B897493E27AADCCC00203FC9 /* FleetPageButtonsView.swift */,
+				B8BED02427908F0400AE2ED8 /* SendFleetCell.swift */,
+				B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */,
+				B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */,
+				B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */,
+				B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */,
+				B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */,
+				B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */,
+				B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */,
+				B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */,
+				B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */,
+				B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */,
+				B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B837008E27F0A7EB004689BB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B8879462270A6E3B00CDDF16 /* FleetCell.swift */,
+				B8879463270A6E3B00CDDF16 /* FleetCell.xib */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B846CD6027946FB100DEFDE2 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
 				B846CD582794643900DEFDE2 /* OGSupplies.swift */,
@@ -360,23 +510,10 @@
 				B8BED03627944B4D00AE2ED8 /* OGCelestials.swift */,
 				B846CD7127958C9E00DEFDE2 /* OGSupport.swift */,
 			);
-			path = Parsers;
+			path = Providers;
 			sourceTree = "<group>";
 		};
-		B8521D2227E3A68A00A6BBDC /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				B8B7BC0F26504F8A00988758 /* LoginVC.swift */,
-				B814BA6526AB0F1B00FF346A /* ServerListVC.swift */,
-				B85D76E227A56824004D838E /* BuildingVC.swift */,
-				B873317426542CB400524FD8 /* OverviewVC.swift */,
-				B869F06727E2441E009AE6BE /* GalaxyVC.swift */,
-				B837007627F08098004689BB /* MenuVC.swift */,
-			);
-			path = "View Controllers";
-			sourceTree = "<group>";
-		};
-		B8521D2327E3B7A400A6BBDC /* Menu Views */ = {
+		B8521D2327E3B7A400A6BBDC /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B8A2D5CB27A6EBBA00ABA399 /* PlanetControlView.swift */,
@@ -384,25 +521,30 @@
 				B83B64072658672500A75A00 /* ResourcesTopBarView.swift */,
 				B83B640526585FE500A75A00 /* ResourcesTopBarView.xib */,
 				B8D6880B27A95E4D0013E209 /* MenuTableView.swift */,
+				B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */,
 			);
-			path = "Menu Views";
+			path = Views;
 			sourceTree = "<group>";
 		};
-		B8521D2427E3B8D600A6BBDC /* Overview Views */ = {
+		B8521D2427E3B8D600A6BBDC /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B8D6881727A9D6840013E209 /* OverviewView.swift */,
 				B8D6881527A9A47C0013E209 /* OverviewInfoView.swift */,
+				B8FA6DE02708B90300924D3D /* OverviewCell.swift */,
+				B8FA6DE12708B90300924D3D /* OverviewCell.xib */,
 			);
-			path = "Overview Views";
+			path = Views;
 			sourceTree = "<group>";
 		};
-		B8521D2527E3B8E000A6BBDC /* Galaxy Views */ = {
+		B8521D2527E3B8E000A6BBDC /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				B869F06527E24302009AE6BE /* GalaxyView.swift */,
+				B8F144E426B8872200B2C31B /* GalaxyCell.swift */,
+				B8F144E526B8872200B2C31B /* GalaxyCell.xib */,
 			);
-			path = "Galaxy Views";
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B8521D2827E480E900A6BBDC /* Overview */ = {
@@ -413,87 +555,20 @@
 			path = Overview;
 			sourceTree = "<group>";
 		};
-		B8627D4C27C66A6800BBBAE2 /* Menu Cells */ = {
+		B88B3F3827D40CD900B5BFD5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */,
-			);
-			path = "Menu Cells";
-			sourceTree = "<group>";
-		};
-		B869F06427E242D9009AE6BE /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				B8521D2327E3B7A400A6BBDC /* Menu Views */,
-				B8521D2427E3B8D600A6BBDC /* Overview Views */,
-				B81A83FC27EDD44D009AC12C /* Building Views */,
-				B8521D2527E3B8E000A6BBDC /* Galaxy Views */,
-				B82D8BA627E5131D001B5E34 /* Custom Cells */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		B872E4AF27D424BD009E4CF1 /* Authorization */ = {
-			isa = PBXGroup;
-			children = (
-				B84400C326519884001CE771 /* Account.swift */,
-				B85AF0CD26A5A81D0087C5A7 /* Server.swift */,
-				B8B7BC252650579100988758 /* Servers.swift */,
-				B872E4B027D425A6009E4CF1 /* LoginData.swift */,
-				B8B7BC2D2650AD5700988758 /* LoginResponse.swift */,
-				B814BA6726AB1B0200FF346A /* MyServer.swift */,
-				B8BED03A279453C800AE2ED8 /* ServerData.swift */,
-			);
-			path = Authorization;
-			sourceTree = "<group>";
-		};
-		B88B3F3627D40CC100B5BFD5 /* Views(MVP) */ = {
-			isa = PBXGroup;
-			children = (
-				B8521D2227E3A68A00A6BBDC /* View Controllers */,
-				B869F06427E242D9009AE6BE /* Views */,
-			);
-			path = "Views(MVP)";
-			sourceTree = "<group>";
-		};
-		B88B3F3727D40CD000B5BFD5 /* Presenters(MVP) */ = {
-			isa = PBXGroup;
-			children = (
-				B88B3F3A27D4105D00B5BFD5 /* LoginPresenter.swift */,
-				B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */,
-				B837007C27F0883E004689BB /* MenuPresenter.swift */,
-				B8521D2627E3BA4D00A6BBDC /* OverviewPresenter.swift */,
-				B81A83FA27EDD2AC009AC12C /* BuildingPresenter.swift */,
-				B8833FC227E26CB600549E9D /* GalaxyPresenter.swift */,
-			);
-			path = "Presenters(MVP)";
-			sourceTree = "<group>";
-		};
-		B88B3F3827D40CD900B5BFD5 /* Models(MVP) */ = {
-			isa = PBXGroup;
-			children = (
-				B872E4AF27D424BD009E4CF1 /* Authorization */,
+				B837008A27F0A640004689BB /* Login */,
+				B837008B27F0A654004689BB /* ServerList */,
 				B82D8BA727E513C9001B5E34 /* Player */,
 				B82D8BA827E51CAA001B5E34 /* Resources */,
 				B8521D2827E480E900A6BBDC /* Overview */,
 				B82D8BAA27E51D05001B5E34 /* Buildings */,
 				B82D8BAB27E51D10001B5E34 /* Fleet */,
 				B82D8BA927E51CCB001B5E34 /* Galaxy */,
+				B8FF0451269DD023007743B8 /* Cells */,
 			);
-			path = "Models(MVP)";
-			sourceTree = "<group>";
-		};
-		B88B3F3927D4102000B5BFD5 /* Providers(MVP) */ = {
-			isa = PBXGroup;
-			children = (
-				B8BED02C2794284700AE2ED8 /* LoginProvider.swift */,
-				B8BED02E27942CA600AE2ED8 /* ServerListProvider.swift */,
-				B8BED0302794335100AE2ED8 /* ConfigurePlayerProvider.swift */,
-				B8BED0382794538F00AE2ED8 /* ResourcesProvider.swift */,
-				B846CD6F27958AA200DEFDE2 /* OverviewProvider.swift */,
-				B846CD6D27948A7A00DEFDE2 /* GalaxyProvider.swift */,
-			);
-			path = "Providers(MVP)";
+			path = Models;
 			sourceTree = "<group>";
 		};
 		B8B7BBFF26504F8A00988758 = {
@@ -517,48 +592,15 @@
 		B8B7BC0A26504F8A00988758 /* OGame */ = {
 			isa = PBXGroup;
 			children = (
-				B88B3F3927D4102000B5BFD5 /* Providers(MVP) */,
-				B88B3F3827D40CD900B5BFD5 /* Models(MVP) */,
-				B88B3F3627D40CC100B5BFD5 /* Views(MVP) */,
-				B88B3F3727D40CD000B5BFD5 /* Presenters(MVP) */,
-				B8B7BC222650576000988758 /* Views */,
-				B8B7BC232650576700988758 /* Controllers */,
-				B8B7BC212650575B00988758 /* Models */,
+				B837007E27F0A47C004689BB /* Modules */,
+				B88B3F3827D40CD900B5BFD5 /* Models */,
+				B846CD6027946FB100DEFDE2 /* Providers */,
 				B8B7BC242650577B00988758 /* Utilities */,
 				B8B7CE90270A213300C8EFAE /* Extensions */,
 				B8B7CE91270A217000C8EFAE /* Support */,
 				B8B7BC1926504F8F00988758 /* Info.plist */,
 			);
 			path = OGame;
-			sourceTree = "<group>";
-		};
-		B8B7BC212650575B00988758 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				B846CD6027946FB100DEFDE2 /* Parsers */,
-				B8FF0451269DD023007743B8 /* Cells */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		B8B7BC222650576000988758 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				B8B7BC1126504F8A00988758 /* Main.storyboard */,
-				B8E5D990265A5457004CF69B /* Custom Views */,
-				B8E5D98F265A5448004CF69B /* Custom Cells */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		B8B7BC232650576700988758 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				B8BED01C27905C6C00AE2ED8 /* FleetVC.swift */,
-				B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */,
-				B8A9A34626B2D2360099E8CD /* MovementVC.swift */,
-			);
-			path = Controllers;
 			sourceTree = "<group>";
 		};
 		B8B7BC242650577B00988758 /* Utilities */ = {
@@ -591,88 +633,6 @@
 				B8B7BC1426504F8F00988758 /* Assets.xcassets */,
 			);
 			path = Support;
-			sourceTree = "<group>";
-		};
-		B8C8268927A1A034005BE032 /* Auth Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B883A01726AF047B0080AFE5 /* ServerCell.swift */,
-			);
-			path = "Auth Cells";
-			sourceTree = "<group>";
-		};
-		B8C8268A27A1A042005BE032 /* Overview Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B8FA6DE02708B90300924D3D /* OverviewCell.swift */,
-				B8FA6DE12708B90300924D3D /* OverviewCell.xib */,
-			);
-			path = "Overview Cells";
-			sourceTree = "<group>";
-		};
-		B8C8268C27A1A055005BE032 /* Movement Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B8879462270A6E3B00CDDF16 /* FleetCell.swift */,
-				B8879463270A6E3B00CDDF16 /* FleetCell.xib */,
-			);
-			path = "Movement Cells";
-			sourceTree = "<group>";
-		};
-		B8C8268D27A1A06C005BE032 /* Send Fleet Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B8BED02427908F0400AE2ED8 /* SendFleetCell.swift */,
-				B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */,
-				B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */,
-				B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */,
-				B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */,
-				B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */,
-				B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */,
-				B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */,
-				B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */,
-				B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */,
-				B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */,
-				B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */,
-			);
-			path = "Send Fleet Cells";
-			sourceTree = "<group>";
-		};
-		B8C8268E27A1A09F005BE032 /* Galaxy Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B8F144E426B8872200B2C31B /* GalaxyCell.swift */,
-				B8F144E526B8872200B2C31B /* GalaxyCell.xib */,
-			);
-			path = "Galaxy Cells";
-			sourceTree = "<group>";
-		};
-		B8C8268F27A1A0B3005BE032 /* Building Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B867614D265945A30096BE39 /* BuildingCell.swift */,
-				B867614E265945A30096BE39 /* BuildingCell.xib */,
-			);
-			path = "Building Cells";
-			sourceTree = "<group>";
-		};
-		B8E5D98F265A5448004CF69B /* Custom Cells */ = {
-			isa = PBXGroup;
-			children = (
-				B8C8268F27A1A0B3005BE032 /* Building Cells */,
-				B8C8268D27A1A06C005BE032 /* Send Fleet Cells */,
-				B8C8268C27A1A055005BE032 /* Movement Cells */,
-			);
-			path = "Custom Cells";
-			sourceTree = "<group>";
-		};
-		B8E5D990265A5457004CF69B /* Custom Views */ = {
-			isa = PBXGroup;
-			children = (
-				B897493C27AA86AC00203FC9 /* GenericTableView.swift */,
-				B897493E27AADCCC00203FC9 /* FleetPageButtonsView.swift */,
-			);
-			path = "Custom Views";
 			sourceTree = "<group>";
 		};
 		B8FF0451269DD023007743B8 /* Cells */ = {
