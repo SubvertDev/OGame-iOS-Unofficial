@@ -9,22 +9,35 @@ import UIKit
 
 final class MenuCell: UITableViewCell {
     
-    let label = UILabel()
-
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        configureLabel()
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        self.accessoryType = .disclosureIndicator
-        configureLabel()
     }
     
-    func configureLabel() {
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        accessoryType = .disclosureIndicator
+        addSubviews()
+        makeConstraints()
+    }
+    
+    // MARK: Public
+    func set(with title: String) {
+        label.text = title
+    }
+    
+    // MARK: Private
+    private func addSubviews() {
         addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
@@ -32,6 +45,5 @@ final class MenuCell: UITableViewCell {
             label.trailingAnchor.constraint(equalTo: trailingAnchor),
             label.heightAnchor.constraint(equalToConstant: 44)
         ])
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
     }
 }

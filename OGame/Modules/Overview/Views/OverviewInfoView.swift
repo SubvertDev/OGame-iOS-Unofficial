@@ -7,55 +7,68 @@
 
 import UIKit
 
+protocol IOverviewInfoView {
+    func refreshCalled()
+}
+
 final class OverviewInfoView: UIView {
 
-    let tableView = UITableView()
-    let refreshControl = UIRefreshControl()
-    let activityIndicator = UIActivityIndicatorView()
+    let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.rowHeight = 88
+        tableView.register(UINib(nibName: K.CellReuseID.overviewCell, bundle: nil),
+                           forCellReuseIdentifier: K.CellReuseID.overviewCell)
+        return tableView
+    }()
+    
+    let refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)
+        return refresh
+    }()
+    
+    let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.style = .large
+        return indicator
+    }()
+    
+    var delegate: IOverviewInfoView?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureSubviews()
+        addSubviews()
+        makeConstraints()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configureSubviews()
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    func configureSubviews() {
-        configureTableView()
-        configureActivityIndicator()
-    }
-    
-    func configureTableView() {
+
+    // MARK: Private
+    private func addSubviews() {
         addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.refreshControl = refreshControl
+        addSubview(activityIndicator)
+    }
+    
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-
-        tableView.alpha = 0.5
-        tableView.rowHeight = 88
-        tableView.removeExtraCellLines()
-        tableView.register(UINib(nibName: "OverviewCell", bundle: nil), forCellReuseIdentifier: "OverviewCell")
-
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(nil, action: #selector(OverviewVC.refreshControl), for: .valueChanged)
-    }
-
-    func configureActivityIndicator() {
-        addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.style = .large
-        NSLayoutConstraint.activate([
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
+    }
+    
+    @objc private func refreshCalled() {
+        delegate?.refreshCalled()
     }
 }

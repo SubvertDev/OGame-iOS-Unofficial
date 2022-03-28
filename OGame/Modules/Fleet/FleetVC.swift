@@ -9,7 +9,7 @@ import UIKit
 
 class FleetVC: UIViewController {
     
-    let resourcesTopBarView = ResourcesTopBarView()
+    let resourcesTopBarView = ResourcesBarView()
     let fleetPageButtonsView = FleetPageButtonsView()
     let genericTableView = GenericTableView()
     

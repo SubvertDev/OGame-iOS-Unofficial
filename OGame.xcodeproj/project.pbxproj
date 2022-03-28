@@ -13,9 +13,11 @@
 		B81A83FE27EDD609009AC12C /* BuildingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81A83FD27EDD609009AC12C /* BuildingView.swift */; };
 		B837007727F08098004689BB /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837007627F08098004689BB /* MenuVC.swift */; };
 		B837007D27F0883E004689BB /* MenuPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837007C27F0883E004689BB /* MenuPresenter.swift */; };
+		B839FBA427F1B13B00386BEA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B839FBA327F1B13B00386BEA /* Constants.swift */; };
+		B839FBA627F1B5CA00386BEA /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B839FBA527F1B5CA00386BEA /* MenuView.swift */; };
 		B83B64042658455C00A75A00 /* Supplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83B64032658455C00A75A00 /* Supplies.swift */; };
 		B83B640626585FE500A75A00 /* ResourcesTopBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B83B640526585FE500A75A00 /* ResourcesTopBarView.xib */; };
-		B83B64082658672500A75A00 /* ResourcesTopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83B64072658672500A75A00 /* ResourcesTopBarView.swift */; };
+		B83B64082658672500A75A00 /* ResourcesBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B83B64072658672500A75A00 /* ResourcesBarView.swift */; };
 		B84400C426519884001CE771 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84400C326519884001CE771 /* Account.swift */; };
 		B846CD592794643900DEFDE2 /* OGSupplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD582794643900DEFDE2 /* OGSupplies.swift */; };
 		B846CD5B2794668B00DEFDE2 /* OGBuildTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846CD5A2794668B00DEFDE2 /* OGBuildTime.swift */; };
@@ -130,9 +132,11 @@
 		B81A83FD27EDD609009AC12C /* BuildingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingView.swift; sourceTree = "<group>"; };
 		B837007627F08098004689BB /* MenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
 		B837007C27F0883E004689BB /* MenuPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPresenter.swift; sourceTree = "<group>"; };
+		B839FBA327F1B13B00386BEA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		B839FBA527F1B5CA00386BEA /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		B83B64032658455C00A75A00 /* Supplies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supplies.swift; sourceTree = "<group>"; };
 		B83B640526585FE500A75A00 /* ResourcesTopBarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ResourcesTopBarView.xib; sourceTree = "<group>"; };
-		B83B64072658672500A75A00 /* ResourcesTopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesTopBarView.swift; sourceTree = "<group>"; };
+		B83B64072658672500A75A00 /* ResourcesBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesBarView.swift; sourceTree = "<group>"; };
 		B84400C326519884001CE771 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		B846CD582794643900DEFDE2 /* OGSupplies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGSupplies.swift; sourceTree = "<group>"; };
 		B846CD5A2794668B00DEFDE2 /* OGBuildTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGBuildTime.swift; sourceTree = "<group>"; };
@@ -516,9 +520,10 @@
 		B8521D2327E3B7A400A6BBDC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B839FBA527F1B5CA00386BEA /* MenuView.swift */,
 				B8A2D5CB27A6EBBA00ABA399 /* PlanetControlView.swift */,
 				B8A2D5CF27A6EC4500ABA399 /* PlanetControlView.xib */,
-				B83B64072658672500A75A00 /* ResourcesTopBarView.swift */,
+				B83B64072658672500A75A00 /* ResourcesBarView.swift */,
 				B83B640526585FE500A75A00 /* ResourcesTopBarView.xib */,
 				B8D6880B27A95E4D0013E209 /* MenuTableView.swift */,
 				B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */,
@@ -606,6 +611,7 @@
 		B8B7BC242650577B00988758 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				B839FBA327F1B13B00386BEA /* Constants.swift */,
 				B85D7F88265FDDCC00186021 /* Images.swift */,
 				B8FF0458269DDD35007743B8 /* Typealiases.swift */,
 				B872AAD52708E62300BAC4C9 /* OGError.swift */,
@@ -793,7 +799,7 @@
 				B8BED03B279453C800AE2ED8 /* ServerData.swift in Sources */,
 				B8FF0453269DD049007743B8 /* FacilityCell.swift in Sources */,
 				B8BED01D27905C6C00AE2ED8 /* FleetVC.swift in Sources */,
-				B83B64082658672500A75A00 /* ResourcesTopBarView.swift in Sources */,
+				B83B64082658672500A75A00 /* ResourcesBarView.swift in Sources */,
 				B846CD6A27947D8100DEFDE2 /* OGDefence.swift in Sources */,
 				B867077E26F6857D00F7372E /* Fleets.swift in Sources */,
 				B8607870279AE2E800F22AD1 /* SetCoordinatesCell.swift in Sources */,
@@ -815,6 +821,7 @@
 				B81A83FE27EDD609009AC12C /* BuildingView.swift in Sources */,
 				B872AAD42708CB6B00BAC4C9 /* String+Ext.swift in Sources */,
 				B883A01826AF047B0080AFE5 /* ServerCell.swift in Sources */,
+				B839FBA627F1B5CA00386BEA /* MenuView.swift in Sources */,
 				B8F30D1C27CA557200A3E582 /* Moon.swift in Sources */,
 				B846CD6C2794870800DEFDE2 /* OGCheckFleet.swift in Sources */,
 				B8BED029279176DF00AE2ED8 /* SendFleetVC.swift in Sources */,
@@ -870,6 +877,7 @@
 				B872E4B127D425A6009E4CF1 /* LoginData.swift in Sources */,
 				B846CD662794746400DEFDE2 /* OGResearch.swift in Sources */,
 				B8F30D1A27CA423100A3E582 /* MoonFacilities.swift in Sources */,
+				B839FBA427F1B13B00386BEA /* Constants.swift in Sources */,
 				B84400C426519884001CE771 /* Account.swift in Sources */,
 				B8B29730265703FE00C59CD4 /* Resources.swift in Sources */,
 			);

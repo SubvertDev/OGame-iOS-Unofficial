@@ -123,6 +123,4 @@ final class MenuPresenter: IMenuPresenter {
             }
         }
     }
-    
-    // MARK: Private
 }

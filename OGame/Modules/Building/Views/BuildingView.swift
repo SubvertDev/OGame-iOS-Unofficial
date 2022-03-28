@@ -9,8 +9,8 @@ import UIKit
 
 final class BuildingView: UIView {
     
-    private let resourcesBar: ResourcesTopBarView = {
-        let resourcesBar = ResourcesTopBarView()
+    private let resourcesBar: ResourcesBarView = {
+        let resourcesBar = ResourcesBarView()
         resourcesBar.translatesAutoresizingMaskIntoConstraints = false
         return resourcesBar
     }()

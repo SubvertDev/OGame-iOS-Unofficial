@@ -72,15 +72,15 @@ extension BuildingVC: BuildingViewDelegate {
 }
 
 // MARK: - Resources Top Bar View Delegate
-extension BuildingVC: IResourcesTopBarView {
-    func refreshFinished() {
-        myView.stopRefreshing()
-    }
-    
-    func didGetError(error: OGError) {
-        logoutAndShowError(error)
-    }
-}
+//extension BuildingVC: IResourcesTopBarView {
+//    func refreshFinished() {
+//        myView.stopRefreshing()
+//    }
+//    
+//    func didGetError(error: OGError) {
+//        logoutAndShowError(error)
+//    }
+//}
 
 // MARK: - DataSource & Delegate
 extension BuildingVC: UITableViewDataSource, UITableViewDelegate {

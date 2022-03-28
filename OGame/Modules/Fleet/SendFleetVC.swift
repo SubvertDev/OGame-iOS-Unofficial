@@ -11,7 +11,7 @@ import UIKit
 
 class SendFleetVC: UIViewController {
     
-    let resourcesTopBarView = ResourcesTopBarView()
+    let resourcesTopBarView = ResourcesBarView()
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView()
 

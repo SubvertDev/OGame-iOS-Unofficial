@@ -7,35 +7,40 @@
 
 import UIKit
 
-protocol OverviewViewDelegate: AnyObject {
-    func showLoading(_ state: Bool)
+protocol IOverviewView: AnyObject {
+    func showResourcesLoading(_ state: Bool)
+    func updateResourcesBar(with: Resources)
+    func showInfoLoading(_ state: Bool)
     func updateTableView(with: [Overview?])
     func showAlert(error: Error)
 }
 
 final class OverviewVC: UIViewController {
 
-    // MARK: - Properties
-    private var overviewPresenter: OverviewPresenterDelegate!
+    // MARK: Properties
     private var player: PlayerData
-    private var resources: Resources?
+    private var resources: Resources
     private var overviewInfo: [Overview?]?
+    private var presenter: IOverviewPresenter!
     
     var myView: OverviewView { return view as! OverviewView }
     
+    // MARK: View Lifecycle
     override func loadView() {
         view = OverviewView()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        overviewPresenter = OverviewPresenter(view: self)
-        configureViews()
+        title = K.Overview.title
+        configureView()
+        presenter = OverviewPresenter(view: self)
+        presenter.getOverviewInfo(for: player)
     }
 
-    init(player: PlayerData) {
+    init(player: PlayerData, resources: Resources) {
         self.player = player
+        self.resources = resources
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,42 +48,41 @@ final class OverviewVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Configure Views
-    func configureViews() {
-        myView.resourcesTopBarView.configureWith(resources: resources, player: player)
-        myView.overviewInfoView.tableView.delegate = self
-        myView.overviewInfoView.tableView.dataSource = self
-        overviewPresenter.getOverviewInfo(for: player)
-    }
-    
-    @objc func refreshControl() {
-        myView.resourcesTopBarView.refresh(player)
-        overviewPresenter.getOverviewInfo(for: player)
+    // MARK: Private
+    private func configureView() {
+        myView.updateResourcesBar(with: resources)
+        myView.setDelegates(self)
     }
 }
 
 // MARK: - Overview View Delegate
-extension OverviewVC: OverviewViewDelegate {
-    func showLoading(_ state: Bool) {
-        if state {
-            myView.overviewInfoView.tableView.alpha = 0.5
-            myView.overviewInfoView.tableView.isUserInteractionEnabled = false
-            myView.overviewInfoView.activityIndicator.startAnimating()
-        } else {
-            myView.overviewInfoView.tableView.alpha = 1
-            myView.overviewInfoView.tableView.isUserInteractionEnabled = true
-            myView.overviewInfoView.activityIndicator.stopAnimating()
-            myView.overviewInfoView.refreshControl.endRefreshing()
-        }
+extension OverviewVC: IOverviewView {
+    func showResourcesLoading(_ state: Bool) {
+        myView.showResourcesLoading(state)
+    }
+    
+    func updateResourcesBar(with resources: Resources) {
+        myView.updateResourcesBar(with: resources)
+    }
+    
+    func showInfoLoading(_ state: Bool) {
+        myView.showInfoLoading(state)
     }
     
     func updateTableView(with overview: [Overview?]) {
         overviewInfo = overview
-        myView.overviewInfoView.tableView.reloadData()
+        myView.updateTableView()
     }
     
     func showAlert(error: Error) {
         logoutAndShowError(error as! OGError)
+    }
+}
+
+extension OverviewVC: IOverviewInfoView {
+    func refreshCalled() {
+        presenter.loadResources(for: player)
+        presenter.getOverviewInfo(for: player)
     }
 }
 
@@ -95,18 +99,18 @@ extension OverviewVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Resources & Facilities"
+            return K.Overview.Section.resourcesAndFacilities
         case 1:
-            return "Research"
+            return K.Overview.Section.researches
         case 2:
-            return "Shipyard & Defences"
+            return K.Overview.Section.shipyardAndDefences
         default:
-            return "Section error"
+            return K.Overview.Section.error
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "OverviewCell", for: indexPath) as! OverviewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.overviewCell, for: indexPath) as! OverviewCell
 
         switch indexPath.section {
         case 0:

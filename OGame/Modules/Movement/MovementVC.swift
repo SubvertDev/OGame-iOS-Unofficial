@@ -9,7 +9,7 @@ import UIKit
 
 class MovementVC: UIViewController {
     
-    let resourcesTopBarView = ResourcesTopBarView()
+    let resourcesTopBarView = ResourcesBarView()
     let genericTableView = GenericTableView()
     
     var player: PlayerData

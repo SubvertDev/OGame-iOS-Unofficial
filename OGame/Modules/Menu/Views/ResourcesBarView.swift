@@ -1,5 +1,5 @@
 //
-//  ResourcesTopBarView.swift
+//  ResourcesBarView.swift
 //  OGame
 //
 //  Created by Subvert on 22.05.2021.
@@ -7,12 +7,7 @@
 
 import UIKit
 
-protocol IResourcesTopBarView {
-    func refreshFinished()
-    func didGetError(error: OGError)
-}
-
-@IBDesignable final class ResourcesTopBarView: UIView {
+final class ResourcesBarView: UIView {
     
     // MARK: - Properties
     @IBOutlet private weak var metalLabel: UILabel!
@@ -25,29 +20,44 @@ protocol IResourcesTopBarView {
     private var crystal: Double?
     private var deuterium: Double?
     private var prodPerSecond: [Double]?
-    
-    var delegate: IResourcesTopBarView?
-    
+    var currentResources: Resources {
+        var resources = resources
+        resources!.metal = Int(metal!)
+        resources!.crystal = Int(crystal!)
+        resources!.deuterium = Int(deuterium!)
+        return resources!
+    }
+        
     var player: PlayerData?
     var resources: Resources?
     
     private var isFirstLoad: Bool = true
     private var timer: Timer?
     
-    var refreshFinished: (() -> Void)?
-    var didGetError: ((OGError) -> Void)?
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        print("coder init resources")
-        configureView()
-    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
     }
-        
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Public
+    func updateNew(with resources: Resources) {
+        self.resources = resources
+        startUpdatingView(with: resources)
+    }
+    
+    func getCurrentResources() -> Resources {
+        var resources = resources
+        resources!.metal = Int(metal!)
+        resources!.crystal = Int(crystal!)
+        resources!.deuterium = Int(deuterium!)
+        return resources!
+    }
+    
+    // MARK: Private
     private func configureView() {
         guard let view = self.loadViewFrobNib(nibName: "ResourcesTopBarView") else { return }
         view.frame = self.bounds
@@ -55,14 +65,9 @@ protocol IResourcesTopBarView {
         view.bringSubviewToFront(activityIndicator)
     }
     
-    func updateNew(with resources: Resources) {
-        self.resources = resources
-        startUpdatingViewWith(resources)
-    }
-    
-    
     // MARK: - LEGACY, DELETE AND USE -> configureNew() (rename it after delete)
     // must be used in presenter
+    @available(*, deprecated, message: "deprecated, use updateNew + presenter instead")
     func configureWith(resources: Resources?, player: PlayerData?) {
         guard let player = player else { return }
         self.resources = resources
@@ -72,22 +77,23 @@ protocol IResourcesTopBarView {
     
     // MARK: - LEGACY, DELETE AFTER DELETING configureWith()
     // must be used in presenter
+    @available(*, deprecated, message: "deprecated, use presenter instead")
     func refresh(_ player: PlayerData? = nil) {
         guard let player = player else { return }
         
         Task {
             do {
                 resources = try await ResourcesProvider().getResourcesWith(playerData: player)
-                startUpdatingViewWith(resources!)
-                refreshFinished?()
+                startUpdatingView(with: resources!)
+                //delegate?.refreshFinished()
             } catch {
-                didGetError?(error as! OGError)
+                //delegate?.didGetError(error: error as! OGError)
             }
         }
     }
     
-    // MARK: - Start Updating
-    func startUpdatingViewWith(_ resources: Resources) {
+    // MARK: Private
+    private func startUpdatingView(with resources: Resources) {
         set(metal: resources.metal,
             crystal: resources.crystal,
             deuterium: resources.deuterium,
@@ -110,8 +116,7 @@ protocol IResourcesTopBarView {
         RunLoop.main.add(timer!, forMode: .common)
     }
     
-    // MARK: - Set
-    func set(metal: Int, crystal: Int, deuterium: Int, energy: Int) {
+    private func set(metal: Int, crystal: Int, deuterium: Int, energy: Int) {
         self.metalLabel.text = String(metal)
         self.crystalLabel.text = String(crystal)
         self.deuteriumLabel.text = String(deuterium)
@@ -122,8 +127,7 @@ protocol IResourcesTopBarView {
         self.deuterium = Double(deuterium)
     }
     
-    // MARK: - Update
-    func update(metal: Double, crystal: Double, deuterium: Double, storage: Resources) {
+    private func update(metal: Double, crystal: Double, deuterium: Double, storage: Resources) {
         if Int(self.metal!) < storage.storage[0] {
             self.metal! += metal
         }
