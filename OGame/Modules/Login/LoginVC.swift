@@ -8,10 +8,10 @@
 import UIKit
 import Alamofire
 
-protocol LoginViewDelegate: AnyObject {
+protocol ILoginView: AnyObject {
     func showLoading(_ state: Bool)
     func performLogin(servers: [MyServer])
-    func showAlert(error: Error)
+    func showAlert(error: OGError)
 }
 
 final class LoginVC: UIViewController {
@@ -30,12 +30,13 @@ final class LoginVC: UIViewController {
     private var username = ""
     private var password = ""
     
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = LoginPresenter(view: self)
         configureFormView()
         configureGestureRecognizer()
         configureInputViews()
+        presenter = LoginPresenter(view: self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,28 +54,7 @@ final class LoginVC: UIViewController {
         formView.layer.borderColor = UIColor.label.cgColor
     }
     
-    // MARK: - Configure UI
-    func configureFormView() {
-        formView.layer.borderWidth = 2
-        formView.layer.borderColor = UIColor.label.cgColor
-        formView.layer.cornerRadius = 10
-        formView.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.65)
-    }
-    
-    func configureGestureRecognizer() {
-        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
-        view.addGestureRecognizer(tap)
-    }
-    
-    func configureInputViews() {
-        if defaults.object(forKey: "username") != nil {
-            emailTextField.text = defaults.string(forKey: "username")
-            passwordTextField.text = defaults.string(forKey: "password")
-            saveSwitch.setOn(true, animated: false)
-        }
-    }
-    
-    // MARK: - IBActions
+    // MARK: - Actions
     @IBAction func loginButtonTouchDown(_ sender: UIButton) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
@@ -91,15 +71,36 @@ final class LoginVC: UIViewController {
     
     // MARK: - Prepare For Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowServerListVC" {
+        if segue.identifier == K.Segue.showServerListVC {
             let serverListVC = segue.destination as! ServerListVC
             serverListVC.servers = servers
+        }
+    }
+    
+    // MARK: - Private
+    private func configureFormView() {
+        formView.layer.borderWidth = 2
+        formView.layer.borderColor = UIColor.label.cgColor
+        formView.layer.cornerRadius = 10
+        formView.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.65)
+    }
+    
+    private func configureGestureRecognizer() {
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tap)
+    }
+    
+    private func configureInputViews() {
+        if defaults.object(forKey: K.Defaults.username) != nil {
+            emailTextField.text = defaults.string(forKey: K.Defaults.username)
+            passwordTextField.text = defaults.string(forKey: K.Defaults.password)
+            saveSwitch.setOn(true, animated: false)
         }
     }
 }
 
 // MARK: - LoginViewDelegate
-extension LoginVC: LoginViewDelegate {
+extension LoginVC: ILoginView {
     func showLoading(_ state: Bool) {
         if state {
             loginButton.isHidden = true
@@ -113,15 +114,13 @@ extension LoginVC: LoginViewDelegate {
     func performLogin(servers: [MyServer]) {
         self.servers = servers
         if saveSwitch.isOn {
-            defaults.set(username, forKey: "username")
-            defaults.set(password, forKey: "password")
+            defaults.set(username, forKey: K.Defaults.username)
+            defaults.set(password, forKey: K.Defaults.password)
         }
-        performSegue(withIdentifier: "ShowServerListVC", sender: self)
+        performSegue(withIdentifier: K.Segue.showServerListVC, sender: self)
     }
     
-    func showAlert(error: Error) {
-        let alert = UIAlertController(title: (error as! OGError).message, message: (error as! OGError).detailed, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+    func showAlert(error: OGError) {
+        logoutAndShowError(error)
     }
 }

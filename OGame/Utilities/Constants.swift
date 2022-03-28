@@ -33,4 +33,18 @@ struct K {
         static let menuCell = "MenuCell"
         static let overviewCell = "OverviewCell"
     }
+    
+    struct Segue {
+        static let showServerListVC = "ShowServerListVC"
+    }
+    
+    struct Defaults {
+        static let username = "username"
+        static let password = "password"
+    }
+    
+    struct Error {
+        static let errorTitle = "Error"
+        static let okTitle = "OK"
+    }
 }

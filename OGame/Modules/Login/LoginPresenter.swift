@@ -8,20 +8,20 @@
 import Foundation
 
 protocol LoginPresenterDelegate {
-    init(view: LoginViewDelegate)
+    init(view: ILoginView)
     func login(username: String, password: String)
 }
 
 final class LoginPresenter: LoginPresenterDelegate {
     
-    unowned let view: LoginViewDelegate
+    unowned let view: ILoginView
     private let loginProvider = LoginProvider()
     
-    required init(view: LoginViewDelegate) {
+    required init(view: ILoginView) {
         self.view = view
     }
     
-    // MARK: - Login
+    // MARK: - Public
     func login(username: String, password: String) {
         guard isInputValid(username, password) else { return }
         view.showLoading(true)
@@ -30,13 +30,13 @@ final class LoginPresenter: LoginPresenterDelegate {
                 let servers = try await loginProvider.loginIntoAccountWith(username: username, password: password)
                 await MainActor.run { view.performLogin(servers: servers) }
             } catch {
-                await MainActor.run { view.showAlert(error: error) }
+                await MainActor.run { view.showAlert(error: error as! OGError) }
             }
             await MainActor.run { view.showLoading(false) }
         }
     }
     
-    // MARK: - Is Input Valid
+    // MARK: - Private
     private func isInputValid(_ username: String, _ password: String) -> Bool {
         let emailPattern = #"^\S+@\S+\.\S+$"#
         let emailCheck = username
@@ -44,10 +44,10 @@ final class LoginPresenter: LoginPresenterDelegate {
             .range(of: emailPattern, options: .regularExpression)
         
         if emailCheck == nil {
-            view.showAlert(error: OGError(message: "Error", detailed: "Please enter valid email"))
+            view.showAlert(error: OGError(message: K.Error.errorTitle, detailed: "Please enter valid email"))
             return false
         } else if password.isEmpty {
-            view.showAlert(error: OGError(message: "Error", detailed: "Please enter valid password"))
+            view.showAlert(error: OGError(message: K.Error.errorTitle, detailed: "Please enter valid password"))
             return false
         }
         return true
