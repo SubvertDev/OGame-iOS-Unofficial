@@ -23,7 +23,7 @@ final class ServerListPresenter: ServerListPresenterDelegate {
         self.view = view
     }
     
-    // MARK: - Enter Server
+    // MARK: Public
     func enterServer(_ server: MyServer) {
         view.showLoading(true)
         Task {

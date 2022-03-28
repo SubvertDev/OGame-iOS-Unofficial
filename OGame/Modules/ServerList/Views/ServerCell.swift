@@ -20,4 +20,11 @@ final class ServerCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+    
+    // MARK: Public
+    func set(with server: MyServer) {
+        serverName.text = server.serverName
+        playerName.text = server.accountName
+        language.text = server.language.uppercased()
+    }
 }

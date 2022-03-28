@@ -1,5 +1,5 @@
 //
-//  OGResources.swift
+//  ResourcesProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.

@@ -20,24 +20,28 @@ final class ServerListVC: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     private var presenter: ServerListPresenter!
-    private var player: PlayerData?
-    private var resources: Resources?
     var servers: [MyServer]?
     
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-        presenter = ServerListPresenter(view: self)
         configureTableView()
+        presenter = ServerListPresenter(view: self)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         tableView.layer.borderColor = UIColor.label.cgColor
     }
+    
+    // MARK: - IBActions
+    @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
+        navigationController?.popToRootViewController(animated: true)
+    }
 
-    // MARK: - Configure UI
-    func configureTableView() {
+    // MARK: - Private
+    private func configureTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.removeExtraCellLines()
@@ -47,27 +51,20 @@ final class ServerListVC: UIViewController {
         tableView.layer.cornerRadius = 10
         tableView.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.75)
     }
-    
-    // MARK: - IBActions
-    @IBAction func logoutButtonPressed(_ sender: UIBarButtonItem) {
-        navigationController?.popToRootViewController(animated: true)
-    }
 }
 
-// MARK: - TableView Delegate & Data
+// MARK: - TableView Delegate & DataSource
 extension ServerListVC: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let servers = servers else { return 0 }
-        return servers.count
+        return servers?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let servers = servers else { return UITableViewCell() }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ServerCell", for: indexPath) as! ServerCell
-        cell.serverName.text = servers[indexPath.row].serverName
-        cell.playerName.text = servers[indexPath.row].accountName
-        cell.language.text = servers[indexPath.row].language.uppercased()
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.serverCell, for: indexPath) as! ServerCell
+        cell.set(with: servers[indexPath.row])
 
         return cell
     }
@@ -94,9 +91,6 @@ extension ServerListVC: ServerListViewDelegate {
     }
     
     func performLogin(player: PlayerData, resources: Resources) {
-        self.player = player
-        self.resources = resources
-        //performSegue(withIdentifier: "ShowMenuVC", sender: self)
         let vc = MenuVC(player: player, resources: resources)
         navigationController?.pushViewController(vc, animated: true)
     }

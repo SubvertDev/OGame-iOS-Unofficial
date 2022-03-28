@@ -108,12 +108,8 @@ final class ConfigurePlayerProvider {
         }
     }
     
-    // MARK: - SUPPORT FUNCTIONS
-    
-    
-    
     // MARK: - Get Rank
-    func getRank() -> Int {
+    private func getRank() -> Int {
         do {
             let idBar = try doc!.select("[id=bar]").get(0)
             let li = try idBar.select("li").get(1)
@@ -136,7 +132,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get Planet Names
-    func getPlanetNames() -> [String] {
+    private func getPlanetNames() -> [String] {
         do {
             var planetNames = [String]()
             let planets = try doc!.select("[class=planet-name]")
@@ -151,7 +147,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get Planet IDs
-    func getPlanetIDs() -> [Int] {
+    private func getPlanetIDs() -> [Int] {
         do {
             var ids = [Int]()
             let planets = try doc!.select("[class*=smallplanet]")
@@ -168,7 +164,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get Moon Names
-    func getMoonNames() -> [String] {
+    private func getMoonNames() -> [String] {
         do {
             var moonNames = [String]()
             let moons = try doc!.select("[class*=smallplanet")
@@ -189,7 +185,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get Moon IDs
-    func getMoonIDs() -> [Int] {
+    private func getMoonIDs() -> [Int] {
         do {
             var ids = [Int]()
             let moons = try doc!.select("[class*=smallplanet")
@@ -211,7 +207,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get Commander
-    func getCommander() -> Bool {
+    private func getCommander() -> Bool {
         // TODO: test on 3 days commander account
         if let commanders = try? doc!.select("[id=officers]").select("[class*=tooltipHTML  on]").select("[class*=commander]") {
             return !commanders.isEmpty() ? true : false
@@ -221,7 +217,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get All Planets Images
-    func getAllPlanetImages() async throws -> [UIImage] {
+    private func getAllPlanetImages() async throws -> [UIImage] {
         do {
             var images: [UIImage] = Array(repeating: UIImage(), count: planetIDs!.count)
             let planets = try doc!.select("[class*=smallplanet]")
@@ -247,7 +243,7 @@ final class ConfigurePlayerProvider {
     }
     
     // MARK: - Get All Moons Images
-    func getAllMoonsImages() async throws -> [UIImage?] {
+    private func getAllMoonsImages() async throws -> [UIImage?] {
         do {
             var images: [UIImage?] = Array(repeating: nil, count: planetIDs!.count)
             let moons = try doc!.select("[class*=smallplanet]")

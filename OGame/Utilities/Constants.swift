@@ -30,6 +30,7 @@ struct K {
     }
     
     struct CellReuseID {
+        static let serverCell = "ServerCell"
         static let menuCell = "MenuCell"
         static let overviewCell = "OverviewCell"
     }
