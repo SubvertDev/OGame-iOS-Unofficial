@@ -8,37 +8,62 @@
 import Foundation
 
 protocol IBuildingPresenter {
+    init(view: IBuildingView)
+    func loadResources(for: PlayerData)
     func loadBuildings(for: PlayerData, with: BuildingType)
 }
 
 final class BuildingPresenter: IBuildingPresenter {
     
-    unowned var view: BuildingViewDelegate
+    unowned private var view: IBuildingView
+    private let resourcesProvider = ResourcesProvider()
     var buildings: [Building] = []
     
-    init(view: BuildingViewDelegate) {
+    init(view: IBuildingView) {
         self.view = view
     }
     
     // MARK: Public
+    func loadResources(for player: PlayerData) {
+        view.showResourcesLoading(true)
+        Task {
+            do {
+                let resources = try await resourcesProvider.getResourcesWith(playerData: player)
+                await MainActor.run {
+                    view.updateResourcesBar(with: resources)
+                    view.showResourcesLoading(false)
+                }
+            } catch {
+                await MainActor.run {
+                    view.showResourcesLoading(false)
+                    view.showAlert(error: error as! OGError)
+                }
+            }
+        }
+    }
+    
     func loadBuildings(for player: PlayerData, with type: BuildingType) {
+        view.showBuildingsLoading(true)
         Task {
             do {
                 switch type {
-                case .supply:
+                case .supplies:
                     buildings = try await OGSupplies.getSuppliesWith(playerData: player)
-                case .facility:
+                case .facilities:
                     buildings = try await OGFacilities.getFacilitiesWith(playerData: player)
                 case .research:
                     buildings = try await OGResearch.getResearchesWith(playerData: player)
                 case .shipyard:
                     buildings = try await OGShipyard.getShipsWith(playerData: player)
-                case .defence:
+                case .defenses:
                     buildings = try await OGDefence.getDefencesWith(playerData: player)
                 }
-                await MainActor.run { view.showBuildings(buildings) }
+                await MainActor.run {
+                    view.updateBuildings(buildings)
+                    view.showBuildingsLoading(false)
+                }
             } catch {
-                await MainActor.run { view.showError(error as! OGError) }
+                await MainActor.run { view.showAlert(error: error as! OGError) }
             }
         }
     }

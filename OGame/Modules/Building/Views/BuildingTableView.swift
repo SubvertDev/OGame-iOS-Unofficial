@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol IBuildingTableView {
+    func refreshCalled()
+}
+
 final class BuildingTableView: UIView {
     
     let tableView: UITableView = {
@@ -20,16 +24,18 @@ final class BuildingTableView: UIView {
     
     let refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl()
-        refresh.addTarget(nil, action: #selector(BuildingVC.tableViewRefreshCalled), for: .valueChanged)
+        refresh.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)
         return refresh
     }()
     
-    private let activityIndicator: UIActivityIndicatorView = {
+    let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.style = .large
         return indicator
     }()
+    
+    var delegate: IBuildingTableView?
         
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,20 +45,6 @@ final class BuildingTableView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Public
-    func showLoading() {
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
-    }
-    
-    func stopLoading() {
-        tableView.alpha = 1
-        tableView.isUserInteractionEnabled = true
-        activityIndicator.stopAnimating()
-        refreshControl.endRefreshing()
     }
     
     // MARK: Private
@@ -74,5 +66,9 @@ final class BuildingTableView: UIView {
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
+    }
+    
+    @objc private func refreshCalled() {
+        delegate?.refreshCalled()
     }
 }

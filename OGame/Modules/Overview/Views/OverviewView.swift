@@ -9,7 +9,7 @@ import UIKit
 
 final class OverviewView: UIView {
 
-    private let resourcesTopBarView: ResourcesBarView = {
+    private let resourcesBarView: ResourcesBarView = {
         let resourcesBar = ResourcesBarView()
         resourcesBar.translatesAutoresizingMaskIntoConstraints = false
         return resourcesBar
@@ -35,16 +35,16 @@ final class OverviewView: UIView {
     // MARK: Public
     func showResourcesLoading(_ state: Bool) {
         if state {
-            resourcesTopBarView.alpha = 0.5
-            resourcesTopBarView.activityIndicator.startAnimating()
+            resourcesBarView.alpha = 0.5
+            resourcesBarView.activityIndicator.startAnimating()
         } else {
-            resourcesTopBarView.alpha = 1
-            resourcesTopBarView.activityIndicator.stopAnimating()
+            resourcesBarView.alpha = 1
+            resourcesBarView.activityIndicator.stopAnimating()
         }
     }
     
     func updateResourcesBar(with resources: Resources) {
-        resourcesTopBarView.updateNew(with: resources)
+        resourcesBarView.updateNew(with: resources)
     }
     
     func showInfoLoading(_ state: Bool) {
@@ -74,18 +74,18 @@ final class OverviewView: UIView {
     
     // MARK: Private
     private func addSubviews() {
-        addSubview(resourcesTopBarView)
+        addSubview(resourcesBarView)
         addSubview(overviewInfoView)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            resourcesTopBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            resourcesTopBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            resourcesTopBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            resourcesTopBarView.heightAnchor.constraint(equalTo: resourcesTopBarView.widthAnchor, multiplier: 0.2),
+            resourcesBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            resourcesBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            resourcesBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            resourcesBarView.heightAnchor.constraint(equalTo: resourcesBarView.widthAnchor, multiplier: 0.2),
             
-            overviewInfoView.topAnchor.constraint(equalTo: resourcesTopBarView.bottomAnchor),
+            overviewInfoView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
             overviewInfoView.leadingAnchor.constraint(equalTo: leadingAnchor),
             overviewInfoView.trailingAnchor.constraint(equalTo: trailingAnchor),
             overviewInfoView.bottomAnchor.constraint(equalTo: bottomAnchor)

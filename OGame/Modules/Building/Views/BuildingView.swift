@@ -9,13 +9,13 @@ import UIKit
 
 final class BuildingView: UIView {
     
-    private let resourcesBar: ResourcesBarView = {
+    private let resourcesBarView: ResourcesBarView = {
         let resourcesBar = ResourcesBarView()
         resourcesBar.translatesAutoresizingMaskIntoConstraints = false
         return resourcesBar
     }()
     
-    let customTableView: BuildingTableView = {
+    private let customTableView: BuildingTableView = {
         let tableView = BuildingTableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -33,21 +33,40 @@ final class BuildingView: UIView {
     }
     
     // MARK: - Public
-    func configureResourcesBar(resources: Resources) {
-        resourcesBar.updateNew(with: resources)
+    func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource & IBuildingTableView) {
+        customTableView.delegate = delegate
+        customTableView.tableView.delegate = delegate
+        customTableView.tableView.dataSource = delegate
     }
     
-    // todo move player load resources logic to presenter
-//    func updateResourcesBar(player: PlayerData) {
-//        resourcesBar.updateNew(for: player)
-//    }
-    
-    func showLoading() {
-        customTableView.showLoading()
+    func showResourcesLoading(_ state: Bool) {
+        if state {
+            resourcesBarView.alpha = 0.5
+            resourcesBarView.activityIndicator.startAnimating()
+        } else {
+            resourcesBarView.alpha = 1
+            resourcesBarView.activityIndicator.stopAnimating()
+        }
     }
     
-    func showLoaded() {
-        customTableView.stopLoading()
+    func updateResourcesBar(with resources: Resources) {
+        resourcesBarView.updateNew(with: resources)
+    }
+
+    func showBuildingsLoading(_ state: Bool) {
+        if state {
+            customTableView.alpha = 0.5
+            customTableView.isUserInteractionEnabled = false
+            customTableView.activityIndicator.startAnimating()
+        } else {
+            customTableView.alpha = 1
+            customTableView.isUserInteractionEnabled = true
+            customTableView.activityIndicator.stopAnimating()
+            customTableView.refreshControl.endRefreshing()
+        }
+    }
+    
+    func updateBuildings() {
         customTableView.tableView.reloadData()
     }
     
@@ -55,25 +74,20 @@ final class BuildingView: UIView {
         customTableView.refreshControl.endRefreshing()
     }
     
-    func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource) {
-        customTableView.tableView.delegate = delegate
-        customTableView.tableView.dataSource = delegate
-    }
-    
     // MARK: - Private
     private func addSubviews() {
-        addSubview(resourcesBar)
+        addSubview(resourcesBarView)
         addSubview(customTableView)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            resourcesBar.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            resourcesBar.leadingAnchor.constraint(equalTo: leadingAnchor),
-            resourcesBar.trailingAnchor.constraint(equalTo: trailingAnchor),
-            resourcesBar.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1.0/5.0),
+            resourcesBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            resourcesBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            resourcesBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            resourcesBarView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1.0/5.0),
             
-            customTableView.topAnchor.constraint(equalTo: resourcesBar.bottomAnchor),
+            customTableView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
             customTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             customTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             customTableView.bottomAnchor.constraint(equalTo: bottomAnchor)

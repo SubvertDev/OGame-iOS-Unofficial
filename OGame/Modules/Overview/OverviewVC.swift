@@ -8,10 +8,10 @@
 import UIKit
 
 protocol IOverviewView: AnyObject {
-    func showResourcesLoading(_ state: Bool)
+    func showResourcesBarLoading(_ state: Bool)
     func updateResourcesBar(with: Resources)
-    func showInfoLoading(_ state: Bool)
-    func updateTableView(with: [Overview?])
+    func showOverviewLoading(_ state: Bool)
+    func updateOverview(with: [Overview?])
     func showAlert(error: Error)
 }
 
@@ -57,7 +57,7 @@ final class OverviewVC: UIViewController {
 
 // MARK: - Overview View Delegate
 extension OverviewVC: IOverviewView {
-    func showResourcesLoading(_ state: Bool) {
+    func showResourcesBarLoading(_ state: Bool) {
         myView.showResourcesLoading(state)
     }
     
@@ -65,11 +65,11 @@ extension OverviewVC: IOverviewView {
         myView.updateResourcesBar(with: resources)
     }
     
-    func showInfoLoading(_ state: Bool) {
+    func showOverviewLoading(_ state: Bool) {
         myView.showInfoLoading(state)
     }
     
-    func updateTableView(with overview: [Overview?]) {
+    func updateOverview(with overview: [Overview?]) {
         overviewInfo = overview
         myView.updateTableView()
     }

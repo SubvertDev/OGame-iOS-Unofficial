@@ -7,28 +7,33 @@
 
 import UIKit
 
-protocol BuildingViewDelegate: AnyObject {
-    func showBuildings(_ buildings: [Building])
-    func showError(_ error: OGError)
+protocol IBuildingView: AnyObject {
+    func showResourcesLoading(_ state: Bool)
+    func updateResourcesBar(with: Resources)
+    func showBuildingsLoading(_ state: Bool)
+    func updateBuildings(_ buildings: [Building])
+    func showAlert(error: OGError)
 }
 
 final class BuildingVC: UIViewController {
     
-    private var myView: BuildingView { return view as! BuildingView }
-    
+    // MARK: Properties
     private var presenter: BuildingPresenter!
     private var player: PlayerData
     private var resources: Resources
     private var buildType: BuildingType
     private var buildings: [Building]?
     
+    private var myView: BuildingView { return view as! BuildingView }
+
+    // MARK: View Lifecycle
     override func loadView() {
         view = BuildingView()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        title = K.Menu.cellTitlesList[buildType.rawValue]
         configureViews()
         presenter = BuildingPresenter(view: self)
         presenter.loadBuildings(for: player, with: buildType)
@@ -45,42 +50,43 @@ final class BuildingVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Actions
-    @objc func tableViewRefreshCalled() {
-        // todo move logic to presenter
-        //myView.updateResourcesBar(player: player)
-    }
-    
     // MARK: Private
     private func configureViews() {
-        myView.configureResourcesBar(resources: resources) // todo fix unwrap
         myView.setDelegates(self)
-        myView.showLoading()
+        myView.updateResourcesBar(with: resources)
     }
 }
 
 // MARK: - Building View Delegate
-extension BuildingVC: BuildingViewDelegate {
-    func showBuildings(_ buildings: [Building]) {
-        self.buildings = buildings
-        myView.showLoaded()
+extension BuildingVC: IBuildingView {
+    func showResourcesLoading(_ state: Bool) {
+        myView.showResourcesLoading(state)
     }
     
-    func showError(_ error: OGError) {
+    func updateResourcesBar(with resources: Resources) {
+        myView.updateResourcesBar(with: resources)
+    }
+    
+    func showBuildingsLoading(_ state: Bool) {
+        myView.showBuildingsLoading(state)
+    }
+    
+    func updateBuildings(_ buildings: [Building]) {
+        self.buildings = buildings
+        myView.updateBuildings()
+    }
+    
+    func showAlert(error: OGError) {
         logoutAndShowError(error)
     }
 }
 
-// MARK: - Resources Top Bar View Delegate
-//extension BuildingVC: IResourcesTopBarView {
-//    func refreshFinished() {
-//        myView.stopRefreshing()
-//    }
-//    
-//    func didGetError(error: OGError) {
-//        logoutAndShowError(error)
-//    }
-//}
+extension BuildingVC: IBuildingTableView {
+    func refreshCalled() {
+        presenter.loadResources(for: player)
+        presenter.loadBuildings(for: player, with: buildType)
+    }
+}
 
 // MARK: - DataSource & Delegate
 extension BuildingVC: UITableViewDataSource, UITableViewDelegate {
@@ -94,7 +100,7 @@ extension BuildingVC: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
-        cell.set(type: buildType, building: buildings[indexPath.row], playerData: player)
+        cell.set(type: buildType, building: buildings[indexPath.row], player: player)
 
         return cell
     }
@@ -112,17 +118,17 @@ extension BuildingVC: BuildingCellDelegate {
         let buildingInfo = buildings[sender.tag]
         
         switch buildType {
-        case .supply, .facility, .research:
+        case .supplies, .facilities, .research:
             let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.levelOrAmount + 1)", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "No", style: .default))
-            alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+            alert.addAction(UIAlertAction(title: K.Error.no, style: .default))
+            alert.addAction(UIAlertAction(title: K.Error.yes, style: .default) { _ in
                 Task {
                     do {
-                        self.myView.showLoading()
+                        self.myView.showResourcesLoading(true)
+                        self.myView.showBuildingsLoading(true)
                         try await OGBuild.build(what: type, playerData: self.player)
-                        // todo move logic to presenter
-                        //self.myView.updateResourcesBar(player: self.player)
-                        self.myView.showLoaded()
+                        self.presenter.loadResources(for: self.player)
+                        self.presenter.loadBuildings(for: self.player, with: self.buildType)
                     } catch {
                         self.logoutAndShowError(error as! OGError)
                     }
@@ -130,38 +136,37 @@ extension BuildingVC: BuildingCellDelegate {
             })
             present(alert, animated: true)
             
-        case .shipyard, .defence:
+        case .shipyard, .defenses:
             let alertAmount = UIAlertController(title: "\(buildingInfo.name)", message: "Enter an amount for construction", preferredStyle: .alert)
             alertAmount.addTextField { textField in
                 textField.keyboardType = .numberPad
                 textField.textAlignment = .center
             }
-            alertAmount.addAction(UIAlertAction(title: "Cancel", style: .default))
-            alertAmount.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            alertAmount.addAction(UIAlertAction(title: K.Error.cancel, style: .default))
+            alertAmount.addAction(UIAlertAction(title: K.Error.ok, style: .default) { _ in
                 let amount = Int(alertAmount.textFields![0].text!) ?? 1
                 
                 var messageType = ""
                 switch self.buildType {
                 case .shipyard:
                     messageType += "ship(s)"
-                case .defence:
+                case .defenses:
                     messageType += "defence(s)"
                 default:
                     break
                 }
                 
                 let alert = UIAlertController(title: "Construct \(buildingInfo.name)?", message: "\(amount) \(messageType) will be constructed", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "No", style: .default))
-                alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
-                    //self.myView.tableView.startUpdatingUI()
+                alert.addAction(UIAlertAction(title: K.Error.no, style: .default))
+                alert.addAction(UIAlertAction(title: K.Error.yes, style: .default) { _ in
                     let typeToBuild = (type.0, amount, type.2)
                     Task {
                         do {
-                            self.myView.showLoading()
+                            self.myView.showResourcesLoading(true)
+                            self.myView.showBuildingsLoading(true)
                             try await OGBuild.build(what: typeToBuild, playerData: self.player)
-                            // todo move logic to presenter
-                            //self.myView.updateResourcesBar(player: self.player)
-                            self.myView.showLoaded()
+                            self.presenter.loadResources(for: self.player)
+                            self.presenter.loadBuildings(for: self.player, with: self.buildType)
                         } catch {
                             self.logoutAndShowError(error as! OGError)
                         }

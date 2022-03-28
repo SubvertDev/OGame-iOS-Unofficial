@@ -12,11 +12,12 @@ protocol IMenuView: AnyObject {
     func planetIsChanged(for: PlayerData)
     func showResourcesLoading(_: Bool)
     func updateResources(with: Resources)
+    func showAlert(error: OGError)
 }
 
 final class MenuVC: UIViewController {
     
-    // MARK: Properties
+    // MARK: - Properties
     private var presenter: MenuPresenter!
     private var player: PlayerData
     private var resources: Resources
@@ -24,7 +25,7 @@ final class MenuVC: UIViewController {
     
     private var myView: MenuView { return view as! MenuView }
 
-    // MARK: View Lifecycle
+    // MARK: - View Lifecycle
     override func loadView() {
         view = MenuView()
     }
@@ -49,7 +50,7 @@ final class MenuVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Private
+    // MARK: - Private
     private func configureView() {
         myView.setDelegates(self)
         myView.updateControlView(with: player)
@@ -75,6 +76,10 @@ extension MenuVC: IMenuView {
     func updateResources(with resources: Resources) {
         myView.updateResourcesBar(with: resources)
     }
+    
+    func showAlert(error: OGError) {
+        logoutAndShowError(error)
+    }
 }
 
 // MARK: - Planet Control View Delegate
@@ -96,7 +101,7 @@ extension MenuVC: IPlanetControlView {
     }
 }
 
-// MARK: - Menu Table View Delegate
+// MARK: - Menu TableView Delegate
 extension MenuVC: IMenuTableView {
     func refreshCalled() {
         presenter.loadResources(for: player)
@@ -125,9 +130,10 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         case 0:
             vc = OverviewVC(player: player, resources: resources)
         case 1...5:
+            let buildType = BuildingType(rawValue: indexPath.row)!
             vc = BuildingVC(player: player,
-                            buildType: BuildingType(rawValue: indexPath.row)!,
-                            resources: resources) // todo fix unwraps
+                            buildType: buildType,
+                            resources: resources)
         case 6:
             vc = FleetVC(player: player)
         case 7:

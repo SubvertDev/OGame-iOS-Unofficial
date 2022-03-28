@@ -10,7 +10,6 @@ import Foundation
 struct K {
     
     struct Menu {
-        
         static let title = "Menu"
         static let cellTitlesList = ["Overview", "Resources", "Facilities",
                                      "Research", "Shipyard", "Defence",
@@ -18,7 +17,6 @@ struct K {
     }
     
     struct Overview {
-        
         static let title = "Overview"
         
         struct Section {
@@ -45,7 +43,10 @@ struct K {
     }
     
     struct Error {
-        static let errorTitle = "Error"
-        static let okTitle = "OK"
+        static let error = "Error"
+        static let ok = "OK"
+        static let yes = "Yes"
+        static let no = "No"
+        static let cancel = "Cancel"
     }
 }

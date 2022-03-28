@@ -25,17 +25,17 @@ final class OverviewPresenter: IOverviewPresenter {
     
     // MARK: - Public
     func loadResources(for player: PlayerData) {
-        view.showResourcesLoading(true)
+        view.showResourcesBarLoading(true)
         Task {
             do {
                 let resources = try await resourcesProvider.getResourcesWith(playerData: player)
                 await MainActor.run {
                     view.updateResourcesBar(with: resources)
-                    view.showResourcesLoading(false)
+                    view.showResourcesBarLoading(false)
                 }
             } catch {
                 await MainActor.run {
-                    view.showResourcesLoading(false)
+                    view.showResourcesBarLoading(false)
                     view.showAlert(error: error as! OGError)
                 }
             }
@@ -43,17 +43,17 @@ final class OverviewPresenter: IOverviewPresenter {
     }
 
     func getOverviewInfo(for player: PlayerData) {
-        view.showInfoLoading(true)
+        view.showOverviewLoading(true)
         Task {
             do {
                 let overviewInfo = try await overviewProvider.getOverviewWith(playerData: player)
                 await MainActor.run {
-                    view.showInfoLoading(false)
-                    view.updateTableView(with: overviewInfo)
+                    view.showOverviewLoading(false)
+                    view.updateOverview(with: overviewInfo)
                 }
             } catch {
                 await MainActor.run {
-                    view.showInfoLoading(false)
+                    view.showOverviewLoading(false)
                     view.showAlert(error: error as! OGError)
                 }
             }
