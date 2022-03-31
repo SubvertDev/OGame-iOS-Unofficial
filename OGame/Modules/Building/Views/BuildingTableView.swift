@@ -16,7 +16,8 @@ final class BuildingTableView: UIView {
     let tableView: UITableView = {
        let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UINib(nibName: "BuildingCell", bundle: nil), forCellReuseIdentifier: "BuildingCell")
+        tableView.register(UINib(nibName: K.CellReuseID.buildingCell, bundle: nil),
+                           forCellReuseIdentifier: K.CellReuseID.buildingCell)
         tableView.removeExtraCellLines()
         tableView.rowHeight = 88
         return tableView

@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol GalaxyViewDelegate: AnyObject {
+protocol IGalaxyView: AnyObject {
     func showLoading(_ state: Bool)
     func reloadTable(with: [Position?])
     func updateTextFields(with: [Int], type: TextFieldType)
@@ -20,25 +20,25 @@ enum TextFieldType {
 
 final class GalaxyVC: UIViewController {
     
-    // MARK: - Properties
-    var galaxyPresenter: GalaxyPresenterDelegate!
+    // MARK: Properties
     var player: PlayerData
     var systemInfo: [Position?]?
     var currentCoordinates = [1, 1]
+    var presenter: GalaxyPresenterDelegate!
     
     var myView: GalaxyView { return view as! GalaxyView }
         
+    // MARK: View Lifecycle
     override func loadView() {
         view = GalaxyView()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Galaxy"
+        title = K.Galaxy.title
         configureView()
-        
-        galaxyPresenter = GalaxyPresenter(view: self)
-        galaxyPresenter.viewDidLoad(coords: currentCoordinates, player: player)
+        presenter = GalaxyPresenter(view: self)
+        presenter.viewDidLoad(coords: currentCoordinates, player: player)
     }
 
     init(player: PlayerData) {
@@ -50,8 +50,8 @@ final class GalaxyVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Configure View
-    func configureView() {
+    // MARK: Private
+    private func configureView() {
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
@@ -59,54 +59,47 @@ final class GalaxyVC: UIViewController {
         currentCoordinates = player.celestials[player.currentPlanetIndex].coordinates
         myView.galaxyTextField.text = "\(currentCoordinates[0])"
         myView.systemTextField.text = "\(currentCoordinates[1])"
-        
-        myView.tableView.delegate = self
-        myView.tableView.dataSource = self
-    }
-    
-    // MARK: - Actions
-    @objc func galaxyLeftButtonPressed() {
-        galaxyPresenter.galaxyChanged(coords: currentCoordinates, direction: .left, player: player)
-    }
-    
-    @objc func galaxyRightButtonPressed() {
-        galaxyPresenter.galaxyChanged(coords: currentCoordinates, direction: .right, player: player)
-    }
-    
-    @objc func systemLeftButtonPressed() {
-        galaxyPresenter.systemChanged(coords: currentCoordinates, direction: .left, player: player)
-    }
-    
-    @objc func systemRightButtonPressed() {
-        galaxyPresenter.systemChanged(coords: currentCoordinates, direction: .right, player: player)
-    }
-    
-    @objc func galaxyTextFieldChanged() {
-        galaxyPresenter.galaxyTextFieldChanged(coords: currentCoordinates, player: player, sender: myView.galaxyTextField)
-    }
-    
-    @objc func systemTextFieldChanged() {
-        galaxyPresenter.systemTextFieldChanged(coords: currentCoordinates, player: player, sender: myView.systemTextField)
+
+        myView.setDelegates(self)
     }
 }
 
-// MARK: - GalaxyViewDelegate
-extension GalaxyVC: GalaxyViewDelegate {
+// MARK: - GalaxyView Control Delegate
+extension GalaxyVC: IGalaxyViewControl {
+    func galaxyLeftButtonTapped() {
+        presenter.galaxyChanged(coords: currentCoordinates, direction: .left, player: player)
+    }
+    
+    func galaxyRightButtonTapped() {
+        presenter.galaxyChanged(coords: currentCoordinates, direction: .right, player: player)
+    }
+    
+    func galaxyTextFieldChanged(_ sender: UITextField) {
+        presenter.galaxyTextFieldChanged(coords: currentCoordinates, player: player, sender: sender)
+    }
+    
+    func systemLeftButtonTapped() {
+        presenter.systemChanged(coords: currentCoordinates, direction: .left, player: player)
+    }
+    
+    func systemRightButtonTapped() {
+        presenter.systemChanged(coords: currentCoordinates, direction: .right, player: player)
+    }
+    
+    func systemTextFieldChanged(_ sender: UITextField) {
+        presenter.systemTextFieldChanged(coords: currentCoordinates, player: player, sender: sender)
+    }
+}
+
+// MARK: - GalaxyView Delegate
+extension GalaxyVC: IGalaxyView {
     func showLoading(_ state: Bool) {
-        if state {
-            myView.activityIndicator.startAnimating()
-            myView.tableView.alpha = 0.5
-            myView.tableView.isUserInteractionEnabled = false
-        } else {
-            myView.activityIndicator.stopAnimating()
-            myView.tableView.alpha = 1
-            myView.tableView.isUserInteractionEnabled = true
-        }
+        myView.showLoading(state)
     }
     
     func reloadTable(with positions: [Position?]) {
         systemInfo = positions
-        myView.tableView.reloadData()
+        myView.updateTableView()
     }
     
     func updateTextFields(with coords: [Int], type: TextFieldType) {
@@ -120,22 +113,20 @@ extension GalaxyVC: GalaxyViewDelegate {
     }
     
     func showAlert(error: Error) {
-        let alert = UIAlertController(title: (error as! OGError).message, message: (error as! OGError).detailed, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        logoutAndShowError(error as! OGError)
     }
 }
 
-// MARK: - Delegate & DataSource
+// MARK: - TableView Delegate & DataSource
 extension GalaxyVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 15
+        return systemInfo?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let systemInfo = systemInfo else { return UITableViewCell() }
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GalaxyCell", for: indexPath) as! GalaxyCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.galaxyCell, for: indexPath) as! GalaxyCell
         cell.set(with: systemInfo, indexPath: indexPath)
 
         return cell

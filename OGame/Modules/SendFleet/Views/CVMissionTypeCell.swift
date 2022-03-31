@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CVMissionTypeCell: UICollectionViewCell {
+final class CVMissionTypeCell: UICollectionViewCell {
 
     @IBOutlet weak var missionTypeImageView: UIImageView!
     @IBOutlet weak var missionTypeLabel: UILabel!

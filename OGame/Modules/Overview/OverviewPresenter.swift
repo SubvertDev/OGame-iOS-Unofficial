@@ -34,10 +34,7 @@ final class OverviewPresenter: IOverviewPresenter {
                     view.showResourcesBarLoading(false)
                 }
             } catch {
-                await MainActor.run {
-                    view.showResourcesBarLoading(false)
-                    view.showAlert(error: error as! OGError)
-                }
+                await MainActor.run { view.showAlert(error: error as! OGError) }
             }
         }
     }

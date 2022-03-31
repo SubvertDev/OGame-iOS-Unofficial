@@ -9,28 +9,28 @@ import UIKit
 
 // MARK: - TODO: Refactor this VC -
 
-class SendFleetVC: UIViewController {
+final class SendFleetVC: UIViewController {
     
-    let resourcesTopBarView = ResourcesBarView()
-    let tableView = UITableView()
-    let activityIndicator = UIActivityIndicatorView()
+    private let resourcesTopBarView = ResourcesBarView()
+    private let tableView = UITableView()
+    private let activityIndicator = UIActivityIndicatorView()
 
-    var player: PlayerData?
-    var ships: [Building]?
-    var targetCoordinates: Coordinates?
-    var targetMission: Mission?
-    var targetData: CheckTarget?
-    var briefingData: [String]?
-    var orders: [Int: Bool] = [:]
-    var missionTypeModel = MissionTypeModel()
-    var resourcesToSend = [0, 0, 0]
-    var fleetSpeed = 10
+    private var player: PlayerData
+    private var ships: [Building]
+    private var targetData: CheckTarget
+ 
+    private var targetCoordinates: Coordinates?
+    private var targetMission: Mission?
+    private var briefingData: [String]?
+    private var orders: [Int: Bool] = [:]
+    private var missionTypeModel = MissionTypeModel()
+    private var resourcesToSend = [0, 0, 0]
+    private var fleetSpeed = 10
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Send Fleet"
         view.backgroundColor = .systemBackground
-        guard let player = player, let targetData = targetData else { return }
         
         targetCoordinates = Coordinates(galaxy: targetData.targetPlanet!.galaxy,
                                         system: targetData.targetPlanet!.system,
@@ -68,6 +68,17 @@ class SendFleetVC: UIViewController {
         }
     }
     
+    init(player: PlayerData, ships: [Building], target: CheckTarget) {
+        self.player = player
+        self.ships = ships
+        self.targetData = target
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Configure UI
     func configureResourcesTopBarView() {
         view.addSubview(resourcesTopBarView)
@@ -78,7 +89,7 @@ class SendFleetVC: UIViewController {
             resourcesTopBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             resourcesTopBarView.heightAnchor.constraint(equalTo: resourcesTopBarView.widthAnchor, multiplier: 0.2)
         ])
-        resourcesTopBarView.configureWith(resources: nil, player: player)
+        //resourcesTopBarView.configureWith(resources: nil, player: player)
     }
     
     func configureTableView() {
@@ -149,9 +160,9 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                     return
                 }
                 
-                targetData = try await OGSendFleet.checkTarget(player: player!, whereTo: targetCoordinates!, ships: ships)
+                targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates!, ships: ships)
                 
-                switch targetData!.status {
+                switch targetData.status {
                 case "failure":
                     let falses = Array(repeating: false, count: 10)
                     for index in 0...9 {
@@ -163,13 +174,13 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                     
                     stopUpdatingUI()
                     
-                    let alert = UIAlertController(title: "\(targetData!.errors![0].message)", message: nil, preferredStyle: .alert)
+                    let alert = UIAlertController(title: "\(targetData.errors![0].message)", message: nil, preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default))
                     present(alert, animated: true)
                     
                 case "success":
-                    if targetData!.targetInhabited == true {
-                        for order in targetData!.orders! {
+                    if targetData.targetInhabited == true {
+                        for order in targetData.orders! {
                             let orderKeyInt = Int(order.key)! - 1
                             if orderKeyInt != 15 {
                                 orders[orderKeyInt] = order.value
@@ -178,7 +189,7 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                             }
                         }
                     } else {
-                        if targetData!.orders!["7"] == true {
+                        if targetData.orders!["7"] == true {
                             let falses = Array(repeating: false, count: 10)
                             for index in 0...9 {
                                 orders[index] = falses[index]
@@ -209,10 +220,8 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
     
     // MARK: - Send Button Pressed
     func sendButtonPressed(_ sender: UIButton) {
-        guard let player = player,
-              let targetCoordinates = targetCoordinates,
-              let ships = ships,
-              let targetMission = targetMission // !    
+        guard let targetCoordinates = targetCoordinates,
+              let targetMission = targetMission // !
         else { return }
         
         Task {
@@ -272,9 +281,6 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
     
     // MARK: - CellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let player = player else { return UITableViewCell() }
-        guard let targetData = targetData else { return UITableViewCell() }
-        
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SetCoordinatesCell", for: indexPath) as! SetCoordinatesCell
@@ -362,9 +368,9 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
             
             Task {
                 do {
-                    targetData = try await OGSendFleet.checkTarget(player: player!, whereTo: targetCoordinates!, ships: ships)
-                    if targetData!.targetInhabited == true {
-                        for order in targetData!.orders! {
+                    targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates!, ships: ships)
+                    if targetData.targetInhabited == true {
+                        for order in targetData.orders! {
                             let orderKeyInt = Int(order.key)! - 1
                             if orderKeyInt != 15 {
                                 orders[orderKeyInt] = order.value
@@ -373,7 +379,7 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                             }
                         }
                     } else {
-                        if targetData!.orders?["7"] == true {
+                        if targetData.orders?["7"] == true {
                             let falses = Array(repeating: false, count: 10)
                             for index in 0...9 {
                                 orders[index] = falses[index]
@@ -475,7 +481,7 @@ extension SendFleetVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                         targetCoordinates!.system,
                         targetCoordinates!.position,
                         targetCoordinates!.destination.rawValue]
-        if myCoords == player!.celestials[player!.currentPlanetIndex].coordinates {
+        if myCoords == player.celestials[player.currentPlanetIndex].coordinates {
             cell.missionTypeImageView.image = missionTypeModel.missionTypes[indexPath.row].images.unavailable
         }
         
@@ -497,7 +503,7 @@ extension SendFleetVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                         targetCoordinates!.system,
                         targetCoordinates!.position,
                         targetCoordinates!.destination.rawValue]
-        let isSamePlanet = myCoords == player!.celestials[player!.currentPlanetIndex].coordinates
+        let isSamePlanet = myCoords == player.celestials[player.currentPlanetIndex].coordinates
         
         if !cell.isActive && !cell.isAvailable { // not selected, not available
             cell.missionTypeImageView.image = missionTypeModel.missionTypes[indexPath.row].images.unavailableSelected

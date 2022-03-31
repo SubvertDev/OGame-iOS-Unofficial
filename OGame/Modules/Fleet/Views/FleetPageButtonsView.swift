@@ -7,68 +7,85 @@
 
 import UIKit
 
-class FleetPageButtonsView: UIView {
+protocol IFleetPageButtonsView {
+    func nextButtonTapped()
+    func resetButtonTapped()
+}
+
+final class FleetPageButtonsView: UIView {
     
-    let nextButton = UIButton()
-    let resetButton = UIButton()
+    let nextButton: UIButton = {
+        let nextButton = UIButton()
+        nextButton.translatesAutoresizingMaskIntoConstraints = false
+        nextButton.setTitle("NEXT", for: .normal)
+        nextButton.setTitleColor(.systemBlue, for: .normal)
+        nextButton.setTitleColor(.systemGray, for: .disabled)
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        nextButton.isEnabled = false
+        return nextButton
+    }()
     
-    var nextButtonPressed: (() -> Void)?
-    var resetButtonPressed: (() -> Void)?
+    let resetButton: UIButton = {
+        let resetButton = UIButton()
+        resetButton.translatesAutoresizingMaskIntoConstraints = false
+        resetButton.setTitle("RESET", for: .normal)
+        resetButton.setTitleColor(.systemBlue, for: .normal)
+        resetButton.setTitleColor(.systemGray, for: .disabled)
+        resetButton.addTarget(self, action: #selector(resetButtonTapped), for: .touchUpInside)
+        return resetButton
+    }()
     
+    private let separatorView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .opaqueSeparator
+        return view
+    }()
     
+    var delegate: IFleetPageButtonsView?
+    
+    // MARK: View Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
+        addSubviews()
+        makeConstraints()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configureView()
+        fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView() {
-        configureResetButton()
-        configureNextButton()
-    }
-    
-    func configureResetButton() {
+    // MARK: Private
+    private func addSubviews() {
         addSubview(resetButton)
-        resetButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(nextButton)
+        addSubview(separatorView)
+    }
+    
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
             resetButton.topAnchor.constraint(equalTo: topAnchor),
             resetButton.leadingAnchor.constraint(equalTo: leadingAnchor),
             resetButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-            resetButton.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 4)
-        ])
-        
-        resetButton.setTitle("RESET", for: .normal)
-        resetButton.setTitleColor(.systemBlue, for: .normal)
-        resetButton.setTitleColor(.systemGray, for: .disabled)
-        resetButton.addTarget(self, action: #selector(resetPressed), for: .touchUpInside)        
-    }
-    
-    func configureNextButton() {
-        addSubview(nextButton)
-        nextButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
+            resetButton.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 4),
+            
             nextButton.leadingAnchor.constraint(equalTo: resetButton.trailingAnchor),
             nextButton.trailingAnchor.constraint(equalTo: trailingAnchor),
             nextButton.topAnchor.constraint(equalTo: topAnchor),
-            nextButton.bottomAnchor.constraint(equalTo: bottomAnchor)
+            
+            separatorView.topAnchor.constraint(equalTo: nextButton.bottomAnchor),
+            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            separatorView.heightAnchor.constraint(equalToConstant: 0.5)
         ])
-        
-        nextButton.setTitle("NEXT", for: .normal)
-        nextButton.setTitleColor(.systemBlue, for: .normal)
-        nextButton.setTitleColor(.systemGray, for: .disabled)
-        nextButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
-        nextButton.isEnabled = false
     }
     
-    @objc func nextPressed() {
-        nextButtonPressed?()
+    @objc private func nextButtonTapped() {
+        delegate?.nextButtonTapped()
     }
     
-    @objc func resetPressed() {
-        resetButtonPressed?()
+    @objc private func resetButtonTapped() {
+        delegate?.resetButtonTapped()
     }
 }

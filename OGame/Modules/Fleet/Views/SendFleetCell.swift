@@ -7,13 +7,12 @@
 
 import UIKit
 
-class SendFleetCell: UITableViewCell {
+final class SendFleetCell: UITableViewCell {
 
     @IBOutlet weak var shipImageView: UIImageView!
     @IBOutlet weak var shipNameLabel: UILabel!
     @IBOutlet weak var shipAvailableLabel: UILabel!
     @IBOutlet weak var shipSelectedTextField: UITextField!
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()

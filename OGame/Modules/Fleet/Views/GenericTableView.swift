@@ -7,80 +7,79 @@
 
 import UIKit
 
-class GenericTableView: UIView {
+protocol IGenericTableView {
+    func refreshCalled()
+}
 
-    let tableView = UITableView()
-    let activityIndicator = UIActivityIndicatorView()
-    let refreshControl = UIRefreshControl()
-    
-    var refreshCompletion: (() -> Void)?
+final class GenericTableView: UIView {
 
+    let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.rowHeight = 88
+        tableView.keyboardDismissMode = .onDrag
+        tableView.register(UINib(nibName: K.CellReuseID.sendFleetCell, bundle: nil),
+                           forCellReuseIdentifier: K.CellReuseID.sendFleetCell)
+        return tableView
+    }()
     
+    let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.style = .large
+        return indicator
+    }()
+    
+    let refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)
+        return refreshControl
+    }()
+    
+    var delegate: IGenericTableView?
+    
+    // MARK: View Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureView()
+        addSubviews()
+        makeConstraints()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configureView()
+        fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(cellIdentifier: String? = nil) {
-        configureTableView(cellIdentifier)
-        configureActivityIndicator()
-    }
-    
-    func configureTableView(_ identifier: String?) {
-        addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-
-        tableView.removeExtraCellLines()
-        tableView.alpha = 0.5
-        tableView.rowHeight = 88
-        tableView.keyboardDismissMode = .onDrag
-
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        
+    // MARK: Public
+    // todo delete?
+    func registerTableViewCell(withIdentifier identifier: String? = nil) {
         if let identifier = identifier {
             tableView.register(UINib(nibName: identifier, bundle: nil), forCellReuseIdentifier: identifier)
         }
     }
-
-    func configureActivityIndicator() {
+    
+    // MARK: Private
+    private func addSubviews() {
+        addSubview(tableView)
+        tableView.refreshControl = refreshControl
         addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.style = .large
+
+    }
+    
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
+            tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
             activityIndicator.widthAnchor.constraint(equalToConstant: 100),
             activityIndicator.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
-
-    func startUpdatingUI() {
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
-    }
     
-    func stopUpdatingUI() {
-        tableView.reloadData()
-        refreshControl.endRefreshing()
-        activityIndicator.stopAnimating()
-        tableView.isUserInteractionEnabled = true
-        tableView.alpha = 1
-    }
-    
-    @objc func refresh() {
-        refreshCompletion?()
+    @objc private func refreshCalled() {
+        delegate?.refreshCalled()
     }
 }

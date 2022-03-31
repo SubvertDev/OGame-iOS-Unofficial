@@ -11,6 +11,7 @@
 		B814BA6826AB1B0200FF346A /* MyServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B814BA6726AB1B0200FF346A /* MyServer.swift */; };
 		B81A83FB27EDD2AC009AC12C /* BuildingPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81A83FA27EDD2AC009AC12C /* BuildingPresenter.swift */; };
 		B81A83FE27EDD609009AC12C /* BuildingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81A83FD27EDD609009AC12C /* BuildingView.swift */; };
+		B836B2EA27F31D3E006FA67D /* FleetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B836B2E927F31D3E006FA67D /* FleetView.swift */; };
 		B837007727F08098004689BB /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837007627F08098004689BB /* MenuVC.swift */; };
 		B837007D27F0883E004689BB /* MenuPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B837007C27F0883E004689BB /* MenuPresenter.swift */; };
 		B839FBA427F1B13B00386BEA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B839FBA327F1B13B00386BEA /* Constants.swift */; };
@@ -46,6 +47,7 @@
 		B8607880279C82DB00F22AD1 /* MissionBriefingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */; };
 		B8607881279C82DB00F22AD1 /* MissionBriefingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */; };
 		B8607883279CABCB00F22AD1 /* MissionTypeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8607882279CABCB00F22AD1 /* MissionTypeModel.swift */; };
+		B8626F2C27F34B54003278A7 /* FleetPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8626F2B27F34B54003278A7 /* FleetPresenter.swift */; };
 		B867077E26F6857D00F7372E /* Fleets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867077D26F6857D00F7372E /* Fleets.swift */; };
 		B867614C2659130D0096BE39 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614B2659130D0096BE39 /* UIView+Ext.swift */; };
 		B867614F265945A30096BE39 /* BuildingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B867614D265945A30096BE39 /* BuildingCell.swift */; };
@@ -130,6 +132,7 @@
 		B814BA6726AB1B0200FF346A /* MyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyServer.swift; sourceTree = "<group>"; };
 		B81A83FA27EDD2AC009AC12C /* BuildingPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingPresenter.swift; sourceTree = "<group>"; };
 		B81A83FD27EDD609009AC12C /* BuildingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingView.swift; sourceTree = "<group>"; };
+		B836B2E927F31D3E006FA67D /* FleetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetView.swift; sourceTree = "<group>"; };
 		B837007627F08098004689BB /* MenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
 		B837007C27F0883E004689BB /* MenuPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPresenter.swift; sourceTree = "<group>"; };
 		B839FBA327F1B13B00386BEA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -165,6 +168,7 @@
 		B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionBriefingCell.swift; sourceTree = "<group>"; };
 		B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MissionBriefingCell.xib; sourceTree = "<group>"; };
 		B8607882279CABCB00F22AD1 /* MissionTypeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionTypeModel.swift; sourceTree = "<group>"; };
+		B8626F2B27F34B54003278A7 /* FleetPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetPresenter.swift; sourceTree = "<group>"; };
 		B867077D26F6857D00F7372E /* Fleets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fleets.swift; sourceTree = "<group>"; };
 		B867614B2659130D0096BE39 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		B867614D265945A30096BE39 /* BuildingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingCell.swift; sourceTree = "<group>"; };
@@ -350,6 +354,7 @@
 				B837008327F0A4A5004689BB /* Overview */,
 				B837008427F0A4A9004689BB /* Building */,
 				B837008727F0A4B6004689BB /* Fleet */,
+				B8626F4D27F399E0003278A7 /* SendFleet */,
 				B837008627F0A4B2004689BB /* Movement */,
 				B837008527F0A4AC004689BB /* Galaxy */,
 			);
@@ -434,7 +439,7 @@
 			isa = PBXGroup;
 			children = (
 				B8BED01C27905C6C00AE2ED8 /* FleetVC.swift */,
-				B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */,
+				B8626F2B27F34B54003278A7 /* FleetPresenter.swift */,
 				B837008D27F0A7BE004689BB /* Views */,
 			);
 			path = Fleet;
@@ -472,20 +477,11 @@
 		B837008D27F0A7BE004689BB /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B897493C27AA86AC00203FC9 /* GenericTableView.swift */,
+				B836B2E927F31D3E006FA67D /* FleetView.swift */,
 				B897493E27AADCCC00203FC9 /* FleetPageButtonsView.swift */,
+				B897493C27AA86AC00203FC9 /* GenericTableView.swift */,
 				B8BED02427908F0400AE2ED8 /* SendFleetCell.swift */,
 				B8BED02527908F0400AE2ED8 /* SendFleetCell.xib */,
-				B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */,
-				B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */,
-				B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */,
-				B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */,
-				B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */,
-				B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */,
-				B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */,
-				B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */,
-				B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */,
-				B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -558,6 +554,32 @@
 				B8FA6DE42708BD4100924D3D /* Overview.swift */,
 			);
 			path = Overview;
+			sourceTree = "<group>";
+		};
+		B8626F4D27F399E0003278A7 /* SendFleet */ = {
+			isa = PBXGroup;
+			children = (
+				B8BED028279176DF00AE2ED8 /* SendFleetVC.swift */,
+				B8626F4E27F399EE003278A7 /* Views */,
+			);
+			path = SendFleet;
+			sourceTree = "<group>";
+		};
+		B8626F4E27F399EE003278A7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B860786E279AE2E800F22AD1 /* SetCoordinatesCell.swift */,
+				B860786F279AE2E800F22AD1 /* SetCoordinatesCell.xib */,
+				B8607872279AF2E300F22AD1 /* MissionTypeCell.swift */,
+				B8607873279AF2E300F22AD1 /* MissionTypeCell.xib */,
+				B8607876279AF7E900F22AD1 /* CVMissionTypeCell.swift */,
+				B8607877279AF7E900F22AD1 /* CVMissionTypeCell.xib */,
+				B860787E279C82DB00F22AD1 /* MissionBriefingCell.swift */,
+				B860787F279C82DB00F22AD1 /* MissionBriefingCell.xib */,
+				B8CCF5FA279DB95800F3C3B5 /* FleetSettingsCell.swift */,
+				B8CCF5FB279DB95800F3C3B5 /* FleetSettingsCell.xib */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		B88B3F3827D40CD900B5BFD5 /* Models */ = {
@@ -790,6 +812,7 @@
 				B8D6881627A9A47C0013E209 /* OverviewInfoView.swift in Sources */,
 				B8A9A34726B2D2360099E8CD /* MovementVC.swift in Sources */,
 				B8607878279AF7E900F22AD1 /* CVMissionTypeCell.swift in Sources */,
+				B836B2EA27F31D3E006FA67D /* FleetView.swift in Sources */,
 				B8BED02627908F0400AE2ED8 /* SendFleetCell.swift in Sources */,
 				B897493D27AA86AC00203FC9 /* GenericTableView.swift in Sources */,
 				B8BED0232790605100AE2ED8 /* Destination.swift in Sources */,
@@ -799,6 +822,7 @@
 				B8BED03B279453C800AE2ED8 /* ServerData.swift in Sources */,
 				B8FF0453269DD049007743B8 /* FacilityCell.swift in Sources */,
 				B8BED01D27905C6C00AE2ED8 /* FleetVC.swift in Sources */,
+				B8626F2C27F34B54003278A7 /* FleetPresenter.swift in Sources */,
 				B83B64082658672500A75A00 /* ResourcesBarView.swift in Sources */,
 				B846CD6A27947D8100DEFDE2 /* OGDefence.swift in Sources */,
 				B867077E26F6857D00F7372E /* Fleets.swift in Sources */,

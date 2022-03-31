@@ -135,7 +135,7 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
                             buildType: buildType,
                             resources: resources)
         case 6:
-            vc = FleetVC(player: player)
+            vc = FleetVC(player: player, resources: resources)
         case 7:
             vc = MovementVC(player: player)
         case 8:

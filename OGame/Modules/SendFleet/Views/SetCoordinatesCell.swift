@@ -13,7 +13,8 @@ protocol SetCoordinatesCellDelegate: AnyObject {
     func didPressButton(_ sender: UIButton)
 }
 
-class SetCoordinatesCell: UITableViewCell {
+final class SetCoordinatesCell: UITableViewCell {
+    
     @IBOutlet weak var planetNameLabel: UILabel!
     @IBOutlet weak var planetImage: UIImageView!
     @IBOutlet weak var moonImage: UIImageView!

@@ -11,7 +11,7 @@ protocol FleetSettingsCellDelegate: AnyObject {
     func sendButtonPressed(_ sender: UIButton)
 }
 
-class FleetSettingsCell: UITableViewCell {
+final class FleetSettingsCell: UITableViewCell {
     
     @IBOutlet weak var metalTextField: UITextField!
     @IBOutlet weak var crystalTextField: UITextField!
@@ -24,7 +24,6 @@ class FleetSettingsCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

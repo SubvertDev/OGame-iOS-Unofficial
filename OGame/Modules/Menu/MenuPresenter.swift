@@ -115,11 +115,7 @@ final class MenuPresenter: IMenuPresenter {
                     view.showPlanetLoading(false)
                 }
             } catch {
-                await MainActor.run {
-                    view.showResourcesLoading(false)
-                    view.showPlanetLoading(false)
-                    view.showAlert(error: error as! OGError)
-                }
+                await MainActor.run { view.showAlert(error: error as! OGError) }
             }
         }
     }

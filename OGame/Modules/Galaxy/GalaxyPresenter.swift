@@ -8,7 +8,7 @@
 import UIKit
 
 protocol GalaxyPresenterDelegate {
-    init(view: GalaxyViewDelegate)
+    init(view: IGalaxyView)
     func viewDidLoad(coords: [Int], player: PlayerData)
     func galaxyChanged(coords: [Int], direction: Direction, player: PlayerData)
     func systemChanged(coords: [Int], direction: Direction, player: PlayerData)
@@ -22,14 +22,14 @@ enum Direction {
 
 final class GalaxyPresenter: GalaxyPresenterDelegate {
     
-    unowned let view: GalaxyViewDelegate
+    unowned let view: IGalaxyView
     private let galaxyProvider = GalaxyProvider()
     
-    init(view: GalaxyViewDelegate) {
+    init(view: IGalaxyView) {
         self.view = view
     }
     
-    // MARK: - View Did Load
+    // MARK: Public
     func viewDidLoad(coords: [Int], player: PlayerData) {
         view.showLoading(true)
         Task {
@@ -43,7 +43,6 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         }
     }
     
-    // MARK: - Galaxy Changed
     func galaxyChanged(coords: [Int], direction: Direction, player: PlayerData) {
         var targetCoords = coords
         switch direction {
@@ -64,7 +63,6 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         updateSystemInfo(for: targetCoords, player: player)
     }
     
-    // MARK: - System Changed
     func systemChanged(coords: [Int], direction: Direction, player: PlayerData) {
         var targetCoords = coords
         switch direction {
@@ -85,7 +83,6 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         updateSystemInfo(for: targetCoords, player: player)
     }
     
-    // MARK: - Galaxy Text Field Changed
     func galaxyTextFieldChanged(coords: [Int], player: PlayerData, sender: UITextField) {
         if sender.text != "" {
             if Int(sender.text!)! > 4 {
@@ -101,7 +98,6 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         }
     }
     
-    // MARK: - System Text Field Changed
     func systemTextFieldChanged(coords: [Int], player: PlayerData, sender: UITextField) {
         if sender.text != "" {
             if Int(sender.text!)! > 499 {
@@ -117,7 +113,7 @@ final class GalaxyPresenter: GalaxyPresenterDelegate {
         }
     }
     
-    // MARK: - Update System Info
+    // MARK: Private
     private func updateSystemInfo(for coords: [Int], player: PlayerData) {
         view.showLoading(true)
         Task {

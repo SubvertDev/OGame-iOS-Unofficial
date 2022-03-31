@@ -34,10 +34,7 @@ final class BuildingPresenter: IBuildingPresenter {
                     view.showResourcesLoading(false)
                 }
             } catch {
-                await MainActor.run {
-                    view.showResourcesLoading(false)
-                    view.showAlert(error: error as! OGError)
-                }
+                await MainActor.run { view.showAlert(error: error as! OGError) }
             }
         }
     }

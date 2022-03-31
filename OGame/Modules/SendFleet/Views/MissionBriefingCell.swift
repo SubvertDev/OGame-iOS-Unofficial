@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MissionBriefingCell: UITableViewCell {
+final class MissionBriefingCell: UITableViewCell {
 
     @IBOutlet weak var targetLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
@@ -16,7 +16,6 @@ class MissionBriefingCell: UITableViewCell {
     @IBOutlet weak var deuteriumLabel: UILabel!
     @IBOutlet weak var cargobaysLabel: UILabel!
     @IBOutlet weak var speedLabel: UILabel!
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()

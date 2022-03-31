@@ -27,10 +27,32 @@ struct K {
         }
     }
     
+    struct Fleet {
+        static let title = "Fleet"
+    }
+    
+    struct SendFleet {
+        static let title = "Send Fleet"
+    }
+    
+    struct Galaxy {
+        static let title = "Galaxy"
+        
+        struct Placeholder {
+            static let galaxy = "Galaxy"
+            static let system = "System"
+        }
+    }
+    
+    // MARK: -
+    
     struct CellReuseID {
         static let serverCell = "ServerCell"
         static let menuCell = "MenuCell"
         static let overviewCell = "OverviewCell"
+        static let buildingCell = "BuildingCell"
+        static let galaxyCell = "GalaxyCell"
+        static let sendFleetCell = "SendFleetCell"
     }
     
     struct Segue {

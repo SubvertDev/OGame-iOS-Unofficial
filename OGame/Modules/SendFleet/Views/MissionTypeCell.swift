@@ -1,5 +1,5 @@
 //
-//  missionTypeCell.swift
+//  MissionTypeCell.swift
 //  OGame
 //
 //  Created by Subvert on 21.01.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MissionTypeCell: UITableViewCell {
+final class MissionTypeCell: UITableViewCell {
     
     @IBOutlet weak var collectionView: UICollectionView!
     

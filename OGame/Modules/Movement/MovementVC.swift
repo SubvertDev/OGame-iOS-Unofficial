@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - Currently Not Working -
+
 class MovementVC: UIViewController {
     
     let resourcesTopBarView = ResourcesBarView()
@@ -38,27 +40,27 @@ class MovementVC: UIViewController {
     // MARK: - Configure UI
     func configureResourcesTopBarView() {
         resourcesTopBarView.pinToTopEdges(inView: view, aspectRatio: 0.2, topIsSafeArea: true)
-        resourcesTopBarView.configureWith(resources: nil, player: player)
+        //resourcesTopBarView.configureWith(resources: nil, player: player)
     }
     
     func configureGenericTableView() {
         genericTableView.pinToTopView(inView: view, toTopView: resourcesTopBarView)
-        genericTableView.configureView(cellIdentifier: "FleetCell")
+        //genericTableView.configureView(cellIdentifier: "FleetCell")
         genericTableView.tableView.delegate = self
         genericTableView.tableView.dataSource = self
-        genericTableView.refreshCompletion = { [weak self] in
-            self?.resourcesTopBarView.refresh(self?.player)
-            self?.refresh()
-        }
+//        genericTableView.refreshCompletion = { [weak self] in
+//            self?.resourcesTopBarView.refresh(self?.player)
+//            self?.refresh()
+//        }
     }
     
     // MARK: - Refresh UI
     @objc func refresh() {
         Task {
             do {
-                genericTableView.startUpdatingUI()
+                //genericTableView.startUpdatingUI()
                 fleets = try await OGCheckFleet.getFleetWith(playerData: player)
-                genericTableView.stopUpdatingUI()
+                //genericTableView.stopUpdatingUI()
             } catch {
                 logoutAndShowError(error as! OGError)
             }
