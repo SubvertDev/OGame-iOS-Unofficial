@@ -1,5 +1,5 @@
 //
-//  GetFacilities.swift
+//  FacilitiesProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGFacilities {
+final class FacilitiesProvider {
     
     // MARK: - Get Facilities
     static func getFacilitiesWith(playerData: PlayerData) async throws -> [Building] {
@@ -41,7 +41,7 @@ class OGFacilities {
                 var buildingDataModel: [Building] = []
                 
                 for building in facilitiesCells.facilityBuildings {
-                    let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
+                    let buildTime = BuildTimeProvider.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
                     let newBuilding = Building(name: building.name,
                                                metal: building.metal,
                                                crystal: building.crystal,
@@ -64,7 +64,7 @@ class OGFacilities {
                 var buildingDataModel: [Building] = []
                 
                 for building in moonFacilitiesCells.moonFacilityBuildings {
-                    let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
+                    let buildTime = BuildTimeProvider.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
                     let newBuilding = Building(name: building.name,
                                                metal: building.metal,
                                                crystal: building.crystal,

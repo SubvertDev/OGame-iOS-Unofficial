@@ -1,5 +1,5 @@
 //
-//  OGBuildTime.swift
+//  BuildTimeProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class OGBuildTime {
+final class BuildTimeProvider {
     
     // MARK: - Get Building Time (level)
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithLevel: BuildingWithLevelData) -> String {

@@ -1,5 +1,5 @@
 //
-//  OGSendFleet.swift
+//  SendFleetProvider.swift
 //  OGame
 //
 //  Created by Subvert on 20.01.2022.
@@ -9,12 +9,12 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGSendFleet {
+final class SendFleetProvider {
     
-    static var currentToken: String?
+    var currentToken: String?
     
     // MARK: - Send Fleet
-    static func sendFleet(player: PlayerData,
+    func sendFleet(player: PlayerData,
                           mission: Mission,
                           whereTo: Coordinates,
                           ships: [Building],
@@ -63,7 +63,7 @@ class OGSendFleet {
     }
     
     // MARK: - Check Target
-    static func checkTarget(player: PlayerData,
+    func checkTarget(player: PlayerData,
                             whereTo: Coordinates,
                             ships: [Building]? = nil) async throws -> CheckTarget {
         do {
@@ -99,7 +99,7 @@ class OGSendFleet {
     }
     
     // MARK: - Get Token
-    static private func getToken(from data: Data) async throws {
+    private func getToken(from data: Data) async throws {
         do {
             let text = String(data: data, encoding: .ascii)!
             

@@ -126,7 +126,7 @@ extension BuildingVC: BuildingCellDelegate {
                     do {
                         self.myView.showResourcesLoading(true)
                         self.myView.showBuildingsLoading(true)
-                        try await OGBuild.build(what: type, playerData: self.player)
+                        try await BuildProvider.build(what: type, playerData: self.player)
                         self.presenter.loadResources(for: self.player)
                         self.presenter.loadBuildings(for: self.player, with: self.buildType)
                     } catch {
@@ -164,7 +164,7 @@ extension BuildingVC: BuildingCellDelegate {
                         do {
                             self.myView.showResourcesLoading(true)
                             self.myView.showBuildingsLoading(true)
-                            try await OGBuild.build(what: typeToBuild, playerData: self.player)
+                            try await BuildProvider.build(what: typeToBuild, playerData: self.player)
                             self.presenter.loadResources(for: self.player)
                             self.presenter.loadBuildings(for: self.player, with: self.buildType)
                         } catch {

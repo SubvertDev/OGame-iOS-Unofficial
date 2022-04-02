@@ -9,6 +9,14 @@ import Foundation
 
 struct K {
     
+    struct Titles {
+        static let overview = "Overview"
+        static let fleet = "Fleet"
+        static let sendFleet = "Send Fleet"
+        static let movement = "Movement"
+        static let galaxy = "Galaxy"
+    }
+    
     struct Menu {
         static let title = "Menu"
         static let cellTitlesList = ["Overview", "Resources", "Facilities",
@@ -17,8 +25,6 @@ struct K {
     }
     
     struct Overview {
-        static let title = "Overview"
-        
         struct Section {
             static let resourcesAndFacilities = "Resources & Facilities"
             static let researches = "Research"
@@ -27,17 +33,7 @@ struct K {
         }
     }
     
-    struct Fleet {
-        static let title = "Fleet"
-    }
-    
-    struct SendFleet {
-        static let title = "Send Fleet"
-    }
-    
     struct Galaxy {
-        static let title = "Galaxy"
-        
         struct Placeholder {
             static let galaxy = "Galaxy"
             static let system = "System"
@@ -53,6 +49,12 @@ struct K {
         static let buildingCell = "BuildingCell"
         static let galaxyCell = "GalaxyCell"
         static let sendFleetCell = "SendFleetCell"
+        static let setCoordinatesCell = "SetCoordinatesCell"
+        static let missionTypeCell = "MissionTypeCell"
+        static let CVMissionTypeCell = "CVMissionTypeCell"
+        static let missionBriefingCell = "MissionBriefingCell"
+        static let fleetSettingsCell = "FleetSettingsCell"
+        static let fleetCell = "FleetCell"
     }
     
     struct Segue {
@@ -70,5 +72,7 @@ struct K {
         static let yes = "Yes"
         static let no = "No"
         static let cancel = "Cancel"
+        static let success = "Success"
+        static let failure = "Failure"
     }
 }

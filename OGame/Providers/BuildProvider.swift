@@ -1,5 +1,5 @@
 //
-//  OGBuild.swift
+//  BuildProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGBuild {
+final class BuildProvider {
     
     // MARK: - Build
     static func build(what: (Int, Int, String), playerData: PlayerData) async throws {

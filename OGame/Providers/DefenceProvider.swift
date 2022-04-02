@@ -1,5 +1,5 @@
 //
-//  OGDefence.swift
+//  DefenceProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGDefence {
+final class DefenceProvider {
     
     // MARK: - Get Defences
     static func getDefencesWith(playerData: PlayerData) async throws -> [Building] {
@@ -41,7 +41,7 @@ class OGDefence {
             var buildingDataModel: [Building] = []
             
             for building in defencesCells.defenceTechnologies {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithAmount: building)
+                let buildTime = BuildTimeProvider.getBuildingTimeOfflineWith(player: playerData, buildingWithAmount: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,

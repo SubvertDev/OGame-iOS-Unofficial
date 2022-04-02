@@ -1,35 +1,28 @@
 //
-//  FleetView.swift
+//  MovementView.swift
 //  OGame
 //
-//  Created by Subvert on 3/29/22.
+//  Created by Subvert on 4/2/22.
 //
 
 import UIKit
 
-final class FleetView: UIView {
-    
+final class MovementView: UIView {
+
     private let resourcesBarView: ResourcesBarView = {
         let resourcesBar = ResourcesBarView()
         resourcesBar.translatesAutoresizingMaskIntoConstraints = false
         return resourcesBar
     }()
     
-    let fleetPageButtonsView: FleetPageButtonsView = {
-        let fleetPageButtons = FleetPageButtonsView()
-        fleetPageButtons.translatesAutoresizingMaskIntoConstraints = false
-        return fleetPageButtons
-    }()
-    
-    let genericTableView: GenericTableView = {
+    private let genericTableView: GenericTableView = {
         let tableView = GenericTableView()
-        tableView.tableView.register(UINib(nibName: K.CellReuseID.sendFleetCell, bundle: nil),
-                                     forCellReuseIdentifier: K.CellReuseID.sendFleetCell)
+        tableView.tableView.register(UINib(nibName: K.CellReuseID.fleetCell, bundle: nil),
+                                     forCellReuseIdentifier: K.CellReuseID.fleetCell)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
-    // MARK: View Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .systemBackground
@@ -42,12 +35,10 @@ final class FleetView: UIView {
     }
     
     // MARK: Public
-    func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource
-                                  & IFleetPageButtonsView & IGenericTableView) {
+    func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource & IGenericTableView) {
         genericTableView.delegate = delegate
         genericTableView.tableView.delegate = delegate
         genericTableView.tableView.dataSource = delegate
-        fleetPageButtonsView.delegate = delegate
     }
     
     func showResourcesLoading(_ state: Bool) {
@@ -60,7 +51,11 @@ final class FleetView: UIView {
         }
     }
     
-    func showTableViewLoading(_ state: Bool) {
+    func updateResources(with resources: Resources) {
+        resourcesBarView.updateNew(with: resources)
+    }
+    
+    func showMovementLoading(_ state: Bool) {
         if state {
             genericTableView.tableView.alpha = 0.5
             genericTableView.tableView.isUserInteractionEnabled = false
@@ -73,33 +68,24 @@ final class FleetView: UIView {
         }
     }
     
-    func updateTableView() {
+    func updateMovementTableView() {
         genericTableView.tableView.reloadData()
-    }
-    
-    func updateResources(with resources: Resources) {
-        resourcesBarView.updateNew(with: resources)
     }
     
     // MARK: Private
     private func addSubviews() {
         addSubview(resourcesBarView)
-        addSubview(fleetPageButtonsView)
         addSubview(genericTableView)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            resourcesBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             resourcesBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             resourcesBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            resourcesBarView.heightAnchor.constraint(equalTo: resourcesBarView.widthAnchor, multiplier: 1.0/5.0),
+            resourcesBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            resourcesBarView.heightAnchor.constraint(equalTo: resourcesBarView.widthAnchor, multiplier: 0.2),
             
-            fleetPageButtonsView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
-            fleetPageButtonsView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            fleetPageButtonsView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            genericTableView.topAnchor.constraint(equalTo: fleetPageButtonsView.bottomAnchor),
+            genericTableView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
             genericTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             genericTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             genericTableView.bottomAnchor.constraint(equalTo: bottomAnchor)

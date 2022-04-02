@@ -1,5 +1,5 @@
 //
-//  OGSupply.swift
+//  ShipyardProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,20 +9,20 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGSupplies {
-        
-    // MARK: - Get Supplies
-    static func getSuppliesWith(playerData: PlayerData) async throws -> [Building] {
+final class ShipyardProvider {
+    
+    // MARK: Get Ships
+    static func getShipsWith(playerData: PlayerData) async throws -> [Building] {
         do {
-            let link = "\(playerData.indexPHP)page=ingame&component=supplies&cp=\(playerData.planetID)"
+            let link = "\(playerData.indexPHP)page=ingame&component=shipyard&cp=\(playerData.planetID)"
             let value = try await AF.request(link).serializingData().value
             
             let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
             
-            let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
-            var levels = [Int]()
-            for level in levelsParse {
-                levels.append(Int(try level.text())!)
+            let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
+            var shipsAmount = [Int]()
+            for ship in shipsParse {
+                shipsAmount.append(Int(try ship.text())!)
             }
             
             let technologyStatusParse = try page.select("li[class*=technology]")
@@ -31,16 +31,17 @@ class OGSupplies {
                 technologyStatus.append(try status.attr("data-status"))
             }
             
-            guard !levels.isEmpty, !technologyStatus.isEmpty
-            else { throw OGError(message: "Not logged in", detailed: "Supply login check failed") }
+            guard !shipsAmount.isEmpty else {
+                throw OGError(message: "Not logged in", detailed: "Ships login check failed")
+            }
             
-            let supplies = Supplies(levels, technologyStatus)
-            let supplyCells = ResourceCell(with: supplies)
+            let ships = Ships(shipsAmount, technologyStatus)
+            let shipsCells = ShipsCell(with: ships)
             
             var buildingDataModel: [Building] = []
             
-            for building in supplyCells.resourceBuildings {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
+            for building in shipsCells.shipsTechnologies {
+                let buildTime = BuildTimeProvider.getBuildingTimeOfflineWith(player: playerData, buildingWithAmount: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,
@@ -49,7 +50,7 @@ class OGSupplies {
                                                    unavailable: building.image.unavailable,
                                                    disabled: building.image.disabled),
                                            buildingsID: building.buildingsID,
-                                           levelOrAmount: building.level,
+                                           levelOrAmount: building.amount,
                                            condition: building.condition,
                                            timeToBuild: buildTime)
                 buildingDataModel.append(newBuilding)
@@ -57,7 +58,7 @@ class OGSupplies {
             return buildingDataModel
             
         } catch {
-            throw OGError(message: "Supplies network request failed", detailed: error.localizedDescription)
+            throw OGError(message: "Ships network error", detailed: error.localizedDescription)
         }
     }
 }

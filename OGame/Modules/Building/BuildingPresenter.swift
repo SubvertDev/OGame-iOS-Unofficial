@@ -45,15 +45,15 @@ final class BuildingPresenter: IBuildingPresenter {
             do {
                 switch type {
                 case .supplies:
-                    buildings = try await OGSupplies.getSuppliesWith(playerData: player)
+                    buildings = try await SuppliesProvider.getSuppliesWith(playerData: player)
                 case .facilities:
-                    buildings = try await OGFacilities.getFacilitiesWith(playerData: player)
+                    buildings = try await FacilitiesProvider.getFacilitiesWith(playerData: player)
                 case .research:
-                    buildings = try await OGResearch.getResearchesWith(playerData: player)
+                    buildings = try await ResearchProvider.getResearchesWith(playerData: player)
                 case .shipyard:
-                    buildings = try await OGShipyard.getShipsWith(playerData: player)
+                    buildings = try await ShipyardProvider.getShipsWith(playerData: player)
                 case .defenses:
-                    buildings = try await OGDefence.getDefencesWith(playerData: player)
+                    buildings = try await DefenceProvider.getDefencesWith(playerData: player)
                 }
                 await MainActor.run {
                     view.updateBuildings(buildings)

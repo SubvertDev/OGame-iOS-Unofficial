@@ -37,7 +37,7 @@ final class FleetVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = K.Fleet.title
+        title = K.Titles.fleet
         
         myView.setDelegates(self)
         myView.updateResources(with: resources)

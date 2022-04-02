@@ -22,6 +22,7 @@ final class MenuVC: UIViewController {
     private var player: PlayerData
     private var resources: Resources
     private let menuList = K.Menu.cellTitlesList
+    private var isFirstLoad = true
     
     private var myView: MenuView { return view as! MenuView }
 
@@ -38,6 +39,14 @@ final class MenuVC: UIViewController {
         configureView()
         presenter = MenuPresenter(view: self, player: player)
         presenter.viewDidLoad(with: player)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if !isFirstLoad {
+            presenter.loadResources(for: player)
+        }
+        isFirstLoad = false
     }
     
     init(player: PlayerData, resources: Resources) {
@@ -137,7 +146,7 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         case 6:
             vc = FleetVC(player: player, resources: resources)
         case 7:
-            vc = MovementVC(player: player)
+            vc = MovementVC(player: player, resources: resources)
         case 8:
             vc = GalaxyVC(player: player)
         default:

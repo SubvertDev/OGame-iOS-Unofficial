@@ -1,5 +1,5 @@
 //
-//  FleetVC.swift
+//  MovementVC.swift
 //  OGame
 //
 //  Created by Subvert on 29.07.2021.
@@ -7,78 +7,91 @@
 
 import UIKit
 
-// MARK: - Currently Not Working -
+protocol IMovementView: AnyObject {
+    func showResourcesLoading(_ state: Bool)
+    func updateResources(with: Resources)
+    func showMovementLoading(_ state: Bool)
+    func updateMovementTableView(with: [Fleets])
+    func showAlert(error: OGError)
+}
 
-class MovementVC: UIViewController {
+final class MovementVC: UIViewController {
     
-    let resourcesTopBarView = ResourcesBarView()
-    let genericTableView = GenericTableView()
+    // MARK: Properties
+    private var player: PlayerData
+    private var resources: Resources
+    private var fleets: [Fleets]?
+    private var presenter: MovementPresenter!
+    private var myView: MovementView { return view as! MovementView }
     
-    var player: PlayerData
-    var fleets: [Fleets]?
-    
+    // MARK: View Lifecycle
+    override func loadView() {
+        view = MovementView()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Movement"
-        view.backgroundColor = .systemBackground
+        title = K.Titles.movement
         
-        configureResourcesTopBarView()
-        configureGenericTableView()
-        refresh()
+        myView.setDelegates(self)
+        myView.updateResources(with: resources)
+        
+        presenter = MovementPresenter(view: self)
+        presenter.loadMovement(for: player)
     }
     
-    init(player: PlayerData) {
+    init(player: PlayerData, resources: Resources) {
         self.player = player
+        self.resources = resources
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Configure UI
-    func configureResourcesTopBarView() {
-        resourcesTopBarView.pinToTopEdges(inView: view, aspectRatio: 0.2, topIsSafeArea: true)
-        //resourcesTopBarView.configureWith(resources: nil, player: player)
+}
+
+// MARK: - MovementView Delegate
+extension MovementVC: IMovementView {
+    func showResourcesLoading(_ state: Bool) {
+        myView.showResourcesLoading(state)
     }
     
-    func configureGenericTableView() {
-        genericTableView.pinToTopView(inView: view, toTopView: resourcesTopBarView)
-        //genericTableView.configureView(cellIdentifier: "FleetCell")
-        genericTableView.tableView.delegate = self
-        genericTableView.tableView.dataSource = self
-//        genericTableView.refreshCompletion = { [weak self] in
-//            self?.resourcesTopBarView.refresh(self?.player)
-//            self?.refresh()
-//        }
+    func updateResources(with resources: Resources) {
+        myView.updateResources(with: resources)
     }
     
-    // MARK: - Refresh UI
-    @objc func refresh() {
-        Task {
-            do {
-                //genericTableView.startUpdatingUI()
-                fleets = try await OGCheckFleet.getFleetWith(playerData: player)
-                //genericTableView.stopUpdatingUI()
-            } catch {
-                logoutAndShowError(error as! OGError)
-            }
-        }
+    func showMovementLoading(_ state: Bool) {
+        myView.showMovementLoading(state)
+    }
+    
+    func updateMovementTableView(with fleets: [Fleets]) {
+        self.fleets = fleets
+        myView.updateMovementTableView()
+    }
+    
+    func showAlert(error: OGError) {
+        logoutAndShowError(error)
+    }
+}
+
+extension MovementVC: IGenericTableView {
+    func refreshCalled() {
+        presenter.loadResources(for: player)
+        presenter.loadMovement(for: player)
     }
 }
 
 // MARK: - Delegates & DataSource
-extension MovementVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+extension MovementVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let fleets = fleets else { return 0 }
-        return fleets.count
+        return fleets?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let fleets = fleets else { return UITableViewCell() }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FleetCell", for: indexPath) as! FleetCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.fleetCell, for: indexPath) as! FleetCell
         cell.set(with: fleets[indexPath.row])
         
         return cell

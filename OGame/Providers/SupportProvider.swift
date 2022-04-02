@@ -1,5 +1,5 @@
 //
-//  OGSupport.swift
+//  SupportProvider.swift
 //  OGame
 //
 //  Created by Subvert on 17.01.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftSoup
 
-class OGSupport {
+final class SupportProvider {
     
     // MARK: - Get Character Class
     func getCharacterClassWith(playerData: PlayerData) -> String {

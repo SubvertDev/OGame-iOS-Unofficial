@@ -1,5 +1,5 @@
 //
-//  OGFleet.swift
+//  CheckFleetProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,10 +9,10 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGCheckFleet {
+final class CheckFleetProvider {
     
     // MARK: - Get Fleet
-    static func getFleetWith(playerData: PlayerData) async throws -> [Fleets] {
+    func getFleetWith(playerData: PlayerData) async throws -> [Fleets] {
         try await withThrowingTaskGroup(of: [Fleets].self) { group in
             var fleets = [Fleets]()
             
@@ -29,7 +29,7 @@ class OGCheckFleet {
     
     
     // MARK: - Get Hostile Fleet
-    static private func getHostileFleetWith(_ playerData: PlayerData) async throws -> [Fleets] {
+    private func getHostileFleetWith(_ playerData: PlayerData) async throws -> [Fleets] {
         do {
             let link = "\(playerData.indexPHP)page=componentOnly&component=eventList"
             let value = try await AF.request(link).serializingData().value
@@ -95,7 +95,7 @@ class OGCheckFleet {
 
 
     // MARK: - Get Friendly Fleet
-    static private func getFriendlyFleetWith(_ playerData: PlayerData) async throws -> [Fleets] {
+    private func getFriendlyFleetWith(_ playerData: PlayerData) async throws -> [Fleets] {
         do {
             let link = "\(playerData.indexPHP)page=ingame&component=movement"
             let value = try await AF.request(link).serializingData().value
@@ -179,7 +179,7 @@ class OGCheckFleet {
 
     
     // MARK: - Get Fleet Coordinates
-    static private func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
+    private func getFleetCoordinates(details: Elements, type: String) -> [[Int]] {
         // TODO: Test with moon/expedition
         var coordinates = [[Int]]()
 
@@ -220,7 +220,7 @@ class OGCheckFleet {
     }
     
     // MARK: - Get Images From URL
-    static private func getImagesFromUrl(_ urls: [String]) async throws -> [UIImage] {
+    private func getImagesFromUrl(_ urls: [String]) async throws -> [UIImage] {
         do {
             var images: [UIImage] = []
             try await withThrowingTaskGroup(of: UIImage.self) { group in

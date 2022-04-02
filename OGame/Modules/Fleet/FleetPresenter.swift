@@ -19,6 +19,7 @@ final class FleetPresenter: IFleetPresenter {
     
     unowned let view: IFleetView
     private let resourcesProvider = ResourcesProvider()
+    private let sendFleetProvider = SendFleetProvider()
     
     init(view: IFleetView) {
         self.view = view
@@ -29,7 +30,7 @@ final class FleetPresenter: IFleetPresenter {
         view.showTableViewLoading(true)
         Task {
             do {
-                let ships = try await OGShipyard.getShipsWith(playerData: player)
+                let ships = try await ShipyardProvider.getShipsWith(playerData: player)
                 await MainActor.run {
                     var ships = ships
                     ships.removeLast(2)
@@ -49,7 +50,7 @@ final class FleetPresenter: IFleetPresenter {
                 let targetCoordinates = Coordinates(galaxy: coordinates[0],
                                                     system: coordinates[1],
                                                     position: coordinates[2])
-                let targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates)
+                let targetData = try await sendFleetProvider.checkTarget(player: player, whereTo: targetCoordinates)
                 await MainActor.run { view.setTarget(with: targetData) }
             } catch {
                 await MainActor.run { view.showAlert(error: error as! OGError) }

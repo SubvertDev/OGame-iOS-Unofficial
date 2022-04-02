@@ -1,5 +1,5 @@
 //
-//  OGCelestials.swift
+//  CelestialsProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGCelestials {
+final class CelestialsProvider {
     
     // MARK: - Get All Celestials
     static func getAllCelestialsWith(serverData: ServerData) async throws -> [Celestial] {

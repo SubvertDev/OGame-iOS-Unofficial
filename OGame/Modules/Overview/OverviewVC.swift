@@ -32,7 +32,7 @@ final class OverviewVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = K.Overview.title
+        title = K.Titles.overview
         configureView()
         presenter = OverviewPresenter(view: self)
         presenter.getOverviewInfo(for: player)

@@ -9,17 +9,25 @@ import UIKit
 
 // MARK: - TODO: Refactor this VC -
 
+protocol ISendFleetView: AnyObject {
+    func showResourcesLoading(_ state: Bool)
+    func updateResources(with: Resources)
+    func showFleetSendLoading(_ state: Bool)
+    func updateFleetSend(with: [Int: Bool])
+    func showAlert(error: OGError)
+}
+
 final class SendFleetVC: UIViewController {
     
-    private let resourcesTopBarView = ResourcesBarView()
-    private let tableView = UITableView()
-    private let activityIndicator = UIActivityIndicatorView()
-
+    // MARK: Properties
     private var player: PlayerData
     private var ships: [Building]
     private var targetData: CheckTarget
+    private var targetCoordinates: Coordinates
+    private var presenter: SendFleetPresenter!
+    
+    private let sendFleetProvider = SendFleetProvider() // todo REMOVE it
  
-    private var targetCoordinates: Coordinates?
     private var targetMission: Mission?
     private var briefingData: [String]?
     private var orders: [Int: Bool] = [:]
@@ -27,116 +35,68 @@ final class SendFleetVC: UIViewController {
     private var resourcesToSend = [0, 0, 0]
     private var fleetSpeed = 10
     
+    private var myView: SendFleetView { return view as! SendFleetView }
+    
+    // MARK: View Lifecycle
+    override func loadView() {
+        view = SendFleetView()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Send Fleet"
-        view.backgroundColor = .systemBackground
+        title = K.Titles.sendFleet
         
-        targetCoordinates = Coordinates(galaxy: targetData.targetPlanet!.galaxy,
-                                        system: targetData.targetPlanet!.system,
-                                        position: targetData.targetPlanet!.position,
-                                        destination: .planet)
-        configureResourcesTopBarView()
-        configureTableView()
-        configureActivityIndicator()
-        startUpdatingUI()
+        myView.tableView.delegate = self
+        myView.tableView.dataSource = self
         
-        Task {
-            do {
-                let targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates!, ships: ships)
-                for order in targetData.orders! {
-                    let orderKeyInt = Int(order.key)! - 1
-                    if orderKeyInt != 15 {
-                        orders[orderKeyInt] = order.value
-                    } else {
-                        orders[9] = order.value
-                    }
-                }
-                
-                let coordinatesCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! SetCoordinatesCell
-                coordinatesCell.delegate = self
-                
-                let missionTypeCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! MissionTypeCell
-                let collectionView = missionTypeCell.collectionView
-                collectionView!.reloadData()
-                
-                stopUpdatingUI()
-                
-            } catch {
-                logoutAndShowError(error as! OGError)
-            }
-        }
+        presenter = SendFleetPresenter(view: self)
+        presenter.loadResources(for: player)
+        
+        presenter.getInitialTarget(for: player, at: targetCoordinates, with: ships)
     }
     
     init(player: PlayerData, ships: [Building], target: CheckTarget) {
         self.player = player
         self.ships = ships
         self.targetData = target
+        self.targetCoordinates = Coordinates(galaxy: targetData.targetPlanet!.galaxy,
+                                             system: targetData.targetPlanet!.system,
+                                             position: targetData.targetPlanet!.position,
+                                             destination: .planet)
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Configure UI
-    func configureResourcesTopBarView() {
-        view.addSubview(resourcesTopBarView)
-        resourcesTopBarView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            resourcesTopBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            resourcesTopBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            resourcesTopBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            resourcesTopBarView.heightAnchor.constraint(equalTo: resourcesTopBarView.widthAnchor, multiplier: 0.2)
-        ])
-        //resourcesTopBarView.configureWith(resources: nil, player: player)
+}
+
+// MARK: - SendFleetView Delegate
+extension SendFleetVC: ISendFleetView {
+    func showResourcesLoading(_ state: Bool) {
+        myView.showResourcesLoading(state)
     }
     
-    func configureTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: resourcesTopBarView.bottomAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+    func updateResources(with resources: Resources) {
+        myView.updateResources(with: resources)
+    }
+    
+    func showFleetSendLoading(_ state: Bool) {
+        myView.showFleetSendLoading(state)
+    }
+    
+    func updateFleetSend(with orders: [Int : Bool]) {
+        // todo what the hell is that
+        let coordinatesCell = myView.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SetCoordinatesCell
+        coordinatesCell?.delegate = self
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: "SetCoordinatesCell", bundle: nil), forCellReuseIdentifier: "SetCoordinatesCell")
-        tableView.register(UINib(nibName: "MissionTypeCell", bundle: nil), forCellReuseIdentifier: "MissionTypeCell")
-        tableView.register(UINib(nibName: "MissionBriefingCell", bundle: nil), forCellReuseIdentifier: "MissionBriefingCell")
-        tableView.register(UINib(nibName: "FleetSettingsCell", bundle: nil), forCellReuseIdentifier: "FleetSettingsCell")
-        tableView.removeExtraCellLines()
-        tableView.keyboardDismissMode = .onDrag
-        
-        //tableView.refreshControl = refreshControl
-        //refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        let missionTypeCell = myView.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? MissionTypeCell
+        let collectionView = missionTypeCell?.collectionView
+        collectionView?.reloadData()
     }
     
-    func configureActivityIndicator() {
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.style = .large
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            activityIndicator.widthAnchor.constraint(equalToConstant: 100),
-            activityIndicator.heightAnchor.constraint(equalToConstant: 100)
-        ])
-    }
-    
-    func startUpdatingUI() {
-        tableView.alpha = 0.5
-        tableView.isUserInteractionEnabled = false
-        activityIndicator.startAnimating()
-    }
-    
-    func stopUpdatingUI() {
-        tableView.alpha = 1
-        tableView.isUserInteractionEnabled = true
-        activityIndicator.stopAnimating()
+    func showAlert(error: OGError) {
+        logoutAndShowError(error)
     }
 }
 
@@ -146,21 +106,21 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
     
     // MARK: - Coordinates Button Pressed
     func didPressButton(_ sender: UIButton) {
-        startUpdatingUI()
+        myView.showFleetSendLoading(true)
         Task {
             do {
                 switch sender.tag {
                 case 1:
-                    targetCoordinates!.destination = .planet
+                    targetCoordinates.destination = .planet
                 case 2:
-                    targetCoordinates!.destination = .moon
+                    targetCoordinates.destination = .moon
                 case 3:
-                    targetCoordinates!.destination = .debris
+                    targetCoordinates.destination = .debris
                 default:
                     return
                 }
                 
-                targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates!, ships: ships)
+                targetData = try await sendFleetProvider.checkTarget(player: player, whereTo: targetCoordinates, ships: ships)
                 
                 switch targetData.status {
                 case "failure":
@@ -168,14 +128,14 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                     for index in 0...9 {
                         orders[index] = falses[index]
                     }
-                    let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! MissionTypeCell
+                    let cell = myView.tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! MissionTypeCell
                     let collectionView = cell.collectionView
                     collectionView!.reloadData()
                     
-                    stopUpdatingUI()
+                    myView.showFleetSendLoading(false)
                     
                     let alert = UIAlertController(title: "\(targetData.errors![0].message)", message: nil, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    alert.addAction(UIAlertAction(title: K.Error.ok, style: .default))
                     present(alert, animated: true)
                     
                 case "success":
@@ -205,9 +165,9 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                     
                     let rowsIndexPaths = [IndexPath(row: 0, section: 1),
                                           IndexPath(row: 0, section: 2)]
-                    tableView.reloadRows(at: rowsIndexPaths, with: .automatic)
+                    myView.tableView.reloadRows(at: rowsIndexPaths, with: .automatic)
                     
-                    stopUpdatingUI()
+                    myView.showFleetSendLoading(false)
                     
                 default:
                     break
@@ -220,29 +180,27 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
     
     // MARK: - Send Button Pressed
     func sendButtonPressed(_ sender: UIButton) {
-        guard let targetCoordinates = targetCoordinates,
-              let targetMission = targetMission // !
-        else { return }
+        guard let targetMission = targetMission else { return }
         
         Task {
             do {
-                startUpdatingUI()
-                let response = try await OGSendFleet.sendFleet(player: player,
+                myView.showFleetSendLoading(true)
+                let response = try await sendFleetProvider.sendFleet(player: player,
                                                                mission: targetMission,
                                                                whereTo: targetCoordinates,
                                                                ships: ships,
                                                                resources: resourcesToSend,
                                                                speed: fleetSpeed)
-                stopUpdatingUI()
+                myView.showFleetSendLoading(false)
                 if response.success {
-                    let alert = UIAlertController(title: "Success", message: response.message ?? "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                    let alert = UIAlertController(title: K.Error.success, message: response.message ?? "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: K.Error.ok, style: .default) { _ in
                         // TODO: Go back to menu
                     })
                     present(alert, animated: true)
                 } else {
-                    let alert = UIAlertController(title: "Failure", message: response.errors?[0].message ?? "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                    let alert = UIAlertController(title: K.Error.failure, message: response.errors?[0].message ?? "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: K.Error.ok, style: .default) { _ in
                         // TODO: Go back to menu or not?
                     })
                     present(alert, animated: true)
@@ -283,7 +241,7 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SetCoordinatesCell", for: indexPath) as! SetCoordinatesCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.setCoordinatesCell, for: indexPath) as! SetCoordinatesCell
             cell.planetNameLabel.text = player.planet
             
             if player.moonIDs.contains(player.planetID) {
@@ -302,20 +260,20 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
             return cell
             
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MissionTypeCell", for: indexPath) as! MissionTypeCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.missionTypeCell, for: indexPath) as! MissionTypeCell
             cell.collectionView.delegate = self
             cell.collectionView.dataSource = self
-            cell.collectionView.register(UINib(nibName: "CVMissionTypeCell", bundle: nil),
-                                         forCellWithReuseIdentifier: "CVMissionTypeCell")
+            cell.collectionView.register(UINib(nibName: K.CellReuseID.CVMissionTypeCell, bundle: nil),
+                                         forCellWithReuseIdentifier: K.CellReuseID.CVMissionTypeCell)
             cell.collectionView.reloadData()
             return cell
             
         case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MissionBriefingCell", for: indexPath) as! MissionBriefingCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.missionBriefingCell, for: indexPath) as! MissionBriefingCell
             if targetData.targetPlanet == nil {
-                let galaxy = "\(targetCoordinates!.galaxy)"
-                let system = "\(targetCoordinates!.system)"
-                let position = "\(targetCoordinates!.position)"
+                let galaxy = "\(targetCoordinates.galaxy)"
+                let system = "\(targetCoordinates.system)"
+                let position = "\(targetCoordinates.position)"
                 cell.targetLabel.text = "[\(galaxy):\(system):\(position)] No planet"
                 return cell
             }
@@ -327,7 +285,7 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
             return cell
             
         case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FleetSettingsCell", for: indexPath) as! FleetSettingsCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.fleetSettingsCell, for: indexPath) as! FleetSettingsCell
             cell.delegate = self
             cell.metalTextField.delegate = self
             cell.crystalTextField.delegate = self
@@ -347,28 +305,28 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
     
     // MARK: - TextFieldDidEndEditing
     func textFieldDidEndEditing(_ textField: UITextField) {
-        startUpdatingUI()
+        myView.showFleetSendLoading(true)
 
         switch textField.tag {
         case 0, 1, 2:
             if textField.text == "0" || textField.text == "" {
-                textField.text = "\(targetCoordinates!.galaxy)"
+                textField.text = "\(targetCoordinates.galaxy)"
             }
             
             switch textField.tag {
             case 0:
-                targetCoordinates!.galaxy = Int(textField.text!) ?? targetCoordinates!.galaxy
+                targetCoordinates.galaxy = Int(textField.text!) ?? targetCoordinates.galaxy
             case 1:
-                targetCoordinates!.system = Int(textField.text!) ?? targetCoordinates!.system
+                targetCoordinates.system = Int(textField.text!) ?? targetCoordinates.system
             case 2:
-                targetCoordinates!.position = Int(textField.text!) ?? targetCoordinates!.position
+                targetCoordinates.position = Int(textField.text!) ?? targetCoordinates.position
             default:
                 break
             }
             
             Task {
                 do {
-                    targetData = try await OGSendFleet.checkTarget(player: player, whereTo: targetCoordinates!, ships: ships)
+                    targetData = try await sendFleetProvider.checkTarget(player: player, whereTo: targetCoordinates, ships: ships)
                     if targetData.targetInhabited == true {
                         for order in targetData.orders! {
                             let orderKeyInt = Int(order.key)! - 1
@@ -395,8 +353,8 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                     
                     let rowsIndexPaths = [IndexPath(row: 0, section: 1),
                                           IndexPath(row: 0, section: 2)]
-                    tableView.reloadRows(at: rowsIndexPaths, with: .automatic)
-                    stopUpdatingUI()
+                    myView.tableView.reloadRows(at: rowsIndexPaths, with: .automatic)
+                    myView.showFleetSendLoading(false)
                     
                 } catch {
                     throw OGError(message: "Error checking target", detailed: error.localizedDescription)
@@ -419,10 +377,10 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
             default:
                 break
             }
-            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 3)) as? FleetSettingsCell
+            let cell = myView.tableView.cellForRow(at: IndexPath(row: 0, section: 3)) as? FleetSettingsCell
             let resourcesTotal = resourcesToSend[0] + resourcesToSend[1] + resourcesToSend[2]
             cell?.cargoLabel.text = "\(resourcesTotal)/?" // TODO: Add full cargo number
-            stopUpdatingUI()
+            myView.showFleetSendLoading(false)
             
         default:
             break
@@ -462,7 +420,7 @@ extension SendFleetVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CVMissionTypeCell", for: indexPath) as! CVMissionTypeCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.CellReuseID.CVMissionTypeCell, for: indexPath) as! CVMissionTypeCell
         cell.isAvailable = false
         cell.missionTypeLabel.text = missionTypeModel.missionTypes[indexPath.row].name
 
@@ -477,10 +435,10 @@ extension SendFleetVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             cell.missionTypeImageView.image = missionTypeModel.missionTypes[indexPath.row].images.unavailable
         }
         
-        let myCoords = [targetCoordinates!.galaxy,
-                        targetCoordinates!.system,
-                        targetCoordinates!.position,
-                        targetCoordinates!.destination.rawValue]
+        let myCoords = [targetCoordinates.galaxy,
+                        targetCoordinates.system,
+                        targetCoordinates.position,
+                        targetCoordinates.destination.rawValue]
         if myCoords == player.celestials[player.currentPlanetIndex].coordinates {
             cell.missionTypeImageView.image = missionTypeModel.missionTypes[indexPath.row].images.unavailable
         }
@@ -499,10 +457,10 @@ extension SendFleetVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! CVMissionTypeCell
         
-        let myCoords = [targetCoordinates!.galaxy,
-                        targetCoordinates!.system,
-                        targetCoordinates!.position,
-                        targetCoordinates!.destination.rawValue]
+        let myCoords = [targetCoordinates.galaxy,
+                        targetCoordinates.system,
+                        targetCoordinates.position,
+                        targetCoordinates.destination.rawValue]
         let isSamePlanet = myCoords == player.celestials[player.currentPlanetIndex].coordinates
         
         if !cell.isActive && !cell.isAvailable { // not selected, not available

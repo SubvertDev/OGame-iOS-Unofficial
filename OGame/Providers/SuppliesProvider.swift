@@ -1,5 +1,5 @@
 //
-//  OGResearch.swift
+//  SuppliesProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,20 +9,20 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGResearch {
-    
-    // MARK: - Get Researches
-    static func getResearchesWith(playerData: PlayerData) async throws -> [Building] {
+final class SuppliesProvider {
+        
+    // MARK: - Get Supplies
+    static func getSuppliesWith(playerData: PlayerData) async throws -> [Building] {
         do {
-            let link = "\(playerData.indexPHP)page=ingame&component=research&cp=\(playerData.planetID)"
+            let link = "\(playerData.indexPHP)page=ingame&component=supplies&cp=\(playerData.planetID)"
             let value = try await AF.request(link).serializingData().value
             
             let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
             
-            let levelsParse = try page.select("span[class=level]").select("[data-value]")
+            let levelsParse = try page.select("span[data-value][class=level]") // + [class=amount]
             var levels = [Int]()
             for level in levelsParse {
-                levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
+                levels.append(Int(try level.text())!)
             }
             
             let technologyStatusParse = try page.select("li[class*=technology]")
@@ -31,16 +31,16 @@ class OGResearch {
                 technologyStatus.append(try status.attr("data-status"))
             }
             
-            guard !levels.isEmpty && !technologyStatus.isEmpty
-            else { throw OGError(message: "Not logged in", detailed: "Research login check failed") }
+            guard !levels.isEmpty, !technologyStatus.isEmpty
+            else { throw OGError(message: "Not logged in", detailed: "Supply login check failed") }
             
-            let researches = Researches(levels, technologyStatus)
-            let researchesCells = ResearchCell(with: researches)
+            let supplies = Supplies(levels, technologyStatus)
+            let supplyCells = ResourceCell(with: supplies)
             
             var buildingDataModel: [Building] = []
             
-            for building in researchesCells.researchTechnologies {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
+            for building in supplyCells.resourceBuildings {
+                let buildTime = BuildTimeProvider.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,
@@ -57,7 +57,7 @@ class OGResearch {
             return buildingDataModel
             
         } catch {
-            throw OGError(message: "Research network error", detailed: error.localizedDescription)
+            throw OGError(message: "Supplies network request failed", detailed: error.localizedDescription)
         }
     }
 }

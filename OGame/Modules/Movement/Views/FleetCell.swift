@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FleetCell: UITableViewCell {
+final class FleetCell: UITableViewCell {
 
     @IBOutlet weak var friendlyPlanetImage: UIImageView!
     @IBOutlet weak var enemyPlanetImage: UIImageView!
@@ -26,6 +26,7 @@ class FleetCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+        selectionStyle = .none
     }
 
     func set(with fleet: Fleets) {
@@ -184,7 +185,7 @@ class FleetCell: UITableViewCell {
         }
     }
 
-    func destinationToString(_ destination: [Int]) -> String {
+    private func destinationToString(_ destination: [Int]) -> String {
         return "[\(destination[0]):\(destination[1]):\(destination[2])]"
     }
 }

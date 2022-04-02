@@ -1,5 +1,5 @@
 //
-//  OGShipyard.swift
+//  ResearchProvider.swift
 //  OGame
 //
 //  Created by Subvert on 16.01.2022.
@@ -9,20 +9,20 @@ import Foundation
 import Alamofire
 import SwiftSoup
 
-class OGShipyard {
+final class ResearchProvider {
     
-    // MARK: Get Ships
-    static func getShipsWith(playerData: PlayerData) async throws -> [Building] {
+    // MARK: - Get Researches
+    static func getResearchesWith(playerData: PlayerData) async throws -> [Building] {
         do {
-            let link = "\(playerData.indexPHP)page=ingame&component=shipyard&cp=\(playerData.planetID)"
+            let link = "\(playerData.indexPHP)page=ingame&component=research&cp=\(playerData.planetID)"
             let value = try await AF.request(link).serializingData().value
             
             let page = try SwiftSoup.parse(String(data: value, encoding: .ascii)!)
             
-            let shipsParse = try page.select("[class=amount]").select("[data-value]") // *=amount for targetamount
-            var shipsAmount = [Int]()
-            for ship in shipsParse {
-                shipsAmount.append(Int(try ship.text())!)
+            let levelsParse = try page.select("span[class=level]").select("[data-value]")
+            var levels = [Int]()
+            for level in levelsParse {
+                levels.append(Int(try level.text().components(separatedBy: "(")[0]) ?? -1)
             }
             
             let technologyStatusParse = try page.select("li[class*=technology]")
@@ -31,17 +31,16 @@ class OGShipyard {
                 technologyStatus.append(try status.attr("data-status"))
             }
             
-            guard !shipsAmount.isEmpty else {
-                throw OGError(message: "Not logged in", detailed: "Ships login check failed")
-            }
+            guard !levels.isEmpty && !technologyStatus.isEmpty
+            else { throw OGError(message: "Not logged in", detailed: "Research login check failed") }
             
-            let ships = Ships(shipsAmount, technologyStatus)
-            let shipsCells = ShipsCell(with: ships)
+            let researches = Researches(levels, technologyStatus)
+            let researchesCells = ResearchCell(with: researches)
             
             var buildingDataModel: [Building] = []
             
-            for building in shipsCells.shipsTechnologies {
-                let buildTime = OGBuildTime.getBuildingTimeOfflineWith(player: playerData, buildingWithAmount: building)
+            for building in researchesCells.researchTechnologies {
+                let buildTime = BuildTimeProvider.getBuildingTimeOfflineWith(player: playerData, buildingWithLevel: building)
                 let newBuilding = Building(name: building.name,
                                            metal: building.metal,
                                            crystal: building.crystal,
@@ -50,7 +49,7 @@ class OGShipyard {
                                                    unavailable: building.image.unavailable,
                                                    disabled: building.image.disabled),
                                            buildingsID: building.buildingsID,
-                                           levelOrAmount: building.amount,
+                                           levelOrAmount: building.level,
                                            condition: building.condition,
                                            timeToBuild: buildTime)
                 buildingDataModel.append(newBuilding)
@@ -58,7 +57,7 @@ class OGShipyard {
             return buildingDataModel
             
         } catch {
-            throw OGError(message: "Ships network error", detailed: error.localizedDescription)
+            throw OGError(message: "Research network error", detailed: error.localizedDescription)
         }
     }
 }

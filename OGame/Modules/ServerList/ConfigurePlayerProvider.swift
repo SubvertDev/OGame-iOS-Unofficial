@@ -66,11 +66,11 @@ final class ConfigurePlayerProvider {
                     self.planetImages = images
                 }
                 group.addTask {
-                    let сelestials = try await OGCelestials.getAllCelestialsWith(serverData: serverData)
+                    let сelestials = try await CelestialsProvider.getAllCelestialsWith(serverData: serverData)
                     self.celestials = сelestials
                 }
                 group.addTask {
-                    let mainFacilitiesLevels = try await OGFacilities.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: Int(planetIDContent)!)
+                    let mainFacilitiesLevels = try await FacilitiesProvider.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: Int(planetIDContent)!)
                     self.roboticsFactoryLevel = mainFacilitiesLevels[0]
                     self.naniteFactoryLevel = mainFacilitiesLevels[1]
                     self.researchLabLevel = mainFacilitiesLevels[2]

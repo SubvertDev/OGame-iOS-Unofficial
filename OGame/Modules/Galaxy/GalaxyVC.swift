@@ -35,7 +35,7 @@ final class GalaxyVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = K.Galaxy.title
+        title = K.Titles.galaxy
         configureView()
         presenter = GalaxyPresenter(view: self)
         presenter.viewDidLoad(coords: currentCoordinates, player: player)

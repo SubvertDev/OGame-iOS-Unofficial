@@ -18,8 +18,6 @@ final class GenericTableView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = 88
         tableView.keyboardDismissMode = .onDrag
-        tableView.register(UINib(nibName: K.CellReuseID.sendFleetCell, bundle: nil),
-                           forCellReuseIdentifier: K.CellReuseID.sendFleetCell)
         return tableView
     }()
     
@@ -47,14 +45,6 @@ final class GenericTableView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: Public
-    // todo delete?
-    func registerTableViewCell(withIdentifier identifier: String? = nil) {
-        if let identifier = identifier {
-            tableView.register(UINib(nibName: identifier, bundle: nil), forCellReuseIdentifier: identifier)
-        }
     }
     
     // MARK: Private
