@@ -6,7 +6,7 @@ OGame is a browser-based, money-management and space-war themed massively multip
 
 This is my pet-project which I'm doing at my free time. I'm still learning iOS development, so this project may have a lot of issues and bugs. Hope for your understanding.
 - Project is written with **UIKit**.
-- The architecture is **MVC**.
+- The architecture is **MVP**.
 - Interface layout with **code** and some **storyboards**.
 - Networking with **Alamofire**.
 - Parsing **HTML** with **SwiftSoup** framework.
@@ -20,7 +20,6 @@ This is my pet-project which I'm doing at my free time. I'm still learning iOS d
 ![screenshot-3](https://i.imgur.com/AzvEGqP.png)
 
 ## To-Do
-- Move project to MVP architecture ([in progress](https://github.com/SubvertDev/OGame-iOS-Unofficial/tree/switch-to-mvp))
 - Add construction queue
 - Check for maximum builds
 - Show remaining build time online
