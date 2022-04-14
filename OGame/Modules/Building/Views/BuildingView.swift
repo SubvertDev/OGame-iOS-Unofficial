@@ -15,12 +15,21 @@ final class BuildingView: UIView {
         return resourcesBar
     }()
     
+    private let queueBarView: QueueView = {
+        let queueBarView = QueueView()
+        queueBarView.translatesAutoresizingMaskIntoConstraints = false
+        return queueBarView
+    }()
+    
     private let customTableView: BuildingTableView = {
         let tableView = BuildingTableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
+    private var queueBarHeightConstraint: NSLayoutConstraint?
+    
+    // MARK: View Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .systemBackground
@@ -39,6 +48,24 @@ final class BuildingView: UIView {
         customTableView.tableView.dataSource = delegate
     }
     
+    func configureQueueView(buildings: [Building]) {
+        queueBarView.setQueue(buildings: buildings)
+
+        queueBarHeightConstraint?.constant = 33
+        if !buildings.isEmpty {
+            queueBarView.updateConstraintsIfNeeded()
+            UIView.animate(withDuration: 0.5) {
+                self.layoutIfNeeded()
+            }
+        } else {
+            queueBarHeightConstraint?.constant = 0
+            queueBarView.updateConstraintsIfNeeded()
+            UIView.animate(withDuration: 0.5) {
+                self.layoutIfNeeded()
+            }
+        }
+    }
+    
     func showResourcesLoading(_ state: Bool) {
         if state {
             resourcesBarView.alpha = 0.5
@@ -52,7 +79,7 @@ final class BuildingView: UIView {
     func updateResourcesBar(with resources: Resources) {
         resourcesBarView.updateNew(with: resources)
     }
-
+    
     func showBuildingsLoading(_ state: Bool) {
         if state {
             customTableView.alpha = 0.5
@@ -77,17 +104,27 @@ final class BuildingView: UIView {
     // MARK: - Private
     private func addSubviews() {
         addSubview(resourcesBarView)
+        addSubview(queueBarView)
         addSubview(customTableView)
     }
     
     private func makeConstraints() {
+        let queueBarHeightConstraint = NSLayoutConstraint(item: queueBarView, attribute: .height, relatedBy: .equal,
+                                                          toItem: nil, attribute: .height, multiplier: 1, constant: 0)
+        self.queueBarHeightConstraint = queueBarHeightConstraint
+        
         NSLayoutConstraint.activate([
             resourcesBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             resourcesBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             resourcesBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
             resourcesBarView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1.0/5.0),
             
-            customTableView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
+            queueBarView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
+            queueBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            queueBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            queueBarHeightConstraint,
+            
+            customTableView.topAnchor.constraint(equalTo: queueBarView.bottomAnchor),
             customTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             customTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             customTableView.bottomAnchor.constraint(equalTo: bottomAnchor)

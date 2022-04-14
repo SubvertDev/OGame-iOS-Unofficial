@@ -15,7 +15,7 @@ protocol IMenuView: AnyObject {
     func showAlert(error: OGError)
 }
 
-final class MenuVC: UIViewController {
+final class MenuVC: BaseViewController {
     
     // MARK: - Properties
     private var presenter: MenuPresenter!
@@ -34,8 +34,8 @@ final class MenuVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        title = K.Menu.title
-        
+        title = K.Titles.menu
+                
         configureView()
         presenter = MenuPresenter(view: self, player: player)
         presenter.viewDidLoad(with: player)
@@ -63,6 +63,7 @@ final class MenuVC: UIViewController {
     private func configureView() {
         myView.setDelegates(self)
         myView.updateControlView(with: player)
+        myView.menuTableView.tableView.isUserInteractionEnabled = false
     }
 }
 
@@ -84,6 +85,7 @@ extension MenuVC: IMenuView {
     
     func updateResources(with resources: Resources) {
         myView.updateResourcesBar(with: resources)
+        myView.menuTableView.tableView.isUserInteractionEnabled = true // resources bug simple fix
     }
     
     func showAlert(error: OGError) {
@@ -135,6 +137,7 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         
         var vc: UIViewController
         let resources = myView.getCurrentResources()
+        myView.menuTableView.tableView.isUserInteractionEnabled = true
         switch indexPath.row {
         case 0:
             vc = OverviewVC(player: player, resources: resources)
@@ -149,6 +152,8 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             vc = MovementVC(player: player, resources: resources)
         case 8:
             vc = GalaxyVC(player: player)
+        case 9:
+            vc = SettingsVC(player: player)
         default:
             return
         }

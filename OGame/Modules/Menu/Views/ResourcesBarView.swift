@@ -22,7 +22,7 @@ final class ResourcesBarView: UIView {
     private var prodPerSecond: [Double]?
     var currentResources: Resources {
         var resources = resources
-        resources!.metal = Int(metal!)
+        resources!.metal = Int(metal!) // todo fix random fatal error on getCurrentResources from menuView
         resources!.crystal = Int(crystal!)
         resources!.deuterium = Int(deuterium!)
         return resources!
@@ -64,34 +64,7 @@ final class ResourcesBarView: UIView {
         addSubview(view)
         view.bringSubviewToFront(activityIndicator)
     }
-    
-    // MARK: - LEGACY, DELETE AND USE -> configureNew() (rename it after delete)
-    // must be used in presenter
-    @available(*, deprecated, message: "deprecated, use updateNew + presenter instead")
-    func configureWith(resources: Resources?, player: PlayerData?) {
-        guard let player = player else { return }
-        self.resources = resources
-        self.player = player
-        refresh(player)
-    }
-    
-    // MARK: - LEGACY, DELETE AFTER DELETING configureWith()
-    // must be used in presenter
-    @available(*, deprecated, message: "deprecated, use presenter instead")
-    func refresh(_ player: PlayerData? = nil) {
-        guard let player = player else { return }
-        
-        Task {
-            do {
-                resources = try await ResourcesProvider().getResourcesWith(playerData: player)
-                startUpdatingView(with: resources!)
-                //delegate?.refreshFinished()
-            } catch {
-                //delegate?.didGetError(error: error as! OGError)
-            }
-        }
-    }
-    
+
     // MARK: Private
     private func startUpdatingView(with resources: Resources) {
         set(metal: resources.metal,

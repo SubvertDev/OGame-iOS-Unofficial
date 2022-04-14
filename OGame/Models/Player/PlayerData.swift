@@ -12,6 +12,7 @@ struct PlayerData {
     let doc: Document
     let indexPHP: String
     let universe: String
+    let universeInfo: UniverseInfo
     
     var planet: String
     var planetID: Int
@@ -23,15 +24,13 @@ struct PlayerData {
     let planetIDs: [Int]
     let moonNames: [String]
     let moonIDs: [Int]
-    let commander: Bool
+    let characterClass: CharacterClass
+    let officers: Officers
     
     var currentPlanetIndex = 0
     let planetImages: [UIImage]
     let moonImages: [UIImage?]
     var celestials: [Celestial]
     
-    let roboticsFactoryLevel: [Int]
-    let naniteFactoryLevel: [Int]
-    let researchLabLevel: [Int]
-    let shipyardLevel: [Int]
+    var factoryLevels: [FactoryLevels]
 }

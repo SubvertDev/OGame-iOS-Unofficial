@@ -18,7 +18,7 @@ enum TextFieldType {
     case galaxy, system
 }
 
-final class GalaxyVC: UIViewController {
+final class GalaxyVC: BaseViewController {
     
     // MARK: Properties
     var player: PlayerData

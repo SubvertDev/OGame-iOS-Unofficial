@@ -13,10 +13,10 @@ final class BuildTimeProvider {
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithLevel: BuildingWithLevelData) -> String {
         // TODO: Change "0" to player.currentPlanetIndex
         let resources = buildingWithLevel.metal + buildingWithLevel.crystal
-        let robotics = 1 + player.roboticsFactoryLevel[0]
-        let research = 1 + player.researchLabLevel[0]
-        let nanites = NSDecimalNumber(decimal: pow(2, player.naniteFactoryLevel[0]))
-        let speed = getServerInfo(player).speed.universe
+        let robotics = 1 + player.factoryLevels[player.currentPlanetIndex].roboticsFactoryLevel
+        let research = 1 + player.factoryLevels[player.currentPlanetIndex].researchLabLevel
+        let nanites = NSDecimalNumber(decimal: pow(2, player.factoryLevels[player.currentPlanetIndex].naniteFactoryLevel))
+        let speed = getUniverseInfo(player).speed.universe
         
         var time = 0
         if buildingWithLevel.level < 5 && !(106...199).contains(buildingWithLevel.buildingsID) {
@@ -37,9 +37,9 @@ final class BuildTimeProvider {
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithAmount: BuildingWithAmountData) -> String {
         // TODO: Change "0" to player.currentPlanetIndex
         let resources = buildingWithAmount.metal + buildingWithAmount.crystal
-        let shipyard = 1 + player.shipyardLevel[0]
-        let nanites = NSDecimalNumber(decimal: pow(2, player.naniteFactoryLevel[0]))
-        let speed = getServerInfo(player).speed.universe
+        let shipyard = 1 + player.factoryLevels[player.currentPlanetIndex].shipyardLevel
+        let nanites = NSDecimalNumber(decimal: pow(2, player.factoryLevels[player.currentPlanetIndex].naniteFactoryLevel))
+        let speed = getUniverseInfo(player).speed.universe
         
         let time = Int((Double(resources) / Double((2500 * shipyard * Int(truncating: nanites) * speed))) * 3600)
         
@@ -49,14 +49,17 @@ final class BuildTimeProvider {
         return formatter.string(from: TimeInterval(time)) ?? "nil"
     }
     
-    // MARK: - Get Server Info
-    static private func getServerInfo(_ playerData: PlayerData) -> Server {
+    // MARK: - Get Universe Info
+    static private func getUniverseInfo(_ playerData: PlayerData) -> UniverseInfo {
         do {
             let version = try playerData.doc.select("[name=ogame-version]").get(0).attr("content")
-            
-            let universe = Int(try playerData.doc.select("[name=ogame-universe-speed]").get(0).attr("content")) ?? -1
-            let fleet = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-peaceful]").get(0).attr("content")) ?? -1
-            let speed = Speed(universe: universe, fleet: fleet)
+            let universe = Int(try playerData.doc.select("[name=ogame-universe-speed]").get(0).attr("content")) ?? 0
+            let fleetSpeedPeaceful = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-peaceful]").get(0).attr("content")) ?? 0
+            let fleetSpeedWar = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-war]").get(0).attr("content")) ?? 0
+            let fleetSpeedHolding = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-holding]").get(0).attr("content")) ?? 0
+            let speed = Speed(universe: universe, peaceSpeed: fleetSpeedPeaceful,
+                                                  warSpeed: fleetSpeedWar,
+                                                  holdingSpeed: fleetSpeedHolding)
             
             let galaxyString = Int(try playerData.doc.select("[name=ogame-donut-galaxy]").get(0).attr("content")) ?? 0
             let galaxy = galaxyString == 1 ? true : false
@@ -64,10 +67,12 @@ final class BuildTimeProvider {
             let system = systemString == 1 ? true : false
             let donut = Donut(galaxy: galaxy, system: system)
             
-            return Server(version: version, speed: speed, donut: donut)
+            return UniverseInfo(version: version, speed: speed, donut: donut)
             
         } catch {
-            return Server(version: "-1", speed: Speed(universe: -1, fleet: -1), donut: Donut(galaxy: false, system: false))
+            return UniverseInfo(version: "-1",
+                                speed: Speed(universe: 0, peaceSpeed: 0, warSpeed: 0, holdingSpeed: 0),
+                                donut: Donut(galaxy: false, system: false))
         }
     }
 }

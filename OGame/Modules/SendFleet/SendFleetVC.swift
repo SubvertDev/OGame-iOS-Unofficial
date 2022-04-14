@@ -17,7 +17,7 @@ protocol ISendFleetView: AnyObject {
     func showAlert(error: OGError)
 }
 
-final class SendFleetVC: UIViewController {
+final class SendFleetVC: BaseViewController {
     
     // MARK: Properties
     private var player: PlayerData

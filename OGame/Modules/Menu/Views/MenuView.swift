@@ -21,7 +21,7 @@ final class MenuView: UIView {
         return resourcesBar
     }()
     
-    private let menuTableView: MenuTableView = {
+     let menuTableView: MenuTableView = {
         let menuTable = MenuTableView()
         menuTable.translatesAutoresizingMaskIntoConstraints = false
         return menuTable

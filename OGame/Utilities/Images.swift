@@ -424,4 +424,29 @@ struct Images {
                                     jumpGate]
         }
     }
+    
+    struct Classes {
+        static let noClass = UIImage(named: "no_class")
+        static let collector = UIImage(named: "collector")
+        static let admiral = UIImage(named: "admiral")
+        static let discoverer = UIImage(named: "discoverer")
+    }
+    
+    // MARK: - Officers
+    struct Officers {
+        struct On {
+            static let commander = UIImage(named: "commander_on")
+            static let admiral = UIImage(named: "admiral_on")
+            static let engineer = UIImage(named: "engineer_on")
+            static let geologist = UIImage(named: "geologist_on")
+            static let technocrat = UIImage(named: "technocrat_on")
+        }
+        struct Off {
+            static let commander = UIImage(named: "commander_off")
+            static let admiral = UIImage(named: "admiral_off")
+            static let engineer = UIImage(named: "engineer_off")
+            static let geologist = UIImage(named: "geologist_off")
+            static let technocrat = UIImage(named: "technocrat_off")
+        }
+    }
 }

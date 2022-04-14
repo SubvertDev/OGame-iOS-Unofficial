@@ -37,9 +37,9 @@ final class LoginProvider {
                                        platformGameId: "1dfd8e7e-6e1a-4eb1-8c64-03c3b62efd2f",
                                        gameEnvironmentId: "0a31d605-ffaf-43e7-aa02-d06df7116fc8",
                                        autoGameAccountCreation: false)
-
-            let response = await AF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).serializingDecodable(LoginResponse.self).response
             
+            let response = await AF.request("https://gameforge.com/api/v1/auth/thin/sessions", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default).validate(statusCode: 200...409).serializingDecodable(LoginResponse.self).response
+                        
             guard response.response != nil
             else { throw OGError(message: "Network response error", detailed: "Try again later") }
             
@@ -58,12 +58,11 @@ final class LoginProvider {
                     try await solveCaptcha(challenge: token)
                 } else if attempt > 10 {
                     guard statusCode != 409 else {
-                        throw OGError(message: "Captcha error", detailed: "Couldn't resolve captcha, try to solve it in browser and try again. (\(error.localizedDescription)")
+                        throw OGError(message: "Captcha error", detailed: "Couldn't resolve captcha, try to solve it in the browser and try again. (\(error.localizedDescription)")
                     }
                 } else {
                     guard statusCode == 201 else {
-                        throw OGError(message: "Login error", detailed: "Check your login data and try again. (\(error.localizedDescription)")
-                        // Also called when can't captcha in
+                        throw OGError(message: "Login error", detailed: "Check your login data or re-login in the browser. (\(error.localizedDescription)")
                     }
                 }
             }

@@ -10,9 +10,10 @@ import Alamofire
 import SwiftSoup
 
 final class ConfigurePlayerProvider {
-          
+    
     // MARK: - Properties
     private var doc: Document?
+    private var universeInfo: UniverseInfo?
     
     private var planet: String?
     private var planetID: Int?
@@ -24,16 +25,14 @@ final class ConfigurePlayerProvider {
     private var planetIDs: [Int]?
     private var moonNames: [String]?
     private var moonIDs: [Int]?
-    private var commander: Bool?
+    private var characterClass: CharacterClass?
+    private var officers: Officers?
     
     private var planetImages: [UIImage]?
     private var moonImages: [UIImage?]?
     private var celestials: [Celestial]?
-    
-    private var roboticsFactoryLevel: Int?
-    private var naniteFactoryLevel: Int?
-    private var researchLabLevel: Int?
-    private var shipyardLevel: Int?
+
+    private var factoryLevels: [FactoryLevels]?
     
     // MARK: - Configure Player
     func configurePlayerDataWith(serverData: ServerData) async throws -> PlayerData {
@@ -53,12 +52,14 @@ final class ConfigurePlayerProvider {
             self.playerName = playerName
             self.playerID = Int(playerID)
             
+            self.universeInfo = getUniverseInfo()
             self.rank = getRank()
             self.planetNames = getPlanetNames()
             self.planetIDs = getPlanetIDs()
             self.moonNames = getMoonNames()
             self.moonIDs = getMoonIDs()
-            self.commander = getCommander()
+            self.characterClass = getCharacterClass()
+            self.officers = getOfficers()
             
             await withThrowingTaskGroup(of: Void.self) { group in
                 group.addTask {
@@ -70,20 +71,49 @@ final class ConfigurePlayerProvider {
                     self.celestials = сelestials
                 }
                 group.addTask {
-                    let mainFacilitiesLevels = try await FacilitiesProvider.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: Int(planetIDContent)!)
-                    self.roboticsFactoryLevel = mainFacilitiesLevels[0]
-                    self.naniteFactoryLevel = mainFacilitiesLevels[1]
-                    self.researchLabLevel = mainFacilitiesLevels[2]
-                    self.shipyardLevel = mainFacilitiesLevels[3]
+                    // TODO: FIX working but serial
+                    var allLevels: [FactoryLevels] = []
+                    for planetID in self.planetIDs! {
+                        let levels = try await FacilitiesProvider.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: planetID)
+                        let result = FactoryLevels(roboticsFactoryLevel: levels[0],
+                                                   naniteFactoryLevel: levels[1],
+                                                   researchLabLevel: levels[2],
+                                                   shipyardLevel: levels[3])
+                        allLevels.append(result)
+                    }
+                    self.factoryLevels = allLevels
                 }
                 group.addTask {
                     self.moonImages = try await self.getAllMoonsImages()
                 }
             }
+            print(factoryLevels!)
+            
+            // NOT WORKING, RESULT DATA IS MIXED UP
+            //            let levels = try await withThrowingTaskGroup(of: [Int].self, returning: [FactoryLevels].self) { group in
+            //                for planetID in planetIDs! {
+            //                    print(planetID)
+            //                    group.addTask {
+            //                        return try await FacilitiesProvider.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: planetID)
+            //                    }
+            //                }
+            //
+            //                var factoryLevels: [FactoryLevels] = []
+            //                for try await levels in group {
+            //                    let levels = FactoryLevels(roboticsFactoryLevel: levels[0],
+            //                                               naniteFactoryLevel: levels[1],
+            //                                               researchLabLevel: levels[2],
+            //                                               shipyardLevel: levels[3])
+            //                    factoryLevels.append(levels)
+            //                }
+            //                return factoryLevels
+            //            }
+            //            print("LEVELS DATA: \(levels)")
             
             let playerData = PlayerData(doc: doc!,
                                         indexPHP: serverData.indexPHP,
                                         universe: serverData.universe,
+                                        universeInfo: universeInfo!,
                                         planet: planet!,
                                         planetID: Int(planetIDContent)!,
                                         playerName: playerName,
@@ -93,18 +123,43 @@ final class ConfigurePlayerProvider {
                                         planetIDs: planetIDs!,
                                         moonNames: moonNames!,
                                         moonIDs: moonIDs!,
-                                        commander: commander!,
+                                        characterClass: characterClass!,
+                                        officers: officers!,
                                         planetImages: planetImages!,
                                         moonImages: moonImages!,
                                         celestials: celestials!,
-                                        roboticsFactoryLevel: [roboticsFactoryLevel!],
-                                        naniteFactoryLevel: [naniteFactoryLevel!],
-                                        researchLabLevel: [researchLabLevel!],
-                                        shipyardLevel: [shipyardLevel!])
+                                        factoryLevels: factoryLevels!)
             return playerData
             
         } catch {
             throw OGError(message: "Player configuration error", detailed: error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Get Universe Info
+    private func getUniverseInfo() -> UniverseInfo {
+        do {
+            let version = try doc!.select("[name=ogame-version]").get(0).attr("content")
+            let universe = Int(try doc!.select("[name=ogame-universe-speed]").get(0).attr("content")) ?? 0
+            let fleetSpeedPeaceful = Int(try doc!.select("[name=ogame-universe-speed-fleet-peaceful]").get(0).attr("content")) ?? 0
+            let fleetSpeedWar = Int(try doc!.select("[name=ogame-universe-speed-fleet-war]").get(0).attr("content")) ?? 0
+            let fleetSpeedHolding = Int(try doc!.select("[name=ogame-universe-speed-fleet-holding]").get(0).attr("content")) ?? 0
+            let speed = Speed(universe: universe, peaceSpeed: fleetSpeedPeaceful,
+                              warSpeed: fleetSpeedWar,
+                              holdingSpeed: fleetSpeedHolding)
+            
+            let galaxyString = Int(try doc!.select("[name=ogame-donut-galaxy]").get(0).attr("content")) ?? 0
+            let galaxy = galaxyString == 1 ? true : false
+            let systemString = Int(try doc!.select("[name=ogame-donut-system]").get(0).attr("content")) ?? 0
+            let system = systemString == 1 ? true : false
+            let donut = Donut(galaxy: galaxy, system: system)
+            
+            return UniverseInfo(version: version, speed: speed, donut: donut)
+            
+        } catch {
+            return UniverseInfo(version: "-1",
+                                speed: Speed(universe: 0, peaceSpeed: 0, warSpeed: 0, holdingSpeed: 0),
+                                donut: Donut(galaxy: false, system: false))
         }
     }
     
@@ -200,19 +255,47 @@ final class ConfigurePlayerProvider {
                 }
             }
             return ids
-
+            
         } catch {
             return [-1]
         }
     }
     
-    // MARK: - Get Commander
-    private func getCommander() -> Bool {
-        // TODO: test on 3 days commander account
-        if let commanders = try? doc!.select("[id=officers]").select("[class*=tooltipHTML  on]").select("[class*=commander]") {
-            return !commanders.isEmpty() ? true : false
-        } else {
-            return false
+    // MARK: - Get CharacterClass
+    private func getCharacterClass() -> CharacterClass {
+        do {
+            let characterClass = try doc!.select("[class*=sprite characterclass medium]").get(0).className().components(separatedBy: " ").last!
+            switch characterClass {
+            case "miner":
+                return .collector
+            case "admiral": // todo test string
+                return .admiral
+            case "discoverer": // todo test string
+                return .discoverer
+            default: // "none"
+                return .noClass
+            }
+        } catch {
+            return .noClass
+        }
+    }
+    
+    // MARK: - Get Officers
+    private func getOfficers() -> Officers {
+        do {
+            let officers = try doc!.select("[id=officers]").select("[class*=tooltipHTML  on]")
+            let commander = try !officers.select("[class*=commander]").isEmpty()
+            let admiral = try !officers.select("[class*=admiral]").isEmpty()
+            let engineer = try !officers.select("[class*=engineer]").isEmpty()
+            let geologist = try !officers.select("[class*=geologist]").isEmpty()
+            let technocrat = try !officers.select("[class*=technocrat]").isEmpty()
+            return Officers(commander: commander,
+                            admiral: admiral,
+                            engineer: engineer,
+                            geologist: geologist,
+                            technocrat: technocrat)
+        } catch {
+            return Officers(commander: false, admiral: false, engineer: false, geologist: false, technocrat: false)
         }
     }
     

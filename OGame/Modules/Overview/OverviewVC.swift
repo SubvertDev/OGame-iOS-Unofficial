@@ -15,7 +15,7 @@ protocol IOverviewView: AnyObject {
     func showAlert(error: Error)
 }
 
-final class OverviewVC: UIViewController {
+final class OverviewVC: BaseViewController {
 
     // MARK: Properties
     private var player: PlayerData

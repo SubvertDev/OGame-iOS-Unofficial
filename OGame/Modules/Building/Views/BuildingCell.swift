@@ -70,7 +70,7 @@ final class BuildingCell: UITableViewCell {
             case "active":
                 buildingImage.image = UIImage(systemName: "timer")
                 levelLabel.text = "\(building.levelOrAmount) -> \(building.levelOrAmount + 1)"
-                buildButton.isEnabled = player.commander
+                buildButton.isEnabled = player.officers.commander
             case "disabled":
                 buildingImage.image = building.image.unavailable
             case "off":
@@ -92,7 +92,7 @@ final class BuildingCell: UITableViewCell {
                 // levelLabel.text = "\(ships.allShips[id].levelOrAmount) -> \(ships.allShips[id].levelOrAmount + 1)"
             case "disabled":
                 buildingImage.image = building.image.unavailable
-                buildButton.isEnabled = player.commander
+                buildButton.isEnabled = player.officers.commander
             case "off":
                 buildingImage.image = building.image.disabled
             default:

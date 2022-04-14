@@ -1,5 +1,5 @@
 //
-//  Server.swift
+//  UniverseInfo.swift
 //  OGame
 //
 //  Created by Subvert on 19.07.2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Server {
+struct UniverseInfo {
     let version: String
     let speed: Speed
     let donut: Donut
@@ -21,11 +21,15 @@ struct Server {
 
 struct Speed {
     let universe: Int
-    let fleet: Int
+    let peacefulFleet: Int
+    let warFleet: Int
+    let holdingFleet: Int
 
-    init(universe: Int, fleet: Int) {
+    init(universe: Int, peaceSpeed: Int, warSpeed: Int, holdingSpeed: Int ) {
         self.universe = universe
-        self.fleet = fleet
+        self.peacefulFleet = peaceSpeed
+        self.warFleet = warSpeed
+        self.holdingFleet = holdingSpeed
     }
 }
 

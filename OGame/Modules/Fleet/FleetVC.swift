@@ -18,8 +18,9 @@ protocol IFleetView: AnyObject {
     func showAlert(error: OGError)
 }
 
-final class FleetVC: UIViewController {
+final class FleetVC: BaseViewController {
     
+    // MARK: Properties
     private var player: PlayerData
     private var resources: Resources
     private var ships: [Building]?

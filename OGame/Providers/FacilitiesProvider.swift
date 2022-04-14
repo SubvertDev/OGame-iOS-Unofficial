@@ -33,7 +33,7 @@ final class FacilitiesProvider {
             
             guard !noScriptCheck(with: page)
             else { throw OGError(message: "Not logged in", detailed: "Facilities login check failed") }
-                        
+            
             if levels.count != 5 { // Planet
                 let facilities = Facilities(levels, technologyStatus)
                 let facilitiesCells = FacilityCell(with: facilities)
@@ -116,10 +116,12 @@ final class FacilitiesProvider {
             let researchLabLevel = facilitiesObject.researchLaboratory.level
             let shipyardLevel = facilitiesObject.shipyard.level
             
-            return [roboticsFactoryLevel,
-                    naniteFactoryLevel,
-                    researchLabLevel,
-                    shipyardLevel]
+            let result = [roboticsFactoryLevel,
+                          naniteFactoryLevel,
+                          researchLabLevel,
+                          shipyardLevel]
+            
+            return result
             
         } catch {
             throw OGError(message: "Facilities levels check request failed", detailed: error.localizedDescription)

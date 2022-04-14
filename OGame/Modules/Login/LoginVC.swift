@@ -1,12 +1,11 @@
 //
-//  LoginViewDelegate.swift
+//  LoginVC.swift
 //  OGame
 //
 //  Created by Subvert on 15.05.2021.
 //
 
 import UIKit
-import Alamofire
 
 protocol ILoginView: AnyObject {
     func showLoading(_ state: Bool)
@@ -16,26 +15,33 @@ protocol ILoginView: AnyObject {
 
 final class LoginVC: UIViewController {
     
-    // MARK: - Properties
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var saveSwitch: UISwitch!
-    @IBOutlet weak var formView: UIView!
-    
     private var presenter: LoginPresenter!
     private let defaults = UserDefaults.standard
     private var servers: [MyServer]?
     private var username = ""
     private var password = ""
     
+    private var myView: LoginView { return view as! LoginView}
+    
     // MARK: - View Lifecycle
+    override func loadView() {
+        let loginView = LoginView()
+        loginView.delegate = self
+        view = loginView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureFormView()
-        configureGestureRecognizer()
-        configureInputViews()
+        
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tap)
+        
+        if defaults.object(forKey: K.Defaults.username) != nil {
+            myView.loginTextField.text = defaults.string(forKey: K.Defaults.username)
+            myView.passwordTextField.text = defaults.string(forKey: K.Defaults.password)
+            myView.saveSwitch.setOn(true, animated: false)
+        }
+        
         presenter = LoginPresenter(view: self)
     }
     
@@ -51,73 +57,41 @@ final class LoginVC: UIViewController {
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        formView.layer.borderColor = UIColor.label.cgColor
+        myView.embedView.layer.borderColor = UIColor.label.cgColor
     }
-    
-    // MARK: - Actions
-    @IBAction func loginButtonTouchDown(_ sender: UIButton) {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-    }
-    
-    @IBAction func loginButtonPressed(_ sender: UIButton) {
-        emailTextField.resignFirstResponder()
-        passwordTextField.resignFirstResponder()
+}
+
+// MARK: - LoginButton Protocol
+extension LoginVC: ILoginButton {
+    func loginButtonPressed() {
+        myView.loginTextField.resignFirstResponder()
+        myView.passwordTextField.resignFirstResponder()
         
-        username = emailTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
-        password = passwordTextField.text!
+        username = myView.loginTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
+        password = myView.passwordTextField.text!
         
         presenter.login(username: username, password: password)
     }
     
-    // MARK: - Prepare For Segue
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == K.Segue.showServerListVC {
-            let serverListVC = segue.destination as! ServerListVC
-            serverListVC.servers = servers
-        }
-    }
-    
-    // MARK: - Private
-    private func configureFormView() {
-        formView.layer.borderWidth = 2
-        formView.layer.borderColor = UIColor.label.cgColor
-        formView.layer.cornerRadius = 10
-        formView.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.65)
-    }
-    
-    private func configureGestureRecognizer() {
-        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
-        view.addGestureRecognizer(tap)
-    }
-    
-    private func configureInputViews() {
-        if defaults.object(forKey: K.Defaults.username) != nil {
-            emailTextField.text = defaults.string(forKey: K.Defaults.username)
-            passwordTextField.text = defaults.string(forKey: K.Defaults.password)
-            saveSwitch.setOn(true, animated: false)
-        }
+    func loginButtonTouchDown() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 }
 
-// MARK: - LoginViewDelegate
+// MARK: - LoginView Delegate
 extension LoginVC: ILoginView {
     func showLoading(_ state: Bool) {
-        if state {
-            loginButton.isHidden = true
-            activityIndicator.startAnimating()
-        } else {
-            loginButton.isHidden = false
-            activityIndicator.stopAnimating()
-        }
+        myView.showLoading(state)
     }
     
     func performLogin(servers: [MyServer]) {
         self.servers = servers
-        if saveSwitch.isOn {
+        if myView.saveSwitch.isOn {
             defaults.set(username, forKey: K.Defaults.username)
             defaults.set(password, forKey: K.Defaults.password)
         }
-        performSegue(withIdentifier: K.Segue.showServerListVC, sender: self)
+        let serverListVC = ServerListVC(servers: servers)
+        navigationController?.pushViewController(serverListVC, animated: true)
     }
     
     func showAlert(error: OGError) {

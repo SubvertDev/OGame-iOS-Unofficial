@@ -17,7 +17,9 @@ final class BuildingPresenter: IBuildingPresenter {
     
     unowned private var view: IBuildingView
     private let resourcesProvider = ResourcesProvider()
+    private let queueProvider = QueueProvider()
     var buildings: [Building] = []
+    var buildType: BuildingType?
     
     init(view: IBuildingView) {
         self.view = view
@@ -40,6 +42,7 @@ final class BuildingPresenter: IBuildingPresenter {
     }
     
     func loadBuildings(for player: PlayerData, with type: BuildingType) {
+        self.buildType = type
         view.showBuildingsLoading(true)
         Task {
             do {
@@ -59,9 +62,50 @@ final class BuildingPresenter: IBuildingPresenter {
                     view.updateBuildings(buildings)
                     view.showBuildingsLoading(false)
                 }
+                
+                loadQueues(for: player)
+                
             } catch {
                 await MainActor.run { view.showAlert(error: error as! OGError) }
             }
+        }
+    }
+    
+    private func loadQueues(for player: PlayerData) {
+        Task {
+            do {
+                switch buildType! {
+                case .supplies:
+                    buildings += try await FacilitiesProvider.getFacilitiesWith(playerData: player)
+                case .facilities:
+                    buildings += try await SuppliesProvider.getSuppliesWith(playerData: player)
+                case .research:
+                    break
+                case .shipyard:
+                    buildings += try await DefenceProvider.getDefencesWith(playerData: player)
+                case .defenses:
+                    buildings += try await ShipyardProvider.getShipsWith(playerData: player)
+                }
+                
+                let queues = try await queueProvider.getQueue(player: player, buildings: buildings)
+                
+                switch buildType! {
+                case .supplies, .facilities:
+                    await updateThatQueue(with: queues[0])
+                case .research:
+                    await updateThatQueue(with: queues[1])
+                case .shipyard, .defenses:
+                    await updateThatQueue(with: queues[2])
+                }
+            } catch {
+                print("error provider")
+            }
+        }
+    }
+    
+    private func updateThatQueue(with buildings: [Building]) async {
+        await MainActor.run {
+            view.updateQueue(with: buildings)
         }
     }
 }

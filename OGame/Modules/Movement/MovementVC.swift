@@ -15,7 +15,7 @@ protocol IMovementView: AnyObject {
     func showAlert(error: OGError)
 }
 
-final class MovementVC: UIViewController {
+final class MovementVC: BaseViewController {
     
     // MARK: Properties
     private var player: PlayerData

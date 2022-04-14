@@ -10,18 +10,19 @@ import Foundation
 struct K {
     
     struct Titles {
+        static let menu = "Menu"
         static let overview = "Overview"
         static let fleet = "Fleet"
         static let sendFleet = "Send Fleet"
         static let movement = "Movement"
         static let galaxy = "Galaxy"
+        static let settings = "Settings"
     }
     
     struct Menu {
-        static let title = "Menu"
         static let cellTitlesList = ["Overview", "Resources", "Facilities",
                                      "Research", "Shipyard", "Defence",
-                                     "Fleet", "Movement", "Galaxy"]
+                                     "Fleet", "Movement", "Galaxy", "Settings"]
     }
     
     struct Overview {

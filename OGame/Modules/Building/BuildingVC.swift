@@ -12,10 +12,11 @@ protocol IBuildingView: AnyObject {
     func updateResourcesBar(with: Resources)
     func showBuildingsLoading(_ state: Bool)
     func updateBuildings(_ buildings: [Building])
+    func updateQueue(with buildings: [Building])
     func showAlert(error: OGError)
 }
 
-final class BuildingVC: UIViewController {
+final class BuildingVC: BaseViewController {
     
     // MARK: Properties
     private var presenter: BuildingPresenter!
@@ -74,6 +75,10 @@ extension BuildingVC: IBuildingView {
     func updateBuildings(_ buildings: [Building]) {
         self.buildings = buildings
         myView.updateBuildings()
+    }
+    
+    func updateQueue(with buildings: [Building]) {
+        myView.configureQueueView(buildings: buildings)
     }
     
     func showAlert(error: OGError) {
