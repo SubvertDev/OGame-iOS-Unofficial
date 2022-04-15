@@ -44,10 +44,10 @@ final class LoginPresenter: LoginPresenterDelegate {
             .range(of: emailPattern, options: .regularExpression)
         
         if emailCheck == nil {
-            view.showAlert(error: OGError(message: K.Error.error, detailed: "Please enter valid email"))
+            view.showAlert(error: OGError(message: K.ActionTitle.error, detailed: "Please enter valid email"))
             return false
         } else if password.isEmpty {
-            view.showAlert(error: OGError(message: K.Error.error, detailed: "Please enter valid password"))
+            view.showAlert(error: OGError(message: K.ActionTitle.error, detailed: "Please enter valid password"))
             return false
         }
         return true

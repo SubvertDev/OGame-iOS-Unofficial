@@ -135,7 +135,7 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                     myView.showFleetSendLoading(false)
                     
                     let alert = UIAlertController(title: "\(targetData.errors![0].message)", message: nil, preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: K.Error.ok, style: .default))
+                    alert.addAction(UIAlertAction(title: K.ActionTitle.ok, style: .default))
                     present(alert, animated: true)
                     
                 case "success":
@@ -193,14 +193,14 @@ extension SendFleetVC: UITableViewDelegate, UITableViewDataSource, UITextFieldDe
                                                                speed: fleetSpeed)
                 myView.showFleetSendLoading(false)
                 if response.success {
-                    let alert = UIAlertController(title: K.Error.success, message: response.message ?? "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: K.Error.ok, style: .default) { _ in
+                    let alert = UIAlertController(title: K.ActionTitle.success, message: response.message ?? "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: K.ActionTitle.ok, style: .default) { _ in
                         // TODO: Go back to menu
                     })
                     present(alert, animated: true)
                 } else {
-                    let alert = UIAlertController(title: K.Error.failure, message: response.errors?[0].message ?? "", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: K.Error.ok, style: .default) { _ in
+                    let alert = UIAlertController(title: K.ActionTitle.failure, message: response.errors?[0].message ?? "", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: K.ActionTitle.ok, style: .default) { _ in
                         // TODO: Go back to menu or not?
                     })
                     present(alert, animated: true)

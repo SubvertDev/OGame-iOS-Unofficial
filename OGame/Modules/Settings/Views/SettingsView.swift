@@ -121,6 +121,12 @@ final class SettingsView: UIView {
          return label
     }()
     
+    let footerView: FooterView = {
+       let view = FooterView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     // MARK: View Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -156,7 +162,7 @@ final class SettingsView: UIView {
     func configureLabels(player: PlayerData) {
         universeLabel.text! += "\(player.universe)"
         planetsAmountLabel.text! += "\(player.planetIDs.count)"
-        moonsAmountLabel.text! += "\(player.moonIDs.compactMap{$0}.count)"
+        moonsAmountLabel.text! += "\(player.moonIDs.compactMap{$0 > 0 ? $0 : nil}.count)"
         serverFleetSpeedPeacefulLabel.text! += "\(player.universeInfo.speed.peacefulFleet)"
         serverFleetSpeedWarLabel.text! += "\(player.universeInfo.speed.warFleet)"
         serverFleetSpeedHoldingLabel.text! += "\(player.universeInfo.speed.holdingFleet)"
@@ -183,6 +189,8 @@ final class SettingsView: UIView {
         infoStackView.addArrangedSubview(serverFleetSpeedHoldingLabel)
         infoStackView.addArrangedSubview(serverEconomySpeedLabel)
         infoStackView.addArrangedSubview(serverVersionLabel)
+        
+        addSubview(footerView)
     }
     
     private func makeConstraints() {
@@ -196,6 +204,10 @@ final class SettingsView: UIView {
             infoStackView.topAnchor.constraint(equalTo: hireStackView.bottomAnchor, constant: 16),
             infoStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             infoStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+            
+            footerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            footerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            footerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
 }

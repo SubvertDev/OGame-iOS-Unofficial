@@ -125,8 +125,8 @@ extension BuildingVC: BuildingCellDelegate {
         switch buildType {
         case .supplies, .facilities, .research:
             let alert = UIAlertController(title: "Build \(buildingInfo.name)?", message: "It will be upgraded to level \(buildingInfo.levelOrAmount + 1)", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: K.Error.no, style: .default))
-            alert.addAction(UIAlertAction(title: K.Error.yes, style: .default) { _ in
+            alert.addAction(UIAlertAction(title: K.ActionTitle.no, style: .default))
+            alert.addAction(UIAlertAction(title: K.ActionTitle.yes, style: .default) { _ in
                 Task {
                     do {
                         self.myView.showResourcesLoading(true)
@@ -147,8 +147,8 @@ extension BuildingVC: BuildingCellDelegate {
                 textField.keyboardType = .numberPad
                 textField.textAlignment = .center
             }
-            alertAmount.addAction(UIAlertAction(title: K.Error.cancel, style: .default))
-            alertAmount.addAction(UIAlertAction(title: K.Error.ok, style: .default) { _ in
+            alertAmount.addAction(UIAlertAction(title: K.ActionTitle.cancel, style: .default))
+            alertAmount.addAction(UIAlertAction(title: K.ActionTitle.ok, style: .default) { _ in
                 let amount = Int(alertAmount.textFields![0].text!) ?? 1
                 
                 var messageType = ""
@@ -162,8 +162,8 @@ extension BuildingVC: BuildingCellDelegate {
                 }
                 
                 let alert = UIAlertController(title: "Construct \(buildingInfo.name)?", message: "\(amount) \(messageType) will be constructed", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: K.Error.no, style: .default))
-                alert.addAction(UIAlertAction(title: K.Error.yes, style: .default) { _ in
+                alert.addAction(UIAlertAction(title: K.ActionTitle.no, style: .default))
+                alert.addAction(UIAlertAction(title: K.ActionTitle.yes, style: .default) { _ in
                     let typeToBuild = (type.0, amount, type.2)
                     Task {
                         do {

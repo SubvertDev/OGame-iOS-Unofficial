@@ -98,7 +98,7 @@ final class BuildingPresenter: IBuildingPresenter {
                     await updateThatQueue(with: queues[2])
                 }
             } catch {
-                print("error provider")
+                throw OGError(message: "Error", detailed: "Can't load queues")
             }
         }
     }

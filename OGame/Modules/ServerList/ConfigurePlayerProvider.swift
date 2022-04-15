@@ -87,28 +87,27 @@ final class ConfigurePlayerProvider {
                     self.moonImages = try await self.getAllMoonsImages()
                 }
             }
-            print(factoryLevels!)
             
-            // NOT WORKING, RESULT DATA IS MIXED UP
-            //            let levels = try await withThrowingTaskGroup(of: [Int].self, returning: [FactoryLevels].self) { group in
-            //                for planetID in planetIDs! {
-            //                    print(planetID)
-            //                    group.addTask {
-            //                        return try await FacilitiesProvider.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: planetID)
-            //                    }
-            //                }
-            //
-            //                var factoryLevels: [FactoryLevels] = []
-            //                for try await levels in group {
-            //                    let levels = FactoryLevels(roboticsFactoryLevel: levels[0],
-            //                                               naniteFactoryLevel: levels[1],
-            //                                               researchLabLevel: levels[2],
-            //                                               shipyardLevel: levels[3])
-            //                    factoryLevels.append(levels)
-            //                }
-            //                return factoryLevels
-            //            }
-            //            print("LEVELS DATA: \(levels)")
+// NOT WORKING, RESULT DATA IS MIXED UP
+//            let levels = try await withThrowingTaskGroup(of: [Int].self, returning: [FactoryLevels].self) { group in
+//                for planetID in planetIDs! {
+//                    print(planetID)
+//                    group.addTask {
+//                        return try await FacilitiesProvider.getMainFacilitiesLevels(indexPHP: serverData.indexPHP, planetID: planetID)
+//                    }
+//                }
+//
+//                var factoryLevels: [FactoryLevels] = []
+//                for try await levels in group {
+//                    let levels = FactoryLevels(roboticsFactoryLevel: levels[0],
+//                                               naniteFactoryLevel: levels[1],
+//                                               researchLabLevel: levels[2],
+//                                               shipyardLevel: levels[3])
+//                    factoryLevels.append(levels)
+//                }
+//                return factoryLevels
+//            }
+//            print("LEVELS DATA: \(levels)")
             
             let playerData = PlayerData(doc: doc!,
                                         indexPHP: serverData.indexPHP,

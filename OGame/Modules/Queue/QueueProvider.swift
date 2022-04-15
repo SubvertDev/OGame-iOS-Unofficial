@@ -26,13 +26,13 @@ final class QueueProvider {
 
         let text = String(data: value, encoding: .ascii)!
         let page = try SwiftSoup.parse(text)
-        let queues = getQueueData(document: page)
+        let queues = try getQueueData(document: page)
         let buildings = convertQueuesToBuildings(queues: queues, buildings: buildings)
 
         return buildings
     }
 
-    private func getQueueData(document doc: Document) -> [[QueueItem]] {
+    private func getQueueData(document doc: Document) throws ->[[QueueItem]] {
         do {
             // MARK: - Buildings
             let buildingBox = try doc.select("[class*=productionboxbuilding]").get(0)
@@ -103,18 +103,13 @@ final class QueueProvider {
                     }
                 }
             }
-            //print(buildingFullQueue)
-            //print(researchFullQueue)
-            //print(shipyardFullQueue)
             return [buildingFullQueue, researchFullQueue, shipyardFullQueue]
         } catch {
-            print("ERROR")
+            throw OGError(message: "Error", detailed: "Can't get queue data")
         }
-        return [[], [], []]
     }
     
     private func convertQueuesToBuildings(queues: [[QueueItem]], buildings: [Building]) -> [[Building]] {
-                
         var supplyBuildings: [Building] = []
         for supply in queues[0] {
             for building in buildings {
@@ -138,21 +133,15 @@ final class QueueProvider {
         }
         
         var shipyardBuildings: [Building] = []
-        //print("queues2: \(queues[2])")
-        for _ in buildings {
-            //print("bbb: \(item.levelOrAmount)")
-        }
         for shipyard in queues[2] {
             for building in buildings {
                 if shipyard.id == building.buildingsID {
-                    //print("YEAH")
                     var building = building
                     building.levelOrAmount = shipyard.amount
                     shipyardBuildings.append(building)
                 }
             }
         }
-        //print("shipz \(shipyardBuildings)")
         return [supplyBuildings, researchBuildings, shipyardBuildings]
     }
 }

@@ -68,6 +68,7 @@
 		B872E4B327D42855009E4CF1 /* ServerListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */; };
 		B873317526542CB400524FD8 /* OverviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873317426542CB400524FD8 /* OverviewVC.swift */; };
 		B87331772654366700524FD8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87331762654366700524FD8 /* Price.swift */; };
+		B8758E2728097A1C009E6D0F /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8758E2628097A1C009E6D0F /* FooterView.swift */; };
 		B878BDD82808C4D500F57CB6 /* FactoryLevels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B878BDD72808C4D500F57CB6 /* FactoryLevels.swift */; };
 		B8833FC327E26CB600549E9D /* GalaxyPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8833FC227E26CB600549E9D /* GalaxyPresenter.swift */; };
 		B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */; };
@@ -204,6 +205,7 @@
 		B872E4B227D42855009E4CF1 /* ServerListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListPresenter.swift; sourceTree = "<group>"; };
 		B873317426542CB400524FD8 /* OverviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewVC.swift; sourceTree = "<group>"; };
 		B87331762654366700524FD8 /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
+		B8758E2628097A1C009E6D0F /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		B878BDD72808C4D500F57CB6 /* FactoryLevels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactoryLevels.swift; sourceTree = "<group>"; };
 		B8833FC227E26CB600549E9D /* GalaxyPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalaxyPresenter.swift; sourceTree = "<group>"; };
 		B883A01526AEF84F0080AFE5 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
@@ -380,10 +382,8 @@
 		B837007E27F0A47C004689BB /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				B8CEECBA280325C500ECAED3 /* QueueView.swift */,
-				B8CEECBE2803281500ECAED3 /* QueueInfoView.swift */,
-				B8CEECBC2803261400ECAED3 /* QueueProvider.swift */,
 				B8CEECB92802E45100ECAED3 /* Base */,
+				B8758E252809745D009E6D0F /* Queue */,
 				B837007F27F0A483004689BB /* Login */,
 				B837008027F0A498004689BB /* ServerList */,
 				B837008227F0A4A1004689BB /* Menu */,
@@ -625,6 +625,16 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		B8758E252809745D009E6D0F /* Queue */ = {
+			isa = PBXGroup;
+			children = (
+				B8CEECBA280325C500ECAED3 /* QueueView.swift */,
+				B8CEECBE2803281500ECAED3 /* QueueInfoView.swift */,
+				B8CEECBC2803261400ECAED3 /* QueueProvider.swift */,
+			);
+			path = Queue;
+			sourceTree = "<group>";
+		};
 		B88B3F3827D40CD900B5BFD5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -736,6 +746,7 @@
 			isa = PBXGroup;
 			children = (
 				B8F315B527FECA1300D6A96F /* SettingsView.swift */,
+				B8758E2628097A1C009E6D0F /* FooterView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -986,6 +997,7 @@
 				B8F315B927FECA5200D6A96F /* SettingsPresenter.swift in Sources */,
 				B8676155265982DD0096BE39 /* Researches.swift in Sources */,
 				B872E4B327D42855009E4CF1 /* ServerListPresenter.swift in Sources */,
+				B8758E2728097A1C009E6D0F /* FooterView.swift in Sources */,
 				B883A01626AEF84F0080AFE5 /* UITableView+Ext.swift in Sources */,
 				B837007727F08098004689BB /* MenuVC.swift in Sources */,
 				B88B3F3B27D4105D00B5BFD5 /* LoginPresenter.swift in Sources */,

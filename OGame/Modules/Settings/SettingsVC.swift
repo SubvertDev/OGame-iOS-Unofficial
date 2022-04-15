@@ -21,6 +21,7 @@ final class SettingsVC: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = K.Titles.settings
+        myView.footerView.bottomTextView.delegate = self
         myView.setTopStackView(characterClass: player.characterClass, officers: player.officers)
         myView.configureLabels(player: player)
     }
@@ -32,5 +33,18 @@ final class SettingsVC: BaseViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - TextView Delegate
+extension SettingsVC: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        
+        if (URL.absoluteString == K.Titles.rules) {
+            let alert = UIAlertController(title: K.Titles.rules, message: K.Texts.rules, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: K.ActionTitle.ok, style: .default))
+            present(alert, animated: true)
+        }
+        return true
     }
 }

@@ -32,6 +32,8 @@ final class ServerListPresenter: ServerListPresenterDelegate {
                 let playerData = try await configurePlayerProvider.configurePlayerDataWith(serverData: serverData)
                 let resourcesData = try await resourcesProvider.getResourcesWith(playerData: playerData)
                 await MainActor.run { view.performLogin(player: playerData, resources: resourcesData) }
+                // todo fix logout while entering server
+                // Attempted to read an unowned reference but the object was already deallocated
             } catch {
                 await MainActor.run { view.showAlert(error: error) }
             }
