@@ -8,7 +8,6 @@
 import Foundation
 
 protocol IMenuPresenter {
-    func viewDidLoad(with: PlayerData)
     func previousPlanetButtonTapped(for: PlayerData)
     func nextPlanetButtonTapped(for: PlayerData)
     func planetButtonTapped(for: PlayerData)
@@ -28,10 +27,6 @@ final class MenuPresenter: IMenuPresenter {
     }
     
     // MARK: Public
-    func viewDidLoad(with player: PlayerData) {
-        loadResources(for: player)
-    }
-    
     func previousPlanetButtonTapped(for player: PlayerData) {
         var player = player
         var index = 0

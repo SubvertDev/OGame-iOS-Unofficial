@@ -38,7 +38,6 @@ final class MenuVC: BaseViewController {
                 
         configureView()
         presenter = MenuPresenter(view: self, player: player)
-        presenter.viewDidLoad(with: player)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,8 +61,8 @@ final class MenuVC: BaseViewController {
     // MARK: - Private
     private func configureView() {
         myView.setDelegates(self)
+        myView.updateResourcesBar(with: resources)
         myView.updateControlView(with: player)
-        myView.menuTableView.tableView.isUserInteractionEnabled = false
     }
 }
 
@@ -85,7 +84,6 @@ extension MenuVC: IMenuView {
     
     func updateResources(with resources: Resources) {
         myView.updateResourcesBar(with: resources)
-        myView.menuTableView.tableView.isUserInteractionEnabled = true // resources bug simple fix
     }
     
     func showAlert(error: OGError) {
