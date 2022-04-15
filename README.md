@@ -7,7 +7,7 @@ OGame is a browser-based, money-management and space-war themed massively multip
 This is my pet-project which I'm doing at my free time. I'm still learning iOS development, so this project may have a lot of issues and bugs. Hope for your understanding.
 - Project is written with **UIKit**.
 - The architecture is **MVP**.
-- Interface layout with **code** and some **storyboards**.
+- Interface layout with **code** and some **xibs**.
 - Networking with **Alamofire**.
 - Parsing **HTML** with **SwiftSoup** framework.
 
@@ -20,18 +20,19 @@ This is my pet-project which I'm doing at my free time. I'm still learning iOS d
 ![screenshot-3](https://i.imgur.com/AzvEGqP.png)
 
 ## To-Do
-- Add construction queue
-- Check for maximum builds
 - Show remaining build time online
+- Finished buildings notifications
+- Incoming attack info in menu
+- Check for maximum builds
 - Discarding unnecessary network requests
-- Messaging feature
+- Messaging, buddy requests, quick espionage
 - Update UI with game assets
 
 ## Known Issues
+- Building times are using local language
 - Planets are not added to menu after colonization
-- Scuffed defense images
-- IRN is not supported
-- Wrong build times on non-main planet
+- Serial loading of factory levels for time calculations
+- Scuffed defense images, queue images
 - Send fleet view has no full cargo/distance info
 - Admin planets considered yours on galaxy view
 
