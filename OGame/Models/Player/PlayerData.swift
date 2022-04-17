@@ -31,6 +31,7 @@ struct PlayerData {
     let planetImages: [UIImage]
     let moonImages: [UIImage?]
     var celestials: [Celestial]
-    
     var factoryLevels: [FactoryLevels]
+    
+    let ads: [Ad]
 }

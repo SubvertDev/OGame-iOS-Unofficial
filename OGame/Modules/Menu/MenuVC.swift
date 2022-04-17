@@ -46,6 +46,7 @@ final class MenuVC: BaseViewController {
             presenter.loadResources(for: player)
         }
         isFirstLoad = false
+        myView.adView.setAds(player.ads)
     }
     
     init(player: PlayerData, resources: Resources) {
@@ -63,6 +64,7 @@ final class MenuVC: BaseViewController {
         myView.setDelegates(self)
         myView.updateResourcesBar(with: resources)
         myView.updateControlView(with: player)
+        myView.adView.setAds(player.ads)
     }
 }
 
@@ -114,6 +116,13 @@ extension MenuVC: IPlanetControlView {
 extension MenuVC: IMenuTableView {
     func refreshCalled() {
         presenter.loadResources(for: player)
+        myView.adView.setAds(player.ads)
+    }
+}
+
+extension MenuVC: AdViewDelegate {
+    func adButtonPressed(ad: Ad) {
+        openAd(ad: ad)
     }
 }
 

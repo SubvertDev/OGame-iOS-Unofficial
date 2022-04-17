@@ -27,6 +27,12 @@ final class BuildingView: UIView {
         return tableView
     }()
     
+    let adView: AdView = {
+       let adView = AdView()
+        adView.translatesAutoresizingMaskIntoConstraints = false
+        return adView
+    }()
+    
     private var queueBarHeightConstraint: NSLayoutConstraint?
     
     // MARK: View Lifecycle
@@ -42,10 +48,12 @@ final class BuildingView: UIView {
     }
     
     // MARK: - Public
-    func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource & IBuildingTableView) {
+    func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource
+                                  & IBuildingTableView & AdViewDelegate) {
         customTableView.delegate = delegate
         customTableView.tableView.delegate = delegate
         customTableView.tableView.dataSource = delegate
+        adView.delegate = delegate
     }
     
     func configureQueueView(buildings: [Building]) {
@@ -57,6 +65,7 @@ final class BuildingView: UIView {
             UIView.animate(withDuration: 0.5) {
                 self.layoutIfNeeded()
             }
+            
         } else {
             queueBarHeightConstraint?.constant = 0
             queueBarView.updateConstraintsIfNeeded()
@@ -106,12 +115,12 @@ final class BuildingView: UIView {
         addSubview(resourcesBarView)
         addSubview(queueBarView)
         addSubview(customTableView)
+        addSubview(adView)
     }
     
     private func makeConstraints() {
-        let queueBarHeightConstraint = NSLayoutConstraint(item: queueBarView, attribute: .height, relatedBy: .equal,
+        self.queueBarHeightConstraint = NSLayoutConstraint(item: queueBarView, attribute: .height, relatedBy: .equal,
                                                           toItem: nil, attribute: .height, multiplier: 1, constant: 0)
-        self.queueBarHeightConstraint = queueBarHeightConstraint
         
         NSLayoutConstraint.activate([
             resourcesBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
@@ -122,12 +131,16 @@ final class BuildingView: UIView {
             queueBarView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
             queueBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             queueBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            queueBarHeightConstraint,
+            queueBarHeightConstraint!,
             
             customTableView.topAnchor.constraint(equalTo: queueBarView.bottomAnchor),
             customTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             customTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            customTableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            
+            adView.topAnchor.constraint(equalTo: customTableView.bottomAnchor),
+            adView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            adView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            adView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 }

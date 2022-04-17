@@ -55,6 +55,7 @@ final class BuildingVC: BaseViewController {
     private func configureViews() {
         myView.setDelegates(self)
         myView.updateResourcesBar(with: resources)
+        myView.adView.setAds(player.ads)
     }
 }
 
@@ -86,10 +87,17 @@ extension BuildingVC: IBuildingView {
     }
 }
 
+// MARK: - BuildingTableView Delegate
 extension BuildingVC: IBuildingTableView {
     func refreshCalled() {
         presenter.loadResources(for: player)
         presenter.loadBuildings(for: player, with: buildType)
+    }
+}
+
+extension BuildingVC: AdViewDelegate {
+    func adButtonPressed(ad: Ad) {
+        openAd(ad: ad)
     }
 }
 
@@ -102,7 +110,7 @@ extension BuildingVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let buildings = buildings else { return UITableViewCell() }
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.CellReuseID.buildingCell, for: indexPath) as! BuildingCell
         cell.delegate = self
         cell.buildButton.tag = indexPath.row
         cell.set(type: buildType, building: buildings[indexPath.row], player: player)

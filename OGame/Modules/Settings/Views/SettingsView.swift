@@ -121,6 +121,29 @@ final class SettingsView: UIView {
          return label
     }()
     
+    private let debugStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private let debugSwitch: UISwitch = {
+       let debugSwitch = UISwitch()
+        debugSwitch.isOn = K.debugMode
+        debugSwitch.addTarget(self, action: #selector(debugSwitchPressed(_:)), for: .touchUpInside)
+        return debugSwitch
+    }()
+    
+    private let debugLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Debug mode"
+        return label
+    }()
+    
     let footerView: FooterView = {
        let view = FooterView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -190,6 +213,10 @@ final class SettingsView: UIView {
         infoStackView.addArrangedSubview(serverEconomySpeedLabel)
         infoStackView.addArrangedSubview(serverVersionLabel)
         
+        infoStackView.addArrangedSubview(debugStackView)
+        debugStackView.addArrangedSubview(debugSwitch)
+        debugStackView.addArrangedSubview(debugLabel)
+        
         addSubview(footerView)
     }
     
@@ -207,7 +234,13 @@ final class SettingsView: UIView {
             
             footerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             footerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            footerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+            footerView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
+    }
+    
+    @objc private func debugSwitchPressed(_ sender: UISwitch) {
+        K.debugMode = sender.isOn
+        let defaults = UserDefaults.standard
+        defaults.set(K.debugMode, forKey: "debugMode")
     }
 }

@@ -21,12 +21,22 @@ final class MenuView: UIView {
         return resourcesBar
     }()
     
-     let menuTableView: MenuTableView = {
+    let menuTableView: MenuTableView = {
         let menuTable = MenuTableView()
         menuTable.translatesAutoresizingMaskIntoConstraints = false
         return menuTable
     }()
     
+    let adView: AdView = {
+       let adView = AdView()
+        adView.translatesAutoresizingMaskIntoConstraints = false
+        return adView
+    }()
+    
+    var menuBottomConstraint: NSLayoutConstraint?
+    var adViewTopConstraint: NSLayoutConstraint?
+    var adViewHeightConstraint: NSLayoutConstraint?
+        
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubviews()
@@ -39,11 +49,12 @@ final class MenuView: UIView {
     
     // MARK: Public
     func setDelegates(_ delegate: UITableViewDelegate & UITableViewDataSource &
-                                  IPlanetControlView & IMenuTableView) {
+                                  IPlanetControlView & IMenuTableView & AdViewDelegate) {
         planetControlView.delegate = delegate
         menuTableView.delegate = delegate
         menuTableView.tableView.delegate = delegate
         menuTableView.tableView.dataSource = delegate
+        adView.delegate = delegate
     }
     
     func showPlanetLoading(_ state: Bool) {
@@ -86,6 +97,7 @@ final class MenuView: UIView {
         addSubview(planetControlView)
         addSubview(resourcesBarView)
         addSubview(menuTableView)
+        addSubview(adView)
     }
     
     private func makeConstraints() {
@@ -103,7 +115,25 @@ final class MenuView: UIView {
             menuTableView.topAnchor.constraint(equalTo: resourcesBarView.bottomAnchor),
             menuTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             menuTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            menuTableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            
+            adView.topAnchor.constraint(equalTo: menuTableView.bottomAnchor),
+            adView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            adView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            adView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
         ])
+        
+        
+        self.adViewHeightConstraint = NSLayoutConstraint(item: adView, attribute: .height, relatedBy: .equal, toItem: adView, attribute: .height, multiplier: 1, constant: 0)
+        
+        if K.debugMode {
+            NSLayoutConstraint.activate([
+                adViewHeightConstraint!
+            ])
+        } else {
+            adViewHeightConstraint?.constant = 33
+            NSLayoutConstraint.activate([
+                adViewHeightConstraint!
+            ])
+        }
     }
 }

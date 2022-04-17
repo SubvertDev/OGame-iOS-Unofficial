@@ -14,6 +14,11 @@ class BaseViewController: UIViewController {
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Logout", style: .done, target: self, action: #selector(logoutButtonPressed))
     }
+        
+    // MARK: Public
+    func openAd(ad: Ad) {
+        UIApplication.shared.open(ad.link, options: [:])
+    }
     
     // MARK: Private
     @objc private func logoutButtonPressed() {

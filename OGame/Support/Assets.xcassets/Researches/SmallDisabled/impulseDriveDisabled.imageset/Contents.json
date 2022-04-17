@@ -1,17 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "all_images_413.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "impulseDriveDisabled.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

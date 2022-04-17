@@ -1,17 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "all_images_401.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "plasmaUnavailable.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

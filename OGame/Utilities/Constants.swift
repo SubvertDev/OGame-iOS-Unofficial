@@ -9,6 +9,8 @@ import Foundation
 
 struct K {
     
+    static var debugMode = UserDefaults.standard.bool(forKey: "debugMode")
+    
     struct Titles {
         static let menu = "Menu"
         static let overview = "Overview"
@@ -41,9 +43,7 @@ struct K {
             static let system = "System"
         }
     }
-    
-    // MARK: -
-    
+        
     struct CellReuseID {
         static let serverCell = "ServerCell"
         static let menuCell = "MenuCell"

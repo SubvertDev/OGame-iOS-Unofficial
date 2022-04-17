@@ -31,8 +31,9 @@ final class ConfigurePlayerProvider {
     private var planetImages: [UIImage]?
     private var moonImages: [UIImage?]?
     private var celestials: [Celestial]?
-
     private var factoryLevels: [FactoryLevels]?
+    
+    private var ads: [Ad]?
     
     // MARK: - Configure Player
     func configurePlayerDataWith(serverData: ServerData) async throws -> PlayerData {
@@ -86,6 +87,9 @@ final class ConfigurePlayerProvider {
                 group.addTask {
                     self.moonImages = try await self.getAllMoonsImages()
                 }
+                group.addTask {
+                    self.ads = AdProvider.getAds(doc: self.doc!)
+                }
             }
             
 // NOT WORKING, RESULT DATA IS MIXED UP
@@ -127,7 +131,8 @@ final class ConfigurePlayerProvider {
                                         planetImages: planetImages!,
                                         moonImages: moonImages!,
                                         celestials: celestials!,
-                                        factoryLevels: factoryLevels!)
+                                        factoryLevels: factoryLevels!,
+                                        ads: ads!)
             return playerData
             
         } catch {

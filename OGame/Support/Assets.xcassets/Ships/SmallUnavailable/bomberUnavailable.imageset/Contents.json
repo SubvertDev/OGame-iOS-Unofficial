@@ -1,17 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "all_images_277.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "bomberUnavailable.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {
