@@ -89,6 +89,7 @@ final class LoginView: UIView {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
         textField.keyboardType = .emailAddress
+        textField.autocorrectionType = .no
         textField.font = .systemFont(ofSize: 14)
         textField.textColor = .black
         textField.backgroundColor = .white
