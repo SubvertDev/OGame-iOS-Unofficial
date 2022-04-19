@@ -13,11 +13,11 @@ This is my pet-project which I'm doing at my free time. I'm still learning iOS d
 
 ## Screenshots
 ### Authorization and menu
-![screenshot-1](https://i.imgur.com/HLMXwv4.png)
+![screenshot-1](Screenshots/mockup1.png)
 ### Construct buildings, research technologies
-![screenshot-2](https://i.imgur.com/5OUxZYb.png)
+![screenshot-2](Screenshots/mockup2.png)
 ### Sending fleet, movement and galaxy
-![screenshot-3](https://i.imgur.com/AzvEGqP.png)
+![screenshot-3](Screenshots/mockup3.png)
 
 ## To-Do
 - Show remaining build time online

@@ -15,8 +15,7 @@ protocol ILoginView: AnyObject {
 
 final class LoginVC: UIViewController {
     
-
-    private var myView: LoginView { return view as! LoginView}
+    private var myView: LoginView { return view as! LoginView }
     override var preferredStatusBarStyle : UIStatusBarStyle { .lightContent }
     
     private var presenter: LoginPresenter!
@@ -34,7 +33,7 @@ final class LoginVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tap)
         
@@ -54,7 +53,6 @@ final class LoginVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setNeedsStatusBarAppearanceUpdate()
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     

@@ -11,10 +11,10 @@ class BaseViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Logout", style: .done, target: self, action: #selector(logoutButtonPressed))
     }
-        
+    
     // MARK: Public
     func openFooterAd(ad: Ad) {
         UIApplication.shared.open(ad.link, options: [:])

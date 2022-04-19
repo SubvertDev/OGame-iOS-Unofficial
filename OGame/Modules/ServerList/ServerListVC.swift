@@ -16,6 +16,7 @@ protocol ServerListViewDelegate: AnyObject {
 final class ServerListVC: BaseViewController {
     
     private var myView: ServerListView { return view as! ServerListView }
+    override var preferredStatusBarStyle : UIStatusBarStyle { .lightContent }
     
     private var presenter: ServerListPresenter!
     private let servers: [MyServer]
@@ -42,11 +43,6 @@ final class ServerListVC: BaseViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.barStyle = .black
     }
     
     override func viewDidLayoutSubviews() {

@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         
         let rootViewController = LoginVC()
-        let navController = UINavigationController(rootViewController: rootViewController)
+        let navController = NavigationController(rootViewController: rootViewController)
         
         window.rootViewController = navController
         
@@ -34,4 +34,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func sceneDidEnterBackground(_ scene: UIScene) { }
     
+}
+
+class NavigationController : UINavigationController {
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        if let topVC = viewControllers.last {
+            return topVC.preferredStatusBarStyle
+        }
+        return .default
+    }
 }
