@@ -13,6 +13,9 @@ typealias ImageBundle = (available: UIImage?,
 
 struct Images {
     
+    static let loginBackground = UIImage(named: "ogame_login_background")
+    static let loginButtonBg = UIImage(named: "login_button_bg")
+    
     // MARK: - Resources
     struct Resources {
         struct Large {
@@ -425,6 +428,14 @@ struct Images {
         }
     }
     
+    // MARK: - Server Type
+    struct ServerType {
+        static let balanced = UIImage(named: "balanced")
+        static let fleeter = UIImage(named: "fleeter")
+        static let miner = UIImage(named: "miner")
+    }
+    
+    // MARK: - Player Class
     struct Classes {
         static let noClass = UIImage(named: "no_class")
         static let collector = UIImage(named: "collector")

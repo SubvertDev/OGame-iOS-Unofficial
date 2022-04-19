@@ -13,5 +13,8 @@ struct MyServer {
     let number: Int
     let language: String
     let serverID: Int
+    let type: String
+    let online: Int
+    let rank: String
     let token: String
 }

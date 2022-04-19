@@ -8,38 +8,38 @@
 import Foundation
 
 // MARK: - Server
-struct Servers: Codable {
+struct ServerDetailed: Codable {
     let language: String
     let number: Int
     let name: String
-    // let playerCount: Int?
-    // let playersOnline: Int?
+    // let playerCount: Int
+    let playersOnline: Int
     // let opened: String?
     // let startDate: String?
     // let endDate: String?
     // let serverClosed: Int?
     // let prefered: Int?
     // let signupClosed: Int?
-    // let settings: Settings?
+    let settings: Settings
 }
 
 // MARK: - Settings
-// struct Settings: Codable {
+struct Settings: Codable {
 //    let aks, fleetSpeed, wreckField: Int?
 //    let serverLabel: ServerLabel?
 //    let economySpeed, planetFields, universeSize: Int?
-//    let serverCategory: ServerCategory?
+    let serverCategory: ServerCategory
 //    let espionageProbeRaids, premiumValidationGift, debrisFieldFactorShips: Int?
 //    let researchDurationDivisor: Double?
 //    let debrisFieldFactorDefence: Int?
-// }
+}
 //
-// enum ServerCategory: String, Codable {
-//    case balanced = "balanced"
-//    case fleeter = "fleeter"
-//    case graveyard = "graveyard"
-//    case miner = "miner"
-// }
+ enum ServerCategory: String, Codable {
+    case balanced = "balanced"
+    case fleeter = "fleeter"
+    case graveyard = "graveyard"
+    case miner = "miner"
+}
 //
 // enum ServerLabel: String, Codable {
 //    case empty = "empty"

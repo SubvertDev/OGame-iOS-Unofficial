@@ -34,6 +34,7 @@ final class ConfigurePlayerProvider {
     private var factoryLevels: [FactoryLevels]?
     
     private var ads: [Ad]?
+    private var banner: Banner?
     
     // MARK: - Configure Player
     func configurePlayerDataWith(serverData: ServerData) async throws -> PlayerData {
@@ -89,6 +90,7 @@ final class ConfigurePlayerProvider {
                 }
                 group.addTask {
                     self.ads = AdProvider.getAds(doc: self.doc!)
+                    self.banner = try await AdProvider.getBanner(doc: self.doc!)
                 }
             }
             
@@ -132,7 +134,8 @@ final class ConfigurePlayerProvider {
                                         moonImages: moonImages!,
                                         celestials: celestials!,
                                         factoryLevels: factoryLevels!,
-                                        ads: ads!)
+                                        ads: ads!,
+                                        banner: banner)
             return playerData
             
         } catch {
@@ -148,9 +151,10 @@ final class ConfigurePlayerProvider {
             let fleetSpeedPeaceful = Int(try doc!.select("[name=ogame-universe-speed-fleet-peaceful]").get(0).attr("content")) ?? 0
             let fleetSpeedWar = Int(try doc!.select("[name=ogame-universe-speed-fleet-war]").get(0).attr("content")) ?? 0
             let fleetSpeedHolding = Int(try doc!.select("[name=ogame-universe-speed-fleet-holding]").get(0).attr("content")) ?? 0
-            let speed = Speed(universe: universe, peaceSpeed: fleetSpeedPeaceful,
-                              warSpeed: fleetSpeedWar,
-                              holdingSpeed: fleetSpeedHolding)
+            let speed = Speed(universe: universe,
+                              peacefulFleet: fleetSpeedPeaceful,
+                              warFleet: fleetSpeedWar,
+                              holdingFleet: fleetSpeedHolding)
             
             let galaxyString = Int(try doc!.select("[name=ogame-donut-galaxy]").get(0).attr("content")) ?? 0
             let galaxy = galaxyString == 1 ? true : false
@@ -162,7 +166,7 @@ final class ConfigurePlayerProvider {
             
         } catch {
             return UniverseInfo(version: "-1",
-                                speed: Speed(universe: 0, peaceSpeed: 0, warSpeed: 0, holdingSpeed: 0),
+                                speed: Speed(universe: 0, peacefulFleet: 0, warFleet: 0, holdingFleet: 0),
                                 donut: Donut(galaxy: false, system: false))
         }
     }

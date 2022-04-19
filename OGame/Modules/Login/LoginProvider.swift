@@ -16,7 +16,7 @@ final class LoginProvider {
     private let userAgent = ["User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1"]
     private var attempt = 0
     private var token = ""
-    private var serversListResponse: [Servers] = []
+    private var serversListResponse: [ServerDetailed] = []
     private var serversOnAccount: [MyServer] = []
     
     // MARK: - LOGIN INTO ACCOUNT
@@ -99,7 +99,7 @@ final class LoginProvider {
         // MARK: - Configure Servers List
         func configureServers() async throws {
             do {
-                let response = try await AF.request("https://lobby.ogame.gameforge.com/api/servers").serializingDecodable([Servers].self).value
+                let response = try await AF.request("https://lobby.ogame.gameforge.com/api/servers").serializingDecodable([ServerDetailed].self).value
                 serversListResponse = response
                 try await configureAccounts()
                 
@@ -123,6 +123,9 @@ final class LoginProvider {
                                          number: server.number,
                                          language: server.language,
                                          serverID: account.id,
+                                         type: server.settings.serverCategory.rawValue,
+                                         online: server.playersOnline,
+                                         rank: account.details[0].value,
                                          token: token))
                         }
                     }

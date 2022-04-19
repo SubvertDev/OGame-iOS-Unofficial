@@ -97,7 +97,7 @@ extension BuildingVC: IBuildingTableView {
 
 extension BuildingVC: AdViewDelegate {
     func adButtonPressed(ad: Ad) {
-        openAd(ad: ad)
+        openFooterAd(ad: ad)
     }
 }
 

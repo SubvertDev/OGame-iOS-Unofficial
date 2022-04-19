@@ -11,7 +11,7 @@ final class ServerListView: UIView {
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "login_background")
+        imageView.image = Images.loginBackground
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -19,21 +19,45 @@ final class ServerListView: UIView {
     private let label: UILabel = {
         let label = UILabel()
         label.text = "Choose your server:"
-        label.font = .systemFont(ofSize: 24, weight: .semibold)
+        label.textColor = .white
+        label.font = UIFont(name: "Verdana Bold", size: 24)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    let embedView: UIView = {
+        let view = UIView()
+        view.layer.borderWidth = 3
+        view.layer.borderColor = UIColor(red: 0.098, green: 0.137, blue: 0.188, alpha: 1).cgColor
+        view.layer.cornerRadius = 10
+        view.clipsToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(ServerCell.self, forCellReuseIdentifier: "ServerCell")
+        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), style: .grouped)
+        //tableView.alwaysBounceVertical = false
+        tableView.rowHeight = 80
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.register(ServerCell.self, forCellReuseIdentifier: K.CellReuseID.serverCell)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
+    }()
+    
+    let gradient: CAGradientLayer = {
+        let gradient = CAGradientLayer()
+        let firstColor = UIColor.black.cgColor
+        let secondColor = UIColor(red: 0.1, green: 0.2, blue: 0.3, alpha: 1).withAlphaComponent(0.8).cgColor
+        gradient.colors = [firstColor, secondColor]
+        return gradient
     }()
     
     let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.style = .large
+        indicator.color = .white
         indicator.hidesWhenStopped = true
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
@@ -41,7 +65,6 @@ final class ServerListView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemBackground
         addSubviews()
         makeConstraints()
     }
@@ -54,6 +77,8 @@ final class ServerListView: UIView {
     private func addSubviews() {
         addSubview(backgroundImageView)
         addSubview(label)
+        addSubview(embedView)
+        embedView.layer.addSublayer(gradient)
         addSubview(tableView)
         addSubview(activityIndicator)
     }
@@ -65,13 +90,18 @@ final class ServerListView: UIView {
             backgroundImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            label.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 12),
+            label.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             label.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            tableView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 16),
-            tableView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            embedView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 16),
+            embedView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            embedView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            embedView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            
+            tableView.topAnchor.constraint(equalTo: embedView.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: embedView.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: embedView.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: embedView.bottomAnchor),
             
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)

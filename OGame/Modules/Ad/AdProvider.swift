@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 import SwiftSoup
 
 final class AdProvider {
@@ -26,6 +27,23 @@ final class AdProvider {
             return resultAds
         } catch {
             return []
+        }
+    }
+    
+    static func getBanner(doc: Document) async throws -> Banner? {
+        do {
+            let bannerBox = try doc.select("[id=banner_skyscraper]")
+            guard !bannerBox.isEmpty() else { return nil }
+            
+            let adLink = try bannerBox.select("[href*=https]").get(0).attr("href")
+            
+            let imageLink = try bannerBox.select("[src*=.jpg]").get(0).attr("src")
+            let value = try await AF.request(imageLink).serializingData().value
+            let image = UIImage(data: value)!
+            
+            return Banner(imageLink: imageLink, adLink: adLink, image: image)
+        } catch {
+            return nil
         }
     }
 }

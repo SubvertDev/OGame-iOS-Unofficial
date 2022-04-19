@@ -16,26 +16,33 @@ final class LoginView: UIView {
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "login_background")
+        imageView.image = Images.loginBackground
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     let embedView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemYellow
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.label.cgColor
+        view.layer.borderWidth = 3
+        view.layer.borderColor = UIColor(red: 0.098, green: 0.137, blue: 0.188, alpha: 1).cgColor
         view.layer.cornerRadius = 10
-        view.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.65)
+        view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    let gradient: CAGradientLayer = {
+        let gradient = CAGradientLayer()
+        let firstColor = UIColor.black.cgColor
+        let secondColor = UIColor(red: 0.1, green: 0.2, blue: 0.3, alpha: 1).withAlphaComponent(0.8).cgColor
+        gradient.colors = [firstColor, secondColor]
+        return gradient
     }()
     
     private let topStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 0
+        stackView.spacing = -8
         stackView.alignment = .fill
         stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,17 +61,17 @@ final class LoginView: UIView {
     
     private let loginLabel: UILabel = {
         let label = UILabel()
-        label.text = "Login:"
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Username:"
+        label.textColor = .white
+        label.font = UIFont(name: "Verdana Bold", size: 18)
         return label
     }()
     
     private let passwordLabel: UILabel = {
         let label = UILabel()
         label.text = "Password:"
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.font = UIFont(name: "Verdana Bold", size: 18)
         return label
     }()
     
@@ -83,9 +90,8 @@ final class LoginView: UIView {
         textField.borderStyle = .roundedRect
         textField.keyboardType = .emailAddress
         textField.font = .systemFont(ofSize: 14)
-        textField.textColor = .systemBackground
-        textField.backgroundColor = .label
-        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.textColor = .black
+        textField.backgroundColor = .white
         return textField
     }()
     
@@ -94,16 +100,16 @@ final class LoginView: UIView {
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         textField.font = .systemFont(ofSize: 14)
-        textField.textColor = .systemBackground
-        textField.backgroundColor = .label
-        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.textColor = .black
+        textField.backgroundColor = .white
         return textField
     }()
     
     private let saveLabel: UILabel = {
         let label = UILabel()
-        label.text = "Save login and password"
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.text = "Save login and password:"
+        label.textColor = .white
+        label.font = UIFont(name: "Verdana Bold", size: 15)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -124,11 +130,16 @@ final class LoginView: UIView {
     
     private let loginButton: UIButton = {
         let button = UIButton()
-        button.setTitle("LOGIN", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 30, weight: .bold)
-        button.setTitleColor(.label, for: .normal)
+        button.setTitle("Play", for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
         button.addTarget(self, action: #selector(loginButtonTouchDown), for: .touchDown)
+        button.setBackgroundImage(Images.loginButtonBg, for: .normal)
+        button.titleLabel?.font = UIFont(name: "Play-Bold", size: 25)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 10
+        button.layer.borderColor = UIColor(red: 0.227, green: 0.549, blue: 0.156, alpha: 1).cgColor
+        button.layer.borderWidth = 2
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -136,6 +147,7 @@ final class LoginView: UIView {
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.style = .large
+        indicator.color = .white
         indicator.hidesWhenStopped = true
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
@@ -155,14 +167,18 @@ final class LoginView: UIView {
     
     // MARK: Public
     func showLoading(_ state: Bool) {
+        loginTextField.isUserInteractionEnabled = !state
+        passwordTextField.isUserInteractionEnabled = !state
+        saveSwitch.isUserInteractionEnabled = !state
+        loginButton.isHidden = state
+        
         if state {
-            loginButton.isHidden = true
             activityIndicator.startAnimating()
         } else {
-            loginButton.isHidden = false
             activityIndicator.stopAnimating()
         }
     }
+
     
     // MARK: Private
     @objc private func loginButtonPressed() {
@@ -176,6 +192,7 @@ final class LoginView: UIView {
     private func addSubviews() {
         addSubview(backgroundImageView)
         addSubview(embedView)
+        embedView.layer.addSublayer(gradient)
         
         addSubview(topStackView)
         topStackView.addArrangedSubview(labelsStackView)
@@ -189,6 +206,7 @@ final class LoginView: UIView {
         
         addSubview(saveLabel)
         addSubview(saveSwitch)
+        
         addSubview(loginButton)
         addSubview(activityIndicator)
         
@@ -211,14 +229,20 @@ final class LoginView: UIView {
             topStackView.leadingAnchor.constraint(equalTo: embedView.leadingAnchor, constant: 16),
             topStackView.trailingAnchor.constraint(equalTo: embedView.trailingAnchor, constant: -16),
             
-            saveSwitch.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: 16),
-            saveSwitch.leadingAnchor.constraint(equalTo: embedView.leadingAnchor, constant: 16),
+            loginTextField.widthAnchor.constraint(equalTo: embedView.widthAnchor, multiplier: 0.57),
+            passwordTextField.widthAnchor.constraint(equalTo: embedView.widthAnchor, multiplier: 0.57),
             
-            saveLabel.leadingAnchor.constraint(equalTo: saveSwitch.trailingAnchor, constant: 12),
-            saveLabel.centerYAnchor.constraint(equalTo: saveSwitch.centerYAnchor),
+            saveLabel.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: 16),
+            saveLabel.leadingAnchor.constraint(equalTo: embedView.leadingAnchor, constant: 16),
+            saveLabel.widthAnchor.constraint(equalToConstant: 220),
             
-            loginButton.topAnchor.constraint(equalTo: saveSwitch.bottomAnchor, constant: 10),
+            saveSwitch.leadingAnchor.constraint(equalTo: saveLabel.trailingAnchor, constant: 8),
+            saveSwitch.centerYAnchor.constraint(equalTo: saveLabel.centerYAnchor),
+            
+            loginButton.topAnchor.constraint(equalTo: saveLabel.bottomAnchor, constant: 16),
             loginButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            loginButton.heightAnchor.constraint(equalToConstant: 45),
+            loginButton.widthAnchor.constraint(equalToConstant: 180),
             loginButton.bottomAnchor.constraint(equalTo: embedView.bottomAnchor, constant: -16),
             
             activityIndicator.centerXAnchor.constraint(equalTo: loginButton.centerXAnchor),

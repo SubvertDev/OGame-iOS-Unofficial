@@ -16,7 +16,7 @@ class BaseViewController: UIViewController {
     }
         
     // MARK: Public
-    func openAd(ad: Ad) {
+    func openFooterAd(ad: Ad) {
         UIApplication.shared.open(ad.link, options: [:])
     }
     

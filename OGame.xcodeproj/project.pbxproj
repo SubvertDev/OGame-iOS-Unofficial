@@ -79,6 +79,9 @@
 		B8879464270A6E3B00CDDF16 /* FleetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8879462270A6E3B00CDDF16 /* FleetCell.swift */; };
 		B8879465270A6E3B00CDDF16 /* FleetCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B8879463270A6E3B00CDDF16 /* FleetCell.xib */; };
 		B88B3F3B27D4105D00B5BFD5 /* LoginPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B3F3A27D4105D00B5BFD5 /* LoginPresenter.swift */; };
+		B88ECD8D280D8BB100EA0379 /* Play-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = B88ECD8C280D8BB100EA0379 /* Play-Bold.otf */; };
+		B88ECD8F280DBDBE00EA0379 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88ECD8E280DBDBE00EA0379 /* CustomHeader.swift */; };
+		B88ECD91280EA8B600EA0379 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88ECD90280EA8B600EA0379 /* Banner.swift */; };
 		B897493D27AA86AC00203FC9 /* GenericTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B897493C27AA86AC00203FC9 /* GenericTableView.swift */; };
 		B897493F27AADCCC00203FC9 /* FleetPageButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B897493E27AADCCC00203FC9 /* FleetPageButtonsView.swift */; };
 		B8A2D5C627A6AE5200ABA399 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */; };
@@ -92,7 +95,7 @@
 		B8B7BC1026504F8A00988758 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC0F26504F8A00988758 /* LoginVC.swift */; };
 		B8B7BC1526504F8F00988758 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8B7BC1426504F8F00988758 /* Assets.xcassets */; };
 		B8B7BC1826504F8F00988758 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8B7BC1626504F8F00988758 /* LaunchScreen.storyboard */; };
-		B8B7BC262650579100988758 /* Servers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC252650579100988758 /* Servers.swift */; };
+		B8B7BC262650579100988758 /* ServerDetailed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC252650579100988758 /* ServerDetailed.swift */; };
 		B8B7BC2E2650AD5700988758 /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B7BC2D2650AD5700988758 /* LoginResponse.swift */; };
 		B8BED01D27905C6C00AE2ED8 /* FleetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED01C27905C6C00AE2ED8 /* FleetVC.swift */; };
 		B8BED01F27905FAE00AE2ED8 /* Mission.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BED01E27905FAE00AE2ED8 /* Mission.swift */; };
@@ -219,6 +222,9 @@
 		B8879462270A6E3B00CDDF16 /* FleetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetCell.swift; sourceTree = "<group>"; };
 		B8879463270A6E3B00CDDF16 /* FleetCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FleetCell.xib; sourceTree = "<group>"; };
 		B88B3F3A27D4105D00B5BFD5 /* LoginPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPresenter.swift; sourceTree = "<group>"; };
+		B88ECD8C280D8BB100EA0379 /* Play-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Play-Bold.otf"; sourceTree = "<group>"; };
+		B88ECD8E280DBDBE00EA0379 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
+		B88ECD90280EA8B600EA0379 /* Banner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
 		B897493C27AA86AC00203FC9 /* GenericTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTableView.swift; sourceTree = "<group>"; };
 		B897493E27AADCCC00203FC9 /* FleetPageButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetPageButtonsView.swift; sourceTree = "<group>"; };
 		B8A2D5C527A6AE5200ABA399 /* MenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
@@ -234,7 +240,7 @@
 		B8B7BC1426504F8F00988758 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B8B7BC1726504F8F00988758 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B8B7BC1926504F8F00988758 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B8B7BC252650579100988758 /* Servers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Servers.swift; sourceTree = "<group>"; };
+		B8B7BC252650579100988758 /* ServerDetailed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailed.swift; sourceTree = "<group>"; };
 		B8B7BC2D2650AD5700988758 /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
 		B8BED01C27905C6C00AE2ED8 /* FleetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FleetVC.swift; sourceTree = "<group>"; };
 		B8BED01E27905FAE00AE2ED8 /* Mission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mission.swift; sourceTree = "<group>"; };
@@ -496,7 +502,7 @@
 			children = (
 				B84400C326519884001CE771 /* Account.swift */,
 				B85AF0CD26A5A81D0087C5A7 /* UniverseInfo.swift */,
-				B8B7BC252650579100988758 /* Servers.swift */,
+				B8B7BC252650579100988758 /* ServerDetailed.swift */,
 				B814BA6726AB1B0200FF346A /* MyServer.swift */,
 				B872E4B027D425A6009E4CF1 /* LoginData.swift */,
 				B8B7BC2D2650AD5700988758 /* LoginResponse.swift */,
@@ -516,6 +522,7 @@
 			isa = PBXGroup;
 			children = (
 				B8C92B492801A1EF0071F516 /* ServerListView.swift */,
+				B88ECD8E280DBDBE00EA0379 /* CustomHeader.swift */,
 				B883A01726AF047B0080AFE5 /* ServerCell.swift */,
 			);
 			path = Views;
@@ -646,6 +653,7 @@
 			isa = PBXGroup;
 			children = (
 				B8758E2D280AB8BE009E6D0F /* Ad.swift */,
+				B88ECD90280EA8B600EA0379 /* Banner.swift */,
 				B8758E292809B582009E6D0F /* AdView.swift */,
 				B8758E2B280AB7B1009E6D0F /* AdProvider.swift */,
 			);
@@ -725,6 +733,7 @@
 		B8B7CE91270A217000C8EFAE /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				B88ECD8C280D8BB100EA0379 /* Play-Bold.otf */,
 				B8B7BC0B26504F8A00988758 /* AppDelegate.swift */,
 				B8B7BC0D26504F8A00988758 /* SceneDelegate.swift */,
 				B8B7BC1626504F8F00988758 /* LaunchScreen.storyboard */,
@@ -850,6 +859,7 @@
 				B8F144E726B8872200B2C31B /* GalaxyCell.xib in Resources */,
 				B8607875279AF2E300F22AD1 /* MissionTypeCell.xib in Resources */,
 				B8607879279AF7E900F22AD1 /* CVMissionTypeCell.xib in Resources */,
+				B88ECD8D280D8BB100EA0379 /* Play-Bold.otf in Resources */,
 				B8FA6DE32708B90300924D3D /* OverviewCell.xib in Resources */,
 				B8607881279C82DB00F22AD1 /* MissionBriefingCell.xib in Resources */,
 				B8B7BC1526504F8F00988758 /* Assets.xcassets in Resources */,
@@ -908,6 +918,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B85AF0CE26A5A81D0087C5A7 /* UniverseInfo.swift in Sources */,
+				B88ECD8F280DBDBE00EA0379 /* CustomHeader.swift in Sources */,
 				B8FF0465269E1D4E007743B8 /* DefenceCell.swift in Sources */,
 				B867614C2659130D0096BE39 /* UIView+Ext.swift in Sources */,
 				B83B64042658455C00A75A00 /* Supplies.swift in Sources */,
@@ -944,6 +955,7 @@
 				B872AAD82708EE7000BAC4C9 /* UIViewController+Ext.swift in Sources */,
 				B8C92B4A2801A1EF0071F516 /* ServerListView.swift in Sources */,
 				B8B7BC0C26504F8A00988758 /* AppDelegate.swift in Sources */,
+				B88ECD91280EA8B600EA0379 /* Banner.swift in Sources */,
 				B846CD7027958AA200DEFDE2 /* OverviewProvider.swift in Sources */,
 				B8607880279C82DB00F22AD1 /* MissionBriefingCell.swift in Sources */,
 				B8B7BC0E26504F8A00988758 /* SceneDelegate.swift in Sources */,
@@ -1009,7 +1021,7 @@
 				B8BED03727944B4D00AE2ED8 /* CelestialsProvider.swift in Sources */,
 				B8BED02F27942CA600AE2ED8 /* ServerListProvider.swift in Sources */,
 				B8F315BB27FED71300D6A96F /* Officers.swift in Sources */,
-				B8B7BC262650579100988758 /* Servers.swift in Sources */,
+				B8B7BC262650579100988758 /* ServerDetailed.swift in Sources */,
 				B8CEECBD2803261400ECAED3 /* QueueProvider.swift in Sources */,
 				B8607883279CABCB00F22AD1 /* MissionTypeModel.swift in Sources */,
 				B8BED03527944B1000AE2ED8 /* PlayerData.swift in Sources */,

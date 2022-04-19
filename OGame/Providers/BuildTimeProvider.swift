@@ -11,7 +11,6 @@ final class BuildTimeProvider {
     
     // MARK: - Get Building Time (level)
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithLevel: BuildingWithLevelData) -> String {
-        // TODO: Change "0" to player.currentPlanetIndex
         let resources = buildingWithLevel.metal + buildingWithLevel.crystal
         let robotics = 1 + player.factoryLevels[player.currentPlanetIndex].roboticsFactoryLevel
         let research = 1 + player.factoryLevels[player.currentPlanetIndex].researchLabLevel
@@ -35,7 +34,6 @@ final class BuildTimeProvider {
     
     // MARK: - Get Building Time (amount)
     static func getBuildingTimeOfflineWith(player: PlayerData, buildingWithAmount: BuildingWithAmountData) -> String {
-        // TODO: Change "0" to player.currentPlanetIndex
         let resources = buildingWithAmount.metal + buildingWithAmount.crystal
         let shipyard = 1 + player.factoryLevels[player.currentPlanetIndex].shipyardLevel
         let nanites = NSDecimalNumber(decimal: pow(2, player.factoryLevels[player.currentPlanetIndex].naniteFactoryLevel))
@@ -57,9 +55,10 @@ final class BuildTimeProvider {
             let fleetSpeedPeaceful = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-peaceful]").get(0).attr("content")) ?? 0
             let fleetSpeedWar = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-war]").get(0).attr("content")) ?? 0
             let fleetSpeedHolding = Int(try playerData.doc.select("[name=ogame-universe-speed-fleet-holding]").get(0).attr("content")) ?? 0
-            let speed = Speed(universe: universe, peaceSpeed: fleetSpeedPeaceful,
-                                                  warSpeed: fleetSpeedWar,
-                                                  holdingSpeed: fleetSpeedHolding)
+            let speed = Speed(universe: universe,
+                              peacefulFleet: fleetSpeedPeaceful,
+                              warFleet: fleetSpeedWar,
+                              holdingFleet: fleetSpeedHolding)
             
             let galaxyString = Int(try playerData.doc.select("[name=ogame-donut-galaxy]").get(0).attr("content")) ?? 0
             let galaxy = galaxyString == 1 ? true : false
@@ -71,7 +70,7 @@ final class BuildTimeProvider {
             
         } catch {
             return UniverseInfo(version: "-1",
-                                speed: Speed(universe: 0, peaceSpeed: 0, warSpeed: 0, holdingSpeed: 0),
+                                speed: Speed(universe: 0, peacefulFleet: 0, warFleet: 0, holdingFleet: 0),
                                 donut: Donut(galaxy: false, system: false))
         }
     }

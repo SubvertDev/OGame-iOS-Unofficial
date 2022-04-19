@@ -47,6 +47,7 @@ final class MenuVC: BaseViewController {
         }
         isFirstLoad = false
         myView.adView.setAds(player.ads)
+        navigationController?.navigationBar.barStyle = .default
     }
     
     init(player: PlayerData, resources: Resources) {
@@ -122,7 +123,7 @@ extension MenuVC: IMenuTableView {
 
 extension MenuVC: AdViewDelegate {
     func adButtonPressed(ad: Ad) {
-        openAd(ad: ad)
+        openFooterAd(ad: ad)
     }
 }
 

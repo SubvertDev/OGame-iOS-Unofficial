@@ -10,30 +10,24 @@ import Foundation
 struct Account: Codable {
     let server: ServerInfo
     let id: Int
-    let gameAccountID: Int
+    let gameAccountId: Int
     let name: String
     // let lastPlayed: String?
     // let lastLogin: String?
     // let blocked: Bool?
     // let bannedUntil: String?
     // let bannedReason: String?
-    // let details: [Detail]
+    let details: [Detail]
     // let sitting: Sitting?
     // let trading: Trading?
-
-    enum CodingKeys: String, CodingKey {
-        case server, id, name
-        case gameAccountID = "gameAccountId"
-        // case details, lastPlayed, lastLogin, blocked, bannedUntil, bannedReason, sitting, trading
-    }
 }
 
 // MARK: - Detail
-// struct Detail: Codable {
+ struct Detail: Codable {
 //    let type: String
 //    let title: String
-//    let value: String
-// }
+    let value: String
+ }
 
 // MARK: - ServerInfo
 struct ServerInfo: Codable {

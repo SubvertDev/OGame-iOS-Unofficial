@@ -15,13 +15,15 @@ protocol ILoginView: AnyObject {
 
 final class LoginVC: UIViewController {
     
+
+    private var myView: LoginView { return view as! LoginView}
+    override var preferredStatusBarStyle : UIStatusBarStyle { .lightContent }
+    
     private var presenter: LoginPresenter!
     private let defaults = UserDefaults.standard
     private var servers: [MyServer]?
     private var username = ""
     private var password = ""
-    
-    private var myView: LoginView { return view as! LoginView}
     
     // MARK: - View Lifecycle
     override func loadView() {
@@ -32,7 +34,7 @@ final class LoginVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tap)
         
@@ -45,19 +47,20 @@ final class LoginVC: UIViewController {
         presenter = LoginPresenter(view: self)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        myView.gradient.frame = myView.embedView.bounds
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        setNeedsStatusBarAppearanceUpdate()
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        myView.embedView.layer.borderColor = UIColor.label.cgColor
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 }
 

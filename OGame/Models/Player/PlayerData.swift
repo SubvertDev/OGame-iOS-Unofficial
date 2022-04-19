@@ -34,4 +34,5 @@ struct PlayerData {
     var factoryLevels: [FactoryLevels]
     
     let ads: [Ad]
+    let banner: Banner?
 }
