@@ -23,7 +23,7 @@ final class BuildingTableView: UIView {
         return tableView
     }()
     
-    let refreshControl: UIRefreshControl = {
+    lazy var refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)
         return refresh

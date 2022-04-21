@@ -21,7 +21,7 @@ final class MenuTableView: UIView {
         return tableView
     }()
     
-    let refreshControl: UIRefreshControl = {
+    lazy var refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl()
         refresh.translatesAutoresizingMaskIntoConstraints = false
         refresh.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)

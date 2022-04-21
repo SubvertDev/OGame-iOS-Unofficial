@@ -14,7 +14,7 @@ protocol IFleetPageButtonsView {
 
 final class FleetPageButtonsView: UIView {
     
-    let nextButton: UIButton = {
+    lazy var nextButton: UIButton = {
         let nextButton = UIButton()
         nextButton.translatesAutoresizingMaskIntoConstraints = false
         nextButton.setTitle("NEXT", for: .normal)
@@ -25,7 +25,7 @@ final class FleetPageButtonsView: UIView {
         return nextButton
     }()
     
-    let resetButton: UIButton = {
+    lazy var resetButton: UIButton = {
         let resetButton = UIButton()
         resetButton.translatesAutoresizingMaskIntoConstraints = false
         resetButton.setTitle("RESET", for: .normal)

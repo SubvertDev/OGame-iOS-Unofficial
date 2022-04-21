@@ -28,7 +28,7 @@ final class GenericTableView: UIView {
         return indicator
     }()
     
-    let refreshControl: UIRefreshControl = {
+    lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshCalled), for: .valueChanged)
         return refreshControl

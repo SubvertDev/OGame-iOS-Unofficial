@@ -129,7 +129,7 @@ final class LoginView: UIView {
         return imageView
     }()
     
-    private let loginButton: UIButton = {
+    lazy var loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("Play", for: .normal)
         button.setTitleColor(.black, for: .normal)

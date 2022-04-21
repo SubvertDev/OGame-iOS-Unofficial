@@ -131,7 +131,7 @@ final class SettingsView: UIView {
         return stackView
     }()
     
-    private let debugSwitch: UISwitch = {
+    private lazy var debugSwitch: UISwitch = {
        let debugSwitch = UISwitch()
         debugSwitch.isOn = K.debugMode
         debugSwitch.addTarget(self, action: #selector(debugSwitchPressed(_:)), for: .touchUpInside)

@@ -13,7 +13,7 @@ protocol AdViewDelegate {
 
 final class AdView: UIView {
     
-    private let adButton: UIButton = {
+    private lazy var adButton: UIButton = {
         let button = UIButton()
         button.setTitleColor(.label, for: .normal)
         button.backgroundColor = .secondarySystemBackground
@@ -40,6 +40,7 @@ final class AdView: UIView {
     
     // MARK: Public
     func setAds(_ ads: [Ad]) {
+        guard !ads.isEmpty else { return }
         let ad = ads[Int.random(in: 0..<ads.count)]
         self.ad = ad
         adButton.setTitle(ad.title, for: .normal)

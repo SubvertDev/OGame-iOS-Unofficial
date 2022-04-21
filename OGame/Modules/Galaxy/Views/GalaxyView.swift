@@ -47,21 +47,21 @@ final class GalaxyView: UIView {
         return galaxyStackView
     }()
     
-    private let galaxyLeftButton: UIButton = {
+    private lazy var galaxyLeftButton: UIButton = {
         let galaxyLeftButton = UIButton()
         galaxyLeftButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
         galaxyLeftButton.addTarget(self, action: #selector(galaxyLeftButtonTapped), for: .touchUpInside)
         return galaxyLeftButton
     }()
     
-    private let galaxyRightButton: UIButton = {
+    private lazy var galaxyRightButton: UIButton = {
         let galaxyRightButton = UIButton()
         galaxyRightButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
         galaxyRightButton.addTarget(self, action: #selector(galaxyRightButtonTapped), for: .touchUpInside)
         return galaxyRightButton
     }()
     
-    let galaxyTextField: UITextField = {
+    lazy var galaxyTextField: UITextField = {
         let galaxyTextField = UITextField()
         galaxyTextField.placeholder = K.Galaxy.Placeholder.galaxy
         galaxyTextField.textAlignment = .center
@@ -80,21 +80,21 @@ final class GalaxyView: UIView {
         return systemStackView
     }()
     
-    private let systemLeftButton: UIButton = {
+    private lazy var systemLeftButton: UIButton = {
         let systemLeftButton = UIButton()
         systemLeftButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
         systemLeftButton.addTarget(self, action: #selector(systemLeftButtonTapped), for: .touchUpInside)
         return systemLeftButton
     }()
     
-    private let systemRightButton: UIButton = {
+    private lazy var systemRightButton: UIButton = {
         let systemRightButton = UIButton()
         systemRightButton.setImage(UIImage(systemName: "arrow.right"), for: .normal)
         systemRightButton.addTarget(self, action: #selector(systemRightButtonTapped), for: .touchUpInside)
         return systemRightButton
     }()
     
-    let systemTextField: UITextField = {
+    lazy var systemTextField: UITextField = {
         let systemTextField = UITextField()
         systemTextField.placeholder = K.Galaxy.Placeholder.system
         systemTextField.textAlignment = .center
