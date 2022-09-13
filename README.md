@@ -1,3 +1,5 @@
+# Abandoned due to release of the official app :(
+
 # OGame for iOS
 
 OGame is a browser-based, money-management and space-war themed massively multiplayer online browser game with over two million accounts.
